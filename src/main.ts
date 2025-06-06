@@ -25,6 +25,7 @@ import {
     getRecordURL,
 } from './lib/recording';
 import { getFritzBoxFilter, getFritzBoxInterfaces, getFritzBoxToken, getFritzBoxUsers } from './lib/fritzbox';
+import type { DefenderAdapterConfig, Device } from './types';
 
 const PCAP_HOST = 'kisshome-experiments.if-is.net';
 // save files every 60 minutes
@@ -35,37 +36,6 @@ const SAVE_DATA_IF_BIGGER = 50 * 1024 * 1024;
 const SYNC_INTERVAL = 3_600_000; // 3_600_000;
 
 const BACKUP_KEYS = '0_userdata.0.kisshomeResearchKeys';
-
-type Device = {
-    enabled: boolean;
-    mac: string;
-    ip: string;
-    desc: string;
-    uuid: string;
-};
-
-declare global {
-    // eslint-disable-next-line @typescript-eslint/no-namespace
-    namespace ioBroker {
-        interface AdapterConfig {
-            /** Registered email address */
-            email: string;
-            /** Fritzbox IP address */
-            fritzbox: string;
-            /** Fritzbox login */
-            login: string;
-            /** Fritzbox password */
-            password: string;
-            /** Working directory */
-            tempDir: string;
-            /** Fritzbox interface */
-            iface: string;
-            devices: Device[];
-            /** if recording is enabled */
-            recordingEnabled: boolean;
-        }
-    }
-}
 
 interface KeysObject extends ioBroker.OtherObject {
     native: {
@@ -85,6 +55,8 @@ function size2text(size: number): string {
 }
 
 export class KISSHomeResearchAdapter extends Adapter {
+    declare config: DefenderAdapterConfig;
+
     protected tempDir: string = '';
 
     private uniqueMacs: string[] = [];
@@ -325,21 +297,6 @@ export class KISSHomeResearchAdapter extends Adapter {
 
     async onReady(): Promise<void> {
         const date = new Date();
-        if (date.getFullYear() >= 2025 && date.getMonth() >= 4) {
-            if (this.language === 'de') {
-                this.log.error('Die Studie ist beendet. Danke für eure Teilnahme. Der Adapter beendet sich jetzt.');
-            } else {
-                this.log.error('The study is finished. Thank you for your participation. The adapter will terminate now.');
-            }
-
-            const obj = await this.getForeignObjectAsync(`system.adapter.${this.namespace}`);
-            if (obj?.common) {
-                obj.common.enabled = false;
-                await this.setForeignObject(obj._id, obj);
-            }
-            return;
-        }
-
 
         // read UUID
         const uuidObj = await this.getForeignObjectAsync('system.meta.uuid');

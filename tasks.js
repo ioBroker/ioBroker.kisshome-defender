@@ -8,7 +8,12 @@ const { existsSync } = require('node:fs');
 const srcAdmin = `${__dirname}/src-admin/`;
 
 function clean() {
-    deleteFoldersRecursive(`${__dirname}/admin`, ['kisshome-defender.png', 'kisshome-defender.svg', 'jsonConfig.json', 'i18n']);
+    deleteFoldersRecursive(`${__dirname}/admin`, [
+        'kisshome-defender.png',
+        'kisshome-defender.svg',
+        'jsonConfig.json',
+        'i18n',
+    ]);
     deleteFoldersRecursive(`${__dirname}/src-admin/build`);
 }
 
@@ -17,10 +22,8 @@ function copyAllFiles() {
         console.error(`[${new Date().toISOString()}] Invalid build: customComponents.js not found!`);
         process.exit(2);
     }
-    copyFiles(['src-admin/build/static/js/*.js', '!src-admin/build/static/js/vendors*.js'], 'admin/custom/static/js');
-    copyFiles(['src-admin/build/static/js/*.map', '!src-admin/build/static/js/vendors*.map'], 'admin/custom/static/js');
+    copyFiles(['src-admin/build/assets/**/*'], 'admin/custom/assets');
     copyFiles(['src-admin/build/customComponents.js'], 'admin/custom');
-    copyFiles(['src-admin/build/customComponents.js.map'], 'admin/custom');
     copyFiles(['src-admin/src/i18n/*.json'], 'admin/custom/i18n');
 }
 
@@ -35,7 +38,7 @@ if (process.argv.includes('--0-clean')) {
         });
     }
 } else if (process.argv.includes('--2-compile')) {
-    buildReact(srcAdmin, { rootDir: __dirname, craco: true, exec: true }).catch(e => {
+    buildReact(srcAdmin, { rootDir: __dirname, vite: true }).catch(e => {
         console.error(`[${new Date().toISOString()}] Cannot build: ${e}`);
         process.exit(1);
     });
@@ -44,7 +47,7 @@ if (process.argv.includes('--0-clean')) {
 } else {
     clean();
     npmInstall(srcAdmin)
-        .then(() => buildReact(srcAdmin, { rootDir: __dirname, craco: true }))
+        .then(() => buildReact(srcAdmin, { rootDir: __dirname, vite: true }))
         .then(() => copyAllFiles())
         .catch(e => {
             console.error(`[${new Date().toISOString()}] Cannot build all: ${e}`);

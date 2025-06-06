@@ -17,3 +17,5 @@ package-lock.json
 *.zip
 /*.html
 /test.mjs
+/src-admin/.__mf__temp/
+/build/

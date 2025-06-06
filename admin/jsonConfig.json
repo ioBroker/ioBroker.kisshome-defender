@@ -151,7 +151,8 @@
                     "sm": 12,
                     "i18n": true,
                     "url": "custom/customComponents.js",
-                    "name": "ConfigCustomKissHomeResearchSet/Components/ConfigCustomInstancesSelector"
+                    "name": "ConfigCustomKissHomeDefenderSet/Components/ConfigCustomInstancesSelector",
+                    "bundlerType": "module"
                 }
             }
         }
