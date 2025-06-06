@@ -1,0 +1,391 @@
+{
+  "common": {
+    "name": "kisshome-defender",
+    "version": "0.0.1",
+    "news": {
+
+    },
+    "titleLang": {
+      "en": "KISSHome defender",
+      "de": "KISSHome-Forschung",
+      "ru": "Исследование KISSHome",
+      "pt": "Pesquisa KISSHome",
+      "nl": "KISSHome-onderzoek",
+      "fr": "Recherche KISSHome",
+      "it": "Ricerca KISSHome",
+      "es": "Investigación de KISSHome",
+      "pl": "Badania KISSHome",
+      "uk": "Дослідження KISSHome",
+      "zh-cn": "KISSHome研究"
+    },
+    "desc": {
+      "en": "Collection of information for KISSHome defender",
+      "de": "Sammlung von Informationen für KISSHome-Forschung",
+      "ru": "Сбор информации для исследования KISSHome",
+      "pt": "Coleção de informações para pesquisa KISSHome",
+      "nl": "Verzameling informatie voor KISSHome-onderzoek",
+      "fr": "Collection d'informations pour la recherche KISSHome",
+      "it": "Raccolta di informazioni per la ricerca KISSHome",
+      "es": "Colección de información para la investigación de KISSHome",
+      "pl": "Zbiór informacji do badań KISSHome",
+      "uk": "Збір інформації для дослідження KISSHome",
+      "zh-cn": "KISSHome研究信息收集"
+    },
+    "authors": [
+      "Denis Haev <dogafox@gmail.com>"
+    ],
+    "platform": "Javascript/Node.js",
+    "mode": "daemon",
+    "nogit": true,
+    "loglevel": "info",
+    "readme": "https://github.com/ioBroker/ioBroker.kisshome-defender/blob/master/README.md",
+    "icon": "kisshome-defender.png",
+    "connectionType": "local",
+    "dataSource": "push",
+    "adminUI": {
+      "config": "json"
+    },
+    "tier": 3,
+    "keywords": [
+      "kisshome-defender"
+    ],
+    "stopTimeout": 5000,
+    "enabled": true,
+    "compact": true,
+    "singletonHost": true,
+    "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.kisshome-defender/main/admin/kisshome-defender.png",
+    "type": "utility",
+    "messagebox": true,
+    "plugins": {
+      "sentry": {
+        "dsn": "https://10a9528535e3bbbf99f4282a20ff43d1@sentry.iobroker.net/248"
+      }
+    },
+    "licenseInformation": {
+      "type": "free",
+      "license": "MIT"
+    },
+    "globalDependencies": [
+      {
+        "admin": ">=7.0.25"
+      }
+    ]
+  },
+  "protectedNative": [
+    "password",
+    "login"
+  ],
+  "encryptedNative": [
+    "password"
+  ],
+  "native": {
+    "fritzbox": "0.0.0.0",
+    "iface": "1-lan",
+    "login": "",
+    "password": "",
+    "tempDir": "",
+    "devices": []
+  },
+  "notifications": [
+    {
+      "scope": "kisshome-defender",
+      "name": {
+        "en": "KISSHome-Research",
+        "de": "KISSHome-Research",
+        "ru": "KISSHome-Research",
+        "pt": "KISSHome-Research",
+        "nl": "KISSHome-Research",
+        "fr": "KISSHome-Research",
+        "it": "KISSHome-Research",
+        "es": "KISSHome-Research",
+        "pl": "KISSHome-Research",
+        "uk": "KISSHome-Research",
+        "zh-cn": "KISSHome-Research"
+      },
+      "description": {
+        "en": "Problem with KISSHome-Research instance",
+        "de": "Problem mit KISSHome-Research-Instanz",
+        "ru": "Проблема с экземпляром KISSHome-Research",
+        "pt": "Problema com a instância KISSHome-Research",
+        "nl": "Probleem met KISSHome-Research-instantie",
+        "fr": "Problème avec l'instance KISSHome-Research",
+        "it": "Problema con l'istanza KISSHome-Research",
+        "es": "Problema con la instancia KISSHome-Research",
+        "pl": "Problem z instancją KISSHome-Research",
+        "uk": "Проблема з екземпляром KISSHome-Research",
+        "zh-cn": "KISSHome-Research 实例存在问题"
+      },
+      "categories": [
+        {
+          "category": "publicKey",
+          "name": {
+            "en": "Problem with KISSHome-Research instance",
+            "de": "Problem mit KISSHome-Research-Instanz",
+            "ru": "Проблема с экземпляром KISSHome-Research",
+            "pt": "Problema com a instância KISSHome-Research",
+            "nl": "Probleem met KISSHome-Research-instantie",
+            "fr": "Problème avec l'instance KISSHome-Research",
+            "it": "Problema con l'istanza KISSHome-Research",
+            "es": "Problema con la instancia KISSHome-Research",
+            "pl": "Problem z instancją KISSHome-Research",
+            "uk": "Проблема з екземпляром KISSHome-Research",
+            "zh-cn": "KISSHome-Research 实例存在问题"
+          },
+          "severity": "notify",
+          "description": {
+            "en": "The public key was rejected because previous connections used a different one. It can happens, if your settings for instance was deleted and then the instance was created again. To make the acceptance of the new public key possible, please contact us under kisshome@internet-sicherheit.de and provide the reason why the public key was changed.",
+            "de": "Der Public-Schlüssel wurde abgelehnt, da frühere Verbindungen einen anderen verwendeten. Es kann vorkommen, wenn Ihre Einstellungen für die Instanz gelöscht wurden und dann die Instanz erneut erstellt wurde. Um die Annahme des neuen öffentlichen Schlüssels zu ermöglichen, kontaktieren Sie uns bitte unter kisshome@internet-sicherheit.de und geben Sie den Grund an, warum der öffentliche Schlüssel geändert wurde.",
+            "ru": "Публичный ключ был отклонен, потому что предыдущие подключения использовали другой. Это может произойти, если ваши настройки для экземпляра были удалены, а затем экземпляр был создан снова. Чтобы сделать возможным принятие нового открытого ключа, пожалуйста, свяжитесь с нами по адресу kisshome@internet-sicherheit.de и укажите причину изменения открытого ключа.",
+            "pt": "A chave pública foi rejeitada porque as conexões anteriores usaram uma diferente. Pode acontecer se suas configurações para a instância foram excluídas e, em seguida, a instância foi criada novamente. Para tornar possível a aceitação da nova chave pública, entre em contato conosco em kisshome@internet-sicherheit.de e forneça o motivo da alteração da chave pública.",
+            "nl": "De openbare sleutel werd afgewezen omdat eerdere verbindingen een andere gebruikten. Het kan gebeuren als uw instellingen voor de instantie zijn verwijderd en vervolgens de instantie opnieuw is gemaakt. Om de acceptatie van de nieuwe openbare sleutel mogelijk te maken, neem contact met ons op via kisshome@internet-sicherheit.de en geef de reden op waarom de openbare sleutel is gewijzigd.",
+            "fr": "La clé publique a été rejetée car les connexions précédentes utilisaient une autre clé. Cela peut se produire si vos paramètres pour l'instance ont été supprimés, puis que l'instance a été recréée. Pour rendre possible l'acceptation de la nouvelle clé publique, veuillez nous contacter à kisshome@internet-sicherheit.de et fournir la raison pour laquelle la clé publique a été modifiée.",
+            "it": "La chiave pubblica è stata rifiutata perché le connessioni precedenti ne utilizzavano una diversa. Può accadere se le impostazioni per l'istanza sono state eliminate e quindi l'istanza è stata creata nuovamente. Per rendere possibile l'accettazione del nuovo chiave pubblica, contattaci a kisshome@internet-sicherheit.de e fornisci il motivo per cui la chiave pubblica è stata modificata.",
+            "es": "La clave pública fue rechazada porque las conexiones anteriores usaban una diferente. Puede suceder si su configuración para la instancia fue eliminada y luego la instancia fue creada nuevamente. Para hacer posible la aceptación de la nueva clave pública, contáctenos en kisshome@internet-sicherheit.de y proporcione la razón por la que se cambió la clave pública.",
+            "pl": "Klucz publiczny został odrzucony, ponieważ poprzednie połączenia używały innego. Może się zdarzyć, jeśli Twoje ustawienia dla instancji zostały usunięte, a następnie instancja została utworzona ponownie. Aby umożliwić akceptację nowego klucza publicznego, skontaktuj się z nami pod adresem kisshome@internet-sicherheit.de i podaj powód zmiany klucza publicznego.",
+            "uk": "Відкритий ключ був відхилений, оскільки попередні підключення використовували інший. Це може статися, якщо ваші налаштування для екземпляра були видалені, а потім екземпляр був створений знову. Щоб зробити прийняття нового відкритого ключа можливим, будь ласка, зв'яжіться з нами за адресою kisshome@internet-sicherheit.de і вкажіть причину зміни відкритого ключа.",
+            "zh-cn": "公钥被拒绝，因为之前的连接使用了不同的公钥. 如果您的实例设置被删除，然后实例被重新创建，就会发生这种情况。为了使新公钥的接受成为可能，请通过 kisshome@internet-sicherheit.de 与我们联系，并提供更改公钥的原因。"
+          },
+          "regex": [],
+          "limit": 1
+        }
+      ]
+    }
+  ],
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "device",
+      "common": {
+        "name": {
+          "en": "Information",
+          "de": "Informationen",
+          "ru": "Информация",
+          "pt": "Informação",
+          "nl": "Informatie",
+          "fr": "Information",
+          "it": "Informazioni",
+          "es": "Información",
+          "pl": "Informacja",
+          "uk": "Інформація",
+          "zh-cn": "信息"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Connected to FritzBox",
+          "de": "Verbindung mit FritzBox",
+          "ru": "Подключен к FritzBox",
+          "pt": "Conectado ao FritzBox",
+          "nl": "Verbinding met FritzBoxr",
+          "fr": "Connecté au FritzBox",
+          "it": "Collegato al FritzBox",
+          "es": "Conectado al FritzBox",
+          "pl": "Łączy się z FritzBox",
+          "uk": "Підключення до FritzBox",
+          "zh-cn": "Connected with FritzBox"
+        },
+        "type": "boolean",
+        "role": "indicator.connected",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.recording",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Recoding on Fritz!Box",
+          "de": "Aufnahme auf Fritz!Box",
+          "ru": "Запись на Fritz!Box",
+          "pt": "Recoding no Fritz!Box",
+          "nl": "Opname op Fritz!Box",
+          "fr": "Enregistrement sur Fritz!Box",
+          "it": "Registrazione su Fritz!Box",
+          "es": "Grabación en Fritz!Box",
+          "pl": "Nagrywanie na Fritz!Box",
+          "uk": "Запис на Fritz!Box",
+          "zh-cn": "Fritz!Box上的录制"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.recording.captured",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "How many packets captured after last start",
+          "de": "Wie viele Pakete wurden nach dem letzten Start erfasst",
+          "ru": "Сколько пакетов было захвачено после последнего запуска",
+          "pt": "Quantos pacotes foram capturados após a última inicialização",
+          "nl": "Hoeveel pakketten zijn er vastgelegd na de laatste start",
+          "fr": "Combien de paquets ont été capturés après le dernier démarrage",
+          "it": "Quanti pacch, etti sono stati catturati dopo l'ultimo avvio",
+          "es": "Cuántos paquetes se capturaron después del último inicio",
+          "pl": "Ile pakietów zostało przechwyconych po ostatnim uruchomieniu",
+          "uk": "Скільки пакетів було захоплено після останнього запуску",
+          "zh-cn": "上次启动后捕获了多少数据包"
+        },
+        "type": "number",
+        "role": "state",
+        "unit": "packets",
+        "read": true,
+        "write": false,
+        "def": 0
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.recording.enabled",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Is recording is running",
+          "de": "Wird aufgezeichnet",
+          "ru": "Идет запись",
+          "pt": "A gravação está em execução",
+          "nl": "Wordt opgenomen",
+          "fr": "L'enregistrement est en cours",
+          "it": "La registrazione è in corso",
+          "es": "La grabación está en curso",
+          "pl": "Nagrywanie jest w toku",
+          "uk": "Запис виконується",
+          "zh-cn": "录制正在进行中"
+        },
+        "type": "boolean",
+        "role": "state",
+        "read": true,
+        "write": true,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.recording.running",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Is recording is running",
+          "de": "Wird aufgezeichnet",
+          "ru": "Идет запись",
+          "pt": "A gravação está em execução",
+          "nl": "Wordt opgenomen",
+          "fr": "L'enregistrement est en cours",
+          "it": "La registrazione è in corso",
+          "es": "La grabación está en curso",
+          "pl": "Nagrywanie jest w toku",
+          "uk": "Запис виконується",
+          "zh-cn": "录制正在进行中"
+        },
+        "type": "boolean",
+        "role": "state",
+        "read": true,
+        "write": true,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.recording.triggerWrite",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Triggers the creation of PCAP file",
+          "de": "Startet die Erstellung der PCAP-Datei",
+          "ru": "Запускает создание файла PCAP",
+          "pt": "Dispara a criação do arquivo PCAP",
+          "nl": "Start de creatie van het PCAP-bestand",
+          "fr": "Déclenche la création du fichier PCAP",
+          "it": "Avvia la creazione del file PCAP",
+          "es": "Desencadena la creación del archivo PCAP",
+          "pl": "Uruchamia tworzenie pliku PCAP",
+          "uk": "Запускає створення файлу PCAP",
+          "zh-cn": "触发PCAP文件的创建"
+        },
+        "type": "boolean",
+        "role": "state",
+        "read": true,
+        "write": true,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.sync",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Synchronization with KISSHome",
+          "de": "Synchronisation mit KISSHome",
+          "ru": "Синхронизация с KISSHome",
+          "pt": "Sincronização com KISSHome",
+          "nl": "Synchronisatie met KISSHome",
+          "fr": "Synchronisation avec KISSHome",
+          "it": "Sincronizzazione con KISSHome",
+          "es": "Sincronización con KISSHome",
+          "pl": "Synchronizacja z KISSHome",
+          "uk": "Синхронізація з KISSHome",
+          "zh-cn": "与KISSHome同步"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.sync.running",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "RSync is running",
+          "de": "RSync läuft",
+          "ru": "RSync работает",
+          "pt": "RSync está em execução",
+          "nl": "RSync is aan het lopen",
+          "fr": "RSync est en cours d'exécution",
+          "it": "RSync è in esecuzione",
+          "es": "RSync está corriendo",
+          "pl": "RSync działa",
+          "uk": "RSync працює",
+          "zh-cn": "RSync正在运行"
+        },
+        "type": "boolean",
+        "role": "state",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.sync.keys",
+      "type": "config",
+      "common": {
+        "name": {
+          "en": "Public and private keys",
+          "de": "Öffentliche und private Schlüssel",
+          "ru": "Публичные и частные ключи",
+          "pt": "Chaves públicas e privadas",
+          "nl": "Openbare en privésleutels",
+          "fr": "Clés publiques et privées",
+          "it": "Chiavi pubbliche e private",
+          "es": "Claves públicas y privadas",
+          "pl": "Klucze publiczne i prywatne",
+          "uk": "Публічні та приватні ключі",
+          "zh-cn": "公钥和私钥"
+        }
+      },
+      "native": {
+        "publicKey": "",
+        "privateKey": ""
+      }
+    }
+  ]
+}

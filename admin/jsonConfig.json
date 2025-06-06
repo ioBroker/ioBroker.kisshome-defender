@@ -1,0 +1,159 @@
+{
+    "i18n": true,
+    "type": "tabs",
+    "items": {
+        "_options": {
+            "type": "panel",
+            "label": "General settings",
+            "items": {
+                "email": {
+                    "type": "text",
+                    "sm": 12,
+                    "md": 3,
+                    "lg": 3,
+                    "label": "Email",
+                    "tooltip": "E-mail address that was used for registration"
+                },
+                "_hint": {
+                    "newLine": true,
+                    "type": "staticLink",
+                    "sm": 12,
+                    "href": "https://kisshome-research.if-is.net/#/register",
+                    "text": "To participate in the KISSHome research, you need to register here."
+                },
+                "fritzbox": {
+                    "newLine": true,
+                    "type": "text",
+                    "sm": 12,
+                    "md": 3,
+                    "lg": 3,
+                    "label": "FritzBox IP",
+                    "defaultSendTo": "getDefaultGateway",
+                    "allowSaveWithError": true,
+                    "disabled": "!data.email"
+                },
+                "login": {
+                    "newLine": true,
+                    "type": "autocompleteSendTo",
+                    "command": "getUsers",
+                    "alsoDependsOn": ["fritzbox"],
+                    "jsonData": "{\"ip\": \"${data.fritzbox}\"}",
+                    "freeSolo": true,
+                    "sm": 12,
+                    "md": 3,
+                    "lg": 3,
+                    "label": "FritzBox Login",
+                    "disabled": "!data.email"
+                },
+                "password": {
+                    "type": "password",
+                    "sm": 12,
+                    "md": 6,
+                    "repeat": true,
+                    "lg": 6,
+                    "label": "FritzBox Password",
+                    "disabled": "!data.email"
+                },
+                "_hint2": {
+                    "newLine": true,
+                    "type": "staticLink",
+                    "sm": 12,
+                    "href": "https://kisshome-research.if-is.net/#/faq/interface",
+                    "text": "Explanation of the Fritz!Box interface could be found at this link.",
+                    "disabled": "!data.email"
+                },
+                "iface": {
+                    "newLine": true,
+                    "type": "selectSendTo",
+                    "command": "getInterfaces",
+                    "manual": true,
+                    "jsonData": "{\"ip\": \"${data.fritzbox}\", \"login\": \"${data.login}\", \"password\": \"${data.password}\"}",
+                    "alsoDependsOn": ["fritzbox", "login", "password"],
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "label": "FritzBox Interface",
+                    "help": "Default interface is 1-lan",
+                    "disabled": "!data.email"
+                },
+                "tempDir": {
+                    "newLine": true,
+                    "type": "text",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "label": "Working directory",
+                    "help": "Directory for temporary files. Leave empty to use the system directory.",
+                    "disabled": "!data.email"
+                },
+                "_header": {
+                    "newLine": true,
+                    "type": "header",
+                    "size": 4,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "text": "Recording"
+                },
+                "_recordingEnabled": {
+                    "type": "state",
+                    "disabled": "!data.email || !data.fritzbox || data.fritzbox === '0.0.0.0' || !data.login || !data.password || !data.iface",
+                    "oid": "info.recording.enabled",
+                    "control": "switch",
+                    "falseText": "Disabled",
+                    "trueText": "Enabled"
+                },
+                "_recordingRunning": {
+                    "type": "state",
+                    "oid": "info.recording.running",
+                    "control": "text",
+                    "falseText": "Recording is not running",
+                    "trueTextStyle": {
+                        "marginTop": 11,
+                        "fontSize": 12,
+                        "color": "green",
+                        "fontWeight": "bold"
+                    },
+                    "falseTextStyle": {
+                        "marginTop": 11,
+                        "fontSize": 12,
+                        "opacity": 0.7
+                    },
+                    "trueText": "Recording is running",
+                    "disabled": "!data.email"
+                },
+                "_filter": {
+                    "newLine": true,
+                    "type": "textSendTo",
+                    "command": "getFilter",
+                    "jsonData": "{\"ip\": \"${data.fritzbox}\", \"login\": \"${data.login}\", \"password\": \"${data.password}\"}",
+                    "alsoDependsOn": ["fritzbox", "login", "password"],
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "disabled": "!data.email"
+                }
+            }
+        },
+        "_instances": {
+            "type": "panel",
+            "label": "Addresses",
+            "disabled": "!data.email",
+            "items": {
+                "_info": {
+                    "type": "staticText",
+                    "sm": 12,
+                    "text": "The MAC address is important, but if you enter the IP address, the system will try to find the MAC address automatically."
+                },
+                "_devices": {
+                    "newLine": true,
+                    "type": "custom",
+                    "sm": 12,
+                    "i18n": true,
+                    "url": "custom/customComponents.js",
+                    "name": "ConfigCustomKissHomeResearchSet/Components/ConfigCustomInstancesSelector"
+                }
+            }
+        }
+    }
+}
