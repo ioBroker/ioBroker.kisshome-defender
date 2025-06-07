@@ -155,6 +155,24 @@
                     "bundlerType": "module"
                 }
             }
+        },
+        "_docker": {
+            "type": "panel",
+            "label": "Docker",
+            "items": {
+                "selfHosted": {
+                    "type": "checkbox",
+                    "label": "Self-hosted",
+                    "default": true
+                },
+                "url": {
+                    "newLine": true,
+                    "type": "text",
+                    "label": "Docker URL",
+                    "help": "Like http://dockerIp:5000",
+                    "hidden": "!!data.selfHosted"
+                }
+            }
         }
     }
 }

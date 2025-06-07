@@ -19,7 +19,15 @@ export interface DefenderAdapterConfig {
     tempDir: string;
     /** Fritzbox interface */
     iface: string;
+    /** Monitored devices */
     devices: Device[];
     /** if recording is enabled */
     recordingEnabled: boolean;
+    /** Information about the Docker setup */
+    docker: {
+        /** If the adapter starts a Docker container itself */
+        selfHosted: boolean;
+        /** Url of the foreign docker container */
+        url: string;
+    };
 }

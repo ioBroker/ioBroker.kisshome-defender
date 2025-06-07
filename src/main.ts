@@ -1,4 +1,4 @@
-import { Adapter, type AdapterOptions } from '@iobroker/adapter-core';
+import { Adapter, type AdapterOptions, I18n } from '@iobroker/adapter-core';
 import axios, { type AxiosResponse } from 'axios';
 import { join, basename } from 'node:path';
 import { createHash } from 'node:crypto';
@@ -81,7 +81,7 @@ export class KISSHomeResearchAdapter extends Adapter {
         lastSaved: 0,
     };
 
-    private versionPack: string;
+    private readonly versionPack: string;
 
     private recordingRunning: boolean = false;
 
@@ -174,12 +174,8 @@ export class KISSHomeResearchAdapter extends Adapter {
                                     msg.command,
                                     {
                                         text: filter
-                                            ? this.language === 'de'
-                                                ? 'Fritz!Box unterstützt Filter-Funktion'
-                                                : 'Fritz!Box supports Filter-Feature'
-                                            : this.language === 'de'
-                                              ? 'Fritz!Box unterstützt Filter-Funktion nicht'
-                                              : 'Fritz!Box does not support Filter-Feature',
+                                            ? I18n.translate('Fritz!Box supports Filter-Feature')
+                                            : I18n.translate('Fritz!Box does not support Filter-Feature'),
                                         style: {
                                             color: filter ? 'green' : 'red',
                                         },
@@ -252,64 +248,40 @@ export class KISSHomeResearchAdapter extends Adapter {
 
     async analyseError(response: AxiosResponse): Promise<void> {
         if (response.status === 404) {
-            if (this.language === 'de') {
-                this.log.error(`Registrieren auf der kisshome-cloud nicht möglich: Unbekannte E-Mail-Adresse`);
-            } else {
-                this.log.error(`Cannot register on the kisshome-cloud: Unknown email address`);
-            }
+            this.log.error(
+                `${I18n.translate('Cannot register on the kisshome-cloud')}: ${I18n.translate('Unknown email address')}`,
+            );
         } else if (response.status === 403) {
-            if (this.language === 'de') {
-                this.log.error(
-                    `Registrieren auf der kisshome-cloud nicht möglich: Der öffentliche Schlüssel hat sich geändert. Bitte kontaktieren Sie uns unter kisshome@internet-sicherheit.de`,
-                );
-            } else {
-                this.log.error(
-                    `Cannot register on the kisshome-cloud: public key changed. Please contact us via kisshome@internet-sicherheit.de`,
-                );
-            }
+            this.log.error(
+                `${I18n.translate('Cannot register on the kisshome-cloud')}: ${I18n.translate('public key changed. Please contact us via kisshome@internet-sicherheit.de')}`,
+            );
             await this.registerNotification('kisshome-defender', 'publicKey', 'Public key changed');
         } else if (response.status === 401) {
-            if (this.language === 'de') {
-                this.log.error(`Registrieren auf der kisshome-cloud nicht möglich: Ungültiges Passwort`);
-            } else {
-                this.log.error(`Cannot register on the cloud: invalid password`);
-            }
+            this.log.error(
+                `${I18n.translate('Cannot register on the kisshome-cloud')}: ${I18n.translate('invalid password')}`,
+            );
         } else if (response.status === 422) {
-            if (this.language === 'de') {
-                this.log.error(
-                    `Registrieren auf der kisshome-cloud nicht möglich: E-Mail, öffentlicher Schlüssel oder UUID fehlen`,
-                );
-            } else {
-                this.log.error(`Cannot register on the cloud: missing email, public key or uuid`);
-            }
+            this.log.error(
+                `${I18n.translate('Cannot register on the kisshome-cloud')}: ${I18n.translate('missing email, public key or uuid')}`,
+            );
         } else {
-            if (this.language === 'de') {
-                this.log.error(
-                    `Registrieren auf der kisshome-cloud nicht möglich: ${response.data || response.statusText || response.status}`,
-                );
-            } else {
-                this.log.error(
-                    `Cannot register on the kisshome-cloud: ${response.data || response.statusText || response.status}`,
-                );
-            }
+            this.log.error(
+                `${I18n.translate('Cannot register on the kisshome-cloud')}: ${response.data || response.statusText || response.status}`,
+            );
         }
     }
 
     async onReady(): Promise<void> {
-        const date = new Date();
-
         // read UUID
         const uuidObj = await this.getForeignObjectAsync('system.meta.uuid');
         if (uuidObj?.native?.uuid) {
             this.uuid = uuidObj.native.uuid;
         } else {
-            if (this.language === 'de') {
-                this.log.error('Kann UUID nicht auslesen');
-            } else {
-                this.log.error('Cannot read UUID');
-            }
+            this.log.error('Cannot read UUID');
             return;
         }
+
+        await I18n.init(__dirname, this);
 
         // remove running flag
         const runningState = await this.getStateAsync('info.connection');
@@ -324,11 +296,7 @@ export class KISSHomeResearchAdapter extends Adapter {
         }
 
         if (!this.config.fritzbox) {
-            if (this.language === 'de') {
-                this.log.error(`Fritz!Box is nicht eingegeben`);
-            } else {
-                this.log.error(`Fritz!Box is not defined`);
-            }
+            this.log.error(`Fritz!Box is not defined`);
             return;
         }
 
@@ -346,11 +314,7 @@ export class KISSHomeResearchAdapter extends Adapter {
             ]);
             fritzMac = fritzEntry[0]?.mac || '';
         } catch {
-            if (this.language === 'de') {
-                this.log.debug(`Kann die MAC Adresse von FritzBox nicht finden`);
-            } else {
-                this.log.debug(`Cannot determine MAC addresses of Fritz!Box`);
-            }
+            this.log.debug(`Cannot determine MAC addresses of Fritz!Box`);
         }
 
         if (tasks.length) {
@@ -368,33 +332,17 @@ export class KISSHomeResearchAdapter extends Adapter {
                 // print out the IP addresses without MAC addresses
                 const missing = this.IPs.filter(item => !item.mac);
                 if (missing.length) {
-                    if (this.language === 'de') {
-                        this.log.warn(
-                            `Für folgende IP konnten keine MAC Adressen gefunden werden: ${missing.map(t => t.ip).join(', ')}`,
-                        );
-                    } else {
-                        this.log.warn(
-                            `Cannot get MAC addresses for the following IPs: ${missing.map(t => t.ip).join(', ')}`,
-                        );
-                    }
+                    this.log.warn(
+                        `${I18n.translate('Cannot get MAC addresses for the following IPs')}: ${missing.map(t => t.ip).join(', ')}`,
+                    );
                 }
             } catch (e) {
                 if (e.toString().includes('no results')) {
-                    if (this.language === 'de') {
-                        this.log.warn(
-                            `Für folgende IP könnten keine MAC Adressen gefunden: ${tasks.map(t => t.ip).join(', ')}`,
-                        );
-                    } else {
-                        this.log.warn(
-                            `Cannot get MAC addresses for the following IPs: ${tasks.map(t => t.ip).join(', ')}`,
-                        );
-                    }
+                    this.log.warn(
+                        `${I18n.translate('Cannot get MAC addresses for the following IPs')}: ${tasks.map(t => t.ip).join(', ')}`,
+                    );
                 } else {
-                    if (this.language === 'de') {
-                        this.log.error(`MAC-Adressen können nicht ermittelt werden: ${e}`);
-                    } else {
-                        this.log.error(`Cannot get MAC addresses: ${e}`);
-                    }
+                    this.log.error(`Cannot get MAC addresses: ${e}`);
                 }
             }
         }
@@ -412,38 +360,21 @@ export class KISSHomeResearchAdapter extends Adapter {
 
         // detect temp directory
         this.tempDir = this.config.tempDir || '/run/shm';
-        if (existsSync(this.tempDir)) {
-            if (this.language === 'de') {
-                this.log.info(`${this.tempDir} wird als temporäres Verzeichnis verwendet`);
-            } else {
-                this.log.info(`Using ${this.tempDir} as temporary directory`);
-            }
-        } else if (existsSync('/run/shm')) {
-            this.tempDir = '/run/shm';
-            if (this.language === 'de') {
-                this.log.info(`${this.tempDir} wird als temporäres Verzeichnis verwendet`);
-            } else {
-                this.log.info(`Using ${this.tempDir} as temporary directory`);
-            }
-        } else if (existsSync('/tmp')) {
-            this.tempDir = '/tmp';
-            if (this.language === 'de') {
-                this.log.info(`${this.tempDir} wird als temporäres Verzeichnis verwendet`);
-            } else {
-                this.log.info(`Using ${this.tempDir} as temporary directory`);
-            }
-        } else {
-            if (this.language === 'de') {
-                this.log.warn(
-                    `Es kann kein temporäres Verzeichnis gefunden werden. Bitte geben Sie es manuell in der Konfiguration an. Für beste Leistung sollte es eine RAM-Disk sein.`,
-                );
+        if (!existsSync(this.tempDir)) {
+            if (existsSync('/run/shm')) {
+                this.tempDir = '/run/shm';
+            } else if (existsSync('/tmp')) {
+                this.tempDir = '/tmp';
             } else {
                 this.log.warn(
-                    `Cannot find any temporary directory. Please specify manually in the configuration. For best performance it should be a RAM disk`,
+                    I18n.translate(
+                        'Cannot find any temporary directory. Please specify manually in the configuration. For best performance it should be a RAM disk',
+                    ),
                 );
+                return;
             }
-            return;
         }
+        this.log.info(I18n.translate('Using "%s" as temporary directory', this.tempDir));
 
         this.tempDir = this.tempDir.replace(/\\/g, '/');
 
@@ -479,22 +410,14 @@ export class KISSHomeResearchAdapter extends Adapter {
                     this.publicKey = _public;
                     privateKey = _private;
                     keysRestored = true;
-                    if (this.language === 'de') {
-                        this.log.info('Schlüssel wurde aus "0_userdata.0.kisshomeResearchKeys" wiederherstellt.');
-                    } else {
-                        this.log.info('The keys were restored from "0_userdata.0.kisshomeResearchKeys".');
-                    }
+                    this.log.info(I18n.translate('The keys were restored from "0_userdata.0.kisshomeResearchKeys".'));
                 }
             } catch {
                 // ignore
             }
 
             if (!keysRestored) {
-                if (this.language === 'de') {
-                    this.log.info('Schlüssel werden erstmalig generiert.');
-                } else {
-                    this.log.info('Generating keys for the first time.');
-                }
+                this.log.info(I18n.translate('Generating keys for the first time.'));
                 const result = generateKeys();
                 privateKey = result.privateKey;
                 this.publicKey = result.publicKey;
@@ -534,11 +457,7 @@ export class KISSHomeResearchAdapter extends Adapter {
         }
 
         if (!this.publicKey || !privateKey) {
-            if (this.language === 'de') {
-                this.log.error('Schlüssel können nicht generiert werden.');
-            } else {
-                this.log.error('Cannot generate keys.');
-            }
+            this.log.error(I18n.translate('Cannot generate keys.'));
             return;
         }
 
@@ -550,28 +469,19 @@ export class KISSHomeResearchAdapter extends Adapter {
                 mkdirSync(this.workingDir);
             }
         } catch (e) {
-            if (this.language === 'de') {
-                this.log.error(`Arbeitsverzeichnis "${this.workingDir}" kann nicht erstellt werden: ${e}`);
-            } else {
-                this.log.error(`Cannot create working directory "${this.workingDir}": ${e}`);
-            }
+            this.log.error(`${I18n.translate('Cannot create working directory')} "${this.workingDir}": ${e}`);
             return;
         }
 
         // this.clearWorkingDir();
 
         if (!this.config.email) {
-            if (this.language === 'de') {
-                this.log.error('Keine E-Mail angegeben. Bitte geben Sie eine E-Mail-Adresse in der Konfiguration an.');
-                this.log.error(
-                    'Sie müssen diese E-Mail zuerst unter https://kisshome-feldversuch.if-is.net/#register registrieren.',
-                );
-            } else {
-                this.log.error('No email provided. Please provide an email address in the configuration.');
-                this.log.error(
+            this.log.error(I18n.translate('No email provided. Please provide an email address in the configuration.'));
+            this.log.error(
+                I18n.translate(
                     'You must register this email first on https://kisshome-feldversuch.if-is.net/#register.',
-                );
-            }
+                ),
+            );
             return;
         }
 
@@ -584,22 +494,14 @@ export class KISSHomeResearchAdapter extends Adapter {
             });
             if (response.status === 200) {
                 if (response.data?.command === 'terminate') {
-                    if (this.language === 'de') {
-                        this.log.warn('Server hat die Terminierung des Adapters angefordert');
-                    } else {
-                        this.log.warn('Server requested to terminate the adapter');
-                    }
+                    this.log.warn(I18n.translate('Server requested to terminate the adapter'));
                     const obj = await this.getForeignObjectAsync(`system.adapter.${this.namespace}`);
                     if (obj?.common?.enabled) {
                         obj.common.enabled = false;
                         await this.setForeignObjectAsync(obj._id, obj);
                     }
                 } else {
-                    if (this.language === 'de') {
-                        this.log.info('Erfolgreich in der Cloud registriert');
-                    } else {
-                        this.log.info('Successfully registered on the cloud');
-                    }
+                    this.log.info(I18n.translate('Successfully registered on the cloud'));
                 }
             } else {
                 await this.analyseError(response);
@@ -609,11 +511,7 @@ export class KISSHomeResearchAdapter extends Adapter {
             if (e.response) {
                 await this.analyseError(e.response);
             } else {
-                if (this.language === 'de') {
-                    this.log.error(`Registrieren auf der kisshome-cloud nicht möglich: ${e}`);
-                } else {
-                    this.log.error(`Cannot register on the kisshome-cloud: ${e}`);
-                }
+                this.log.error(`${I18n.translate('Cannot register on the kisshome-cloud')}: ${e}`);
             }
             return;
         }
@@ -624,15 +522,9 @@ export class KISSHomeResearchAdapter extends Adapter {
         await this.setState('info.recording.triggerWrite', false, true);
 
         if (!this.uniqueMacs.length) {
-            if (this.language === 'de') {
-                this.log.warn(
-                    `[PCAP] Keine MAC-Adressen für die Aufzeichnung angegeben. Bitte geben Sie einige MAC-Adressen oder IP-Adressen an, die in MAC-Adressen aufgelöst werden können`,
-                );
-            } else {
-                this.log.warn(
-                    `[PCAP] No any MAC addresses provided for recording. Please provide some MAC addresses or Ip addresses, that could be resolved to MAC address`,
-                );
-            }
+            this.log.warn(
+                `[PCAP] ${I18n.translate('No any MAC addresses provided for recording. Please provide some MAC addresses or Ip addresses, that could be resolved to MAC address')}`,
+            );
             return;
         }
 
@@ -644,21 +536,13 @@ export class KISSHomeResearchAdapter extends Adapter {
         if (this.recordingEnabled) {
             // start the monitoring
             this.startRecording().catch(e => {
-                if (this.language === 'de') {
-                    this.log.error(`[PCAP] Aufzeichnen kann nicht gestartet werden: ${e}`);
-                } else {
-                    this.log.error(`[PCAP] Cannot start recording: ${e}`);
-                }
+                this.log.error(`[PCAP] ${I18n.translate('Cannot start recording')}: ${e}`);
             });
 
             // Send the data every hour to the cloud
             this.syncJob();
         } else {
-            if (this.language === 'de') {
-                this.log.warn('Aufzeichnen ist nicht aktiviert. Nichts passiert.');
-            } else {
-                this.log.warn('Recording is not enabled. Do nothing.');
-            }
+            this.log.warn(I18n.translate('Recording is not enabled. Do nothing.'));
         }
     }
 
@@ -730,11 +614,7 @@ export class KISSHomeResearchAdapter extends Adapter {
 
         void this.startSynchronization()
             .catch(e => {
-                if (this.language === 'de') {
-                    this.log.error(`[RSYNC] Kann nicht synchronisieren: ${e}`);
-                } else {
-                    this.log.error(`[RSYNC] Cannot synchronize: ${e}`);
-                }
+                this.log.error(`[RSYNC] ${I18n.translate('Cannot synchronize')}: ${e}`);
             })
             .then(() => {
                 const duration = Date.now() - started;
@@ -757,11 +637,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                         this.recordingEnabled = true;
                         this.context.terminate = false;
                         this.startRecording().catch(e => {
-                            if (this.language === 'de') {
-                                this.log.error(`Aufzeichnen kann nicht gestartet werden: ${e}`);
-                            } else {
-                                this.log.error(`Cannot start recording: ${e}`);
-                            }
+                            this.log.error(`${I18n.translate('Cannot start recording')}: ${e}`);
                         });
                     }
                 } else if (this.recordingEnabled) {
@@ -776,18 +652,12 @@ export class KISSHomeResearchAdapter extends Adapter {
                 if (state.val) {
                     if (this.recordingRunning) {
                         void this.setState('info.recording.triggerWrite', false, true).catch(e =>
-                            this.language === 'de'
-                                ? this.log.error(`Kann triggerWrite nicht setzten: ${e}`)
-                                : this.log.error(`Cannot set triggerWrite: ${e}`),
+                            this.log.error(`${I18n.translate('Cannot set triggerWrite')}: ${e}`),
                         );
                         this.savePacketsToFile();
                         setTimeout(() => {
                             this.startSynchronization().catch(e => {
-                                if (this.language === 'de') {
-                                    this.log.error(`[RSYNC] Kann nicht synchronisieren: ${e}`);
-                                } else {
-                                    this.log.error(`[RSYNC] Cannot synchronize: ${e}`);
-                                }
+                                this.log.error(`[RSYNC] ${I18n.translate('Cannot synchronize')}: ${e}`);
                             });
                         }, 2000);
                     }
@@ -801,11 +671,7 @@ export class KISSHomeResearchAdapter extends Adapter {
         this.startTimeout = this.setTimeout(() => {
             this.startTimeout = undefined;
             this.startRecording().catch(e => {
-                if (this.language === 'de') {
-                    this.log.error(`Aufzeichnen kann nicht gestartet werden: ${e}`);
-                } else {
-                    this.log.error(`Cannot start recording: ${e}`);
-                }
+                this.log.error(`${I18n.translate('Cannot start recording')}: ${e}`);
             });
         }, 10000);
     }
@@ -860,11 +726,7 @@ export class KISSHomeResearchAdapter extends Adapter {
 
             closeSync(fd);
 
-            if (this.language === 'de') {
-                this.log.debug(`Datei ${fileName} mit ${size2text(offset)} gespeichert`);
-            } else {
-                this.log.debug(`Saved file ${fileName} with ${size2text(offset)}`);
-            }
+            this.log.debug(I18n.translate('Saved file %s with %s', fileName, size2text(offset)));
         }
 
         this.context.lastSaved = Date.now();
@@ -878,15 +740,9 @@ export class KISSHomeResearchAdapter extends Adapter {
 
     async startRecording(): Promise<void> {
         if (!this.uniqueMacs.length) {
-            if (this.language === 'de') {
-                this.log.error(
-                    `[PCAP] Keine MAC-Adressen für die Aufzeichnung angegeben. Bitte geben Sie einige MAC-Adressen oder IP-Adressen an, die in MAC-Adressen aufgelöst werden können`,
-                );
-            } else {
-                this.log.error(
-                    `[PCAP] No any MAC addresses provided for recording. Please provide some MAC addresses or Ip addresses, that could be resolved to MAC address`,
-                );
-            }
+            this.log.error(
+                `[PCAP] ${I18n.translate('No any MAC addresses provided for recording. Please provide some MAC addresses or Ip addresses, that could be resolved to MAC address')}`,
+            );
             return;
         }
 
@@ -904,20 +760,12 @@ export class KISSHomeResearchAdapter extends Adapter {
             } catch (e) {
                 this.sid = '';
                 this.sidCreated = 0;
-                if (this.language === 'de') {
-                    this.log.error(`[PCAP] SID kann nicht von Fritz!Box abgerufen werden: ${e}`);
-                } else {
-                    this.log.error(`[PCAP] Cannot get SID from Fritz!Box: ${e}`);
-                }
+                this.log.error(`[PCAP] ${I18n.translate('Cannot get SID from Fritz!Box')}: ${e}`);
             }
         }
 
         if (this.sid) {
-            if (this.language === 'de') {
-                this.log.debug(`[PCAP] Nutze SID: ${this.sid}`);
-            } else {
-                this.log.debug(`[PCAP] Use SID: ${this.sid}`);
-            }
+            this.log.debug(`[PCAP] ${I18n.translate('Use SID')}: ${this.sid}`);
 
             const captured = await this.getStateAsync('info.recording.captured');
             if (captured?.val) {
@@ -934,17 +782,11 @@ export class KISSHomeResearchAdapter extends Adapter {
             // stop all recordings
             const response = await stopAllRecordingsOnFritzBox(this.config.fritzbox, this.sid);
             if (response) {
-                if (this.language === 'de') {
-                    this.log.info(`[PCAP] Stopped all recordings on Fritz!Box: ${response}`);
-                } else {
-                    this.log.info(`[PCAP] Alle Aufnahmen auf der Fritz!Box wurden beendet: ${response}`);
-                }
+                this.log.info(`[PCAP] ${I18n.translate('Stopped all recordings on Fritz!Box')}: ${response}`);
             }
-            if (this.language === 'de') {
-                this.log.debug(`[PCAP] Starte das Mitschneiden von ${this.config.fritzbox}/"${this.config.iface}"...`);
-            } else {
-                this.log.debug(`[PCAP] Starting recording on ${this.config.fritzbox}/"${this.config.iface}"...`);
-            }
+            this.log.debug(
+                `[PCAP] ${I18n.translate('Starting recording on')} ${this.config.fritzbox}/"${this.config.iface}"...`,
+            );
             this.log.debug(
                 `[PCAP] ${getRecordURL(this.config.fritzbox, this.sid, this.config.iface, this.uniqueMacs)}`,
             );
@@ -969,8 +811,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                     }
 
                     if (this.recordingRunning) {
-                        this.log.info(`[PCAP] Recording stopped.`);
-                        this.log.info(`[PCAP] Mitschneiden beendet.`);
+                        this.log.info(`[PCAP] ${I18n.translate('Recording stopped.')}`);
                         this.recordingRunning = false;
                         await this.setState('info.connection', false, true);
                         await this.setState('info.recording.running', false, true);
@@ -982,8 +823,7 @@ export class KISSHomeResearchAdapter extends Adapter {
 
                     if (error) {
                         if (!this.context.terminate || !error.toString().includes('aborted')) {
-                            this.log.error(`[PCAP] Error while recording: ${error.toString()}`);
-                            this.log.error(`[PCAP] Fehler wehrend dem Mitschneiden: ${error.toString()}`);
+                            this.log.error(`[PCAP] ${I18n.translate('Error while recording')}: ${error.toString()}`);
                         }
                     }
                     if (!this.context.terminate) {
@@ -993,39 +833,32 @@ export class KISSHomeResearchAdapter extends Adapter {
                 this.context,
                 async (): Promise<void> => {
                     if (!this.recordingRunning) {
-                        this.log.debug('[PCAP] Recording started!');
-                        this.log.debug('[PCAP] Aufzeichnen hat gestartet!');
+                        this.log.debug(`[PCAP] ${I18n.translate('Recording started!')}`);
                         this.recordingRunning = true;
                         await this.setState('info.connection', true, true);
                         await this.setState('info.recording.running', true, true);
 
-                        this.monitorInterval =
-                            this.monitorInterval ||
-                            this.setInterval(() => {
-                                if (Date.now() - this.lastDebug > 60000) {
-                                    this.log.debug(
-                                        `[PCAP] Captured ${this.context.totalPackets} packets (${size2text(this.context.totalBytes)})`,
-                                    );
-                                    this.log.debug(
-                                        `[PCAP] ${this.context.totalPackets} Pakete (${size2text(this.context.totalBytes)}) aufgezeichnet`,
-                                    );
-                                    this.lastDebug = Date.now();
+                        this.monitorInterval ||= this.setInterval(() => {
+                            if (Date.now() - this.lastDebug > 60000) {
+                                this.log.debug(
+                                    `[PCAP] ${I18n.translate('Captured %s packets (%s)', this.context.totalPackets, size2text(this.context.totalBytes))}`,
+                                );
+                                this.lastDebug = Date.now();
+                            }
+                            // save if a file is bigger than 50 Mb
+                            if (
+                                this.context.totalBytes > SAVE_DATA_IF_BIGGER ||
+                                // save every 20 minutes
+                                Date.now() - this.context.lastSaved >= SAVE_DATA_EVERY_MS
+                            ) {
+                                this.savePacketsToFile();
+                                if (!this.context.terminate) {
+                                    this.startSynchronization().catch(e => {
+                                        this.log.error(`[RSYNC] ${I18n.translate('Cannot synchronize')}: ${e}`);
+                                    });
                                 }
-                                // save if a file is bigger than 50 Mb
-                                if (
-                                    this.context.totalBytes > SAVE_DATA_IF_BIGGER ||
-                                    // save every 20 minutes
-                                    Date.now() - this.context.lastSaved >= SAVE_DATA_EVERY_MS
-                                ) {
-                                    this.savePacketsToFile();
-                                    if (!this.context.terminate) {
-                                        this.startSynchronization().catch(e => {
-                                            this.log.error(`[RSYNC] Cannot synchronize: ${e}`);
-                                            this.log.error(`[RSYNC] Kann nicht synchronisieren: ${e}`);
-                                        });
-                                    }
-                                }
-                            }, 10000);
+                            }
+                        }, 10000);
                     }
 
                     await this.setState('info.recording.captured', this.context.totalPackets, true);
@@ -1035,16 +868,10 @@ export class KISSHomeResearchAdapter extends Adapter {
                 },
             );
         } else {
-            if (this.language === 'de') {
-                this.log.warn(
-                    '[PCAP] Anmelden auf Fritz!Box nicht möglich. Vermutlich falsche Anmeldedaten oder die Fritz!Box ist nicht verfügbar.',
-                );
-            } else {
-                this.log.warn(
-                    '[PCAP] Cannot login into Fritz!Box. Could be wrong credentials or Fritz!Box is not available',
-                );
-            }
-            // try to get the token in 10 seconds again. E.g., if fritzbox is rebooting
+            this.log.warn(
+                `[PCAP] ${I18n.translate('Cannot login into Fritz!Box. Could be wrong credentials or Fritz!Box is not available')}`,
+            );
+            // try to get the token in 10 seconds again. E.g., if Fritz!Box is rebooting
             this.restartRecording();
         }
     }
@@ -1086,11 +913,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                 // compare the content
                 const oldFile = readFileSync(`${this.workingDir}/${latestFile}`, 'utf8');
                 if (oldFile !== text) {
-                    if (this.language === 'de') {
-                        this.log.debug('Meta-Datei aktualisiert');
-                    } else {
-                        this.log.debug('Meta file updated');
-                    }
+                    this.log.debug(I18n.translate('Meta file updated'));
                     // delete the old JSON file only if no pcap files exists
                     if (files[0].endsWith('_meta.json')) {
                         unlinkSync(`${this.workingDir}/${latestFile}`);
@@ -1100,20 +923,12 @@ export class KISSHomeResearchAdapter extends Adapter {
                 }
                 return `${this.workingDir}/${latestFile}`;
             }
-            if (this.language === 'de') {
-                this.log.info('Meta-Datei wurde angelegt.');
-            } else {
-                this.log.info('Meta file created');
-            }
+            this.log.info(I18n.translate('Meta file created'));
             // if not found => create new one
             writeFileSync(newFile, text);
             return newFile;
         } catch (e) {
-            if (this.language === 'de') {
-                this.log.warn(`Speicher von Meta-Datei "${newFile}" nicht möglich: ${e}`);
-            } else {
-                this.log.warn(`Cannot save meta file "${newFile}": ${e}`);
-            }
+            this.log.warn(`${I18n.translate('Cannot save meta file "%s"', newFile)}: ${e}`);
             return '';
         }
     }
@@ -1145,11 +960,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                         result.push({ ...mac, found: true });
                         KISSHomeResearchAdapter.macCache[dev.ip] = { mac: mac.mac, vendor: mac.vendor };
                     } else {
-                        if (this.language === 'de') {
-                            this.log.warn(`Kann die MAC Adresse von ${dev.ip} nicht auflösen`);
-                        } else {
-                            this.log.warn(`Cannot resolve MAC address of ${dev.ip}`);
-                        }
+                        this.log.warn(I18n.translate('Cannot resolve MAC address of "%s"', dev.ip));
                     }
                 } catch (e) {
                     error = e.message;
@@ -1210,46 +1021,30 @@ export class KISSHomeResearchAdapter extends Adapter {
                     try {
                         unlinkSync(`${this.workingDir}/${file}`);
                     } catch (e) {
-                        if (this.language === 'de') {
-                            this.log.error(`Die Datei ${this.workingDir}/${file} kann nicht gelöscht werden: ${e}`);
-                        } else {
-                            this.log.error(`Cannot delete file ${this.workingDir}/${file}: ${e}`);
-                        }
+                        this.log.error(
+                            `${I18n.translate('Cannot delete file "%s"', `${this.workingDir}/${file}`)}: ${e}`,
+                        );
                     }
                 } else if (!file.endsWith('.json')) {
                     // delete unknown files
                     try {
                         unlinkSync(`${this.workingDir}/${file}`);
                     } catch (e) {
-                        if (this.language === 'de') {
-                            this.log.error(`Die Datei ${this.workingDir}/${file} kann nicht gelöscht werden: ${e}`);
-                        } else {
-                            this.log.error(`Cannot delete file ${this.workingDir}/${file}: ${e}`);
-                        }
+                        this.log.error(`${I18n.translate('Cannot delete file "%s"')} ${this.workingDir}/${file}: ${e}`);
                     }
                 }
             }
         } catch (e) {
-            if (this.language === 'de') {
-                this.log.error(`Arbeitsverzeichnis „${this.workingDir}“ kann nicht gelesen werden: ${e}`);
-            } else {
-                this.log.error(`Cannot read working directory "${this.workingDir}": ${e}`);
-            }
+            this.log.error(`${I18n.translate('Cannot read working directory "%s"')} "${this.workingDir}": ${e}`);
         }
     }
 
     async sendOneFileToCloud(fileName: string, size?: number): Promise<void> {
         try {
             if (!existsSync(fileName)) {
-                if (this.language === 'de') {
-                    this.log.warn(
-                        `[RSYNC] Datei "${fileName}" existiert nicht. Größe: ${size ? size2text(size) : 'unbekannt'}`,
-                    );
-                } else {
-                    this.log.warn(
-                        `[RSYNC] File "${fileName}" does not exist. Size: ${size ? size2text(size) : 'unknown'}`,
-                    );
-                }
+                this.log.warn(
+                    `[RSYNC] ${I18n.translate('File "%s" does not exist. Size: %s', fileName, size ? size2text(size) : 'unknown')}`,
+                );
                 return;
             }
             const data = readFileSync(fileName);
@@ -1298,55 +1093,29 @@ export class KISSHomeResearchAdapter extends Adapter {
                 if (name.endsWith('.pcap')) {
                     unlinkSync(fileName);
                 }
-                if (this.language === 'de') {
-                    this.log.debug(
-                        `[RSYNC] Datei ${fileName}(${size2text(len)}) an die Cloud gesendet (${size ? size2text(size) : 'unbekannt'}): ${responsePost.status}`,
-                    );
-                } else {
-                    this.log.debug(
-                        `[RSYNC] Sent file ${fileName}(${size2text(len)}) to the cloud (${size ? size2text(size) : 'unbekannt'}): ${responsePost.status}`,
-                    );
-                }
+                this.log.debug(
+                    `[RSYNC] ${I18n.translate('Sent file "%s"(%s) to the cloud', fileName, size2text(len))} (${size ? size2text(size) : I18n.translate('unknown')}): ${responsePost.status}`,
+                );
             } else {
-                if (this.language === 'de') {
-                    this.log.warn(
-                        `[RSYNC] Datei wurde zum Server gesendet, aber Prüfung war nicht erfolgreich (${size ? size2text(size) : 'unbekannt'}). ${fileName} an die Cloud: status=${responsePost.status}, len=${len}, response=${response.data}`,
-                    );
-                } else {
-                    this.log.warn(
-                        `[RSYNC] File sent to server, but check fails (${size ? size2text(size) : 'unbekannt'}). ${fileName} to the cloud: status=${responsePost.status}, len=${len}, response=${response.data}`,
-                    );
-                }
+                this.log.warn(
+                    `[RSYNC] ${I18n.translate('File sent to server, but check fails (%s). "%s" to the cloud', size ? size2text(size) : I18n.translate('unknown'), fileName)}: status=${responsePost.status}, len=${len}, response=${response.data}`,
+                );
             }
         } catch (e) {
-            if (this.language === 'de') {
-                this.log.error(
-                    `[RSYNC] Datei ${fileName} kann nicht zum Server geschickt werden (${size ? size2text(size) : 'unbekannt'}): ${e}`,
-                );
-            } else {
-                this.log.error(
-                    `[RSYNC] Cannot send file ${fileName} to the cloud (${size ? size2text(size) : 'unbekannt'}): ${e}`,
-                );
-            }
+            this.log.error(
+                `[RSYNC] ${I18n.translate('Cannot send file "%s" to the cloud', fileName)} (${size ? size2text(size) : I18n.translate('unknown')}): ${e}`,
+            );
         }
     }
 
     async startSynchronization(): Promise<void> {
         if (this.context.terminate) {
-            if (this.language === 'de') {
-                this.log.debug(`[RSYNC] Terminierung wurde angefragt. Keine Synchronisierung`);
-            } else {
-                this.log.debug(`[RSYNC] Requested termination. No synchronization`);
-            }
+            this.log.debug(`[RSYNC] ${I18n.translate('Requested termination. No synchronization')}`);
             return;
         }
         // calculate the total number of bytes
         let totalBytes = 0;
-        if (this.language === 'de') {
-            this.log.debug(`[RSYNC] Starte Synchronisierung...`);
-        } else {
-            this.log.debug(`[RSYNC] Start synchronization...`);
-        }
+        this.log.debug(`[RSYNC] ${I18n.translate('Start synchronization...')}`);
 
         // calculate the total number of bytes in pcap files
         let pcapFiles: string[];
@@ -1360,43 +1129,27 @@ export class KISSHomeResearchAdapter extends Adapter {
                 totalBytes += sizes[file];
             }
         } catch (e) {
-            if (this.language === 'de') {
-                this.log.error(
-                    `[RSYNC] Arbeitsverzeichnis "${this.workingDir}" kann nicht für die Synchronisierung gelesen werden: ${e}`,
-                );
-            } else {
-                this.log.error(`[RSYNC] Cannot read working directory "${this.workingDir}" for sync : ${e}`);
-            }
+            this.log.error(
+                `[RSYNC] ${I18n.translate('Cannot read working directory "%s" for sync', this.workingDir)}: ${e}`,
+            );
 
             return;
         }
 
         if (!totalBytes) {
-            if (this.language === 'de') {
-                this.log.debug(`[RSYNC] Keine Dateien zum synchronisieren`);
-            } else {
-                this.log.debug(`[RSYNC] No files to sync`);
-            }
+            this.log.debug(`[RSYNC] ${I18n.translate('No files to sync')}`);
             return;
         }
 
         if (this.syncRunning) {
-            if (this.language === 'de') {
-                this.log.warn(`[RSYNC] Synchronisierung läuft noch...`);
-            } else {
-                this.log.warn(`[RSYNC] Synchronization still running...`);
-            }
+            this.log.warn(`[RSYNC] ${I18n.translate('Synchronization still running...')}`);
             return;
         }
 
         this.syncRunning = true;
         await this.setState('info.sync.running', true, true);
 
-        if (this.language === 'de') {
-            this.log.debug(`[RSYNC] Dateien werden mit der Cloud Synchronisiert (${size2text(totalBytes)})`);
-        } else {
-            this.log.debug(`[RSYNC] Syncing files to the cloud (${size2text(totalBytes)})`);
-        }
+        this.log.debug(`[RSYNC] ${I18n.translate('Syncing files to the cloud')} (${size2text(totalBytes)})`);
 
         // send files to the cloud
 
@@ -1414,11 +1167,8 @@ export class KISSHomeResearchAdapter extends Adapter {
             const fileName = this.saveMetaFile();
             if (fileName) {
                 await this.sendOneFileToCloud(fileName);
-            } else if (this.language === 'de') {
-                this.log.debug(`[RSYNC] Kann die META Datei nicht anlegen. Keine Synchronisierung`);
-                return;
             } else {
-                this.log.debug(`[RSYNC] Cannot create META file. No synchronization`);
+                this.log.debug(`[RSYNC] ${I18n.translate('Cannot create META file. No synchronization')}`);
                 return;
             }
         }
