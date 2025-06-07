@@ -30,4 +30,8 @@ export interface DefenderAdapterConfig {
         /** Url of the foreign docker container */
         url: string;
     };
+    /** Level of anomaly sensitivity */
+    anomalySensitivity: 'low' | 'medium' | 'high';
+    /** If the user wants to allow training with own data */
+    allowTraining: boolean;
 }

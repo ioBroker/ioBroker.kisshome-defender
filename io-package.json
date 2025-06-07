@@ -77,52 +77,58 @@
         "login": "",
         "password": "",
         "tempDir": "",
-        "devices": []
+        "devices": [],
+        "allowTraining":  true,
+        "anomalySensitivity": "medium",
+        "docker": {
+            "selfHosted": false,
+            "url": ""
+        }
     },
     "notifications": [
         {
             "scope": "kisshome-defender",
             "name": {
-                "en": "KISSHome-Research",
-                "de": "KISSHome-Research",
-                "ru": "KISSHome-Research",
-                "pt": "KISSHome-Research",
-                "nl": "KISSHome-Research",
-                "fr": "KISSHome-Research",
-                "it": "KISSHome-Research",
-                "es": "KISSHome-Research",
-                "pl": "KISSHome-Research",
-                "uk": "KISSHome-Research",
-                "zh-cn": "KISSHome-Research"
+                "en": "KISSHome-Defender",
+                "de": "KISSHome-Defender",
+                "ru": "KISSHome-Defender",
+                "pt": "KISSHome-Defender",
+                "nl": "KISSHome-Defender",
+                "fr": "KISSHome-Defender",
+                "it": "KISSHome-Defender",
+                "es": "KISSHome-Defender",
+                "pl": "KISSHome-Defender",
+                "uk": "KISSHome-Defender",
+                "zh-cn": "KISSHome-Defender"
             },
             "description": {
-                "en": "Problem with KISSHome-Research instance",
-                "de": "Problem mit KISSHome-Research-Instanz",
-                "ru": "Проблема с экземпляром KISSHome-Research",
-                "pt": "Problema com a instância KISSHome-Research",
-                "nl": "Probleem met KISSHome-Research-instantie",
-                "fr": "Problème avec l'instance KISSHome-Research",
-                "it": "Problema con l'istanza KISSHome-Research",
-                "es": "Problema con la instancia KISSHome-Research",
-                "pl": "Problem z instancją KISSHome-Research",
-                "uk": "Проблема з екземпляром KISSHome-Research",
-                "zh-cn": "KISSHome-Research 实例存在问题"
+                "en": "Problem with KISSHome-Defender instance",
+                "de": "Problem mit KISSHome-Defender-Instanz",
+                "ru": "Проблема с экземпляром KISSHome-Defender",
+                "pt": "Problema com a instância KISSHome-Defender",
+                "nl": "Probleem met KISSHome-Defender-instantie",
+                "fr": "Problème avec l'instance KISSHome-Defender",
+                "it": "Problema con l'istanza KISSHome-Defender",
+                "es": "Problema con la instancia KISSHome-Defender",
+                "pl": "Problem z instancją KISSHome-Defender",
+                "uk": "Проблема з екземпляром KISSHome-Defender",
+                "zh-cn": "KISSHome-Defender 实例存在问题"
             },
             "categories": [
                 {
                     "category": "publicKey",
                     "name": {
-                        "en": "Problem with KISSHome-Research instance",
-                        "de": "Problem mit KISSHome-Research-Instanz",
-                        "ru": "Проблема с экземпляром KISSHome-Research",
-                        "pt": "Problema com a instância KISSHome-Research",
-                        "nl": "Probleem met KISSHome-Research-instantie",
-                        "fr": "Problème avec l'instance KISSHome-Research",
-                        "it": "Problema con l'istanza KISSHome-Research",
-                        "es": "Problema con la instancia KISSHome-Research",
-                        "pl": "Problem z instancją KISSHome-Research",
-                        "uk": "Проблема з екземпляром KISSHome-Research",
-                        "zh-cn": "KISSHome-Research 实例存在问题"
+                        "en": "Problem with KISSHome-Defender instance",
+                        "de": "Problem mit KISSHome-Defender-Instanz",
+                        "ru": "Проблема с экземпляром KISSHome-Defender",
+                        "pt": "Problema com a instância KISSHome-Defender",
+                        "nl": "Probleem met KISSHome-Defender-instantie",
+                        "fr": "Problème avec l'instance KISSHome-Defender",
+                        "it": "Problema con l'istanza KISSHome-Defender",
+                        "es": "Problema con la instancia KISSHome-Defender",
+                        "pl": "Problem z instancją KISSHome-Defender",
+                        "uk": "Проблема з екземпляром KISSHome-Defender",
+                        "zh-cn": "KISSHome-Defender 实例存在问题"
                     },
                     "severity": "notify",
                     "description": {

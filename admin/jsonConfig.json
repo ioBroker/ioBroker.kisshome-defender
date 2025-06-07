@@ -86,6 +86,37 @@
                     "help": "Directory for temporary files. Leave empty to use the system directory.",
                     "disabled": "!data.email"
                 },
+                "anomalySensitivity": {
+                    "newLine": true,
+                    "type": "select",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "label": "Anomaly sensitivity",
+                    "options": [
+                        {
+                            "value": "low",
+                            "text": "Low"
+                        },
+                        {
+                            "value": "medium",
+                            "text": "Medium"
+                        },
+                        {
+                            "value": "high",
+                            "text": "High"
+                        }
+                    ],
+                    "defaultValue": 1,
+                    "disabled": "!data.email"
+                },
+                "allowTraining": {
+                    "newLine": true,
+                    "type": "checkbox",
+                    "sm": 12,
+                    "label": "I allow the training of the AI model with my data",
+                    "hidden": "!data.email"
+                },
                 "_header": {
                     "newLine": true,
                     "type": "header",
@@ -160,12 +191,18 @@
             "type": "panel",
             "label": "Docker",
             "items": {
-                "selfHosted": {
+                "_info": {
+                    "type": "infoBox",
+                    "title": "KISSHome Defender AI Engine is running in a Docker container",
+                    "sm": 12,
+                    "text": "This adapter can start the required docker image for you or you can start the docker image yourself. In the latter case, you need to set the Docker URL."
+                },
+                "docker.selfHosted": {
                     "type": "checkbox",
                     "label": "Self-hosted",
                     "default": true
                 },
-                "url": {
+                "docker.url": {
                     "newLine": true,
                     "type": "text",
                     "label": "Docker URL",
