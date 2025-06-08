@@ -4,10 +4,19 @@ import axios from 'axios';
 export type Context = {
     terminate: boolean;
     controller: AbortController | null;
-    packets: Buffer[];
-    totalBytes: number;
-    totalPackets: number;
-    buffer?: Buffer;
+    filtered: {
+        packets: Buffer[];
+        totalBytes: number;
+        totalPackets: number;
+        buffer?: Buffer;
+    };
+    full: {
+        packets: Buffer[];
+        totalBytes: number;
+        totalPackets: number;
+        buffer?: Buffer;
+    };
+    first: boolean;
     modifiedMagic: boolean; // little Endian with longer header
     networkType: number;
     lastSaved: number;
@@ -20,10 +29,10 @@ const debug = false;
 const NO_FILTER = false;
 
 function analyzePacket(context: Context): boolean {
-    if (!context.buffer) {
+    if (!context.filtered.buffer) {
         return false;
     }
-    const len = context.buffer.byteLength || 0;
+    const len = context.filtered.buffer.byteLength || 0;
     // Normal header is 16 bytes
     // modifiedMagic is true if the header is in Little-Endian format, and extended packet header (8 bytes more)
     // libpCapFormat is true if the header is in Big-Endian format and extended packet header (8 bytes more)
@@ -43,19 +52,27 @@ function analyzePacket(context: Context): boolean {
         return false;
     }
 
-    const seconds = context.libpCapFormat ? context.buffer.readUInt32BE(0) : context.buffer.readUInt32LE(0);
-    const microseconds = context.libpCapFormat ? context.buffer.readUInt32BE(4) : context.buffer.readUInt32LE(4);
-    const packageLen = context.libpCapFormat ? context.buffer.readUInt32BE(8) : context.buffer.readUInt32LE(8);
-    const packageLenSent = context.libpCapFormat ? context.buffer.readUInt32BE(12) : context.buffer.readUInt32LE(12);
+    const seconds = context.libpCapFormat
+        ? context.filtered.buffer.readUInt32BE(0)
+        : context.filtered.buffer.readUInt32LE(0);
+    const microseconds = context.libpCapFormat
+        ? context.filtered.buffer.readUInt32BE(4)
+        : context.filtered.buffer.readUInt32LE(4);
+    const packageLen = context.libpCapFormat
+        ? context.filtered.buffer.readUInt32BE(8)
+        : context.filtered.buffer.readUInt32LE(8);
+    const packageLenSent = context.libpCapFormat
+        ? context.filtered.buffer.readUInt32BE(12)
+        : context.filtered.buffer.readUInt32LE(12);
     if (debug) {
         let MAC1;
         let MAC2;
         if (context.networkType === 0x69) {
-            MAC1 = context.buffer.subarray(headerLength + 4, headerLength + 4 + 6);
-            MAC2 = context.buffer.subarray(headerLength + 4 + 6, headerLength + 4 + 12);
+            MAC1 = context.filtered.buffer.subarray(headerLength + 4, headerLength + 4 + 6);
+            MAC2 = context.filtered.buffer.subarray(headerLength + 4 + 6, headerLength + 4 + 12);
         } else {
-            MAC1 = context.buffer.subarray(headerLength, headerLength + 6);
-            MAC2 = context.buffer.subarray(headerLength + 6, headerLength + 12);
+            MAC1 = context.filtered.buffer.subarray(headerLength, headerLength + 6);
+            MAC2 = context.filtered.buffer.subarray(headerLength + 6, headerLength + 12);
         }
         console.log(
             `Packet: ${new Date(seconds * 1000 + Math.round(microseconds / 1000)).toISOString()} ${packageLen} ${packageLenSent} ${MAC1.toString('hex')} => ${MAC2.toString('hex')}`,
@@ -78,21 +95,21 @@ function analyzePacket(context: Context): boolean {
 
     if (offset + 2 <= len) {
         // next 2 bytes are Ethernet type
-        const ethType = context.buffer.readUInt16BE(offset);
+        const ethType = context.filtered.buffer.readUInt16BE(offset);
 
         // If IPv4
         if (ethType === 0x0800) {
             const ipHeaderStart = offset + 2;
-            const ipVersionAndIHL = context.buffer[ipHeaderStart];
+            const ipVersionAndIHL = context.filtered.buffer[ipHeaderStart];
             const ipHeaderLength = (ipVersionAndIHL & 0x0f) * 4; // IHL field gives the length of the IP header
 
             // read protocol type (TCP/UDP/ICMP/etc.)
-            const protocolType = context.buffer[ipHeaderStart + 9]; // Protocol field in IP header
+            const protocolType = context.filtered.buffer[ipHeaderStart + 9]; // Protocol field in IP header
 
             if (protocolType === 6) {
                 // TCP
                 const tcpHeaderStart = ipHeaderStart + ipHeaderLength;
-                const tcpOffsetAndFlags = context.buffer[tcpHeaderStart + 12];
+                const tcpOffsetAndFlags = context.filtered.buffer[tcpHeaderStart + 12];
                 const tcpHeaderLength = (tcpOffsetAndFlags >> 4) * 4; // Data offset in TCP header
                 maxBytes = ipHeaderLength + tcpHeaderLength + 14; // Total length: IP header + TCP header + Ethernet header
             } else if (protocolType === 17) {
@@ -118,7 +135,7 @@ function analyzePacket(context: Context): boolean {
     if (maxBytes) {
         if (packageLen < maxBytes) {
             // remove from buffer packageLen + 16 bytes
-            const packetBuffer = context.buffer.subarray(0, headerLength + packageLen);
+            const packetBuffer = context.filtered.buffer.subarray(0, headerLength + packageLen);
             if (context.libpCapFormat) {
                 // write header in LE notation
                 packetBuffer.writeUInt32LE(seconds, 0);
@@ -130,13 +147,13 @@ function analyzePacket(context: Context): boolean {
                 packetBuffer.writeUInt32LE(ifindex, 16);
                 packetBuffer.writeUInt16LE(protocol, 20);
             }
-            context.packets.push(packetBuffer);
-            context.totalBytes += headerLength + packageLen;
+            context.filtered.packets.push(packetBuffer);
+            context.filtered.totalBytes += headerLength + packageLen;
             if (debug) {
                 console.log(`Saved packet: ${headerLength + packageLen}`);
             }
         } else {
-            const packetBuffer = context.buffer.subarray(0, headerLength + maxBytes);
+            const packetBuffer = context.filtered.buffer.subarray(0, headerLength + maxBytes);
             if (context.libpCapFormat) {
                 // write header in LE notation
                 packetBuffer.writeUInt32LE(seconds, 0);
@@ -150,17 +167,17 @@ function analyzePacket(context: Context): boolean {
             // save new length in the packet
             packetBuffer.writeUInt32LE(maxBytes, 8);
 
-            context.packets.push(packetBuffer);
-            context.totalBytes += headerLength + maxBytes;
+            context.filtered.packets.push(packetBuffer);
+            context.filtered.totalBytes += headerLength + maxBytes;
             if (debug) {
                 console.log(`Saved packet: ${headerLength + maxBytes}`);
             }
         }
-        context.totalPackets++;
+        context.filtered.totalPackets++;
     }
 
     // remove this packet
-    context.buffer = context.buffer.subarray(headerLength + packageLen);
+    context.filtered.buffer = context.filtered.buffer.subarray(headerLength + packageLen);
 
     return true;
 }
@@ -177,6 +194,88 @@ export function getRecordURL(ip: string, sid: string, iface: string, MACs: strin
     return `http://${ip.trim()}/cgi-bin/capture_notimeout?ifaceorminor=${encodeURIComponent(iface.trim())}&snaplen=${MAX_PACKET_LENGTH}${filter ? `&filter=${encodeURIComponent(filter)}` : ''}&capture=Start&sid=${sid}`;
 }
 
+function _writeHeader(context: Context): boolean {
+    // if the header of PCAP file is not written yet
+    if (!context.first) {
+        // check if we have at least 6 * 4 bytes
+        if (context.full.buffer && context.full.buffer.length > 6 * 4) {
+            context.first = true;
+            const magic = context.full.buffer.readUInt32LE(0);
+            context.modifiedMagic = magic === 0xa1b2cd34;
+            context.libpCapFormat = magic === 0x34cdb2a1;
+            const versionMajor = context.libpCapFormat
+                ? context.full.buffer.readUInt16BE(4)
+                : context.full.buffer.readUInt16LE(4);
+            const versionMinor = context.libpCapFormat
+                ? context.full.buffer.readUInt16BE(4 + 2)
+                : context.full.buffer.readUInt16LE(4 + 2);
+            const reserved1 = context.libpCapFormat
+                ? context.full.buffer.readUInt32BE(4 * 2)
+                : context.full.buffer.readUInt32LE(4 * 2);
+            const reserved2 = context.libpCapFormat
+                ? context.full.buffer.readUInt32BE(4 * 3)
+                : context.full.buffer.readUInt32LE(4 * 3);
+            const snapLen = context.libpCapFormat
+                ? context.full.buffer.readUInt32BE(4 * 4)
+                : context.full.buffer.readUInt32LE(4 * 4);
+
+            context.networkType = context.libpCapFormat
+                ? context.full.buffer.readUInt32BE(4 * 5)
+                : context.full.buffer.readUInt32LE(4 * 5);
+
+            if (debug) {
+                console.log(
+                    `PCAP: ${magic.toString(16)} v${versionMajor}.${versionMinor} res1=${reserved1} res2=${reserved2} snaplen=${snapLen} network=${context.networkType.toString(16)}`,
+                );
+            }
+            // remove header
+            context.full.buffer = context.full.buffer.subarray(6 * 4);
+
+            // No return here, because we need to write header to filtered buffer too
+        }
+        // check if we have at least 6 * 4 bytes
+        if (context.filtered.buffer && context.filtered.buffer.length > 6 * 4) {
+            context.first = true;
+            const magic = context.filtered.buffer.readUInt32LE(0);
+            context.modifiedMagic = magic === 0xa1b2cd34;
+            context.libpCapFormat = magic === 0x34cdb2a1;
+            const versionMajor = context.libpCapFormat
+                ? context.filtered.buffer.readUInt16BE(4)
+                : context.filtered.buffer.readUInt16LE(4);
+            const versionMinor = context.libpCapFormat
+                ? context.filtered.buffer.readUInt16BE(4 + 2)
+                : context.filtered.buffer.readUInt16LE(4 + 2);
+            const reserved1 = context.libpCapFormat
+                ? context.filtered.buffer.readUInt32BE(4 * 2)
+                : context.filtered.buffer.readUInt32LE(4 * 2);
+            const reserved2 = context.libpCapFormat
+                ? context.filtered.buffer.readUInt32BE(4 * 3)
+                : context.filtered.buffer.readUInt32LE(4 * 3);
+            const snapLen = context.libpCapFormat
+                ? context.filtered.buffer.readUInt32BE(4 * 4)
+                : context.filtered.buffer.readUInt32LE(4 * 4);
+
+            context.networkType = context.libpCapFormat
+                ? context.filtered.buffer.readUInt32BE(4 * 5)
+                : context.filtered.buffer.readUInt32LE(4 * 5);
+
+            if (debug) {
+                console.log(
+                    `PCAP: ${magic.toString(16)} v${versionMajor}.${versionMinor} res1=${reserved1} res2=${reserved2} snaplen=${snapLen} network=${context.networkType.toString(16)}`,
+                );
+            }
+            // remove header
+            context.filtered.buffer = context.filtered.buffer.subarray(6 * 4);
+            return true;
+        }
+
+        // wait for more data
+        return false;
+    }
+
+    return true;
+}
+
 export function startRecordingOnFritzBox(
     ip: string,
     sid: string,
@@ -189,9 +288,9 @@ export function startRecordingOnFritzBox(
 ): void {
     const captureUrl = getRecordURL(ip, sid, iface, MACs);
 
-    let first = false;
-
-    context.buffer = Buffer.from([]);
+    context.filtered.buffer = Buffer.from([]);
+    context.full.buffer = Buffer.from([]);
+    context.first = false;
 
     let timeout: NodeJS.Timeout | null = null;
     let lastProgress = Date.now();
@@ -200,7 +299,7 @@ export function startRecordingOnFritzBox(
         const now = Date.now();
         if (now - lastProgress > 1000) {
             lastProgress = now;
-            progress && progress();
+            progress?.();
         }
     };
 
@@ -208,10 +307,14 @@ export function startRecordingOnFritzBox(
         if (debug) {
             console.log(`FINISH receiving of data...: ${error?.toString()}`);
         }
-        timeout && clearTimeout(timeout);
-        timeout = null;
-        onEnd && onEnd(error);
-        onEnd = null;
+        if (timeout) {
+            clearTimeout(timeout);
+            timeout = null;
+        }
+        if (onEnd) {
+            onEnd(error);
+            onEnd = null;
+        }
     };
 
     const controller = context.controller || new AbortController();
@@ -254,49 +357,21 @@ export function startRecordingOnFritzBox(
                 if (debug && log) {
                     log(`Received ${chunkBuffer.length} bytes`, 'debug');
                 }
-                // add data to buffer
-                context.buffer = context.buffer ? Buffer.concat([context.buffer, chunkBuffer]) : chunkBuffer;
+                // add data to filtered buffer
+                context.filtered.buffer = context.filtered.buffer
+                    ? Buffer.concat([context.filtered.buffer, chunkBuffer])
+                    : chunkBuffer;
+
+                // add data to full buffer
+                context.full.buffer = context.full.buffer
+                    ? Buffer.concat([context.full.buffer, chunkBuffer])
+                    : chunkBuffer;
 
                 if (!NO_FILTER) {
                     // if the header of PCAP file is not written yet
-                    if (!first) {
-                        // check if we have at least 6 * 4 bytes
-                        if (context.buffer.length > 6 * 4) {
-                            first = true;
-                            const magic = context.buffer.readUInt32LE(0);
-                            context.modifiedMagic = magic === 0xa1b2cd34;
-                            context.libpCapFormat = magic === 0x34cdb2a1;
-                            const versionMajor = context.libpCapFormat
-                                ? context.buffer.readUInt16BE(4)
-                                : context.buffer.readUInt16LE(4);
-                            const versionMinor = context.libpCapFormat
-                                ? context.buffer.readUInt16BE(4 + 2)
-                                : context.buffer.readUInt16LE(4 + 2);
-                            const reserved1 = context.libpCapFormat
-                                ? context.buffer.readUInt32BE(4 * 2)
-                                : context.buffer.readUInt32LE(4 * 2);
-                            const reserved2 = context.libpCapFormat
-                                ? context.buffer.readUInt32BE(4 * 3)
-                                : context.buffer.readUInt32LE(4 * 3);
-                            const snapLen = context.libpCapFormat
-                                ? context.buffer.readUInt32BE(4 * 4)
-                                : context.buffer.readUInt32LE(4 * 4);
-
-                            context.networkType = context.libpCapFormat
-                                ? context.buffer.readUInt32BE(4 * 5)
-                                : context.buffer.readUInt32LE(4 * 5);
-
-                            if (debug) {
-                                console.log(
-                                    `PCAP: ${magic.toString(16)} v${versionMajor}.${versionMinor} res1=${reserved1} res2=${reserved2} snaplen=${snapLen} network=${context.networkType.toString(16)}`,
-                                );
-                            }
-                            // remove header
-                            context.buffer = context.buffer.subarray(6 * 4);
-                        } else {
-                            // wait for more data
-                            return;
-                        }
+                    if (!_writeHeader(context)) {
+                        // wait for more data
+                        return;
                     }
 
                     let more = false;
@@ -313,11 +388,22 @@ export function startRecordingOnFritzBox(
                             return;
                         }
                     } while (more);
+
+                    // TODO: should the full buffer also be filtered at least for TCP/IP traffic?
+
+                    // Just add the chunk to the full buffer
+                    context.full.packets.push(chunkBuffer);
+                    context.full.totalPackets++;
+                    context.full.totalBytes += chunkBuffer.length;
                 } else {
                     // just save all data to file
-                    context.packets.push(chunkBuffer);
-                    context.totalPackets++;
-                    context.totalBytes += chunkBuffer.length;
+                    context.filtered.packets.push(chunkBuffer);
+                    context.filtered.totalPackets++;
+                    context.filtered.totalBytes += chunkBuffer.length;
+
+                    context.full.packets.push(chunkBuffer);
+                    context.full.totalPackets++;
+                    context.full.totalBytes += chunkBuffer.length;
                 }
 
                 informProgress();
@@ -335,11 +421,11 @@ export function startRecordingOnFritzBox(
             res.on('end', () => {
                 if (log) {
                     log(
-                        `File closed by fritzbox after ${context.totalBytes} bytes received in ${Math.floor((Date.now() - context.started) / 100) / 10} seconds`,
+                        `File closed by fritzbox after ${context.full.totalBytes} bytes received in ${Math.floor((Date.now() - context.started) / 100) / 10} seconds`,
                         'debug',
                     );
                 }
-                if (!context.totalBytes && log && Date.now() - context.started < 3000) {
+                if (!context.full.totalBytes && log && Date.now() - context.started < 3000) {
                     log(
                         `No bytes received and file was closed by Fritzbox very fast. May be wrong interface selected`,
                         'info',

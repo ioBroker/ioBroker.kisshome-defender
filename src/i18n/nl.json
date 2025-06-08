@@ -1,6 +1,6 @@
 {
   "Cannot create META file. No synchronization": "Kan META-bestand niet aanmaken. Geen synchronisatie.",
-  "Cannot create working directory": "Kan geen werkmap aanmaken",
+  "Cannot create %s working directory": "Kan geen werkmap aanmaken",
   "Cannot delete file \"%s\"": "Kan bestand \"%s\" niet verwijderen",
   "Cannot determine MAC addresses of Fritz!Box": "MAC-adressen van Fritz!Box kunnen niet worden bepaald",
   "Cannot find any temporary directory. Please specify manually in the configuration. For best performance it should be a RAM disk": "Er kan geen tijdelijke map worden gevonden. Specificeer dit handmatig in de configuratie. Voor de beste prestaties is een RAM-schijf de beste optie.",

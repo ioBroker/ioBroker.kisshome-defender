@@ -1,6 +1,6 @@
 {
   "Cannot create META file. No synchronization": "Не вдається створити МЕТА-файл. Немає синхронізації.",
-  "Cannot create working directory": "Не вдається створити робочий каталог",
+  "Cannot create %s working directory": "Не вдається створити робочий каталог",
   "Cannot delete file \"%s\"": "Неможливо видалити файл \"%s\"",
   "Cannot determine MAC addresses of Fritz!Box": "Не вдається визначити MAC-адреси Fritz!Box",
   "Cannot find any temporary directory. Please specify manually in the configuration. For best performance it should be a RAM disk": "Не вдалося знайти тимчасовий каталог. Будь ласка, вкажіть вручну в конфігурації. Для найкращої продуктивності це має бути RAM-диск.",

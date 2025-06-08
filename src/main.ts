@@ -70,10 +70,19 @@ export class KISSHomeResearchAdapter extends Adapter {
     private context: Context = {
         terminate: false,
         controller: null,
-        packets: [],
-        totalBytes: 0,
-        totalPackets: 0,
-        buffer: Buffer.from([]),
+        first: false,
+        filtered: {
+            packets: [],
+            totalBytes: 0,
+            totalPackets: 0,
+            buffer: Buffer.from([]),
+        },
+        full: {
+            packets: [],
+            totalBytes: 0,
+            totalPackets: 0,
+            buffer: Buffer.from([]),
+        },
         modifiedMagic: false,
         libpCapFormat: false,
         networkType: 1,
@@ -85,7 +94,8 @@ export class KISSHomeResearchAdapter extends Adapter {
 
     private recordingRunning: boolean = false;
 
-    private workingDir: string = '';
+    private workingCloudDir: string = '';
+    private workingIdsDir: string = '';
 
     private lastDebug: number = 0;
 
@@ -290,14 +300,45 @@ export class KISSHomeResearchAdapter extends Adapter {
             await this.setState('info.recording.running', false, true);
         }
 
-        const captured = await this.getStateAsync('info.recording.captured');
+        let captured = await this.getStateAsync('info.recording.capturedFull');
         if (captured?.val) {
-            await this.setState('info.recording.captured', 0, true);
+            await this.setState('info.recording.capturedFull', 0, true);
+        }
+
+        captured = await this.getStateAsync('info.recording.capturedFiltered');
+        if (captured?.val) {
+            await this.setState('info.recording.capturedFiltered', 0, true);
         }
 
         if (!this.config.fritzbox) {
             this.log.error(`Fritz!Box is not defined`);
             return;
+        }
+
+        // Check the second(time interval) threshold for saving data
+        if (!this.config.saveThresholdSeconds) {
+            this.config.saveThresholdSeconds = SAVE_DATA_EVERY_MS / 1000;
+        } else {
+            this.config.saveThresholdSeconds =
+                parseInt(this.config.saveThresholdSeconds.toString(), 10) || SAVE_DATA_EVERY_MS / 1000;
+        }
+
+        if (this.config.saveThresholdSeconds < 120) {
+            this.log.warn(
+                I18n.translate(
+                    'The saveThresholdSeconds is set to %s seconds, but it should be at least 120 seconds to avoid too frequent saves.',
+                    this.config.saveThresholdSeconds,
+                ),
+            );
+            this.config.saveThresholdSeconds = 120;
+        } else if (this.config.saveThresholdSeconds > 3600) {
+            this.log.warn(
+                I18n.translate(
+                    'The saveThresholdSeconds is set to %s seconds, but it should be less than 3600 seconds to avoid too infrequent saves.',
+                    this.config.saveThresholdSeconds,
+                ),
+            );
+            this.config.saveThresholdSeconds = 3600;
         }
 
         // try to get MAC addresses for all IPs
@@ -461,19 +502,35 @@ export class KISSHomeResearchAdapter extends Adapter {
             return;
         }
 
-        this.workingDir = `${this.tempDir}/hourly_pcaps`;
+        this.workingCloudDir = `${this.tempDir}/cloud_pcaps`;
+        this.workingIdsDir = `${this.tempDir}/ids_pcaps`;
 
-        // create hourly directory
+        // create cloud directory
         try {
-            if (!existsSync(this.workingDir)) {
-                mkdirSync(this.workingDir);
+            if (!existsSync(this.workingCloudDir)) {
+                mkdirSync(this.workingCloudDir);
             }
         } catch (e) {
-            this.log.error(`${I18n.translate('Cannot create working directory')} "${this.workingDir}": ${e}`);
+            this.log.error(
+                `${I18n.translate('Cannot create %s working directory', 'cloud')} "${this.workingCloudDir}": ${e}`,
+            );
             return;
         }
 
-        // this.clearWorkingDir();
+        // create ids directory
+        try {
+            if (!existsSync(this.workingIdsDir)) {
+                mkdirSync(this.workingIdsDir);
+            }
+        } catch (e) {
+            this.log.error(
+                `${I18n.translate('Cannot create %s working directory', 'IDS')} "${this.workingIdsDir}": ${e}`,
+            );
+            return;
+        }
+
+        // this.clearWorkingCloudDir();
+        // this.clearWorkingIdsDir();
 
         if (!this.config.email) {
             this.log.error(I18n.translate('No email provided. Please provide an email address in the configuration.'));
@@ -612,7 +669,7 @@ export class KISSHomeResearchAdapter extends Adapter {
 
         const started = Date.now();
 
-        void this.startSynchronization()
+        void this.startCloudSynchronization()
             .catch(e => {
                 this.log.error(`[RSYNC] ${I18n.translate('Cannot synchronize')}: ${e}`);
             })
@@ -656,7 +713,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                         );
                         this.savePacketsToFile();
                         setTimeout(() => {
-                            this.startSynchronization().catch(e => {
+                            this.startCloudSynchronization().catch(e => {
                                 this.log.error(`[RSYNC] ${I18n.translate('Cannot synchronize')}: ${e}`);
                             });
                         }, 2000);
@@ -677,13 +734,65 @@ export class KISSHomeResearchAdapter extends Adapter {
     }
 
     savePacketsToFile(): void {
-        if (this.context.packets.length) {
-            const packetsToSave = this.context.packets;
-            this.context.packets = [];
-            this.context.totalBytes = 0;
+        if (this.context.filtered.packets.length) {
+            const packetsToSave = this.context.filtered.packets;
+            this.context.filtered.packets = [];
+            this.context.filtered.totalBytes = 0;
 
             const timeStamp = KISSHomeResearchAdapter.getTimestamp();
-            const fileName = `${this.workingDir}/${timeStamp}.pcap`;
+            const fileName = `${this.workingCloudDir}/${timeStamp}.pcap`;
+            // get file descriptor of a file
+            const fd = openSync(fileName, 'w');
+            let offset = 0;
+            const magic = packetsToSave[0].readUInt32LE(0);
+            const STANDARD_MAGIC = 0xa1b2c3d4;
+            // https://wiki.wireshark.org/Development/LibpcapFileFormat
+            const MODIFIED_MAGIC = 0xa1b2cd34;
+
+            // do not save a header if it is already present
+            // write header
+            if (magic !== STANDARD_MAGIC && magic !== MODIFIED_MAGIC) {
+                // create PCAP header
+                const byteArray = Buffer.alloc(6 * 4);
+                // magic number
+                byteArray.writeUInt32LE(
+                    this.context.modifiedMagic || this.context.libpCapFormat ? MODIFIED_MAGIC : STANDARD_MAGIC,
+                    0,
+                );
+                // major version
+                byteArray.writeUInt16LE(2, 4);
+                // minor version
+                byteArray.writeUInt16LE(4, 6);
+                // reserved
+                byteArray.writeUInt32LE(0, 8);
+                // reserved
+                byteArray.writeUInt32LE(0, 12);
+                // SnapLen
+                byteArray.writeUInt16LE(MAX_PACKET_LENGTH, 16);
+                // network type
+                byteArray.writeUInt32LE(this.context.networkType, 20);
+                writeSync(fd, byteArray, 0, byteArray.length, 0);
+                offset = byteArray.length;
+            }
+
+            for (let i = 0; i < packetsToSave.length; i++) {
+                const packet = packetsToSave[i];
+                writeSync(fd, packet, 0, packet.length, offset);
+                offset += packet.length;
+            }
+
+            closeSync(fd);
+
+            this.log.debug(I18n.translate('Saved file %s with %s', fileName, size2text(offset)));
+        }
+
+        if (this.context.full.packets.length) {
+            const packetsToSave = this.context.full.packets;
+            this.context.full.packets = [];
+            this.context.full.totalBytes = 0;
+
+            const timeStamp = KISSHomeResearchAdapter.getTimestamp();
+            const fileName = `${this.workingIdsDir}/${timeStamp}.pcap`;
             // get file descriptor of a file
             const fd = openSync(fileName, 'w');
             let offset = 0;
@@ -767,16 +876,26 @@ export class KISSHomeResearchAdapter extends Adapter {
         if (this.sid) {
             this.log.debug(`[PCAP] ${I18n.translate('Use SID')}: ${this.sid}`);
 
-            const captured = await this.getStateAsync('info.recording.captured');
+            let captured = await this.getStateAsync('info.recording.capturedFull');
             if (captured?.val) {
-                await this.setState('info.recording.captured', 0, true);
+                await this.setState('info.recording.capturedFull', 0, true);
+            }
+
+            captured = await this.getStateAsync('info.recording.capturedFiltered');
+            if (captured?.val) {
+                await this.setState('info.recording.capturedFiltered', 0, true);
             }
 
             this.context.controller = new AbortController();
 
-            this.context.packets = [];
-            this.context.totalBytes = 0;
-            this.context.totalPackets = 0;
+            this.context.filtered.packets = [];
+            this.context.filtered.totalBytes = 0;
+            this.context.filtered.totalPackets = 0;
+
+            this.context.full.packets = [];
+            this.context.full.totalBytes = 0;
+            this.context.full.totalPackets = 0;
+
             this.context.lastSaved = Date.now();
 
             // stop all recordings
@@ -802,8 +921,11 @@ export class KISSHomeResearchAdapter extends Adapter {
 
                     this.savePacketsToFile();
 
-                    this.context.totalBytes = 0;
-                    this.context.totalPackets = 0;
+                    this.context.filtered.totalBytes = 0;
+                    this.context.filtered.totalPackets = 0;
+
+                    this.context.full.totalBytes = 0;
+                    this.context.full.totalPackets = 0;
 
                     if (error?.message === 'Unauthorized') {
                         this.sid = '';
@@ -817,10 +939,16 @@ export class KISSHomeResearchAdapter extends Adapter {
                         await this.setState('info.recording.running', false, true);
                     }
 
-                    if (this.context.packets?.length) {
-                        await this.setState('info.recording.captured', this.context.totalPackets, true);
+                    if (this.context.filtered.packets?.length) {
+                        await this.setState(
+                            'info.recording.capturedFiltered',
+                            this.context.filtered.totalPackets,
+                            true,
+                        );
                     }
-
+                    if (this.context.full.packets?.length) {
+                        await this.setState('info.recording.capturedFull', this.context.full.totalPackets, true);
+                    }
                     if (error) {
                         if (!this.context.terminate || !error.toString().includes('aborted')) {
                             this.log.error(`[PCAP] ${I18n.translate('Error while recording')}: ${error.toString()}`);
@@ -841,19 +969,19 @@ export class KISSHomeResearchAdapter extends Adapter {
                         this.monitorInterval ||= this.setInterval(() => {
                             if (Date.now() - this.lastDebug > 60000) {
                                 this.log.debug(
-                                    `[PCAP] ${I18n.translate('Captured %s packets (%s)', this.context.totalPackets, size2text(this.context.totalBytes))}`,
+                                    `[PCAP] ${I18n.translate('Captured %s packets (%s)', this.context.full.totalPackets, size2text(this.context.full.totalBytes))}`,
                                 );
                                 this.lastDebug = Date.now();
                             }
                             // save if a file is bigger than 50 Mb
                             if (
-                                this.context.totalBytes > SAVE_DATA_IF_BIGGER ||
+                                this.context.full.totalBytes > SAVE_DATA_IF_BIGGER ||
                                 // save every 20 minutes
                                 Date.now() - this.context.lastSaved >= SAVE_DATA_EVERY_MS
                             ) {
                                 this.savePacketsToFile();
                                 if (!this.context.terminate) {
-                                    this.startSynchronization().catch(e => {
+                                    this.startCloudSynchronization().catch(e => {
                                         this.log.error(`[RSYNC] ${I18n.translate('Cannot synchronize')}: ${e}`);
                                     });
                                 }
@@ -861,7 +989,8 @@ export class KISSHomeResearchAdapter extends Adapter {
                         }, 10000);
                     }
 
-                    await this.setState('info.recording.captured', this.context.totalPackets, true);
+                    await this.setState('info.recording.capturedFull', this.context.full.totalPackets, true);
+                    await this.setState('info.recording.capturedFiltered', this.context.filtered.totalPackets, true);
                 },
                 (text: string, level: 'info' | 'warn' | 'error' | 'debug' = 'info') => {
                     this.log[level](`[PCAP] ${text}`);
@@ -883,24 +1012,25 @@ export class KISSHomeResearchAdapter extends Adapter {
 
     saveMetaFile(): string {
         const text = KISSHomeResearchAdapter.getDescriptionFile(this.IPs);
-        const newFile = `${this.workingDir}/${KISSHomeResearchAdapter.getTimestamp()}_v${this.versionPack}_meta.json`;
+        const newFile = `${this.workingCloudDir}/${KISSHomeResearchAdapter.getTimestamp()}_v${this.versionPack}_meta.json`;
+
         try {
             // find the latest file
             let changed = false;
-            let files = readdirSync(this.workingDir);
+            let files = readdirSync(this.workingCloudDir);
             // sort descending
             files.sort((a, b) => b.localeCompare(a));
 
             // if two JSON files are coming after each other, the older one must be deleted
             for (let f = files.length - 1; f > 0; f--) {
                 if (files[f].endsWith('_meta.json') && files[f - 1].endsWith('_meta.json')) {
-                    unlinkSync(`${this.workingDir}/${files[f]}`);
+                    unlinkSync(`${this.workingCloudDir}/${files[f]}`);
                     changed = true;
                 }
             }
             // read the list anew as it was changed
             if (changed) {
-                files = readdirSync(this.workingDir);
+                files = readdirSync(this.workingCloudDir);
                 // sort descending
                 files.sort((a, b) => b.localeCompare(a));
             }
@@ -911,17 +1041,17 @@ export class KISSHomeResearchAdapter extends Adapter {
             // if existing meta file found
             if (latestFile) {
                 // compare the content
-                const oldFile = readFileSync(`${this.workingDir}/${latestFile}`, 'utf8');
+                const oldFile = readFileSync(`${this.workingCloudDir}/${latestFile}`, 'utf8');
                 if (oldFile !== text) {
                     this.log.debug(I18n.translate('Meta file updated'));
                     // delete the old JSON file only if no pcap files exists
                     if (files[0].endsWith('_meta.json')) {
-                        unlinkSync(`${this.workingDir}/${latestFile}`);
+                        unlinkSync(`${this.workingCloudDir}/${latestFile}`);
                     }
                     writeFileSync(newFile, text);
                     return newFile;
                 }
-                return `${this.workingDir}/${latestFile}`;
+                return `${this.workingCloudDir}/${latestFile}`;
             }
             this.log.info(I18n.translate('Meta file created'));
             // if not found => create new one
@@ -1013,29 +1143,48 @@ export class KISSHomeResearchAdapter extends Adapter {
         }
     }
 
-    clearWorkingDir(): void {
+    clearWorkingCloudDir(): void {
         try {
-            const files = readdirSync(this.workingDir);
+            const files = readdirSync(this.workingCloudDir);
             for (const file of files) {
                 if (file.endsWith('.pcap')) {
                     try {
-                        unlinkSync(`${this.workingDir}/${file}`);
+                        unlinkSync(`${this.workingCloudDir}/${file}`);
                     } catch (e) {
                         this.log.error(
-                            `${I18n.translate('Cannot delete file "%s"', `${this.workingDir}/${file}`)}: ${e}`,
+                            `${I18n.translate('Cannot delete file "%s"', `${this.workingCloudDir}/${file}`)}: ${e}`,
                         );
                     }
                 } else if (!file.endsWith('.json')) {
                     // delete unknown files
                     try {
-                        unlinkSync(`${this.workingDir}/${file}`);
+                        unlinkSync(`${this.workingCloudDir}/${file}`);
                     } catch (e) {
-                        this.log.error(`${I18n.translate('Cannot delete file "%s"')} ${this.workingDir}/${file}: ${e}`);
+                        this.log.error(
+                            `${I18n.translate('Cannot delete file "%s"')} ${this.workingCloudDir}/${file}: ${e}`,
+                        );
                     }
                 }
             }
         } catch (e) {
-            this.log.error(`${I18n.translate('Cannot read working directory "%s"')} "${this.workingDir}": ${e}`);
+            this.log.error(`${I18n.translate('Cannot read working directory "%s"')} "${this.workingCloudDir}": ${e}`);
+        }
+    }
+
+    clearWorkingIdsDir(): void {
+        try {
+            const files = readdirSync(this.workingIdsDir);
+            for (const file of files) {
+                try {
+                    unlinkSync(`${this.workingIdsDir}/${file}`);
+                } catch (e) {
+                    this.log.error(
+                        `${I18n.translate('Cannot delete file "%s"', `${this.workingIdsDir}/${file}`)}: ${e}`,
+                    );
+                }
+            }
+        } catch (e) {
+            this.log.error(`${I18n.translate('Cannot read working directory "%s"')} "${this.workingIdsDir}": ${e}`);
         }
     }
 
@@ -1108,11 +1257,12 @@ export class KISSHomeResearchAdapter extends Adapter {
         }
     }
 
-    async startSynchronization(): Promise<void> {
+    async startCloudSynchronization(): Promise<void> {
         if (this.context.terminate) {
             this.log.debug(`[RSYNC] ${I18n.translate('Requested termination. No synchronization')}`);
             return;
         }
+
         // calculate the total number of bytes
         let totalBytes = 0;
         this.log.debug(`[RSYNC] ${I18n.translate('Start synchronization...')}`);
@@ -1122,15 +1272,15 @@ export class KISSHomeResearchAdapter extends Adapter {
         let allFiles: string[];
         const sizes: Record<string, number> = {};
         try {
-            allFiles = readdirSync(this.workingDir);
+            allFiles = readdirSync(this.workingCloudDir);
             pcapFiles = allFiles.filter(f => f.endsWith('.pcap'));
             for (const file of pcapFiles) {
-                sizes[file] = statSync(`${this.workingDir}/${file}`).size;
+                sizes[file] = statSync(`${this.workingCloudDir}/${file}`).size;
                 totalBytes += sizes[file];
             }
         } catch (e) {
             this.log.error(
-                `[RSYNC] ${I18n.translate('Cannot read working directory "%s" for sync', this.workingDir)}: ${e}`,
+                `[RSYNC] ${I18n.translate('Cannot read working directory "%s" for sync', this.workingCloudDir)}: ${e}`,
             );
 
             return;
@@ -1158,7 +1308,7 @@ export class KISSHomeResearchAdapter extends Adapter {
         for (let i = 0; i < allFiles.length; i++) {
             const file = allFiles[i];
             if (file.endsWith('.json')) {
-                await this.sendOneFileToCloud(`${this.workingDir}/${file}`);
+                await this.sendOneFileToCloud(`${this.workingCloudDir}/${file}`);
                 sent = true;
             }
         }
@@ -1176,7 +1326,7 @@ export class KISSHomeResearchAdapter extends Adapter {
         // send all pcap files
         for (let i = 0; i < pcapFiles.length; i++) {
             const file = pcapFiles[i];
-            await this.sendOneFileToCloud(`${this.workingDir}/${file}`, sizes[file]);
+            await this.sendOneFileToCloud(`${this.workingCloudDir}/${file}`, sizes[file]);
         }
         this.syncRunning = false;
         await this.setState('info.sync.running', false, true);

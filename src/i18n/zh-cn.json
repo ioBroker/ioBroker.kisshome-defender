@@ -1,6 +1,6 @@
 {
   "Cannot create META file. No synchronization": "无法创建 META 文件。无同步",
-  "Cannot create working directory": "无法创建工作目录",
+  "Cannot create %s working directory": "无法创建工作目录",
   "Cannot delete file \"%s\"": "无法删除文件“%s”",
   "Cannot determine MAC addresses of Fritz!Box": "无法确定 Fritz!Box 的 MAC 地址",
   "Cannot find any temporary directory. Please specify manually in the configuration. For best performance it should be a RAM disk": "找不到任何临时目录。请在配置中手动指定。为了获得最佳性能，应该使用 RAM 磁盘",
