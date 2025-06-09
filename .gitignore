@@ -19,3 +19,7 @@ package-lock.json
 /test.mjs
 /src-admin/.__mf__temp/
 /build/
+/src-widgets/.__mf__temp/
+/src-widgets/build/
+/src-widgets/node_modules/
+/src-widgets/package-lock.json

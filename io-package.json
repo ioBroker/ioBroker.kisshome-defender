@@ -67,6 +67,19 @@
         ],
         "osDependencies": {
             "linux": ["docker-ce"]
+        },
+        "ifInstalledDependencies": {
+            "vis-2": ">=2.12.8"
+        },
+        "restartAdapters": ["vis-2"],
+        "visWidgets": {
+            "kisshome-defender": {
+                "i18n": "component",
+                "name": "kisshome-defender",
+                "bundlerType": "module",
+                "url": "kisshome-defender/customWidgets.js",
+                "components": ["KisshomeDefender"]
+            }
         }
     },
     "protectedNative": ["password", "login"],
@@ -86,6 +99,7 @@
             "url": ""
         }
     },
+
     "notifications": [
         {
             "scope": "kisshome-defender",
