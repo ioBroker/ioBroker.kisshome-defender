@@ -30,6 +30,7 @@
   "Recording enabled": "Enregistrement activé",
   "Recording is not running": "L'enregistrement ne fonctionne pas",
   "Recording is running": "L'enregistrement est en cours",
+  "Save threshold in seconds": "Seuil de sauvegarde en secondes",
   "Self-hosted": "Auto-hébergé",
   "The MAC address is important, but if you enter the IP address, the system will try to find the MAC address automatically.": "L'adresse MAC est importante, mais si vous entrez l'adresse IP, le système essaiera de trouver l'adresse MAC automatiquement.",
   "This adapter can start the required docker image for you or you can start the docker image yourself. In the latter case, you need to set the Docker URL.": "Cet adaptateur peut démarrer l'image Docker requise pour vous ou vous pouvez la démarrer vous-même. Dans ce dernier cas, vous devez définir l'URL Docker.",

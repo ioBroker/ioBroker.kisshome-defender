@@ -30,6 +30,7 @@
   "Recording enabled": "Запис увімкнено",
   "Recording is not running": "Запис не ведеться",
   "Recording is running": "Запис йде",
+  "Save threshold in seconds": "Поріг збереження за секунди",
   "Self-hosted": "Самостійно розміщено",
   "The MAC address is important, but if you enter the IP address, the system will try to find the MAC address automatically.": "MAC-адреса важлива, але якщо ви введете IP-адресу, система спробує знайти MAC-адресу автоматично.",
   "This adapter can start the required docker image for you or you can start the docker image yourself. In the latter case, you need to set the Docker URL.": "Цей адаптер може запустити необхідний образ Docker для вас, або ви можете запустити образ Docker самостійно. В останньому випадку вам потрібно встановити URL-адресу Docker.",

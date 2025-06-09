@@ -1,21 +1,16 @@
 import { Adapter, type AdapterOptions, I18n } from '@iobroker/adapter-core';
-import axios, { type AxiosResponse } from 'axios';
-import { join, basename } from 'node:path';
-import { createHash } from 'node:crypto';
-import {
-    readFileSync,
-    existsSync,
-    mkdirSync,
-    openSync,
-    writeSync,
-    closeSync,
-    readdirSync,
-    unlinkSync,
-    writeFileSync,
-    statSync,
-} from 'node:fs';
+import { join } from 'node:path';
+import { readFileSync, existsSync, mkdirSync, openSync, writeSync, closeSync, readdirSync, unlinkSync } from 'node:fs';
 
-import { getDefaultGateway, getMacForIp, generateKeys, getVendorForMac, validateIpAddress } from './lib/utils';
+import {
+    getDefaultGateway,
+    getMacForIp,
+    getVendorForMac,
+    validateIpAddress,
+    getTimestamp,
+    getDescriptionObject,
+    size2text,
+} from './lib/utils';
 
 import {
     startRecordingOnFritzBox,
@@ -25,41 +20,22 @@ import {
     getRecordURL,
 } from './lib/recording';
 import { getFritzBoxFilter, getFritzBoxInterfaces, getFritzBoxToken, getFritzBoxUsers } from './lib/fritzbox';
-import type { DefenderAdapterConfig, Device } from './types';
+import type { DefenderAdapterConfig, Device, MACAddress } from './types';
+import CloudSync from './lib/CloudSync';
+import { IDSCommunication } from './lib/IDSCommunication';
+import Statistics from './lib/Statistics';
 
-const PCAP_HOST = 'kisshome-experiments.if-is.net';
 // save files every 60 minutes
 const SAVE_DATA_EVERY_MS = 3_600_000;
 // save files if bigger than 50 Mb
 const SAVE_DATA_IF_BIGGER = 50 * 1024 * 1024;
-
-const SYNC_INTERVAL = 3_600_000; // 3_600_000;
-
-const BACKUP_KEYS = '0_userdata.0.kisshomeResearchKeys';
-
-interface KeysObject extends ioBroker.OtherObject {
-    native: {
-        publicKey: string;
-        privateKey: string;
-    };
-}
-
-function size2text(size: number): string {
-    if (size < 1024) {
-        return `${size} B`;
-    }
-    if (size < 1024 * 1024) {
-        return `${Math.round((size * 10) / 1024) / 10} kB`;
-    }
-    return `${Math.round((size * 10) / (1024 * 1024) / 10)} MB`;
-}
 
 export class KISSHomeResearchAdapter extends Adapter {
     declare config: DefenderAdapterConfig;
 
     protected tempDir: string = '';
 
-    private uniqueMacs: string[] = [];
+    private uniqueMacs: MACAddress[] = [];
 
     private sid: string = '';
 
@@ -99,21 +75,21 @@ export class KISSHomeResearchAdapter extends Adapter {
 
     private lastDebug: number = 0;
 
-    private syncRunning: boolean = false;
-
-    private syncTimer: NodeJS.Timeout | null = null;
-
     private monitorInterval: ioBroker.Interval | undefined;
-
-    private publicKey: string = '';
 
     private uuid: string = '';
 
     private recordingEnabled: boolean = false;
 
-    private static macCache: { [ip: string]: { mac: string; vendor?: string } } = {};
+    private static macCache: { [ip: string]: { mac: MACAddress; vendor?: string } } = {};
 
     private IPs: Device[] = [];
+
+    private cloudSync: CloudSync | null = null;
+
+    private idsCommunication: IDSCommunication | null = null;
+
+    private statistics: Statistics | null = null;
 
     public constructor(options: Partial<AdapterOptions> = {}) {
         super({
@@ -252,32 +228,31 @@ export class KISSHomeResearchAdapter extends Adapter {
                         }
                     }
                     break;
-            }
-        }
-    }
 
-    async analyseError(response: AxiosResponse): Promise<void> {
-        if (response.status === 404) {
-            this.log.error(
-                `${I18n.translate('Cannot register on the kisshome-cloud')}: ${I18n.translate('Unknown email address')}`,
-            );
-        } else if (response.status === 403) {
-            this.log.error(
-                `${I18n.translate('Cannot register on the kisshome-cloud')}: ${I18n.translate('public key changed. Please contact us via kisshome@internet-sicherheit.de')}`,
-            );
-            await this.registerNotification('kisshome-defender', 'publicKey', 'Public key changed');
-        } else if (response.status === 401) {
-            this.log.error(
-                `${I18n.translate('Cannot register on the kisshome-cloud')}: ${I18n.translate('invalid password')}`,
-            );
-        } else if (response.status === 422) {
-            this.log.error(
-                `${I18n.translate('Cannot register on the kisshome-cloud')}: ${I18n.translate('missing email, public key or uuid')}`,
-            );
-        } else {
-            this.log.error(
-                `${I18n.translate('Cannot register on the kisshome-cloud')}: ${response.data || response.statusText || response.status}`,
-            );
+                case 'getData': {
+                    if (msg.callback) {
+                        if (msg.message.type === 'dataVolumePerDevice') {
+                            this.sendTo(msg.from, msg.command, this.statistics?.getDataVolumePerDevice(), msg.callback);
+                        } else if (msg.message.type === 'dataVolumePerCountry') {
+                            this.sendTo(
+                                msg.from,
+                                msg.command,
+                                this.statistics?.getDataVolumePerCountry(),
+                                msg.callback,
+                            );
+                        } else if (msg.message.type === 'dataVolumePerDaytime') {
+                            this.sendTo(
+                                msg.from,
+                                msg.command,
+                                this.statistics?.getDataVolumePerDaytime(),
+                                msg.callback,
+                            );
+                        } else {
+                            this.sendTo(msg.from, msg.command, this.statistics?.getAllStatistics(), msg.callback);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -347,7 +322,7 @@ export class KISSHomeResearchAdapter extends Adapter {
         );
         const tasks = this.IPs.filter(ip => !ip.mac);
 
-        let fritzMac = '';
+        let fritzMac: MACAddress = '';
         try {
             // determine the MAC of Fritzbox
             const fritzEntry = await this.getMacForIps([
@@ -388,7 +363,7 @@ export class KISSHomeResearchAdapter extends Adapter {
             }
         }
 
-        // take only unique MAC addresses and not MAC of Fritzbox
+        // take only unique MAC addresses and not the MAC address of Fritz!Box
         this.uniqueMacs = [];
         this.IPs.forEach(
             item =>
@@ -421,85 +396,6 @@ export class KISSHomeResearchAdapter extends Adapter {
 
         if (this.tempDir.endsWith('/')) {
             this.tempDir = this.tempDir.substring(0, this.tempDir.length - 1);
-        }
-
-        let privateKey = '';
-
-        // retrieve public and private keys
-        let keysObj: KeysObject | null;
-        try {
-            keysObj = (await this.getObjectAsync('info.sync.keys')) as KeysObject;
-            if (!keysObj) {
-                // try to migrate configuration
-                keysObj = (await this.getObjectAsync('info.keys')) as KeysObject;
-                if (keysObj) {
-                    await this.setObjectAsync('info.sync.keys', keysObj);
-                    await this.delObjectAsync('info.keys');
-                }
-            }
-        } catch {
-            // ignore
-            keysObj = null;
-        }
-        if (!keysObj || !keysObj?.native?.publicKey || !keysObj.native?.privateKey) {
-            // try to read the key on the address '0_userdata.0.kisshomeResearchPublicKey'
-            let keysRestored = false;
-            try {
-                const keysState: ioBroker.State | null | undefined = await this.getForeignStateAsync(BACKUP_KEYS);
-                if (keysState?.val && typeof keysState.val === 'string' && keysState.val.includes('/////')) {
-                    const [_public, _private] = keysState.val.split('/////');
-                    this.publicKey = _public;
-                    privateKey = _private;
-                    keysRestored = true;
-                    this.log.info(I18n.translate('The keys were restored from "0_userdata.0.kisshomeResearchKeys".'));
-                }
-            } catch {
-                // ignore
-            }
-
-            if (!keysRestored) {
-                this.log.info(I18n.translate('Generating keys for the first time.'));
-                const result = generateKeys();
-                privateKey = result.privateKey;
-                this.publicKey = result.publicKey;
-            }
-
-            keysObj = {
-                _id: 'info.sync.keys',
-                type: 'config',
-                common: {
-                    name: {
-                        en: 'Public and private keys',
-                        de: 'öffentliche und private Schlüssel',
-                        ru: 'Публичные и частные ключи',
-                        pt: 'Chaves públicas e privadas',
-                        nl: 'Openbare en privésleutels',
-                        fr: 'Clés publiques et privées',
-                        it: 'Chiavi pubbliche e private',
-                        es: 'Claves públicas y privadas',
-                        pl: 'Klucze publiczne i prywatne',
-                        uk: 'Публічні та приватні ключі',
-                        'zh-cn': '公钥和私钥',
-                    },
-                },
-                native: {
-                    publicKey: this.publicKey,
-                    privateKey,
-                },
-            };
-            await this.setObjectAsync(keysObj._id, keysObj);
-            if (!keysRestored) {
-                await this.saveKeyForUninstallAndInstall(this.publicKey, privateKey);
-            }
-        } else {
-            privateKey = keysObj.native.privateKey;
-            this.publicKey = keysObj.native.publicKey;
-            await this.saveKeyForUninstallAndInstall(this.publicKey, privateKey, true);
-        }
-
-        if (!this.publicKey || !privateKey) {
-            this.log.error(I18n.translate('Cannot generate keys.'));
-            return;
         }
 
         this.workingCloudDir = `${this.tempDir}/cloud_pcaps`;
@@ -542,39 +438,6 @@ export class KISSHomeResearchAdapter extends Adapter {
             return;
         }
 
-        try {
-            // register on the cloud
-            const response = await axios.post(`https://${PCAP_HOST}/api/v1/registerKey`, {
-                publicKey: this.publicKey,
-                email: this.config.email,
-                uuid: this.uuid,
-            });
-            if (response.status === 200) {
-                if (response.data?.command === 'terminate') {
-                    this.log.warn(I18n.translate('Server requested to terminate the adapter'));
-                    const obj = await this.getForeignObjectAsync(`system.adapter.${this.namespace}`);
-                    if (obj?.common?.enabled) {
-                        obj.common.enabled = false;
-                        await this.setForeignObjectAsync(obj._id, obj);
-                    }
-                } else {
-                    this.log.info(I18n.translate('Successfully registered on the cloud'));
-                }
-            } else {
-                await this.analyseError(response);
-                return;
-            }
-        } catch (e) {
-            if (e.response) {
-                await this.analyseError(e.response);
-            } else {
-                this.log.error(`${I18n.translate('Cannot register on the kisshome-cloud')}: ${e}`);
-            }
-            return;
-        }
-
-        this.saveMetaFile();
-
         await this.setState('info.recording.running', false, true);
         await this.setState('info.recording.triggerWrite', false, true);
 
@@ -589,100 +452,35 @@ export class KISSHomeResearchAdapter extends Adapter {
         this.subscribeStates('info.recording.triggerWrite');
 
         this.recordingEnabled = (((await this.getStateAsync('info.recording.enabled')) || {}).val as boolean) || false;
+        this.cloudSync = new CloudSync(this, {
+            workingDir: this.workingCloudDir,
+            context: this.context,
+            uuid: this.uuid,
+            IPs: this.IPs,
+            version: this.versionPack,
+        });
+        this.idsCommunication = new IDSCommunication(
+            this,
+            this.config,
+            getDescriptionObject(this.IPs),
+            this.workingCloudDir,
+        );
+        this.statistics = new Statistics(this, this.workingIdsDir, this.IPs);
 
         if (this.recordingEnabled) {
-            // start the monitoring
-            this.startRecording().catch(e => {
-                this.log.error(`[PCAP] ${I18n.translate('Cannot start recording')}: ${e}`);
-            });
-
             // Send the data every hour to the cloud
-            this.syncJob();
+            this.cloudSync.start();
+            if (await this.cloudSync.isEmailOk()) {
+                // start the monitoring
+                await this.startRecording().catch(e => {
+                    this.log.error(`[PCAP] ${I18n.translate('Cannot start recording')}: ${e}`);
+                });
+
+                await this.idsCommunication.start();
+            }
         } else {
             this.log.warn(I18n.translate('Recording is not enabled. Do nothing.'));
         }
-    }
-
-    async saveKeyForUninstallAndInstall(publicKey: string, privateKey: string, check?: boolean): Promise<void> {
-        if (check) {
-            // check if the key is already saved
-            const keysState: ioBroker.State | null | undefined = await this.getForeignStateAsync(BACKUP_KEYS);
-            if (keysState?.val === `${publicKey}/////${privateKey}`) {
-                return;
-            }
-            if (keysState) {
-                await this.setForeignStateAsync(BACKUP_KEYS, `${publicKey}/////${privateKey}`, true);
-                return;
-            }
-        }
-
-        // create state "0_userdata.0.kisshomeResearchKeys"
-        await this.setForeignObjectAsync(BACKUP_KEYS, {
-            type: 'state',
-            common: {
-                name: {
-                    en: 'Keys for KISSHome adapter',
-                    de: 'Schlüssel für KISSHome adapter',
-                    ru: 'Ключи для адаптера KISSHome',
-                    pt: 'Chaves para o adaptador KISSHome',
-                    nl: 'Sleutels voor KISSHome-adapter',
-                    fr: "Clés pour l'adaptateur KISSHome",
-                    it: "Chiavi per l'adattatore KISSHome",
-                    es: 'Claves para el adaptador KISSHome',
-                    pl: 'Klucze dla adaptera KISSHome',
-                    uk: 'Ключі для адаптера KISSHome',
-                    'zh-cn': 'KISSHome适配器的密钥',
-                },
-                desc: {
-                    en: 'It can be deleted if KISSHome adapter uninstalled and does not used anymore',
-                    de: 'Es kann gelöscht werden, wenn der KISSHome-Adapter deinstalliert und nicht mehr verwendet wird',
-                    ru: 'Его можно удалить, если адаптер KISSHome удален и больше не используется',
-                    pt: 'Pode ser excluído se o adaptador KISSHome for desinstalado e não for mais usado',
-                    nl: 'Het kan worden verwijderd als de KISSHome-adapter is verwijderd en niet meer wordt gebruikt',
-                    fr: "Il peut être supprimé si l'adaptateur KISSHome est désinstallé et n'est plus utilisé",
-                    it: "Può essere eliminato se l'adattatore KISSHome è disinstallato e non viene più utilizzato",
-                    es: 'Se puede eliminar si se desinstala el adaptador KISSHome y ya no se usa',
-                    pl: 'Można go usunąć, jeśli adapter KISSHome jest odinstalowany i nie jest już używany',
-                    uk: 'Можна видалити, якщо адаптер KISSHome видалено і більше не використовується',
-                    'zh-cn': '如果KISSHome适配器已卸载且不再使用，则可以删除它',
-                },
-                type: 'string',
-                read: true,
-                write: false,
-                role: 'state',
-            },
-            native: {},
-        });
-        await this.setForeignStateAsync(BACKUP_KEYS, `${publicKey}/////${privateKey}`, true);
-    }
-
-    syncJob(): void {
-        // Send the data every hour to the cloud
-        if (this.syncTimer) {
-            clearTimeout(this.syncTimer);
-            this.syncTimer = null;
-        }
-
-        if (this.context.terminate) {
-            return;
-        }
-
-        const started = Date.now();
-
-        void this.startCloudSynchronization()
-            .catch(e => {
-                this.log.error(`[RSYNC] ${I18n.translate('Cannot synchronize')}: ${e}`);
-            })
-            .then(() => {
-                const duration = Date.now() - started;
-                this.syncTimer = setTimeout(
-                    () => {
-                        this.syncTimer = null;
-                        this.syncJob();
-                    },
-                    SYNC_INTERVAL - duration > 0 ? SYNC_INTERVAL - duration : 0,
-                );
-            });
     }
 
     onStateChange(id: string, state: ioBroker.State | null | undefined): void {
@@ -696,6 +494,9 @@ export class KISSHomeResearchAdapter extends Adapter {
                         this.startRecording().catch(e => {
                             this.log.error(`${I18n.translate('Cannot start recording')}: ${e}`);
                         });
+                        // Send the data every hour to the cloud
+                        this.cloudSync?.start();
+                        void this.idsCommunication?.start();
                     }
                 } else if (this.recordingEnabled) {
                     this.recordingEnabled = false;
@@ -704,6 +505,8 @@ export class KISSHomeResearchAdapter extends Adapter {
                         this.context.controller.abort();
                         this.context.controller = null;
                     }
+                    this.cloudSync?.stop();
+                    void this.idsCommunication?.destroy();
                 }
             } else if (id === `${this.namespace}.info.recording.triggerWrite` && !state.ack) {
                 if (state.val) {
@@ -712,8 +515,9 @@ export class KISSHomeResearchAdapter extends Adapter {
                             this.log.error(`${I18n.translate('Cannot set triggerWrite')}: ${e}`),
                         );
                         this.savePacketsToFile();
+
                         setTimeout(() => {
-                            this.startCloudSynchronization().catch(e => {
+                            this.cloudSync?.startCloudSynchronization().catch(e => {
                                 this.log.error(`[RSYNC] ${I18n.translate('Cannot synchronize')}: ${e}`);
                             });
                         }, 2000);
@@ -724,7 +528,9 @@ export class KISSHomeResearchAdapter extends Adapter {
     }
 
     restartRecording(): void {
-        this.startTimeout && clearTimeout(this.startTimeout);
+        if (this.startTimeout) {
+            clearTimeout(this.startTimeout);
+        }
         this.startTimeout = this.setTimeout(() => {
             this.startTimeout = undefined;
             this.startRecording().catch(e => {
@@ -739,7 +545,7 @@ export class KISSHomeResearchAdapter extends Adapter {
             this.context.filtered.packets = [];
             this.context.filtered.totalBytes = 0;
 
-            const timeStamp = KISSHomeResearchAdapter.getTimestamp();
+            const timeStamp = getTimestamp();
             const fileName = `${this.workingCloudDir}/${timeStamp}.pcap`;
             // get file descriptor of a file
             const fd = openSync(fileName, 'w');
@@ -791,7 +597,7 @@ export class KISSHomeResearchAdapter extends Adapter {
             this.context.full.packets = [];
             this.context.full.totalBytes = 0;
 
-            const timeStamp = KISSHomeResearchAdapter.getTimestamp();
+            const timeStamp = getTimestamp();
             const fileName = `${this.workingIdsDir}/${timeStamp}.pcap`;
             // get file descriptor of a file
             const fd = openSync(fileName, 'w');
@@ -836,15 +642,11 @@ export class KISSHomeResearchAdapter extends Adapter {
             closeSync(fd);
 
             this.log.debug(I18n.translate('Saved file %s with %s', fileName, size2text(offset)));
+
+            this.idsCommunication?.triggerUpdate();
         }
 
         this.context.lastSaved = Date.now();
-    }
-
-    calculateMd5(content: Buffer): string {
-        const hash = createHash('md5');
-        hash.update(content);
-        return hash.digest('hex');
     }
 
     async startRecording(): Promise<void> {
@@ -916,8 +718,10 @@ export class KISSHomeResearchAdapter extends Adapter {
                 this.config.iface,
                 this.uniqueMacs,
                 async (error: Error | null) => {
-                    this.monitorInterval && this.clearInterval(this.monitorInterval);
-                    this.monitorInterval = undefined;
+                    if (this.monitorInterval) {
+                        this.clearInterval(this.monitorInterval);
+                        this.monitorInterval = undefined;
+                    }
 
                     this.savePacketsToFile();
 
@@ -980,11 +784,10 @@ export class KISSHomeResearchAdapter extends Adapter {
                                 Date.now() - this.context.lastSaved >= SAVE_DATA_EVERY_MS
                             ) {
                                 this.savePacketsToFile();
-                                if (!this.context.terminate) {
-                                    this.startCloudSynchronization().catch(e => {
-                                        this.log.error(`[RSYNC] ${I18n.translate('Cannot synchronize')}: ${e}`);
-                                    });
-                                }
+
+                                this.cloudSync?.startCloudSynchronization().catch(e => {
+                                    this.log.error(`[RSYNC] ${I18n.translate('Cannot synchronize')}: ${e}`);
+                                });
                             }
                         }, 10000);
                     }
@@ -1005,78 +808,8 @@ export class KISSHomeResearchAdapter extends Adapter {
         }
     }
 
-    static getTimestamp(): string {
-        const now = new Date();
-        return `${now.getUTCFullYear()}-${(now.getUTCMonth() + 1).toString().padStart(2, '0')}-${now.getUTCDate().toString().padStart(2, '0')}_${now.getUTCHours().toString().padStart(2, '0')}-${now.getUTCMinutes().toString().padStart(2, '0')}-${now.getUTCSeconds().toString().padStart(2, '0')}`;
-    }
-
-    saveMetaFile(): string {
-        const text = KISSHomeResearchAdapter.getDescriptionFile(this.IPs);
-        const newFile = `${this.workingCloudDir}/${KISSHomeResearchAdapter.getTimestamp()}_v${this.versionPack}_meta.json`;
-
-        try {
-            // find the latest file
-            let changed = false;
-            let files = readdirSync(this.workingCloudDir);
-            // sort descending
-            files.sort((a, b) => b.localeCompare(a));
-
-            // if two JSON files are coming after each other, the older one must be deleted
-            for (let f = files.length - 1; f > 0; f--) {
-                if (files[f].endsWith('_meta.json') && files[f - 1].endsWith('_meta.json')) {
-                    unlinkSync(`${this.workingCloudDir}/${files[f]}`);
-                    changed = true;
-                }
-            }
-            // read the list anew as it was changed
-            if (changed) {
-                files = readdirSync(this.workingCloudDir);
-                // sort descending
-                files.sort((a, b) => b.localeCompare(a));
-            }
-
-            // find the latest file and delete all other _meta.json files
-            const latestFile = files.find(f => f.endsWith('_meta.json'));
-
-            // if existing meta file found
-            if (latestFile) {
-                // compare the content
-                const oldFile = readFileSync(`${this.workingCloudDir}/${latestFile}`, 'utf8');
-                if (oldFile !== text) {
-                    this.log.debug(I18n.translate('Meta file updated'));
-                    // delete the old JSON file only if no pcap files exists
-                    if (files[0].endsWith('_meta.json')) {
-                        unlinkSync(`${this.workingCloudDir}/${latestFile}`);
-                    }
-                    writeFileSync(newFile, text);
-                    return newFile;
-                }
-                return `${this.workingCloudDir}/${latestFile}`;
-            }
-            this.log.info(I18n.translate('Meta file created'));
-            // if not found => create new one
-            writeFileSync(newFile, text);
-            return newFile;
-        } catch (e) {
-            this.log.warn(`${I18n.translate('Cannot save meta file "%s"', newFile)}: ${e}`);
-            return '';
-        }
-    }
-
-    static getDescriptionFile(IPs: Device[]): string {
-        const desc: Record<string, { ip: string; desc: string }> = {};
-
-        IPs.sort((a, b) => a.ip.localeCompare(b.ip)).forEach(ip => {
-            if (ip.mac) {
-                desc[ip.mac] = { ip: ip.ip, desc: ip.desc };
-            }
-        });
-
-        return JSON.stringify(desc, null, 2);
-    }
-
-    async getMacForIps(devices: Device[]): Promise<{ mac: string; vendor?: string; ip: string; found: boolean }[]> {
-        const result: { mac: string; vendor?: string; ip: string; found: boolean }[] = [];
+    async getMacForIps(devices: Device[]): Promise<{ mac: MACAddress; vendor?: string; ip: string; found: boolean }[]> {
+        const result: { mac: MACAddress; vendor?: string; ip: string; found: boolean }[] = [];
         let error = '';
         for (const dev of devices) {
             if (dev.ip && KISSHomeResearchAdapter.macCache[dev.ip]) {
@@ -1121,10 +854,9 @@ export class KISSHomeResearchAdapter extends Adapter {
             await this.setState('info.connection', false, true);
             await this.setState('info.recording.running', false, true);
         }
-        if (this.syncTimer) {
-            clearTimeout(this.syncTimer);
-            this.syncTimer = null;
-        }
+
+        this.cloudSync?.stop();
+        await this.idsCommunication?.destroy();
 
         if (this.startTimeout) {
             clearTimeout(this.startTimeout);
@@ -1186,150 +918,6 @@ export class KISSHomeResearchAdapter extends Adapter {
         } catch (e) {
             this.log.error(`${I18n.translate('Cannot read working directory "%s"')} "${this.workingIdsDir}": ${e}`);
         }
-    }
-
-    async sendOneFileToCloud(fileName: string, size?: number): Promise<void> {
-        try {
-            if (!existsSync(fileName)) {
-                this.log.warn(
-                    `[RSYNC] ${I18n.translate('File "%s" does not exist. Size: %s', fileName, size ? size2text(size) : 'unknown')}`,
-                );
-                return;
-            }
-            const data = readFileSync(fileName);
-            const name = basename(fileName);
-            const len = data.length;
-
-            const md5 = this.calculateMd5(data);
-
-            // check if the file was sent successfully
-            try {
-                const responseCheck = await axios.get(
-                    `https://${PCAP_HOST}/api/v1/upload/${encodeURIComponent(this.config.email)}/${encodeURIComponent(name)}?key=${encodeURIComponent(this.publicKey)}&uuid=${encodeURIComponent(this.uuid)}`,
-                );
-                if (responseCheck.data?.command === 'terminate') {
-                    const obj = await this.getForeignObjectAsync(`system.adapter.${this.namespace}`);
-                    if (obj?.common?.enabled) {
-                        obj.common.enabled = false;
-                        await this.setForeignObjectAsync(obj._id, obj);
-                    }
-                    return;
-                }
-
-                if (responseCheck.status === 200 && responseCheck.data === md5) {
-                    // file already uploaded, do not upload it again
-                    if (name.endsWith('.pcap')) {
-                        unlinkSync(fileName);
-                    }
-                    return;
-                }
-            } catch {
-                // ignore
-            }
-
-            const responsePost = await axios({
-                method: 'post',
-                url: `https://${PCAP_HOST}/api/v1/upload/${encodeURIComponent(this.config.email)}/${encodeURIComponent(name)}?key=${encodeURIComponent(this.publicKey)}&uuid=${encodeURIComponent(this.uuid)}`,
-                data: data,
-                headers: { 'Content-Type': 'application/vnd.tcpdump.pcap' },
-            });
-
-            // check if the file was sent successfully
-            const response = await axios.get(
-                `https://${PCAP_HOST}/api/v1/upload/${encodeURIComponent(this.config.email)}/${encodeURIComponent(name)}?key=${encodeURIComponent(this.publicKey)}&uuid=${encodeURIComponent(this.uuid)}`,
-            );
-            if (response.status === 200 && response.data === md5) {
-                if (name.endsWith('.pcap')) {
-                    unlinkSync(fileName);
-                }
-                this.log.debug(
-                    `[RSYNC] ${I18n.translate('Sent file "%s"(%s) to the cloud', fileName, size2text(len))} (${size ? size2text(size) : I18n.translate('unknown')}): ${responsePost.status}`,
-                );
-            } else {
-                this.log.warn(
-                    `[RSYNC] ${I18n.translate('File sent to server, but check fails (%s). "%s" to the cloud', size ? size2text(size) : I18n.translate('unknown'), fileName)}: status=${responsePost.status}, len=${len}, response=${response.data}`,
-                );
-            }
-        } catch (e) {
-            this.log.error(
-                `[RSYNC] ${I18n.translate('Cannot send file "%s" to the cloud', fileName)} (${size ? size2text(size) : I18n.translate('unknown')}): ${e}`,
-            );
-        }
-    }
-
-    async startCloudSynchronization(): Promise<void> {
-        if (this.context.terminate) {
-            this.log.debug(`[RSYNC] ${I18n.translate('Requested termination. No synchronization')}`);
-            return;
-        }
-
-        // calculate the total number of bytes
-        let totalBytes = 0;
-        this.log.debug(`[RSYNC] ${I18n.translate('Start synchronization...')}`);
-
-        // calculate the total number of bytes in pcap files
-        let pcapFiles: string[];
-        let allFiles: string[];
-        const sizes: Record<string, number> = {};
-        try {
-            allFiles = readdirSync(this.workingCloudDir);
-            pcapFiles = allFiles.filter(f => f.endsWith('.pcap'));
-            for (const file of pcapFiles) {
-                sizes[file] = statSync(`${this.workingCloudDir}/${file}`).size;
-                totalBytes += sizes[file];
-            }
-        } catch (e) {
-            this.log.error(
-                `[RSYNC] ${I18n.translate('Cannot read working directory "%s" for sync', this.workingCloudDir)}: ${e}`,
-            );
-
-            return;
-        }
-
-        if (!totalBytes) {
-            this.log.debug(`[RSYNC] ${I18n.translate('No files to sync')}`);
-            return;
-        }
-
-        if (this.syncRunning) {
-            this.log.warn(`[RSYNC] ${I18n.translate('Synchronization still running...')}`);
-            return;
-        }
-
-        this.syncRunning = true;
-        await this.setState('info.sync.running', true, true);
-
-        this.log.debug(`[RSYNC] ${I18n.translate('Syncing files to the cloud')} (${size2text(totalBytes)})`);
-
-        // send files to the cloud
-
-        // first send meta files
-        let sent = false;
-        for (let i = 0; i < allFiles.length; i++) {
-            const file = allFiles[i];
-            if (file.endsWith('.json')) {
-                await this.sendOneFileToCloud(`${this.workingCloudDir}/${file}`);
-                sent = true;
-            }
-        }
-        if (!sent) {
-            // create meta file anew and send it to the cloud
-            const fileName = this.saveMetaFile();
-            if (fileName) {
-                await this.sendOneFileToCloud(fileName);
-            } else {
-                this.log.debug(`[RSYNC] ${I18n.translate('Cannot create META file. No synchronization')}`);
-                return;
-            }
-        }
-
-        // send all pcap files
-        for (let i = 0; i < pcapFiles.length; i++) {
-            const file = pcapFiles[i];
-            await this.sendOneFileToCloud(`${this.workingCloudDir}/${file}`, sizes[file]);
-        }
-        this.syncRunning = false;
-        await this.setState('info.sync.running', false, true);
     }
 }
 

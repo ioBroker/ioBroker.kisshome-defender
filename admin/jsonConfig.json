@@ -110,6 +110,17 @@
                     "defaultValue": 1,
                     "disabled": "!data.email"
                 },
+                "saveThresholdSeconds": {
+                    "type": "slider",
+                    "sm": 11,
+                    "md": 6,
+                    "lg": 6,
+                    "newLine": true,
+                    "step": 10,
+                    "min": 120,
+                    "max": 3600,
+                    "label": "Save threshold in seconds"
+                },
                 "allowTraining": {
                     "newLine": true,
                     "type": "checkbox",

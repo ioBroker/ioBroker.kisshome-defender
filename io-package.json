@@ -78,7 +78,7 @@
         "password": "",
         "tempDir": "",
         "devices": [],
-        "allowTraining":  true,
+        "allowTraining": true,
         "anomalySensitivity": "medium",
         "saveThresholdSeconds": 900,
         "docker": {
@@ -117,7 +117,7 @@
             },
             "categories": [
                 {
-                    "category": "publicKey",
+                    "category": "uuid",
                     "name": {
                         "en": "Problem with KISSHome-Defender instance",
                         "de": "Problem mit KISSHome-Defender-Instanz",
@@ -133,17 +133,17 @@
                     },
                     "severity": "notify",
                     "description": {
-                        "en": "The public key was rejected because previous connections used a different one. It can happens, if your settings for instance was deleted and then the instance was created again. To make the acceptance of the new public key possible, please contact us under kisshome@internet-sicherheit.de and provide the reason why the public key was changed.",
-                        "de": "Der Public-Schlüssel wurde abgelehnt, da frühere Verbindungen einen anderen verwendeten. Es kann vorkommen, wenn Ihre Einstellungen für die Instanz gelöscht wurden und dann die Instanz erneut erstellt wurde. Um die Annahme des neuen öffentlichen Schlüssels zu ermöglichen, kontaktieren Sie uns bitte unter kisshome@internet-sicherheit.de und geben Sie den Grund an, warum der öffentliche Schlüssel geändert wurde.",
-                        "ru": "Публичный ключ был отклонен, потому что предыдущие подключения использовали другой. Это может произойти, если ваши настройки для экземпляра были удалены, а затем экземпляр был создан снова. Чтобы сделать возможным принятие нового открытого ключа, пожалуйста, свяжитесь с нами по адресу kisshome@internet-sicherheit.de и укажите причину изменения открытого ключа.",
-                        "pt": "A chave pública foi rejeitada porque as conexões anteriores usaram uma diferente. Pode acontecer se suas configurações para a instância foram excluídas e, em seguida, a instância foi criada novamente. Para tornar possível a aceitação da nova chave pública, entre em contato conosco em kisshome@internet-sicherheit.de e forneça o motivo da alteração da chave pública.",
-                        "nl": "De openbare sleutel werd afgewezen omdat eerdere verbindingen een andere gebruikten. Het kan gebeuren als uw instellingen voor de instantie zijn verwijderd en vervolgens de instantie opnieuw is gemaakt. Om de acceptatie van de nieuwe openbare sleutel mogelijk te maken, neem contact met ons op via kisshome@internet-sicherheit.de en geef de reden op waarom de openbare sleutel is gewijzigd.",
-                        "fr": "La clé publique a été rejetée car les connexions précédentes utilisaient une autre clé. Cela peut se produire si vos paramètres pour l'instance ont été supprimés, puis que l'instance a été recréée. Pour rendre possible l'acceptation de la nouvelle clé publique, veuillez nous contacter à kisshome@internet-sicherheit.de et fournir la raison pour laquelle la clé publique a été modifiée.",
-                        "it": "La chiave pubblica è stata rifiutata perché le connessioni precedenti ne utilizzavano una diversa. Può accadere se le impostazioni per l'istanza sono state eliminate e quindi l'istanza è stata creata nuovamente. Per rendere possibile l'accettazione del nuovo chiave pubblica, contattaci a kisshome@internet-sicherheit.de e fornisci il motivo per cui la chiave pubblica è stata modificata.",
-                        "es": "La clave pública fue rechazada porque las conexiones anteriores usaban una diferente. Puede suceder si su configuración para la instancia fue eliminada y luego la instancia fue creada nuevamente. Para hacer posible la aceptación de la nueva clave pública, contáctenos en kisshome@internet-sicherheit.de y proporcione la razón por la que se cambió la clave pública.",
-                        "pl": "Klucz publiczny został odrzucony, ponieważ poprzednie połączenia używały innego. Może się zdarzyć, jeśli Twoje ustawienia dla instancji zostały usunięte, a następnie instancja została utworzona ponownie. Aby umożliwić akceptację nowego klucza publicznego, skontaktuj się z nami pod adresem kisshome@internet-sicherheit.de i podaj powód zmiany klucza publicznego.",
-                        "uk": "Відкритий ключ був відхилений, оскільки попередні підключення використовували інший. Це може статися, якщо ваші налаштування для екземпляра були видалені, а потім екземпляр був створений знову. Щоб зробити прийняття нового відкритого ключа можливим, будь ласка, зв'яжіться з нами за адресою kisshome@internet-sicherheit.de і вкажіть причину зміни відкритого ключа.",
-                        "zh-cn": "公钥被拒绝，因为之前的连接使用了不同的公钥. 如果您的实例设置被删除，然后实例被重新创建，就会发生这种情况。为了使新公钥的接受成为可能，请通过 kisshome@internet-sicherheit.de 与我们联系，并提供更改公钥的原因。"
+                        "en": "The communication was rejected because the previous sessions used another UUID. It can happens, if you starts an adapter on the new system, but with the same email address. To make the acceptance of the new UUID possible, please contact us under kisshome@internet-sicherheit.de and provide the reason why the UUID was changed.",
+                        "de": "Die Kommunikation wurde abgelehnt, da die vorherigen Sitzungen eine andere UUID verwendet haben. Dies kann passieren, wenn Sie einen Adapter auf dem neuen System starten, aber mit derselben E-Mail-Adresse. Um die Annahme der neuen UUID zu ermöglichen, kontaktieren Sie uns bitte unter kisshome@internet-sicherheit.de und geben Sie den Grund an, warum die UUID geändert wurde.",
+                        "ru": "Связь была отклонена, потому что предыдущие сеансы использовали другой UUID. Это может произойти, если вы запускаете адаптер на новой системе, но с тем же адресом электронной почты. Чтобы сделать возможным принятие нового UUID, пожалуйста, свяжитесь с нами по адресу kisshome@internet-sicherheit.de и укажите причину, по которой UUID был изменен.",
+                        "pt": "A comunicação foi rejeitada porque as sessões anteriores usaram outro UUID. Isso pode acontecer se você iniciar um adaptador em um novo sistema, mas com o mesmo endereço de e-mail. Para tornar possível a aceitação do novo UUID, entre em contato conosco em kisshome@internet-sicherheit.de e forneça o motivo pelo qual o UUID foi alterado.",
+                        "nl": "De communicatie werd afgewezen omdat de vorige sessies een andere UUID gebruikten. Dit kan gebeuren als u een adapter op het nieuwe systeem start, maar met hetzelfde e-mailadres. Om de acceptatie van de nieuwe UUID mogelijk te maken, neem contact met ons op via kisshome@internet-sicherheit.de en geef de reden op waarom de UUID is gewijzigd.",
+                        "fr": "La communication a été rejetée car les sessions précédentes utilisaient un UUID différent. Cela peut se produire si vous démarrez un adaptateur sur le nouveau système, mais avec la même adresse e-mail. Pour rendre possible l'acceptation du nouvel UUID, veuillez nous contacter à kisshome@internet-sicherheit.de et fournir la raison pour laquelle l'UUID a été modifié.",
+                        "it": "La comunicazione è stata rifiutata perché le sessioni precedenti utilizzavano un UUID diverso. Può succedere se si avvia un adattatore su un nuovo sistema, ma con lo stesso indirizzo e-mail. Per rendere possibile l'accettazione del nuovo UUID, contattaci all'indirizzo kisshome@internet-sicherheit.de e fornisci il motivo per cui l'UUID è stato modificato.",
+                        "es": "La comunicación fue rechazada porque las sesiones anteriores usaron otro UUID. Puede suceder si inicia un adaptador en el nuevo sistema, pero con la misma dirección de correo electrónico. Para hacer posible la aceptación del nuevo UUID, contáctenos en kisshome@internet-sicherheit.de y proporcione el motivo por el cual se cambió el UUID.",
+                        "pl": "Komunikacja została odrzucona, ponieważ poprzednie sesje używały innego UUID. Może się to zdarzyć, jeśli uruchomisz adapter na nowym systemie, ale z tym samym adresem e-mail. Aby umożliwić akceptację nowego UUID, skontaktuj się z nami pod adresem kisshome@internet-sicherheit.de i podaj powód, dla którego UUID został zmieniony.",
+                        "uk": "Зв'язок було відхилено, оскільки попередні сеанси використовували інший UUID. Це може статися, якщо ви запускаєте адаптер на новій системі, але з тією ж адресою електронної пошти. Щоб зробити можливим прийняття нового UUID, будь ласка, зв'яжіться з нами за адресою kisshome@internet-sicherheit.de та надайте причину, чому UUID було змінено.",
+                        "zh-cn": "通信被拒绝，因为之前的会话使用了另一个UUID。如果您在新系统上启动适配器，但使用相同的电子邮件地址，就会发生这种情况。要使接受新UUID成为可能，请通过 kisshome@internet-sicherheit.de 与我们联系，并提供更改UUID的原因。"
                     },
                     "regex": [],
                     "limit": 1
@@ -346,7 +346,7 @@
             "native": {}
         },
         {
-            "_id": "info.sync",
+            "_id": "info.cloudSync",
             "type": "channel",
             "common": {
                 "name": {
@@ -366,7 +366,7 @@
             "native": {}
         },
         {
-            "_id": "info.sync.running",
+            "_id": "info.cloudSync.running",
             "type": "state",
             "common": {
                 "name": {
@@ -391,27 +391,52 @@
             "native": {}
         },
         {
-            "_id": "info.sync.keys",
-            "type": "config",
+            "_id": "info.ids.status",
+            "type": "state",
             "common": {
                 "name": {
-                    "en": "Public and private keys",
-                    "de": "Öffentliche und private Schlüssel",
-                    "ru": "Публичные и частные ключи",
-                    "pt": "Chaves públicas e privadas",
-                    "nl": "Openbare en privésleutels",
-                    "fr": "Clés publiques et privées",
-                    "it": "Chiavi pubbliche e private",
-                    "es": "Claves públicas y privadas",
-                    "pl": "Klucze publiczne i prywatne",
-                    "uk": "Публічні та приватні ключі",
-                    "zh-cn": "公钥和私钥"
-                }
+                    "en": "Status of KISSHome IDS container",
+                    "de": "Status des KISSHome IDS Containers",
+                    "ru": "Статус контейнера KISSHome IDS",
+                    "pt": "Status do contêiner KISSHome IDS",
+                    "nl": "Status van de KISSHome IDS-container",
+                    "fr": "Statut du conteneur KISSHome IDS",
+                    "it": "Stato del contenitore KISSHome IDS",
+                    "es": "Estado del contenedor KISSHome IDS",
+                    "pl": "Status kontenera KISSHome IDS",
+                    "uk": "Статус контейнера KISSHome IDS",
+                    "zh-cn": "KISSHome IDS容器的状态"
+                },
+                "type": "string",
+                "role": "state",
+                "read": true,
+                "write": false
             },
-            "native": {
-                "publicKey": "",
-                "privateKey": ""
-            }
+            "native": {}
+        },
+        {
+            "_id": "info.ids.connectedToFederatedServer",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Is KISSHome IDS connected to federated server",
+                    "de": "Ist KISSHome IDS mit dem föderierten Server verbunden",
+                    "ru": "Подключен ли KISSHome IDS к федеративному серверу",
+                    "pt": "KISSHome IDS está conectado ao servidor federado",
+                    "nl": "Is KISSHome IDS verbonden met de gefedereerde server",
+                    "fr": "KISSHome IDS est-il connecté au serveur fédéré",
+                    "it": "KISSHome IDS è connesso al server federato",
+                    "es": "KISSHome IDS está conectado al servidor federado",
+                    "pl": "Czy KISSHome IDS jest połączony z serwerem federacyjnym",
+                    "uk": "Чи підключено KISSHome IDS до федеративного сервера",
+                    "zh-cn": "KISSHome IDS是否连接到联合服务器"
+                },
+                "type": "boolean",
+                "role": "state",
+                "read": true,
+                "write": false
+            },
+            "native": {}
         }
     ]
 }

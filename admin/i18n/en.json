@@ -30,6 +30,7 @@
   "Recording enabled": "Recording enabled",
   "Recording is not running": "Recording is not running",
   "Recording is running": "Recording is running",
+  "Save threshold in seconds": "Save threshold in seconds",
   "Self-hosted": "Self-hosted",
   "The MAC address is important, but if you enter the IP address, the system will try to find the MAC address automatically.": "The MAC address is important, but if you enter the IP address, the system will try to find the MAC address automatically.",
   "This adapter can start the required docker image for you or you can start the docker image yourself. In the latter case, you need to set the Docker URL.": "This adapter can start the required docker image for you or you can start the docker image yourself. In the latter case, you need to set the Docker URL.",

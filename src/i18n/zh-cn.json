@@ -52,6 +52,5 @@
   "You must register this email first on https://kisshome-feldversuch.if-is.net/#register.": "您必须先在 https://kisshome-feldversuch.if-is.net/#register 上注册此电子邮件。",
   "invalid password": "密码无效",
   "missing email, public key or uuid": "缺少电子邮件、公钥或 UUID",
-  "public key changed. Please contact us via kisshome@internet-sicherheit.de": "公钥已更改。请通过 kisshome@internet-sicherheit.de 与我们联系。",
   "unknown": "未知"
 }

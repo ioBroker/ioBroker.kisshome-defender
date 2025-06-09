@@ -26,6 +26,7 @@
         "@iobroker/adapter-core": "^3.2.3",
         "@network-utils/vendor-lookup": "^1.0.10",
         "axios": "^1.9.0",
+        "form-data": "^4.0.3",
         "network": "^0.7.0"
     },
     "devDependencies": {

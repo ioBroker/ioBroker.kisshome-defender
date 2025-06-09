@@ -52,6 +52,6 @@
   "You must register this email first on https://kisshome-feldversuch.if-is.net/#register.": "Sie müssen diese E-Mail zuerst unter https://kisshome-feldversuch.if-is.net/#register registrieren.",
   "invalid password": "Ungültiges Passwort",
   "missing email, public key or uuid": "E-Mail, öffentlicher Schlüssel oder UUID fehlen",
-  "public key changed. Please contact us via kisshome@internet-sicherheit.de": "Der öffentliche Schlüssel hat sich geändert. Bitte kontaktieren Sie uns unter kisshome@internet-sicherheit.de",
+  "UUID changed. Please contact us via kisshome@internet-sicherheit.de": "Die UUID hat sich geändert. Bitte kontaktieren Sie uns unter kisshome@internet-sicherheit.de",
   "unknown": "unbekannt"
 }

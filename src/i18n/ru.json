@@ -52,6 +52,6 @@
   "You must register this email first on https://kisshome-feldversuch.if-is.net/#register.": "Сначала вам необходимо зарегистрировать этот адрес электронной почты на https://kisshome-feldversuch.if-is.net/#register.",
   "invalid password": "неверный пароль",
   "missing email, public key or uuid": "отсутствует адрес электронной почты, открытый ключ или UUID",
-  "public key changed. Please contact us via kisshome@internet-sicherheit.de": "Публичный ключ изменен. Свяжитесь с нами по адресу kisshome@internet-sicherheit.de",
+  "UUID changed. Please contact us via kisshome@internet-sicherheit.de": "UUID изменен. Свяжитесь с нами по адресу kisshome@internet-sicherheit.de",
   "unknown": "неизвестно"
 }

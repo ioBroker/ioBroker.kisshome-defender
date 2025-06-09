@@ -30,6 +30,7 @@
   "Recording enabled": "已启用录制功能",
   "Recording is not running": "录音未进行",
   "Recording is running": "正在录制",
+  "Save threshold in seconds": "保存阈值（以秒为单位）",
   "Self-hosted": "自托管",
   "The MAC address is important, but if you enter the IP address, the system will try to find the MAC address automatically.": "MAC 地址很重要，但如果您输入 IP 地址，系统将尝试自动查找 MAC 地址。",
   "This adapter can start the required docker image for you or you can start the docker image yourself. In the latter case, you need to set the Docker URL.": "此适配器可以为您启动所需的 Docker 镜像，也可以由您自行启动 Docker 镜像。在后一种情况下，您需要设置 Docker URL。",

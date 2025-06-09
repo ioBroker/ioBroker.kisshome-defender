@@ -1,6 +1,7 @@
+export type MACAddress = string;
 export type Device = {
     enabled: boolean;
-    mac: string;
+    mac: MACAddress;
     ip: string;
     desc: string;
     uuid: string;
@@ -36,4 +37,42 @@ export interface DefenderAdapterConfig {
     allowTraining: boolean;
     /** Interval in seconds to save the pcap data at least every x seconds */
     saveThresholdSeconds: number;
+}
+
+export interface DeviceStatistics {
+    mac: MACAddress;
+    countries?: {
+        country: string;
+        bytes: number;
+    }[];
+    // Show the total bytes per device
+    bytes: number;
+}
+
+export interface StatisticsResult {
+    analysisDurationMs: number;
+    totalBytes: number;
+    packets: number;
+    time: string;
+    devices: DeviceStatistics[];
+}
+
+export interface StoredStatisticsResult {
+    analysisDurationMs: number;
+    totalBytes: number;
+    packets: number;
+    results: StatisticsResult[];
+    countries: { [country: string]: number };
+}
+
+export interface Detection {
+    mac: MACAddress;
+    type: 'Warning' | 'Alert';
+    description: string;
+    country: string;
+    time: string;
+}
+
+export interface DetectionWithUUID extends Detection {
+    uuid: string;
 }
