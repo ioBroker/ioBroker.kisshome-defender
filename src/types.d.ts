@@ -76,3 +76,26 @@ export interface Detection {
 export interface DetectionWithUUID extends Detection {
     uuid: string;
 }
+
+export type UXEventType = 'click' | 'down' | 'up' | 'show' | 'hide' | 'change';
+export interface UXEvent {
+    id: string;
+    event: UXEventType;
+    isTouchEvent?: boolean;
+    ts: number;
+    data?: string;
+}
+
+export type DataRequestType = 'dataVolumePerDevice' | 'dataVolumePerCountry' | 'dataVolumePerDaytime' | 'allStatistics';
+
+export interface DataVolumePerDeviceResult {
+    [mac: MACAddress]: { series: [number, number][]; info?: { ip: string; desc: string } };
+}
+
+export interface DataVolumePerCountryResult {
+    [mac: MACAddress]: { countries: { [country: string]: number }; info?: { ip: string; desc: string } };
+}
+
+export interface DataVolumePerDaytimeResult {
+    [mac: string]: { dayTime: { [time03: string]: number }; info?: { ip: string; desc: string } };
+}

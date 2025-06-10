@@ -4,6 +4,7 @@
  */
 const { deleteFoldersRecursive, npmInstall, buildReact, copyFiles } = require('@iobroker/build-tools');
 const { existsSync, writeFileSync } = require('node:fs');
+const { execSync } = require('node:child_process');
 const adapterName = require('./package.json').name.replace('iobroker.', '');
 
 const srcAdmin = `${__dirname}/src-admin/`;
@@ -45,7 +46,11 @@ function widgetsCopyFiles() {
     copyFiles([`${srcWidgets}build/img/*`], `widgets/${adapterName}/img`);
 }
 
-if (process.argv.includes('--admin-0-clean')) {
+if (process.argv.includes('--build-backend')) {
+    execSync(`tsc --project ${__dirname}/src/tsconfig.build.json`, { stdio: 'inherit', cwd: `${__dirname}/src` });
+    copyFiles([`src/i18n/**/*`], `build/i18n/`);
+    process.exit();
+} else if (process.argv.includes('--admin-0-clean')) {
     adminClean();
     process.exit();
 } else if (process.argv.includes('--admin-1-npm')) {
@@ -79,6 +84,10 @@ if (process.argv.includes('--admin-0-clean')) {
     });
 } else if (process.argv.includes('--widget-3-copy')) {
     widgetsCopyFiles();
+} else if (process.argv.includes('--widget-build')) {
+    widgetsClean();
+    const promise = existsSync(`${srcWidgets}node_modules`) ? Promise.resolve() : npmInstall(srcWidgets);
+    promise.then(() => buildReact(srcWidgets, { rootDir: __dirname, vite: true })).then(() => widgetsCopyFiles());
 } else {
     adminClean();
     widgetsClean();

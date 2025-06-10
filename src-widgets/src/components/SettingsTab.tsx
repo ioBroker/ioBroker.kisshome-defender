@@ -7,6 +7,13 @@ import { I18n } from '@iobroker/adapter-react-v5';
 interface SettingsTabProps {
     context: VisContext;
     instance: string;
+    reportUxEvent: (event: {
+        id: string;
+        event: 'click' | 'down' | 'up' | 'show' | 'hide' | 'change';
+        isTouchEvent?: boolean;
+        ts: number;
+        data?: string;
+    }) => void;
 }
 interface SettingsTabState {
     initialConfig: {
@@ -135,27 +142,68 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
         return (
             <Paper
                 style={{
-                    width: '100%',
-                    height: '100%',
+                    width: 'calc(100% - 32px)',
+                    height: 'calc(100% - 32px)',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 16,
+                    padding: 16,
                 }}
             >
                 {this.state.adminLink ? (
-                    <div style={{ width: '100%' }}>
-                        <div style={{ fontWeight: 'bold', minWidth: 250 }}>{I18n.t('Manage monitored devices')}</div>
+                    <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 16 }}>
+                        <div style={{ fontWeight: 'bold', minWidth: 250 }}>
+                            {I18n.t('kisshome-defender_Manage monitored devices')}
+                        </div>
                         <Link
                             href={this.state.adminLink}
                             target="settings"
-                        />
+                            onClick={e => {
+                                this.props.reportUxEvent({
+                                    id: 'kisshome-defender-settings-admin-link',
+                                    event: 'click',
+                                    data: this.state.adminLink,
+                                    ts: Date.now(),
+                                    isTouchEvent: e instanceof TouchEvent,
+                                });
+                            }}
+                        >
+                            {I18n.t('kisshome-defender_Open in Admin')}
+                        </Link>
                     </div>
                 ) : null}
-                <div style={{ width: '100%' }}>
-                    <div style={{ fontWeight: 'bold', minWidth: 250 }}>{I18n.t('Protection enabled')}</div>
+                <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 16 }}>
+                    <div style={{ fontWeight: 'bold', minWidth: 250 }}>
+                        {I18n.t('kisshome-defender_Protection enabled')}
+                    </div>
                     <Switch
                         checked={this.state.enabled}
+                        onMouseDown={(event: React.MouseEvent<HTMLButtonElement>) => {
+                            this.props.reportUxEvent({
+                                id: 'kisshome-defender-settings-protection-enabled',
+                                event: 'down',
+                                ts: Date.now(),
+                                isTouchEvent: event instanceof TouchEvent,
+                            });
+                        }}
+                        onMouseUp={(event: React.MouseEvent<HTMLButtonElement>) => {
+                            this.props.reportUxEvent({
+                                id: 'kisshome-defender-settings-protection-enabled',
+                                event: 'up',
+                                ts: Date.now(),
+                                isTouchEvent: event instanceof TouchEvent,
+                            });
+                        }}
                         onChange={async (event, checked) => {
+                            this.props.reportUxEvent({
+                                id: 'kisshome-defender-settings-protection-enabled',
+                                event: 'change',
+                                ts: Date.now(),
+                                isTouchEvent: event instanceof TouchEvent,
+                            });
+
                             await this.props.context.socket.setState(
                                 `kisshome-defender.${this.props.instance}.info.recording.enabled`,
                                 checked,
@@ -163,14 +211,22 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                         }}
                     />
                 </div>
-                <div style={{ width: '100%', display: 'flex' }}>
-                    <div style={{ fontWeight: 'bold', minWidth: 250 }}>{I18n.t('Save threshold in seconds')}</div>
+                <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 16 }}>
+                    <div style={{ fontWeight: 'bold', minWidth: 250 }}>
+                        {I18n.t('kisshome-defender_Save threshold in seconds')}
+                    </div>
                     <Slider
                         style={{ flexGrow: 1 }}
                         min={2}
                         max={60}
                         value={this.state.newConfig.saveThresholdSeconds!}
                         onChange={(event, value) => {
+                            this.props.reportUxEvent({
+                                id: 'kisshome-defender-settings-save-threshold',
+                                event: 'change',
+                                ts: Date.now(),
+                                isTouchEvent: event instanceof TouchEvent,
+                            });
                             this.setState({
                                 newConfig: {
                                     anomalySensitivity: this.state.newConfig!.anomalySensitivity,
@@ -180,22 +236,31 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                         }}
                     />
                 </div>
-                <div style={{ width: '100%', display: 'flex' }}>
-                    <div style={{ fontWeight: 'bold', minWidth: 250 }}>{I18n.t('Anomaly sensitivity')}</div>
+                <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 16 }}>
+                    <div style={{ fontWeight: 'bold', minWidth: 250 }}>
+                        {I18n.t('kisshome-defender_Anomaly sensitivity')}
+                    </div>
                     <Select
+                        variant="standard"
                         value={this.state.newConfig.anomalySensitivity || 'medium'}
-                        onChange={event =>
+                        onChange={event => {
+                            this.props.reportUxEvent({
+                                id: 'kisshome-defender-settings-anomaly-sensitivity',
+                                event: 'change',
+                                ts: Date.now(),
+                                isTouchEvent: event instanceof TouchEvent,
+                            });
                             this.setState({
                                 newConfig: {
                                     anomalySensitivity: event.target.value as 'low' | 'medium' | 'high',
                                     saveThresholdSeconds: this.state.newConfig!.saveThresholdSeconds,
                                 },
-                            })
-                        }
+                            });
+                        }}
                     >
-                        <MenuItem value="low">{I18n.t('Low')}</MenuItem>
-                        <MenuItem value="medium">{I18n.t('Medium')}</MenuItem>
-                        <MenuItem value="high">{I18n.t('High')}</MenuItem>
+                        <MenuItem value="low">{I18n.t('kisshome-defender_Low')}</MenuItem>
+                        <MenuItem value="medium">{I18n.t('kisshome-defender_Medium')}</MenuItem>
+                        <MenuItem value="high">{I18n.t('kisshome-defender_High')}</MenuItem>
                     </Select>
                 </div>
                 {settingsChanged ? (
@@ -203,7 +268,29 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                         <Button
                             variant="contained"
                             color="primary"
-                            onClick={async () => {
+                            onMouseDown={(event: React.MouseEvent<HTMLButtonElement>) => {
+                                this.props.reportUxEvent({
+                                    id: 'kisshome-defender-settings-apply',
+                                    event: 'down',
+                                    ts: Date.now(),
+                                    isTouchEvent: event instanceof TouchEvent,
+                                });
+                            }}
+                            onMouseUp={(event: React.MouseEvent<HTMLButtonElement>) => {
+                                this.props.reportUxEvent({
+                                    id: 'kisshome-defender-settings-apply',
+                                    event: 'up',
+                                    ts: Date.now(),
+                                    isTouchEvent: event instanceof TouchEvent,
+                                });
+                            }}
+                            onClick={async (event: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
+                                this.props.reportUxEvent({
+                                    id: 'kisshome-defender-settings-apply',
+                                    event: 'click',
+                                    ts: Date.now(),
+                                    isTouchEvent: event instanceof TouchEvent,
+                                });
                                 const configObj = await this.props.context.socket.getObject(
                                     `system.adapter.kisshome-defender.${this.props.instance}`,
                                 );
@@ -226,7 +313,7 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                                 );
                             }}
                         >
-                            {I18n.t('Apply new settings')}
+                            {I18n.t('kisshome-defender_Apply new settings')}
                         </Button>
                     </div>
                 ) : null}

@@ -1,1 +1,26 @@
-{}
+{
+  "All": "Alle",
+  "All selected": "Alle ausgewählt",
+  "Anomaly sensitivity": "Anomalieempfindlichkeit",
+  "Apply new settings": "Neue Einstellungen anwenden",
+  "By country": "Nach Land",
+  "By day-time": "Tagsüber",
+  "Data volume": "Datenvolumen",
+  "Detections": "Erkennungen",
+  "High": "Hoch",
+  "Instance is not running": "Instanz läuft nicht",
+  "KISSHome": "KISSHome",
+  "Low": "Niedrig",
+  "Manage monitored devices": "Überwachte Geräte verwalten",
+  "Medium": "Medium",
+  "No data available": "Keine Daten verfügbar",
+  "Nothing selected": "Nichts ausgewählt",
+  "Protection enabled": "Schutz aktiviert",
+  "Save threshold in seconds": "Speicherschwelle in Sekunden",
+  "Selected: %s": "Ausgewählt: %s",
+  "Settings": "Einstellungen",
+  "Statistics": "Statistiken",
+  "Status": "Status",
+  "instance": "Adapterinstanz",
+  "set_label": "KISSHome Defender"
+}

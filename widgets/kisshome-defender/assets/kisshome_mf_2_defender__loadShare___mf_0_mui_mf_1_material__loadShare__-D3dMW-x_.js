@@ -1,1 +1,0 @@
-import{k as e,i as r}from"./kisshome_mf_2_defender__mf_v__runtimeInit__mf_v__-BU_gO0Ez.js";const{loadShare:i}=r,{initPromise:o}=e,s=o.then(_=>i("@mui/material",{customShareInfo:{shareConfig:{singleton:!0,strictVersion:!1,requiredVersion:"*"}}})),t=await s.then(_=>_());var n=t;export{n as k};

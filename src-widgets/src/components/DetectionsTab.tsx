@@ -5,6 +5,13 @@ import type { VisContext } from '@iobroker/types-vis-2';
 interface DetectionsTabProps {
     context: VisContext;
     instance: string;
+    reportUxEvent: (event: {
+        id: string;
+        event: 'click' | 'down' | 'up' | 'show' | 'hide' | 'change';
+        isTouchEvent?: boolean;
+        ts: number;
+        data?: string;
+    }) => void;
 }
 interface DetectionsTabState {
     demo: string;

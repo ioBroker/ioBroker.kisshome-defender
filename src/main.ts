@@ -20,7 +20,7 @@ import {
     getRecordURL,
 } from './lib/recording';
 import { getFritzBoxFilter, getFritzBoxInterfaces, getFritzBoxToken, getFritzBoxUsers } from './lib/fritzbox';
-import type { DefenderAdapterConfig, Device, MACAddress } from './types';
+import type { DataRequestType, DefenderAdapterConfig, Device, MACAddress, UXEvent } from './types';
 import CloudSync from './lib/CloudSync';
 import { IDSCommunication } from './lib/IDSCommunication';
 import Statistics from './lib/Statistics';
@@ -231,16 +231,17 @@ export class KISSHomeResearchAdapter extends Adapter {
 
                 case 'getData': {
                     if (msg.callback) {
-                        if (msg.message.type === 'dataVolumePerDevice') {
+                        const requestType: DataRequestType = msg.message.type || 'allStatistics';
+                        if (requestType === 'dataVolumePerDevice') {
                             this.sendTo(msg.from, msg.command, this.statistics?.getDataVolumePerDevice(), msg.callback);
-                        } else if (msg.message.type === 'dataVolumePerCountry') {
+                        } else if (requestType === 'dataVolumePerCountry') {
                             this.sendTo(
                                 msg.from,
                                 msg.command,
                                 this.statistics?.getDataVolumePerCountry(),
                                 msg.callback,
                             );
-                        } else if (msg.message.type === 'dataVolumePerDaytime') {
+                        } else if (requestType === 'dataVolumePerDaytime') {
                             this.sendTo(
                                 msg.from,
                                 msg.command,
@@ -251,6 +252,15 @@ export class KISSHomeResearchAdapter extends Adapter {
                             this.sendTo(msg.from, msg.command, this.statistics?.getAllStatistics(), msg.callback);
                         }
                     }
+                    break;
+                }
+
+                case 'reportUxEvents': {
+                    if (msg.message) {
+                        // Save UX events to the file
+                        this.cloudSync?.reportUxEvents(msg.message as UXEvent[]);
+                    }
+                    break;
                 }
             }
         }
@@ -441,6 +451,7 @@ export class KISSHomeResearchAdapter extends Adapter {
         await this.setState('info.recording.running', false, true);
         await this.setState('info.recording.triggerWrite', false, true);
 
+        this.statistics = new Statistics(this, this.IPs);
         if (!this.uniqueMacs.length) {
             this.log.warn(
                 `[PCAP] ${I18n.translate('No any MAC addresses provided for recording. Please provide some MAC addresses or Ip addresses, that could be resolved to MAC address')}`,
@@ -465,7 +476,6 @@ export class KISSHomeResearchAdapter extends Adapter {
             getDescriptionObject(this.IPs),
             this.workingCloudDir,
         );
-        this.statistics = new Statistics(this, this.workingIdsDir, this.IPs);
 
         if (this.recordingEnabled) {
             // Send the data every hour to the cloud

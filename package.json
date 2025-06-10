@@ -58,8 +58,8 @@
         "prepublishOnly": "npm run build",
         "lint": "eslint -c src/eslint.config.mjs src/",
         "lint-frontend": "eslint -c src-admin/eslint.config.mjs src-admin/",
-        "build": "npm run build:ts && npm run build:gui",
-        "build:ts": "tsc -p src/tsconfig.build.json",
+        "build": "npm run build-backend && npm run build:gui",
+        "build-backend": "node tasks --build-backend",
         "release": "release-script",
         "release-patch": "release-script patch --yes",
         "release-minor": "release-script minor --yes",
@@ -75,6 +75,7 @@
         "widget-1-npm": "node tasks --widget-1-npm",
         "widget-2-compile": "node tasks --widget-2-compile",
         "widget-3-copy": "node tasks --widget-3-copy",
+        "widget-build": "node tasks --widget-build",
         "build:gui": "node tasks"
     },
     "license": "MIT",

@@ -1,1 +1,26 @@
-{}
+{
+  "All": "Todo",
+  "All selected": "Todos los seleccionados",
+  "Anomaly sensitivity": "Sensibilidad a las anomalías",
+  "Apply new settings": "Aplicar nueva configuración",
+  "By country": "Por país",
+  "By day-time": "De día",
+  "Data volume": "Volumen de datos",
+  "Detections": "Detecciones",
+  "High": "Alto",
+  "Instance is not running": "La instancia no se está ejecutando",
+  "KISSHome": "KISSHome",
+  "Low": "Bajo",
+  "Manage monitored devices": "Administrar dispositivos monitoreados",
+  "Medium": "Medio",
+  "No data available": "No hay datos disponibles",
+  "Nothing selected": "Nada seleccionado",
+  "Protection enabled": "Protección habilitada",
+  "Save threshold in seconds": "Umbral de ahorro en segundos",
+  "Selected: %s": "Seleccionado: %s",
+  "Settings": "Ajustes",
+  "Statistics": "Estadística",
+  "Status": "Estado",
+  "instance": "Instancia del adaptador",
+  "set_label": "Defensor del hogar KISS"
+}

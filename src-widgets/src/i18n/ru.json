@@ -1,1 +1,26 @@
-{}
+{
+  "All": "Все",
+  "All selected": "Все выбрано",
+  "Anomaly sensitivity": "Аномальная чувствительность",
+  "Apply new settings": "Применить новые настройки",
+  "By country": "По стране",
+  "By day-time": "По дневному времени",
+  "Data volume": "Объем данных",
+  "Detections": "Обнаружения",
+  "High": "Высокий",
+  "Instance is not running": "Экземпляр не запущен",
+  "KISSHome": "KISSГлавная",
+  "Low": "Низкий",
+  "Manage monitored devices": "Управление контролируемыми устройствами",
+  "Medium": "Середина",
+  "No data available": "Нет доступных данных",
+  "Nothing selected": "Ничего не выбрано",
+  "Protection enabled": "Защита включена",
+  "Save threshold in seconds": "Порог сохранения в секундах",
+  "Selected: %s": "Выбрано: %s",
+  "Settings": "Настройки",
+  "Statistics": "Статистика",
+  "Status": "Статус",
+  "instance": "Экземпляр адаптера",
+  "set_label": "KISSHome Defender"
+}

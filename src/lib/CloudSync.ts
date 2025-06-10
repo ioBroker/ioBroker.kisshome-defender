@@ -1,5 +1,5 @@
 import { I18n } from '@iobroker/adapter-core';
-import type { DefenderAdapterConfig, Device } from '../types';
+import type { DefenderAdapterConfig, Device, UXEvent } from '../types';
 import type { Context } from './recording';
 import { existsSync, readdirSync, readFileSync, statSync, unlinkSync, writeFileSync } from 'node:fs';
 import { basename } from 'node:path';
@@ -21,6 +21,9 @@ export default class CloudSync {
     private readonly version: string;
     private emailOk: boolean | null = null;
     private readonly ready: Promise<void>;
+    private justSending = '';
+    private collectUxEvents: UXEvent[] | null = null;
+    private timeoutUxEvents: NodeJS.Timeout | null = null;
 
     constructor(
         adapter: ioBroker.Adapter,
@@ -154,6 +157,14 @@ export default class CloudSync {
             clearTimeout(this.syncTimer);
             this.syncTimer = null;
         }
+        if (this.timeoutUxEvents) {
+            clearTimeout(this.timeoutUxEvents);
+            this.timeoutUxEvents = null;
+        }
+        if (this.collectUxEvents?.length) {
+            this.saveUxEvents(this.collectUxEvents);
+            this.collectUxEvents = null;
+        }
     }
 
     async isEmailOk(): Promise<boolean> {
@@ -180,6 +191,7 @@ export default class CloudSync {
             const len = data.length;
 
             const md5 = CloudSync.calculateMd5(data);
+            this.justSending = fileName;
 
             // check if the file was sent successfully
             try {
@@ -197,7 +209,8 @@ export default class CloudSync {
 
                 if (responseCheck.status === 200 && responseCheck.data === md5) {
                     // file already uploaded, do not upload it again
-                    if (name.endsWith('.pcap')) {
+                    if (name.endsWith('.pcap') || name.includes('ux_events')) {
+                        this.justSending = '';
                         unlinkSync(fileName);
                     }
                     return;
@@ -289,6 +302,53 @@ export default class CloudSync {
         }
     }
 
+    public reportUxEvents(uxEvents: UXEvent[]): void {
+        this.collectUxEvents ||= [];
+        this.collectUxEvents.push(...uxEvents);
+
+        this.timeoutUxEvents ||= setTimeout(() => {
+            this.timeoutUxEvents = null;
+            if (this.collectUxEvents?.length) {
+                this.saveUxEvents(this.collectUxEvents);
+                this.collectUxEvents = null;
+            }
+        }, 120_000);
+    }
+
+    private saveUxEvents(uxEvents: UXEvent[]): void {
+        // Find UX events files
+        let fileName: string;
+        const files = readdirSync(this.workingDir)
+            .filter(f => f.includes('ux_events') && f.endsWith('.json'))
+            .sort();
+        if (!files.length || files[files.length - 1] === this.justSending) {
+            // create a new file
+            fileName = `${this.workingDir}/${getTimestamp()}_ux_events.json`;
+        } else {
+            // use the last file
+            fileName = `${this.workingDir}/${files[files.length - 1]}`;
+        }
+        let existingEvents: UXEvent[] = [];
+        if (existsSync(fileName)) {
+            try {
+                existingEvents = JSON.parse(readFileSync(fileName, 'utf8')) as UXEvent[];
+            } catch (e) {
+                this.adapter.log.warn(`${I18n.translate('Cannot read UX events file "%s"', fileName)}: ${e}`);
+            }
+        }
+        existingEvents.push(...uxEvents);
+
+        // save the file
+        try {
+            writeFileSync(fileName, JSON.stringify(existingEvents, null, 2), 'utf8');
+            this.adapter.log.debug(
+                `[RSYNC] ${I18n.translate('Saved UX events to file "%s"', fileName)} (${size2text(Buffer.byteLength(JSON.stringify(existingEvents, null, 2)))})`,
+            );
+        } catch (e) {
+            this.adapter.log.warn(`${I18n.translate('Cannot save UX events file "%s"', fileName)}: ${e}`);
+        }
+    }
+
     async startCloudSynchronization(): Promise<void> {
         await this.ready;
 
@@ -300,6 +360,12 @@ export default class CloudSync {
         if (!this.emailOk) {
             this.adapter.log.warn(`[RSYNC] ${I18n.translate('Email not registered. No synchronization')}`);
             return;
+        }
+
+        // if UX events are collected, save them
+        if (this.collectUxEvents?.length) {
+            this.saveUxEvents(this.collectUxEvents);
+            this.collectUxEvents = null;
         }
 
         // calculate the total number of bytes

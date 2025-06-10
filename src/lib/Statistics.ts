@@ -3,10 +3,19 @@
 // Every file contains objects with StoredStatisticsResult
 // The results will be returned as an option for echarts to display the statistics in a chart.
 
-import type { Device, MACAddress, StatisticsResult, StoredStatisticsResult } from '../types';
+import type {
+    DataVolumePerCountryResult,
+    DataVolumePerDaytimeResult,
+    DataVolumePerDeviceResult,
+    Device,
+    MACAddress,
+    StatisticsResult,
+    StoredStatisticsResult,
+} from '../types';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileNameToDate } from './utils';
+import { getAbsoluteDefaultDataDir } from '@iobroker/adapter-core';
 
 export default class Statistics {
     private readonly adapter: ioBroker.Adapter;
@@ -21,9 +30,9 @@ export default class Statistics {
     private readonly IPs: Device[];
     private readonly MAC2DESC: { [mac: MACAddress]: { ip: string; desc: string } } = {};
 
-    constructor(adapter: ioBroker.Adapter, workingDir: string, IPs: Device[]) {
+    constructor(adapter: ioBroker.Adapter, IPs: Device[]) {
         this.adapter = adapter;
-        this.workingDir = workingDir;
+        this.workingDir = join(getAbsoluteDefaultDataDir(), 'kisshome-defender');
         this.IPs = IPs;
         // Create a map for MAC addresses to IP and description
         this.IPs.forEach(ip => {
@@ -89,12 +98,10 @@ export default class Statistics {
     // 1. Data volume per device in time range (1 week) - line chart
     // 2. Data volume per country per device in time range (1 week) - stacked bar chart. Every bar is a device, and the height of the bar is the total data volume for that device.
     // 3. Data volume per daytime (0-6, 6-12, 12-18, 18-24) - bar chart. Every bar is a day, and the height of the bar is the total data volume for that day.
-    public getDataVolumePerDevice(): {
-        [mac: MACAddress]: { series: [number, number][]; info?: { ip: string; desc: string } };
-    } {
+    public getDataVolumePerDevice(): DataVolumePerDeviceResult {
         // For this information, we need all data for the last 7 days.
         const results = this.getData();
-        const macs: { [mac: MACAddress]: { series: [number, number][]; info?: { ip: string; desc: string } } } = {};
+        const macs: DataVolumePerDeviceResult = {};
         for (const result of results) {
             const ts = new Date(result.time).getTime(); // Get date in YYYY-MM-DD format
             result.devices.forEach(device => {
@@ -105,15 +112,11 @@ export default class Statistics {
         return macs;
     }
 
-    public getDataVolumePerCountry(): {
-        [mac: string]: { countries: { [country: string]: number }; info?: { ip: string; desc: string } };
-    } {
+    public getDataVolumePerCountry(): DataVolumePerCountryResult {
         // For this information, we need all data for the last 7 days.
         const results = this.getData();
 
-        const macs: {
-            [mac: string]: { countries: { [country: string]: number }; info?: { ip: string; desc: string } };
-        } = {};
+        const macs: DataVolumePerCountryResult = {};
         for (const result of results) {
             result.devices.forEach(device => {
                 device.countries?.forEach(country => {
@@ -127,14 +130,10 @@ export default class Statistics {
         return macs;
     }
 
-    public getDataVolumePerDaytime(): {
-        [mac: string]: { dayTime: { [time03: string]: number }; info?: { ip: string; desc: string } };
-    } {
+    public getDataVolumePerDaytime(): DataVolumePerDaytimeResult {
         // For this information, we need all data for the last 7 days.
         const results = this.getData();
-        const macs: {
-            [mac: string]: { dayTime: { [time03: string]: number }; info?: { ip: string; desc: string } };
-        } = {};
+        const macs: DataVolumePerDaytimeResult = {};
         for (const result of results) {
             const dayTime = Math.floor(new Date(result.time).getHours() / 6); // 0-3
             result.devices.forEach(device => {

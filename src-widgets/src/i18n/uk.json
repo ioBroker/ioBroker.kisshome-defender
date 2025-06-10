@@ -1,1 +1,26 @@
-{}
+{
+  "All": "Усі",
+  "All selected": "Усі вибрані",
+  "Anomaly sensitivity": "Чутливість до аномалій",
+  "Apply new settings": "Застосувати нові налаштування",
+  "By country": "За країною",
+  "By day-time": "Вдень",
+  "Data volume": "Обсяг даних",
+  "Detections": "Виявлення",
+  "High": "Високий",
+  "Instance is not running": "Екземпляр не працює",
+  "KISSHome": "KISSHome",
+  "Low": "Низький",
+  "Manage monitored devices": "Керування пристроями, що контролюються",
+  "Medium": "Середній",
+  "No data available": "Дані недоступні",
+  "Nothing selected": "Нічого не вибрано",
+  "Protection enabled": "Захист увімкнено",
+  "Save threshold in seconds": "Збереження порогу за секунди",
+  "Selected: %s": "Вибрано: %s",
+  "Settings": "Налаштування",
+  "Statistics": "Статистика",
+  "Status": "Статус",
+  "instance": "Екземпляр адаптера",
+  "set_label": "KISSDomal Defender"
+}

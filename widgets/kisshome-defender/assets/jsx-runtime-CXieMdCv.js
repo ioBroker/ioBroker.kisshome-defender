@@ -1,4 +1,4 @@
-import{k as i}from"./kisshome_mf_2_defender__loadShare__react__loadShare__-BuzZmBs-.js";var p={exports:{}},_={};/**
+import{k as i}from"./kisshome_mf_2_defender__loadShare__react__loadShare__-BQuOsQpm.js";var p={exports:{}},_={};/**
  * @license React
  * react-jsx-runtime.production.min.js
  *

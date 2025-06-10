@@ -96,15 +96,15 @@
                     "options": [
                         {
                             "value": "low",
-                            "text": "Low"
+                            "label": "Low"
                         },
                         {
                             "value": "medium",
-                            "text": "Medium"
+                            "label": "Medium"
                         },
                         {
                             "value": "high",
-                            "text": "High"
+                            "label": "High"
                         }
                     ],
                     "defaultValue": 1,
