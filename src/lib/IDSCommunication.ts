@@ -1,5 +1,6 @@
 import http from 'node:http';
 import dns from 'node:dns';
+import { randomUUID } from 'node:crypto';
 import { join } from 'node:path';
 import { existsSync, mkdirSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 import { networkInterfaces } from 'node:os';
@@ -168,22 +169,25 @@ export class IDSCommunication {
                 this.adapter.log.warn(`No suitable IPv4 address found for ${parsed.hostname}`);
                 return '127.0.0.1'; // Fallback to localhost
             }
-        } else if (parsed.hostname.match(/^[0-9a-fA-F:]+$/)) {
+            return ipv4;
+        }
+        if (parsed.hostname.match(/^[0-9a-fA-F:]+$/)) {
             // If IPv6, we assume the first address is the one to use
             const ipv6 = IDSCommunication.findSuitableIpv6Address(parsed.hostname);
             if (!ipv6) {
                 this.adapter.log.warn(`No suitable IPv6 address found for ${parsed.hostname}`);
                 return '::1'; // Fallback to localhost
             }
-        } else {
-            // resolve the hostname to an IP address
-            this.adapter.log.warn(`Unsupported hostname format: ${parsed.hostname}`);
-            try {
-                const ips = await dns.promises.lookup(parsed.hostname, { family: 4, all: true });
-                if (ips.length === 0) {
-                    this.adapter.log.warn(`No IPv4 addresses found for ${parsed.hostname}`);
-                    return '127.0.0.1';
-                }
+            return ipv6;
+        }
+
+        // resolve the hostname to an IP address
+        this.adapter.log.warn(`Hostname is not an IP address: ${parsed.hostname}`);
+        try {
+            const ips = await dns.promises.lookup(parsed.hostname, { family: 4, all: true });
+            if (ips.length === 0) {
+                this.adapter.log.warn(`No IPv4 addresses found for ${parsed.hostname}`);
+            } else {
                 for (const ip of ips) {
                     if (ip.family === 4) {
                         const ipv4 = IDSCommunication.findSuitableIpv4Address(ip.address);
@@ -192,28 +196,30 @@ export class IDSCommunication {
                         }
                     }
                 }
-            } catch {
-                // ignore
             }
-            try {
-                const ips = await dns.promises.lookup(parsed.hostname, { family: 6, all: true });
-                if (ips.length === 0) {
-                    this.adapter.log.warn(`No IPv6 addresses found for ${parsed.hostname}`);
-                    return '127.0.0.1';
-                }
-                for (const ip of ips) {
-                    if (ip.family === 6) {
-                        const ipv6 = IDSCommunication.findSuitableIpv6Address(ip.address);
-                        if (ipv6) {
-                            return ipv6;
-                        }
+        } catch {
+            // ignore
+        }
+
+        try {
+            const ips = await dns.promises.lookup(parsed.hostname, { family: 6, all: true });
+            if (ips.length === 0) {
+                this.adapter.log.warn(`No IPv6 addresses found for ${parsed.hostname}`);
+                return '127.0.0.1';
+            }
+            for (const ip of ips) {
+                if (ip.family === 6) {
+                    const ipv6 = IDSCommunication.findSuitableIpv6Address(ip.address);
+                    if (ipv6) {
+                        return ipv6;
                     }
                 }
-            } catch {
-                // ignore
             }
-            this.adapter.log.warn(`No addresses found for ${parsed.hostname}`);
+        } catch (error) {
+            // ignore
+            this.adapter.log.warn(`Error resolving hostname ${parsed.hostname}: ${error.message}`);
         }
+        this.adapter.log.warn(`No addresses found for ${parsed.hostname}`);
         return '127.0.0.1';
     }
 
@@ -255,7 +261,7 @@ export class IDSCommunication {
     private async _getStatus(): Promise<void> {
         try {
             const response = await axios.get(`${this.idsUrl}/status`);
-            this.adapter.log.info(`Status: ${response.status} ${response.data}`);
+            this.adapter.log.info(`Status: ${response.status} ${JSON.stringify(response.data)}`);
             // {
             //   "Result": "Success",
             //   "Message": {
@@ -344,6 +350,7 @@ export class IDSCommunication {
                 this.adapter.log.error(`Error reading statistics file ${fileName}: ${e.message}`);
             }
         }
+
         data ||= {
             analysisDurationMs: 0,
             totalBytes: 0,
@@ -402,11 +409,16 @@ export class IDSCommunication {
                 this.uploadStatus.status = 'idle';
             }
         }
+        if (data.statistics) {
+            data.statistics.uuid ||= randomUUID(); // Ensure statistics have a UUID
+            void this.aggregateStatistics(data.statistics);
+        }
 
         // Save detected events if available
         if (data.detections?.length) {
             const newDetections = data.detections;
-            void this.adapter.getStateAsync('info.detections').then(state => {
+            const useUUD = data.statistics?.uuid || '';
+            void this.adapter.getStateAsync('info.detections.json').then(state => {
                 let detections: DetectionWithUUID[] = [];
                 try {
                     detections = state?.val ? JSON.parse(state.val as string) : [];
@@ -422,7 +434,8 @@ export class IDSCommunication {
 
                 for (let i = 0; i < newDetections.length; i++) {
                     const detection: DetectionWithUUID = newDetections[i] as DetectionWithUUID;
-                    detection.uuid = crypto.randomUUID(); // Generate a unique ID for the detection
+                    detection.scanUUID = useUUD; // Get the parent UUID if available
+                    detection.uuid = randomUUID(); // Generate a unique ID for the detection
                     this.adapter.log.warn(
                         `Detection: ${detection.type} for device ${detection.mac} (${detection.country}) at ${detection.time}: ${detection.description}`,
                     );
@@ -430,12 +443,8 @@ export class IDSCommunication {
                     // save it in the state
                 }
 
-                void this.adapter.setState('info.detections', JSON.stringify(detections), true);
+                void this.adapter.setState('info.detections.json', JSON.stringify(detections), true);
             });
-        }
-
-        if (data.statistics) {
-            void this.aggregateStatistics(data.statistics);
         }
 
         if (data.file && existsSync(`${this.workingFolder}/${data.file}`)) {
@@ -570,7 +579,7 @@ export class IDSCommunication {
 
         const filePath = `${this.workingFolder}/${fileName}`;
         const formData = new FormData();
-        formData.append('file', readFileSync(filePath), { filename: fileName });
+        formData.append('data', readFileSync(filePath), { filename: fileName, contentType: 'application/octet-stream', });
 
         axios
             .post(`${this.idsUrl}/pcap`, formData, {
@@ -615,18 +624,12 @@ export class IDSCommunication {
                 } catch (error) {
                     this.adapter.log.error(`Error deleting file ${files[i]}: ${error.message}`);
                 }
+                files.splice(i, 1);
             }
         }
 
-        if (this.uploadStatus.status === 'idle') {
-            // Get the first file in the IDS folder
-            const files = readdirSync(this.workingFolder)
-                .filter(file => file.endsWith('.pcap'))
-                .sort();
-
-            if (files.length) {
-                void this.sendFile(files[0]);
-            }
+        if (this.uploadStatus.status === 'idle' && files.length) {
+            void this.sendFile(files[0]);
         }
     }
 }

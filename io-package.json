@@ -213,6 +213,76 @@
             "native": {}
         },
         {
+            "_id": "info.detections",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Detections",
+                    "de": "Erkennungen",
+                    "ru": "Обнаружения",
+                    "pt": "Detecções",
+                    "nl": "Detecties",
+                    "fr": "Détections",
+                    "it": "Rilevamenti",
+                    "es": "Detecciones",
+                    "pl": "Wykrycia",
+                    "uk": "Виявлення",
+                    "zh-cn": "检测"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.detections.json",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Detections for last 7 days",
+                    "de": "Erkennungen der letzten 7 Tage",
+                    "ru": "Обнаружения за последние 7 дней",
+                    "pt": "Detecções dos últimos 7 dias",
+                    "nl": "Detecties van de afgelopen 7 dagen",
+                    "fr": "Détections des 7 derniers jours",
+                    "it": "Rilevamenti degli ultimi 7 giorni",
+                    "es": "Detecciones de los últimos 7 días",
+                    "pl": "Wykrycia z ostatnich 7 dni",
+                    "uk": "Виявлення за останні 7 днів",
+                    "zh-cn": "过去7天的检测"
+                },
+                "type": "json",
+                "role": "state",
+                "read": true,
+                "write": false,
+                "def": "[]"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.detections.lastSeen",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Last seen detection ID",
+                    "de": "Zuletzt gesehene Erkennungs-ID",
+                    "ru": "Последний обнаруженный ID",
+                    "pt": "Último ID de detecção visto",
+                    "nl": "Laatst gezien detectie-ID",
+                    "fr": "Dernier ID de détection vu",
+                    "it": "Ultimo ID di rilevamento visto",
+                    "es": "Último ID de detección visto",
+                    "pl": "Ostatnio wid, ziany identyfikator wykrycia",
+                    "uk": "Останній ID виявлення",
+                    "zh-cn": "最后看到的检测ID"
+                },
+                "type": "string",
+                "role": "state",
+                "read": true,
+                "write": false,
+                "def": ""
+            },
+            "native": {}
+        },
+        {
             "_id": "info.recording",
             "type": "channel",
             "common": {
@@ -405,6 +475,26 @@
             "native": {}
         },
         {
+            "_id": "info.ids",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Information about KISSHome IDS container",
+                    "de": "Informationen zum KISSHome IDS Container",
+                    "ru": "Информация о контейнере KISSHome IDS",
+                    "pt": "Informações sobre o contêiner KISSHome IDS",
+                    "nl": "Informatie over de KISSHome IDS-container",
+                    "fr": "Informations sur le conteneur KISSHome IDS",
+                    "it": "Informazioni sul contenitore KISSHome IDS",
+                    "es": "Información sobre el contenedor KISSHome IDS",
+                    "pl": "Informacje o kontenerze KISSHome IDS",
+                    "uk": "Інформація про контейнер KISSHome IDS",
+                    "zh-cn": "关于KISSHome IDS容器的信息"
+                }
+            },
+            "native": {}
+        },
+        {
             "_id": "info.ids.status",
             "type": "state",
             "common": {
@@ -422,9 +512,40 @@
                     "zh-cn": "KISSHome IDS容器的状态"
                 },
                 "type": "string",
+                "states": {
+                    "Started": "STARTED",
+                    "Running": "RUNNING",
+                    "Configuring": "CONFIGURING",
+                    "Analyzing": "ANALYZING",
+                    "Exited": "EXITED"
+                },
                 "role": "state",
                 "read": true,
                 "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.ids.restart",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Restart KISSHome IDS container",
+                    "de": "KISSHome IDS Container neu starten",
+                    "ru": "Перезапустить контейнер KISSHome IDS",
+                    "pt": "Reiniciar o contêiner KISSHome IDS",
+                    "nl": "KISSHome IDS-container opnieuw opstarten",
+                    "fr": "Redémarrer le conteneur KISSHome IDS",
+                    "it": "Riavviare il contenitore KISSHome IDS",
+                    "es": "Reiniciar el contenedor KISSHome IDS",
+                    "pl": "Uruchom ponownie kontener KISSHome IDS",
+                    "uk": "Перезапустити контейнер KISSHome IDS",
+                    "zh-cn": "重新启动KISSHome IDS容器"
+                },
+                "type": "boolean",
+                "role": "button",
+                "read": false,
+                "write": true
             },
             "native": {}
         },

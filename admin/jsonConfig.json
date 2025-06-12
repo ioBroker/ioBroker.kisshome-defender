@@ -218,7 +218,16 @@
                     "type": "text",
                     "label": "Docker URL",
                     "help": "Like http://dockerIp:5000",
-                    "hidden": "!!data.selfHosted"
+                    "hidden": "!!data.docker?.selfHosted"
+                },
+                "_restart": {
+                    "newLine": true,
+                    "type": "state",
+                    "control": "button",
+                    "sm": 12,
+                    "label": "Restart Docker Container",
+                    "hidden": "!!data.docker?.selfHosted",
+                    "disabled": "!_alive"
                 }
             }
         }

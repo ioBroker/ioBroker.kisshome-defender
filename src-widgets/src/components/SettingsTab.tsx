@@ -15,6 +15,7 @@ interface SettingsTabProps {
         data?: string;
     }) => void;
 }
+
 interface SettingsTabState {
     initialConfig: {
         anomalySensitivity: 'low' | 'medium' | 'high';
@@ -154,7 +155,7 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
             >
                 {this.state.adminLink ? (
                     <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 16 }}>
-                        <div style={{ fontWeight: 'bold', minWidth: 250 }}>
+                        <div style={{ fontWeight: 'bold', minWidth: 280 }}>
                             {I18n.t('kisshome-defender_Manage monitored devices')}
                         </div>
                         <Link
@@ -175,7 +176,7 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                     </div>
                 ) : null}
                 <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 16 }}>
-                    <div style={{ fontWeight: 'bold', minWidth: 250 }}>
+                    <div style={{ fontWeight: 'bold', minWidth: 280 }}>
                         {I18n.t('kisshome-defender_Protection enabled')}
                     </div>
                     <Switch
@@ -211,14 +212,46 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                         }}
                     />
                 </div>
-                <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 16 }}>
-                    <div style={{ fontWeight: 'bold', minWidth: 250 }}>
+                <div
+                    style={{
+                        width: 'calc(100% - 32px)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 16,
+                        marginRight: 32,
+                    }}
+                >
+                    <div style={{ fontWeight: 'bold', minWidth: 280 }}>
                         {I18n.t('kisshome-defender_Save threshold in seconds')}
                     </div>
                     <Slider
                         style={{ flexGrow: 1 }}
                         min={2}
                         max={60}
+                        valueLabelDisplay="on"
+                        valueLabelFormat={val => I18n.t('kisshome-defender_%s minutes', val)}
+                        marks={[
+                            {
+                                value: 2,
+                                label: I18n.t('kisshome-defender_%s minutes', 2),
+                            },
+                            {
+                                value: 15,
+                                label: I18n.t('kisshome-defender_%s minutes', 15),
+                            },
+                            {
+                                value: 30,
+                                label: I18n.t('kisshome-defender_%s minutes', 30),
+                            },
+                            {
+                                value: 45,
+                                label: I18n.t('kisshome-defender_%s minutes', 45),
+                            },
+                            {
+                                value: 60,
+                                label: I18n.t('kisshome-defender_one hour'),
+                            },
+                        ]}
                         value={this.state.newConfig.saveThresholdSeconds!}
                         onChange={(event, value) => {
                             this.props.reportUxEvent({
@@ -237,10 +270,11 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                     />
                 </div>
                 <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 16 }}>
-                    <div style={{ fontWeight: 'bold', minWidth: 250 }}>
+                    <div style={{ fontWeight: 'bold', minWidth: 280 }}>
                         {I18n.t('kisshome-defender_Anomaly sensitivity')}
                     </div>
                     <Select
+                        style={{ minWidth: 180 }}
                         variant="standard"
                         value={this.state.newConfig.anomalySensitivity || 'medium'}
                         onChange={event => {
@@ -263,60 +297,58 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                         <MenuItem value="high">{I18n.t('kisshome-defender_High')}</MenuItem>
                     </Select>
                 </div>
-                {settingsChanged ? (
-                    <div style={{ width: '100%' }}>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onMouseDown={(event: React.MouseEvent<HTMLButtonElement>) => {
-                                this.props.reportUxEvent({
-                                    id: 'kisshome-defender-settings-apply',
-                                    event: 'down',
-                                    ts: Date.now(),
-                                    isTouchEvent: event instanceof TouchEvent,
-                                });
-                            }}
-                            onMouseUp={(event: React.MouseEvent<HTMLButtonElement>) => {
-                                this.props.reportUxEvent({
-                                    id: 'kisshome-defender-settings-apply',
-                                    event: 'up',
-                                    ts: Date.now(),
-                                    isTouchEvent: event instanceof TouchEvent,
-                                });
-                            }}
-                            onClick={async (event: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
-                                this.props.reportUxEvent({
-                                    id: 'kisshome-defender-settings-apply',
-                                    event: 'click',
-                                    ts: Date.now(),
-                                    isTouchEvent: event instanceof TouchEvent,
-                                });
-                                const configObj = await this.props.context.socket.getObject(
-                                    `system.adapter.kisshome-defender.${this.props.instance}`,
-                                );
-                                this.setState(
-                                    {
-                                        initialConfig: {
-                                            anomalySensitivity: this.state.newConfig!.anomalySensitivity!,
-                                            saveThresholdSeconds: this.state.newConfig!.saveThresholdSeconds!,
-                                        },
+                <div style={{ width: '100%', opacity: settingsChanged ? 1 : 0 }}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        disabled={!settingsChanged}
+                        onMouseDown={(event: React.MouseEvent<HTMLButtonElement>) => {
+                            this.props.reportUxEvent({
+                                id: 'kisshome-defender-settings-apply',
+                                event: 'down',
+                                ts: Date.now(),
+                                isTouchEvent: event instanceof TouchEvent,
+                            });
+                        }}
+                        onMouseUp={(event: React.MouseEvent<HTMLButtonElement>) => {
+                            this.props.reportUxEvent({
+                                id: 'kisshome-defender-settings-apply',
+                                event: 'up',
+                                ts: Date.now(),
+                                isTouchEvent: event instanceof TouchEvent,
+                            });
+                        }}
+                        onClick={async (event: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
+                            this.props.reportUxEvent({
+                                id: 'kisshome-defender-settings-apply',
+                                event: 'click',
+                                ts: Date.now(),
+                                isTouchEvent: event instanceof TouchEvent,
+                            });
+                            const configObj = await this.props.context.socket.getObject(
+                                `system.adapter.kisshome-defender.${this.props.instance}`,
+                            );
+                            this.setState(
+                                {
+                                    initialConfig: {
+                                        anomalySensitivity: this.state.newConfig!.anomalySensitivity!,
+                                        saveThresholdSeconds: this.state.newConfig!.saveThresholdSeconds!,
                                     },
-                                    () => {
-                                        configObj.native.anomalySensitivity = this.state.newConfig!.anomalySensitivity;
-                                        configObj.native.saveThresholdSeconds =
-                                            this.state.newConfig!.saveThresholdSeconds;
-                                        void this.props.context.socket.setObject(
-                                            `system.adapter.kisshome-defender.${this.props.instance}`,
-                                            configObj,
-                                        );
-                                    },
-                                );
-                            }}
-                        >
-                            {I18n.t('kisshome-defender_Apply new settings')}
-                        </Button>
-                    </div>
-                ) : null}
+                                },
+                                () => {
+                                    configObj.native.anomalySensitivity = this.state.newConfig!.anomalySensitivity;
+                                    configObj.native.saveThresholdSeconds = this.state.newConfig!.saveThresholdSeconds;
+                                    void this.props.context.socket.setObject(
+                                        `system.adapter.kisshome-defender.${this.props.instance}`,
+                                        configObj,
+                                    );
+                                },
+                            );
+                        }}
+                    >
+                        {I18n.t('kisshome-defender_Apply new settings')}
+                    </Button>
+                </div>
             </Paper>
         );
     }

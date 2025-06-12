@@ -135,12 +135,12 @@ export default class Statistics {
         const results = this.getData();
         const macs: DataVolumePerDaytimeResult = {};
         for (const result of results) {
-            const dayTime = Math.floor(new Date(result.time).getHours() / 6); // 0-3
+            const dayTime: 0 | 1 | 2 | 3 = Math.floor(new Date(result.time).getHours() / 6) as 0 | 1 | 2 | 3; // 0-3
             result.devices.forEach(device => {
                 device.countries?.forEach(country => {
                     macs[device.mac] ||= { dayTime: {}, info: this.MAC2DESC[device.mac] };
                     macs[device.mac].dayTime[dayTime] ||= 0;
-                    macs[device.mac].dayTime[dayTime] += country.bytes;
+                    macs[device.mac].dayTime[dayTime]! += country.bytes;
                 });
             });
         }

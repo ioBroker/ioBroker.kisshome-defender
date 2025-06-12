@@ -1,4 +1,5 @@
 {
+  "%s minutes": "%s Min.",
   "All": "Alle",
   "All selected": "Alle ausgewählt",
   "Anomaly sensitivity": "Anomalieempfindlichkeit",
@@ -12,9 +13,10 @@
   "KISSHome": "KISSHome",
   "Low": "Niedrig",
   "Manage monitored devices": "Überwachte Geräte verwalten",
-  "Medium": "Medium",
+  "Medium": "Mittel",
   "No data available": "Keine Daten verfügbar",
   "Nothing selected": "Nichts ausgewählt",
+  "Open in Admin": "Im Adminbereich öffnen",
   "Protection enabled": "Schutz aktiviert",
   "Save threshold in seconds": "Speicherschwelle in Sekunden",
   "Selected: %s": "Ausgewählt: %s",
@@ -22,5 +24,6 @@
   "Statistics": "Statistiken",
   "Status": "Status",
   "instance": "Adapterinstanz",
+  "one hour": "Stunde",
   "set_label": "KISSHome Defender"
 }

@@ -1,4 +1,5 @@
 {
+  "%s minutes": "%s мин.",
   "All": "Все",
   "All selected": "Все выбрано",
   "Anomaly sensitivity": "Аномальная чувствительность",
@@ -15,6 +16,7 @@
   "Medium": "Середина",
   "No data available": "Нет доступных данных",
   "Nothing selected": "Ничего не выбрано",
+  "Open in Admin": "Открыть в Администраторе",
   "Protection enabled": "Защита включена",
   "Save threshold in seconds": "Порог сохранения в секундах",
   "Selected: %s": "Выбрано: %s",
@@ -22,5 +24,6 @@
   "Statistics": "Статистика",
   "Status": "Статус",
   "instance": "Экземпляр адаптера",
+  "one hour": "один час",
   "set_label": "KISSHome Defender"
 }

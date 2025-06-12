@@ -474,7 +474,7 @@ export class KISSHomeResearchAdapter extends Adapter {
             this,
             this.config,
             getDescriptionObject(this.IPs),
-            this.workingCloudDir,
+            this.workingIdsDir,
         );
 
         if (this.recordingEnabled) {
@@ -486,9 +486,11 @@ export class KISSHomeResearchAdapter extends Adapter {
                     this.log.error(`[PCAP] ${I18n.translate('Cannot start recording')}: ${e}`);
                 });
 
-                await this.idsCommunication.start();
+                //await this.idsCommunication.start();
             }
         } else {
+            // Start communication with IDS
+            await this.idsCommunication.start();
             this.log.warn(I18n.translate('Recording is not enabled. Do nothing.'));
         }
     }

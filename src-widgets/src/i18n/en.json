@@ -1,4 +1,5 @@
 {
+    "%s minutes": "%s min.",
     "All": "All",
     "All selected": "All selected",
     "Anomaly sensitivity": "Anomaly sensitivity",
@@ -15,6 +16,7 @@
     "Medium": "Medium",
     "No data available": "No data available",
     "Nothing selected": "Nothing selected",
+    "Open in Admin": "Open in Admin",
     "Protection enabled": "Protection enabled",
     "Save threshold in seconds": "Save threshold in seconds",
     "Selected: %s": "Selected: %s",
@@ -22,5 +24,6 @@
     "Statistics": "Statistics",
     "Status": "Status",
     "instance": "Adapter instance",
+    "one hour": "one hour",
     "set_label": "KISSHome Defender"
 }

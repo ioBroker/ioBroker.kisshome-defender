@@ -119,6 +119,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
     private readonly refDataVolumePerDaytime = React.createRef<HTMLDivElement | null>();
     private echartsReact: ReactEchartsCore | null = null;
     private countrySelected: { [country: string]: boolean } = {};
+    private dayTimeSelected: { [dayTime: string]: boolean } = {};
 
     constructor(props: StatisticsTabProps) {
         super(props);
@@ -277,10 +278,155 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         }
     }
 
+    getDataVolumePerDaytimeChartOptions(): EChartsOption | null {
+        if (!this.state.dataVolumePerDaytime.data) {
+            return null;
+        }
+
+        const series: BarSeriesOption[] = [];
+        let maxY = 0;
+        const xData: string[] = [];
+        const totalData: number[] = [];
+        const macAddresses: string[] = [];
+
+        // create 4 daytime's
+        for (let i = 0; i < 4; i++) {
+            const dayTimeItem: BarSeriesOption = {
+                name: i === 0 ? '0-6' : i === 1 ? '6-12' : i === 2 ? '12-18' : '18-24',
+                type: 'bar',
+                stack: 'total',
+                data: [],
+                emphasis: {
+                    focus: 'series',
+                },
+            };
+            series.push(dayTimeItem);
+            this.dayTimeSelected[i] ??= true; // Select country by default
+        }
+
+        // Collect all possible countries
+        Object.keys(this.state.dataVolumePerDaytime.data).forEach(mac => {
+            if (this.state.dataVolumePerDaytime.data) {
+                const item = this.state.dataVolumePerDaytime.data[mac];
+                let sum = 0;
+                if (item.dayTime) {
+                    xData.push(item.info?.desc || item.info?.ip || mac);
+                    for (let i: 0 | 1 | 2 | 3 = 0; i < 4; i++) {
+                        const value = item.dayTime[i.toString() as '0' | '1' | '2' | '3'] || 0;
+                        sum += value;
+                        const seriesData = series[i].data;
+                        if (seriesData) {
+                            seriesData[xData.length - 1] = value;
+                        }
+                    }
+                }
+                totalData[xData.length - 1] = 0;
+                macAddresses[xData.length - 1] = mac;
+                if (sum > maxY) {
+                    maxY = sum;
+                }
+            }
+        });
+
+        if (!series.length) {
+            return null;
+        }
+
+        series.push({
+            name: '',
+            type: 'bar',
+            stack: 'total',
+            tooltip: { show: false },
+            label: {
+                show: true,
+                position: 'top',
+                formatter: p => {
+                    if (!this.state.dataVolumePerDaytime.data) {
+                        return '';
+                    }
+                    let sum = 0;
+                    for (let i = 0; i < 4; i++) {
+                        if (this.dayTimeSelected[i]) {
+                            sum +=
+                                this.state.dataVolumePerDaytime.data[macAddresses[p.dataIndex]].dayTime[
+                                    i.toString() as '0' | '1' | '2' | '3'
+                                ] || 0;
+                        }
+                    }
+                    return bytes2string(sum, maxY);
+                },
+            },
+            data: totalData,
+        });
+
+        return {
+            backgroundColor: 'transparent',
+            grid: {
+                bottom: 100,
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    // Use axis to trigger tooltip
+                    type: 'shadow', // 'shadow' as default; can also be 'line' or 'shadow'
+                },
+                formatter: (_params: any): string => {
+                    const params = _params as BarSeriesTooltipParams[];
+                    let content = `${params[0].axisValueLabel}<br/>`;
+                    params.forEach(item => {
+                        content += `${item.marker + item.seriesName}: ${bytes2string(item.data, maxY)}<br/>`;
+                    });
+                    return content;
+                },
+            },
+            legend: {
+                show: true,
+            },
+            xAxis: {
+                type: 'category',
+                axisLabel: {
+                    rotate: 45,
+                },
+                data: xData,
+            },
+            yAxis: {
+                type: 'value',
+                axisLabel: {
+                    formatter: (value: number) => bytes2string(value, maxY),
+                },
+            },
+            // @ts-expect-error fix later
+            series,
+        };
+    }
+
     renderDayTimeChart(): React.JSX.Element {
+        const options = this.getDataVolumePerDaytimeChartOptions();
+
         return (
             <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                 {this.renderLoading(!!this.state.dataVolumePerDaytime.data)}
+                <div
+                    ref={this.refDataVolumePerDaytime}
+                    style={{ width: '100%', height: '100%' }}
+                >
+                    {this.state.height && options && (
+                        <ReactEchartsCore
+                            ref={e => {
+                                this.echartsReact = e;
+                            }}
+                            echarts={echarts}
+                            option={options}
+                            notMerge
+                            lazyUpdate
+                            theme={this.props.context.themeType === 'dark' ? 'dark' : ''}
+                            style={{ height: `${this.state.height}px`, width: '100%' }}
+                            opts={{ renderer: 'svg' }}
+                            onEvents={{ legendselectchanged: this.onLegendDayTimeSelectChanged }}
+                        />
+                    )}
+                    {!options && <div style={{ padding: 16 }}>{I18n.t('kisshome-defender_No data available')}</div>}
+                </div>
             </div>
         );
     }
@@ -408,6 +554,22 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
     onLegendSelectChanged = (e: { selected: Record<string, boolean> }, _echarts: echarts.ECharts): void => {
         // If all series are deselected, select the first one
         this.countrySelected = e.selected;
+        this.echartsReact?.getEchartsInstance()?.setOption({});
+    };
+
+    onLegendDayTimeSelectChanged = (e: { selected: Record<string, boolean> }, _echarts: echarts.ECharts): void => {
+        // If all series are deselected, select the first one
+        Object.keys(e.selected).forEach(k => {
+            if (k === '0-6') {
+                this.dayTimeSelected[0] = e.selected[k];
+            } else if (k === '6-12') {
+                this.dayTimeSelected[1] = e.selected[k];
+            } else if (k === '12-18') {
+                this.dayTimeSelected[2] = e.selected[k];
+            } else if (k === '18-24') {
+                this.dayTimeSelected[3] = e.selected[k];
+            }
+        });
         this.echartsReact?.getEchartsInstance()?.setOption({});
     };
 
@@ -635,13 +797,25 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                     value={Object.keys(this.state.legendMacs).filter(mac => this.state.legendMacs[mac])}
                     multiline
                     open={this.state.legendOpened}
-                    onOpen={() => {
+                    onOpen={e => {
                         this.setState({ legendOpened: true });
+                        this.props.reportUxEvent({
+                            id: 'kisshome-defender-statistics-legend',
+                            event: 'show',
+                            ts: Date.now(),
+                            isTouchEvent: e instanceof TouchEvent,
+                        });
                     }}
                     onClose={e => {
                         if (e && e.target instanceof HTMLDivElement) {
                             this.setState({ legendOpened: false });
                         }
+                        this.props.reportUxEvent({
+                            id: 'kisshome-defender-statistics-legend',
+                            event: 'hide',
+                            ts: Date.now(),
+                            isTouchEvent: e instanceof TouchEvent,
+                        });
                     }}
                     renderValue={selected => {
                         if (!selected?.length) {
@@ -658,7 +832,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                 >
                     <MenuItem
                         value="__selector__"
-                        onClick={() => {
+                        onClick={e => {
                             const legendMacs: { [mac: MACAddress]: boolean } = { ...this.state.legendMacs };
 
                             if (Object.keys(this.state.legendMacs).length === countSelected) {
@@ -666,10 +840,24 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                                 Object.keys(legendMacs).forEach(mac => {
                                     legendMacs[mac] = false; // Deselect all
                                 });
+                                this.props.reportUxEvent({
+                                    id: 'kisshome-defender-statistics-legend-item-all',
+                                    event: 'change',
+                                    ts: Date.now(),
+                                    isTouchEvent: e instanceof TouchEvent,
+                                    data: 'unselect-all',
+                                });
                             } else {
                                 // Select all
                                 Object.keys(legendMacs).forEach(mac => {
                                     legendMacs[mac] = true; // Select all
+                                });
+                                this.props.reportUxEvent({
+                                    id: 'kisshome-defender-statistics-legend-item-all',
+                                    event: 'change',
+                                    ts: Date.now(),
+                                    isTouchEvent: e instanceof TouchEvent,
+                                    data: 'select-all',
                                 });
                             }
                             this.setState({ legendMacs });
@@ -688,9 +876,16 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                             style={{ color: (colors as string[])?.[i] || undefined }}
                             key={mac}
                             value={mac}
-                            onClick={() => {
+                            onClick={e => {
                                 const legendMacs: { [mac: MACAddress]: boolean } = { ...this.state.legendMacs };
                                 legendMacs[mac] = !legendMacs[mac]; // Toggle selection
+                                this.props.reportUxEvent({
+                                    id: 'kisshome-defender-statistics-legend-item',
+                                    event: 'change',
+                                    ts: Date.now(),
+                                    isTouchEvent: e instanceof TouchEvent,
+                                    data: legendMacs[mac] ? `select` : `unselect`,
+                                });
                                 this.setState({ legendMacs });
                             }}
                         >
@@ -776,6 +971,8 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                         style={{ backgroundColor: this.props.context.themeType === 'dark' ? '#333' : '#CCC' }}
                         orientation="vertical"
                         onChange={(_e, value) => {
+                            this.echartsReact?.getEchartsInstance().dispose();
+
                             this.setState(
                                 {
                                     tab: value as
@@ -785,7 +982,9 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                                 },
                                 () => this.requestData(),
                             );
+
                             window.localStorage.setItem('kisshome-defender-tab.statisticsTab', value);
+
                             this.props.reportUxEvent({
                                 id: 'kisshome-defender-statistics-tabs',
                                 event: 'change',

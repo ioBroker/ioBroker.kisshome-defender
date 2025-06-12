@@ -12,7 +12,7 @@ import StatusTab from './components/StatusTab';
 import StatisticsTab from './components/StatisticsTab';
 import DetectionsTab from './components/DetectionsTab';
 import SettingsTab from './components/SettingsTab';
-import type { UXEvent } from './types';
+import type { DetectionWithUUID, UXEvent } from './types';
 
 interface KisshomeDefenderRxData {
     instance: `${number}`;
@@ -20,6 +20,8 @@ interface KisshomeDefenderRxData {
 
 interface KisshomeDefenderState extends VisRxWidgetState {
     tab: 'status' | 'statistics' | 'detections' | 'settings';
+    detections: DetectionWithUUID[] | null;
+    lastSeenID: string; // Last seen ID for detections
 }
 
 export default class KisshomeDefender extends (window.visRxWidget as typeof VisRxWidget)<
@@ -34,6 +36,8 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
         this.state = {
             ...this.state,
             tab: (window.localStorage.getItem('kisshome-defender-tab') as KisshomeDefenderState['tab']) || 'status',
+            detections: null,
+            lastSeenID: '',
         };
     }
 
@@ -43,11 +47,11 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
             visSet: 'kisshome-defender',
             visSetLabel: 'set_label', // Label of widget set
             visSetColor: '#ff9c2c', // Color of a widget set
-            visWidgetLabel: 'KISShome', // Label of widget
+            visWidgetLabel: 'KISSHome', // Label of widget
             visName: 'KisshomeDefender',
             visAttrs: [
                 {
-                    name: 'common', // groupname
+                    name: 'common', // group name
                     fields: [
                         {
                             label: 'instance',
@@ -75,7 +79,7 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
         return KisshomeDefender.getWidgetInfo();
     }
 
-    componentDidMount(): void {
+    async componentDidMount(): Promise<void> {
         super.componentDidMount();
         // Any initialization logic can be added here
         this.reportUxEvent({
@@ -84,6 +88,16 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
             ts: Date.now(),
             data: window.navigator.userAgent,
         });
+
+        const idDetections = `kisshome-defender.${this.state.rxData.instance || 0}.info.detections.json`;
+        const stateDetections = await this.props.context.socket.getState(idDetections);
+        this.onStateDetections(idDetections, stateDetections);
+        await this.props.context.socket.subscribeState(idDetections, this.onStateDetections);
+
+        const idLastSeen = `kisshome-defender.${this.state.rxData.instance || 0}.info.detections.lastSeen`;
+        const stateLastSeen = await this.props.context.socket.getState(idLastSeen);
+        this.onStateLastSeen(idLastSeen, stateLastSeen);
+        await this.props.context.socket.subscribeState(idLastSeen, this.onStateLastSeen);
     }
 
     componentWillUnmount(): void {
@@ -102,12 +116,35 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
             const uxEvents = this.uxEvents;
             this.uxEvents = null;
             void this.props.context.socket.sendTo(
-                `kisshome-defender.${this.state.rxData.instance}`,
+                `kisshome-defender.${this.state.rxData.instance || 0}`,
                 'reportUxEvents',
                 uxEvents,
             );
         }
+
+        this.props.context.socket.unsubscribeState(
+            `kisshome-defender.${this.state.rxData.instance || 0}.info.detections.json`,
+            this.onStateDetections,
+        );
+        this.props.context.socket.unsubscribeState(
+            `kisshome-defender.${this.state.rxData.instance || 0}.info.detections.lastSeen`,
+            this.onStateLastSeen,
+        );
     }
+
+    onStateDetections = (id: string, state: ioBroker.State | null | undefined): void => {
+        if (id === `kisshome-defender.${this.state.rxData.instance || 0}.info.detections.json`) {
+            this.setState({ detections: state?.val ? JSON.parse(state.val as string) : [] });
+        }
+    };
+
+    onStateLastSeen = (id: string, state: ioBroker.State | null | undefined): void => {
+        if (id === `kisshome-defender.${this.state.rxData.instance || 0}.info.detections.lastSeen`) {
+            if ((state?.val || '') !== this.state.lastSeenID) {
+                this.setState({ lastSeenID: (state?.val as string) || '' });
+            }
+        }
+    };
 
     reportUxEvent = (event: {
         id: string;
@@ -124,7 +161,7 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
             const uxEvents = this.uxEvents;
             this.uxEvents = null;
             void this.props.context.socket.sendTo(
-                `kisshome-defender.${this.state.rxData.instance}`,
+                `kisshome-defender.${this.state.rxData.instance || 0}`,
                 'reportUxEvents',
                 uxEvents,
             );
@@ -182,28 +219,30 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
                     {this.state.tab === 'status' ? (
                         <StatusTab
                             reportUxEvent={this.reportUxEvent}
-                            instance={this.state.rxData.instance}
+                            instance={this.state.rxData.instance || '0'}
                             context={this.props.context}
                         />
                     ) : null}
                     {this.state.tab === 'statistics' ? (
                         <StatisticsTab
                             reportUxEvent={this.reportUxEvent}
-                            instance={this.state.rxData.instance}
+                            instance={this.state.rxData.instance || '0'}
                             context={this.props.context}
                         />
                     ) : null}
                     {this.state.tab === 'detections' ? (
                         <DetectionsTab
+                            detections={this.state.detections}
+                            lastSeenID={this.state.lastSeenID}
                             reportUxEvent={this.reportUxEvent}
-                            instance={this.state.rxData.instance}
+                            instance={this.state.rxData.instance || '0'}
                             context={this.props.context}
                         />
                     ) : null}
                     {this.state.tab === 'settings' ? (
                         <SettingsTab
                             reportUxEvent={this.reportUxEvent}
-                            instance={this.state.rxData.instance}
+                            instance={this.state.rxData.instance || '0'}
                             context={this.props.context}
                         />
                     ) : null}

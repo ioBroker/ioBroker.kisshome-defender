@@ -1,4 +1,5 @@
 {
+  "%s minutes": "%s min.",
   "All": "Alle",
   "All selected": "Alle geselecteerde",
   "Anomaly sensitivity": "Anomaliegevoeligheid",
@@ -15,6 +16,7 @@
   "Medium": "Medium",
   "No data available": "Geen gegevens beschikbaar",
   "Nothing selected": "Niets geselecteerd",
+  "Open in Admin": "Openen in Admin",
   "Protection enabled": "Bescherming ingeschakeld",
   "Save threshold in seconds": "Drempelwaarde in seconden opslaan",
   "Selected: %s": "Geselecteerd: %s",
@@ -22,5 +24,6 @@
   "Statistics": "Statistieken",
   "Status": "Status",
   "instance": "Adapterinstantie",
+  "one hour": "een uur",
   "set_label": "KISSHome Defender"
 }

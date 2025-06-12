@@ -35,6 +35,7 @@ export class DockerManager {
         removeAfterStop?: boolean; // Remove the container after stopping by default (default: false)
         autoUpdate?: boolean; // Automatically update the image if an update is available (default: false)
         autoStart?: boolean; // Automatically start the container after creation (default: false)
+        needSudo?: boolean; // If true, the Docker commands will be prefixed with 'sudo' (default: true)
     } = {
         dockerCommand: 'docker', // Default Docker command
         image: '', // Default image to use for operations
@@ -53,6 +54,7 @@ export class DockerManager {
             removeAfterStop?: boolean; // Remove the container after stopping by default (default: false)
             autoUpdate?: boolean; // Automatically update the image if an update is available (default: false)
             autoStart?: boolean; // Automatically start the container after creation (default: true)
+            needSudo?: boolean; // If true, the Docker commands will be prefixed with 'sudo' (default: true)
         },
     ) {
         this.adapter = adapter;
@@ -67,6 +69,7 @@ export class DockerManager {
             removeAfterStop: options.removeAfterStop !== undefined ? options.removeAfterStop : false,
             autoUpdate: options.autoUpdate !== undefined ? options.autoUpdate : false,
             autoStart: options.autoStart === undefined ? true : options.autoStart,
+            needSudo: options.needSudo === undefined ? true : options.needSudo,
         };
 
         void this.init();
@@ -154,6 +157,7 @@ export class DockerManager {
             this.runningId = null; // Reset running ID
             return true;
         } catch (error) {
+            this.runningId = null; // Reset running ID on error
             this.adapter.log.error(`Error stopping container: ${error as Error}`);
             return false;
         }
@@ -167,7 +171,7 @@ export class DockerManager {
      */
     private async _executeCommand(command: string): Promise<{ stdout: string; stderr: string }> {
         try {
-            const { stdout, stderr } = await execPromise(command);
+            const { stdout, stderr } = await execPromise((this.options.needSudo ? 'sudo ' : '') + command);
             return { stdout, stderr };
         } catch (error) {
             console.error(`Error executing command: ${command}`, error);
@@ -325,6 +329,14 @@ export class DockerManager {
             return await this.startContainer({ ...options, image, name: containerName });
         }
         return '';
+    }
+
+    /**
+     * Restarts the currently running container.
+     */
+    public async restart(): Promise<string> {
+        await this.stop();
+        return await this.start();
     }
 
     /**

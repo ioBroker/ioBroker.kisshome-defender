@@ -1,5 +1,7 @@
-import { writeFileSync } from 'fs';
-import { join } from 'path';
+import { writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { randomUUID } from 'node:crypto';
+
 import type { StatisticsResult, StoredStatisticsResult } from './types';
 import { getTimestamp } from './lib/utils';
 
@@ -40,6 +42,7 @@ for (let i = -7; i <= 0; i++) {
             packets: 0,
             time,
             devices: [],
+            uuid: randomUUID(),
         };
 
         for (let a = 0; a < MACs.length; a++) {

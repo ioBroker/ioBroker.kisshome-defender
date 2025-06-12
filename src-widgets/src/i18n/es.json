@@ -1,4 +1,5 @@
 {
+  "%s minutes": "%s mínimo.",
   "All": "Todo",
   "All selected": "Todos los seleccionados",
   "Anomaly sensitivity": "Sensibilidad a las anomalías",
@@ -15,6 +16,7 @@
   "Medium": "Medio",
   "No data available": "No hay datos disponibles",
   "Nothing selected": "Nada seleccionado",
+  "Open in Admin": "Abrir en Admin",
   "Protection enabled": "Protección habilitada",
   "Save threshold in seconds": "Umbral de ahorro en segundos",
   "Selected: %s": "Seleccionado: %s",
@@ -22,5 +24,6 @@
   "Statistics": "Estadística",
   "Status": "Estado",
   "instance": "Instancia del adaptador",
+  "one hour": "una hora",
   "set_label": "Defensor del hogar KISS"
 }

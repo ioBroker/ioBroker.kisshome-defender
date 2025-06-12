@@ -55,6 +55,7 @@ export interface StatisticsResult {
     packets: number;
     time: string;
     devices: DeviceStatistics[];
+    uuid: string;
 }
 
 export interface StoredStatisticsResult {
@@ -74,6 +75,7 @@ export interface Detection {
 }
 
 export interface DetectionWithUUID extends Detection {
+    scanUUID: string;
     uuid: string;
 }
 
@@ -97,5 +99,8 @@ export interface DataVolumePerCountryResult {
 }
 
 export interface DataVolumePerDaytimeResult {
-    [mac: string]: { dayTime: { [time03: string]: number }; info?: { ip: string; desc: string } };
+    [mac: string]: {
+        dayTime: { '0'?: number; '1'?: number; '2'?: number; '3'?: number };
+        info?: { ip: string; desc: string };
+    };
 }
