@@ -475,6 +475,31 @@
             "native": {}
         },
         {
+            "_id": "info.cloudSync.questionary",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Questionary for KISSHome",
+                    "de": "RSync läuft",
+                    "ru": "RSync работает",
+                    "pt": "RSync está em execução",
+                    "nl": "RSync is aan het lopen",
+                    "fr": "RSync est en cours d'exécution",
+                    "it": "RSync è in esecuzione",
+                    "es": "RSync está corriendo",
+                    "pl": "RSync działa",
+                    "uk": "RSync працює",
+                    "zh-cn": "RSync正在运行"
+                },
+                "type": "boolean",
+                "role": "state",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },
+        {
             "_id": "info.ids",
             "type": "channel",
             "common": {
@@ -513,11 +538,12 @@
                 },
                 "type": "string",
                 "states": {
-                    "Started": "STARTED",
-                    "Running": "RUNNING",
-                    "Configuring": "CONFIGURING",
-                    "Analyzing": "ANALYZING",
-                    "Exited": "EXITED"
+                    "Started": "Started",
+                    "Running": "Running",
+                    "Configuring": "Configuring",
+                    "Analyzing": "Analyzing",
+                    "Exited": "Exited",
+                    "No connection": "No connection"
                 },
                 "role": "state",
                 "read": true,

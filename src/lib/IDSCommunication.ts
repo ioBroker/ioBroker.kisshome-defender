@@ -31,7 +31,7 @@ export class IDSCommunication {
     private lastStatus: {
         Result: 'Success' | 'Error';
         Message?: {
-            Status: 'Running' | 'Stopped' | 'Error' | 'No connection';
+            Status: 'Running' | 'Started' | 'Configuring' | 'Analyzing' | 'Exited' | 'No connection';
             'Has Federated Learning server connection'?: 'True' | 'False';
             Error?: string;
         };
