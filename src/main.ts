@@ -511,7 +511,7 @@ export class KISSHomeResearchAdapter extends Adapter {
         // Read the questionnaire file
         axios.get(`https://${PCAP_HOST}/api/v1/questionnaire?email=${encodeURIComponent(this.config.email)}`)
             .then(async (response) => {
-                if (response.status === 200 && response.data) {
+                if (response.status === 200 && typeof response.data === 'object' && response.data?.id) {
                     // Check if the questionnaire file has changed
                     const state = await this.getStateAsync('info.cloudSync.questionary');
                     if (state?.val) {
