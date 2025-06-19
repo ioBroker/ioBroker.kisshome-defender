@@ -49,7 +49,7 @@
   "Unknown email address": "Onbekend e-mailadres",
   "Use SID": "Gebruik SID",
   "Using \"%s\" as temporary directory": "\"%s\" gebruiken als tijdelijke map",
-  "You must register this email first on https://kisshome-feldversuch.if-is.net/#register.": "U moet dit e-mailadres eerst registreren op https://kisshome-feldversuch.if-is.net/#register.",
+  "You must register this email first on https://kisshome-research.if-is.net/#register.": "U moet dit e-mailadres eerst registreren op https://kisshome-research.if-is.net/#register.",
   "invalid password": "ongeldig wachtwoord",
   "missing email, public key or uuid": "ontbrekende e-mail, openbare sleutel of uuid",
   "UUID changed. Please contact us via kisshome@internet-sicherheit.de": "UUID gewijzigd. Neem contact met ons op via kisshome@internet-sicherheit.de",

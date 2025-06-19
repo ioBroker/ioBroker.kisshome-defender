@@ -49,7 +49,7 @@
   "Unknown email address": "Nieznany adres e-mail",
   "Use SID": "Użyj SID",
   "Using \"%s\" as temporary directory": "Używanie „%s” jako katalogu tymczasowego",
-  "You must register this email first on https://kisshome-feldversuch.if-is.net/#register.": "Najpierw musisz zarejestrować ten adres e-mail na stronie https://kisshome-feldversuch.if-is.net/#register.",
+  "You must register this email first on https://kisshome-research.if-is.net/#register.": "Najpierw musisz zarejestrować ten adres e-mail na stronie https://kisshome-research.if-is.net/#register.",
   "invalid password": "nieprawidłowe hasło",
   "missing email, public key or uuid": "brak adresu e-mail, klucza publicznego lub identyfikatora UUID",
   "UUID changed. Please contact us via kisshome@internet-sicherheit.de": "UUID zmieniony. Prosimy o kontakt przez kisshome@internet-sicherheit.de",

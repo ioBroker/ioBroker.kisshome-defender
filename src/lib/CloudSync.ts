@@ -7,7 +7,7 @@ import { createHash } from 'node:crypto';
 import axios, { type AxiosResponse } from 'axios';
 import { getDescriptionFile, getTimestamp, size2text } from './utils';
 const SYNC_INTERVAL = 3_600_000; // 3_600_000;
-const PCAP_HOST = 'kisshome-experiments.if-is.net';
+export const PCAP_HOST = 'kisshome-experiments.if-is.net';
 
 export default class CloudSync {
     private readonly adapter: ioBroker.Adapter;
@@ -222,7 +222,7 @@ export default class CloudSync {
             const responsePost = await axios({
                 method: 'post',
                 url: `https://${PCAP_HOST}/api/v1/upload/${encodeURIComponent(this.config.email)}/${encodeURIComponent(name)}?&uuid=${encodeURIComponent(this.uuid)}`,
-                data: data,
+                data,
                 headers: { 'Content-Type': 'application/vnd.tcpdump.pcap' },
             });
 

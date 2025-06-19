@@ -49,7 +49,7 @@
   "Unknown email address": "Неизвестный адрес электронной почты",
   "Use SID": "Используется SID",
   "Using \"%s\" as temporary directory": "Использование \"%s\" в качестве временного каталога",
-  "You must register this email first on https://kisshome-feldversuch.if-is.net/#register.": "Сначала вам необходимо зарегистрировать этот адрес электронной почты на https://kisshome-feldversuch.if-is.net/#register.",
+  "You must register this email first on https://kisshome-research.if-is.net/#register.": "Сначала вам необходимо зарегистрировать этот адрес электронной почты на https://kisshome-research.if-is.net/#register.",
   "invalid password": "неверный пароль",
   "missing email, public key or uuid": "отсутствует адрес электронной почты, открытый ключ или UUID",
   "UUID changed. Please contact us via kisshome@internet-sicherheit.de": "UUID изменен. Свяжитесь с нами по адресу kisshome@internet-sicherheit.de",

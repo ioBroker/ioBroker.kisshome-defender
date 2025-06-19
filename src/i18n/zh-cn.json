@@ -49,7 +49,7 @@
   "Unknown email address": "未知的电子邮件地址",
   "Use SID": "使用 SID",
   "Using \"%s\" as temporary directory": "使用“％s”作为临时目录",
-  "You must register this email first on https://kisshome-feldversuch.if-is.net/#register.": "您必须先在 https://kisshome-feldversuch.if-is.net/#register 上注册此电子邮件。",
+  "You must register this email first on https://kisshome-research.if-is.net/#register.": "您必须先在 https://kisshome-research.if-is.net/#register 上注册此电子邮件。",
   "invalid password": "密码无效",
   "missing email, public key or uuid": "缺少电子邮件、公钥或 UUID",
   "unknown": "未知"

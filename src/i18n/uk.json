@@ -49,7 +49,7 @@
   "Unknown email address": "Невідома адреса електронної пошти",
   "Use SID": "Використовувати SID",
   "Using \"%s\" as temporary directory": "Використання \"%s\" як тимчасового каталогу",
-  "You must register this email first on https://kisshome-feldversuch.if-is.net/#register.": "Спочатку вам потрібно зареєструвати цю електронну адресу на https://kisshome-feldversuch.if-is.net/#register.",
+  "You must register this email first on https://kisshome-research.if-is.net/#register.": "Спочатку вам потрібно зареєструвати цю електронну адресу на https://kisshome-research.if-is.net/#register.",
   "invalid password": "недійсний пароль",
   "missing email, public key or uuid": "відсутня електронна адреса, відкритий ключ або UUID",
   "UUID changed. Please contact us via kisshome@internet-sicherheit.de": "UUID змінено. Будь ласка, зв'яжіться з нами через kisshome@internet-sicherheit.de",

@@ -1,6 +1,7 @@
 import { Adapter, type AdapterOptions, I18n } from '@iobroker/adapter-core';
 import { join } from 'node:path';
 import { readFileSync, existsSync, mkdirSync, openSync, writeSync, closeSync, readdirSync, unlinkSync } from 'node:fs';
+import axios from 'axios';
 
 import {
     getDefaultGateway,
@@ -21,7 +22,7 @@ import {
 } from './lib/recording';
 import { getFritzBoxFilter, getFritzBoxInterfaces, getFritzBoxToken, getFritzBoxUsers } from './lib/fritzbox';
 import type { DataRequestType, DefenderAdapterConfig, Device, MACAddress, UXEvent } from './types';
-import CloudSync from './lib/CloudSync';
+import CloudSync, { PCAP_HOST } from './lib/CloudSync';
 import { IDSCommunication } from './lib/IDSCommunication';
 import Statistics from './lib/Statistics';
 
@@ -90,6 +91,8 @@ export class KISSHomeResearchAdapter extends Adapter {
     private idsCommunication: IDSCommunication | null = null;
 
     private statistics: Statistics | null = null;
+
+    private questionnaireTimer: ioBroker.Timeout | null | undefined = null;
 
     public constructor(options: Partial<AdapterOptions> = {}) {
         super({
@@ -326,6 +329,11 @@ export class KISSHomeResearchAdapter extends Adapter {
             this.config.saveThresholdSeconds = 3600;
         }
 
+        this.questionnaireTimer = this.setTimeout(() => {
+            this.questionnaireTimer = null;
+            this.readQuestionnaire();
+        }, 60 * 60 * 1000); // every hour
+
         // try to get MAC addresses for all IPs
         this.IPs = this.config.devices.filter(
             item => item.enabled && (item.ip || item.mac) && item.ip !== this.config.fritzbox,
@@ -442,7 +450,7 @@ export class KISSHomeResearchAdapter extends Adapter {
             this.log.error(I18n.translate('No email provided. Please provide an email address in the configuration.'));
             this.log.error(
                 I18n.translate(
-                    'You must register this email first on https://kisshome-feldversuch.if-is.net/#register.',
+                    'You must register this email first on https://kisshome-research.if-is.net/#register.',
                 ),
             );
             return;
@@ -493,6 +501,42 @@ export class KISSHomeResearchAdapter extends Adapter {
             await this.idsCommunication.start();
             this.log.warn(I18n.translate('Recording is not enabled. Do nothing.'));
         }
+    }
+
+    readQuestionnaire() {
+        if (this.questionnaireTimer) {
+            this.clearTimeout(this.questionnaireTimer);
+            this.questionnaireTimer = null;
+        }
+        // Read the questionnaire file
+        axios.get(`https://${PCAP_HOST}/api/v1/questionnaire?email=${encodeURIComponent(this.config.email)}`)
+            .then(async (response) => {
+                if (response.status === 200 && response.data) {
+                    // Check if the questionnaire file has changed
+                    const state = await this.getStateAsync('info.cloudSync.questionary');
+                    if (state?.val) {
+                        const questionary = JSON.parse(state.val as string);
+                        if (questionary.id !== response.data.id) {
+                            // Save the new questionnaire
+                            await this.setStateAsync('info.cloudSync.questionary', JSON.stringify(response.data), true);
+                            this.log.info(`${I18n.translate('New questionnaire received')}: ${response.data.id}`);
+                        }
+                    } else {
+                        // Save the questionnaire for the first time
+                        await this.setStateAsync('info.cloudSync.questionary', JSON.stringify(response.data), true);
+                        this.log.info(`${I18n.translate('New questionnaire received')}: ${response.data.id}`);
+                    }
+                }
+            })
+            .catch(e => {
+                this.log.error(`${I18n.translate('Cannot read questionnaire')}: ${e}`);
+            });
+
+
+        this.questionnaireTimer = this.setTimeout(() => {
+            this.questionnaireTimer = null;
+            this.readQuestionnaire();
+        }, 60 * 60 * 1000); // every hour
     }
 
     onStateChange(id: string, state: ioBroker.State | null | undefined): void {
@@ -865,6 +909,11 @@ export class KISSHomeResearchAdapter extends Adapter {
             this.recordingRunning = false;
             await this.setState('info.connection', false, true);
             await this.setState('info.recording.running', false, true);
+        }
+
+        if (this.questionnaireTimer) {
+            this.clearTimeout(this.questionnaireTimer);
+            this.questionnaireTimer = null;
         }
 
         this.cloudSync?.stop();
