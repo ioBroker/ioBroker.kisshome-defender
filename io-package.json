@@ -475,7 +475,7 @@
             "native": {}
         },
         {
-            "_id": "info.cloudSync.questionary",
+            "_id": "info.cloudSync.questionnaire",
             "type": "state",
             "common": {
                 "name": {
@@ -491,11 +491,10 @@
                     "uk": "RSync працює",
                     "zh-cn": "RSync正在运行"
                 },
-                "type": "boolean",
+                "type": "json",
                 "role": "state",
                 "read": true,
-                "write": false,
-                "def": false
+                "write": false
             },
             "native": {}
         },

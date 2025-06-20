@@ -18,7 +18,7 @@ import { I18n } from '@iobroker/adapter-react-v5';
 import { Close, ExpandMore, Warning, Alarm } from '@mui/icons-material';
 import type { VisContext } from '@iobroker/types-vis-2';
 
-import type { StatisticsResult, StoredStatisticsResult } from '../types';
+import type { ReportUxHandler, StatisticsResult, StoredStatisticsResult } from '../types';
 import type { DetectionWithUUID } from '../../../src/types';
 
 interface DetectionsTabProps {
@@ -26,13 +26,7 @@ interface DetectionsTabProps {
     instance: string;
     detections?: DetectionWithUUID[] | null;
     lastSeenID: string;
-    reportUxEvent: (event: {
-        id: string;
-        event: 'click' | 'down' | 'up' | 'show' | 'hide' | 'change';
-        isTouchEvent?: boolean;
-        ts: number;
-        data?: string;
-    }) => void;
+    reportUxEvent: ReportUxHandler;
 }
 interface DetectionsTabState {
     detailed: boolean;

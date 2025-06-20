@@ -1,17 +1,12 @@
 import React, { Component } from 'react';
 
 import type { VisContext } from '@iobroker/types-vis-2';
+import type { ReportUxHandler } from '../types';
 
 interface StatusTabProps {
     context: VisContext;
     instance: string;
-    reportUxEvent: (event: {
-        id: string;
-        event: 'click' | 'down' | 'up' | 'show' | 'hide' | 'change';
-        isTouchEvent?: boolean;
-        ts: number;
-        data?: string;
-    }) => void;
+    reportUxEvent: ReportUxHandler;
 }
 interface StatusTabState {
     demo: string;

@@ -104,3 +104,11 @@ export interface DataVolumePerDaytimeResult {
         info?: { ip: string; desc: string };
     };
 }
+export type ReportUxEventType = 'click' | 'down' | 'up' | 'show' | 'hide' | 'change';
+export type ReportUxHandler = (event: {
+    id: string;
+    event: ReportUxEventType;
+    isTouchEvent?: boolean;
+    ts: number;
+    data?: string;
+}) => void;

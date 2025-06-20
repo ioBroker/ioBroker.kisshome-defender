@@ -8,6 +8,7 @@ import type {
     DataVolumePerDaytimeResult,
     DataVolumePerDeviceResult,
     MACAddress,
+    ReportUxHandler,
 } from '../types';
 import ReactEchartsCore from 'echarts-for-react/lib/core';
 import type { EChartsOption, YAXisComponentOption } from 'echarts/types/dist/echarts';
@@ -38,13 +39,7 @@ const SHOW_SELECT_LEGEND = 5; // Show legend if more than 4 series
 interface StatisticsTabProps {
     context: VisContext;
     instance: string;
-    reportUxEvent: (event: {
-        id: string;
-        event: 'click' | 'down' | 'up' | 'show' | 'hide' | 'change';
-        isTouchEvent?: boolean;
-        ts: number;
-        data?: string;
-    }) => void;
+    reportUxEvent: ReportUxHandler;
 }
 
 interface StatisticsTabState {

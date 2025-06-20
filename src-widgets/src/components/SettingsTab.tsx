@@ -3,17 +3,12 @@ import React, { Component } from 'react';
 import type { VisContext } from '@iobroker/types-vis-2';
 import { Button, LinearProgress, Link, MenuItem, Paper, Select, Slider, Switch } from '@mui/material';
 import { I18n } from '@iobroker/adapter-react-v5';
+import type { ReportUxHandler } from '../types';
 
 interface SettingsTabProps {
     context: VisContext;
     instance: string;
-    reportUxEvent: (event: {
-        id: string;
-        event: 'click' | 'down' | 'up' | 'show' | 'hide' | 'change';
-        isTouchEvent?: boolean;
-        ts: number;
-        data?: string;
-    }) => void;
+    reportUxEvent: ReportUxHandler;
 }
 
 interface SettingsTabState {

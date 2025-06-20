@@ -265,6 +265,51 @@ export class KISSHomeResearchAdapter extends Adapter {
                     }
                     break;
                 }
+
+                case 'questionnaireAnswer': {
+                    // Send the questionnaire answer to the server
+                    if (msg.message && typeof msg.message === 'object' && this.config.email) {
+                        try {
+                            const response = await axios.post(
+                                `https://${PCAP_HOST}/api/v1/questionnaire?email=${encodeURIComponent(this.config.email)}`,
+                                msg.message,
+                            );
+                            if (response.status === 200) {
+                                if (msg.callback) {
+                                    this.sendTo(msg.from, msg.command, { result: 'ok' }, msg.callback);
+                                }
+                                this.log.info(`${I18n.translate('Questionnaire answer sent successfully')}`);
+                            } else {
+                                this.log.error(
+                                    `${I18n.translate('Failed to send questionnaire answer')}: ${response.statusText}`,
+                                );
+                                if (msg.callback) {
+                                    this.sendTo(msg.from, msg.command, { error: I18n.translate('Cannot send answer') }, msg.callback);
+                                }
+                            }
+                        } catch (e) {
+                            this.log.error(`${I18n.translate('Error sending questionnaire answer')}: ${e}`);
+                            if (msg.callback) {
+                                this.sendTo(msg.from, msg.command, { error: I18n.translate('Cannot send answer') }, msg.callback);
+                            }
+                        }
+                        // If the state has the same ID => delete it
+                        const state = await this.getStateAsync('info.cloudSync.questionnaire');
+                        if (state?.val) {
+                            const questionnaire = JSON.parse(state.val as string);
+                            if (questionnaire.id === msg.message.id) {
+                                // Clear questionnaire
+                                await this.setStateAsync('info.cloudSync.questionnaire', '', true);
+                            }
+                        }
+                    } else {
+                        // Cannot happen, but just in case
+                        this.log.warn(I18n.translate('No email provided for questionnaire answer or empty message'));
+                        if (msg.callback) {
+                            this.sendTo(msg.from, msg.command, { error: I18n.translate('Invalid answer') }, msg.callback);
+                        }
+                    }
+                }
             }
         }
     }
@@ -329,10 +374,7 @@ export class KISSHomeResearchAdapter extends Adapter {
             this.config.saveThresholdSeconds = 3600;
         }
 
-        this.questionnaireTimer = this.setTimeout(() => {
-            this.questionnaireTimer = null;
-            this.readQuestionnaire();
-        }, 60 * 60 * 1000); // every hour
+        this.readQuestionnaire();
 
         // try to get MAC addresses for all IPs
         this.IPs = this.config.devices.filter(
@@ -449,9 +491,7 @@ export class KISSHomeResearchAdapter extends Adapter {
         if (!this.config.email) {
             this.log.error(I18n.translate('No email provided. Please provide an email address in the configuration.'));
             this.log.error(
-                I18n.translate(
-                    'You must register this email first on https://kisshome-research.if-is.net/#register.',
-                ),
+                I18n.translate('You must register this email first on https://kisshome-research.if-is.net/#register.'),
             );
             return;
         }
@@ -509,21 +549,26 @@ export class KISSHomeResearchAdapter extends Adapter {
             this.questionnaireTimer = null;
         }
         // Read the questionnaire file
-        axios.get(`https://${PCAP_HOST}/api/v1/questionnaire?email=${encodeURIComponent(this.config.email)}`)
-            .then(async (response) => {
+        axios
+            .get(`https://${PCAP_HOST}/api/v1/questionnaire?email=${encodeURIComponent(this.config.email)}`)
+            .then(async response => {
                 if (response.status === 200 && typeof response.data === 'object' && response.data?.id) {
                     // Check if the questionnaire file has changed
-                    const state = await this.getStateAsync('info.cloudSync.questionary');
+                    const state = await this.getStateAsync('info.cloudSync.questionnaire');
                     if (state?.val) {
-                        const questionary = JSON.parse(state.val as string);
-                        if (questionary.id !== response.data.id) {
+                        const questionnaire = JSON.parse(state.val as string);
+                        if (questionnaire.id !== response.data.id) {
                             // Save the new questionnaire
-                            await this.setStateAsync('info.cloudSync.questionary', JSON.stringify(response.data), true);
+                            await this.setStateAsync(
+                                'info.cloudSync.questionnaire',
+                                JSON.stringify(response.data),
+                                true,
+                            );
                             this.log.info(`${I18n.translate('New questionnaire received')}: ${response.data.id}`);
                         }
                     } else {
                         // Save the questionnaire for the first time
-                        await this.setStateAsync('info.cloudSync.questionary', JSON.stringify(response.data), true);
+                        await this.setStateAsync('info.cloudSync.questionnaire', JSON.stringify(response.data), true);
                         this.log.info(`${I18n.translate('New questionnaire received')}: ${response.data.id}`);
                     }
                 }
@@ -532,11 +577,13 @@ export class KISSHomeResearchAdapter extends Adapter {
                 this.log.error(`${I18n.translate('Cannot read questionnaire')}: ${e}`);
             });
 
-
-        this.questionnaireTimer = this.setTimeout(() => {
-            this.questionnaireTimer = null;
-            this.readQuestionnaire();
-        }, 60 * 60 * 1000); // every hour
+        this.questionnaireTimer = this.setTimeout(
+            () => {
+                this.questionnaireTimer = null;
+                this.readQuestionnaire();
+            },
+            60 * 60 * 1000,
+        ); // every hour
     }
 
     onStateChange(id: string, state: ioBroker.State | null | undefined): void {

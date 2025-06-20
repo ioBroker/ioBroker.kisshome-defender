@@ -12,7 +12,8 @@ import StatusTab from './components/StatusTab';
 import StatisticsTab from './components/StatisticsTab';
 import DetectionsTab from './components/DetectionsTab';
 import SettingsTab from './components/SettingsTab';
-import type { DetectionWithUUID, UXEvent } from './types';
+import type { DetectionWithUUID, ReportUxEventType, ReportUxHandler, UXEvent } from './types';
+import Questionnaire, { type QuestionnaireJson } from './components/Questionnaire';
 
 interface KisshomeDefenderRxData {
     instance: `${number}`;
@@ -22,6 +23,8 @@ interface KisshomeDefenderState extends VisRxWidgetState {
     tab: 'status' | 'statistics' | 'detections' | 'settings';
     detections: DetectionWithUUID[] | null;
     lastSeenID: string; // Last seen ID for detections
+    questionnaire: QuestionnaireJson | null; // Questionnaire data
+    showQuestionnaire: QuestionnaireJson | null; // Currently shown questionnaire
 }
 
 export default class KisshomeDefender extends (window.visRxWidget as typeof VisRxWidget)<
@@ -38,6 +41,8 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
             tab: (window.localStorage.getItem('kisshome-defender-tab') as KisshomeDefenderState['tab']) || 'status',
             detections: null,
             lastSeenID: '',
+            questionnaire: null,
+            showQuestionnaire: null,
         };
     }
 
@@ -98,6 +103,11 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
         const stateLastSeen = await this.props.context.socket.getState(idLastSeen);
         this.onStateLastSeen(idLastSeen, stateLastSeen);
         await this.props.context.socket.subscribeState(idLastSeen, this.onStateLastSeen);
+
+        const idQuestionnaire = `kisshome-defender.${this.state.rxData.instance || 0}.info.cloudSync.questionnaire`;
+        const stateQuestionnaire = await this.props.context.socket.getState(idQuestionnaire);
+        this.onStateQuestionnaire(idQuestionnaire, stateQuestionnaire);
+        await this.props.context.socket.subscribeState(idQuestionnaire, this.onStateQuestionnaire);
     }
 
     componentWillUnmount(): void {
@@ -130,7 +140,22 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
             `kisshome-defender.${this.state.rxData.instance || 0}.info.detections.lastSeen`,
             this.onStateLastSeen,
         );
+        this.props.context.socket.unsubscribeState(
+            `kisshome-defender.${this.state.rxData.instance || 0}.info.cloudSync.questionnaire`,
+            this.onStateQuestionnaire,
+        );
     }
+
+    onStateQuestionnaire = (id: string, state: ioBroker.State | null | undefined): void => {
+        if (id === `kisshome-defender.${this.state.rxData.instance || 0}.info.cloudSync.questionnaire`) {
+            const questionnaire =
+                state?.val && typeof state.val === 'string' && state.val.startsWith('{')
+                    ? JSON.parse(state.val as string)
+                    : null;
+
+            this.setState({ questionnaire, showQuestionnaire: this.state.showQuestionnaire || questionnaire });
+        }
+    };
 
     onStateDetections = (id: string, state: ioBroker.State | null | undefined): void => {
         if (id === `kisshome-defender.${this.state.rxData.instance || 0}.info.detections.json`) {
@@ -146,9 +171,9 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
         }
     };
 
-    reportUxEvent = (event: {
+    reportUxEvent: ReportUxHandler = (event: {
         id: string;
-        event: 'click' | 'down' | 'up' | 'show' | 'hide' | 'change';
+        event: ReportUxEventType;
         isTouchEvent?: boolean;
         ts: number;
         data?: string;
@@ -168,11 +193,35 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
         }, 10_000);
     };
 
+    renderQuestionnaire(): React.JSX.Element | null {
+        if (!this.state.showQuestionnaire || this.props.editMode) {
+            return null;
+        }
+        return (
+            <Questionnaire
+                themeType={this.props.context.themeType}
+                json={this.state.showQuestionnaire}
+                instance={this.state.rxData.instance || '0'}
+                socket={this.props.context.socket}
+                onClose={() => {
+                    if (this.state.questionnaire && this.state.showQuestionnaire!.id !== this.state.questionnaire.id) {
+                        // Show next queued questionnaire
+                        this.setState({ showQuestionnaire: JSON.parse(JSON.stringify(this.state.questionnaire)) });
+                    } else {
+                        this.setState({ showQuestionnaire: null });
+                    }
+                }}
+                reportUxEvent={this.reportUxEvent}
+            />
+        );
+    }
+
     renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element | React.JSX.Element[] | null {
         super.renderWidgetBody(props);
 
         return (
             <Card style={{ width: '100%', height: '100%' }}>
+                {this.renderQuestionnaire()}
                 <Toolbar
                     variant="dense"
                     style={{ width: 'calc(100% - 48px)', display: 'flex' }}
