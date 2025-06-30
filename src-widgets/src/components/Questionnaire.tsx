@@ -8,7 +8,8 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    FormControlLabel, MenuItem,
+    FormControlLabel,
+    MenuItem,
     Radio,
     RadioGroup,
     Select,
@@ -32,10 +33,15 @@ export interface QuestionnaireItem {
 
 export interface QuestionnaireJson {
     id: string;
+    done?: boolean;
     title?: string;
     button?: string;
     required?: boolean;
     items?: QuestionnaireItem[];
+    labelStyle?: React.CSSProperties;
+    itemStyle?: React.CSSProperties;
+    divStyle?: React.CSSProperties;
+    titleStyle?: React.CSSProperties;
 }
 
 interface QuestionnaireProps {
@@ -68,6 +74,7 @@ const styles: Record<string, React.CSSProperties> = {
         width: '100%',
         display: 'flex',
         flexDirection: 'row',
+        alignItems: 'baseline',
     },
     divLabel: {
         minWidth: '30%',
@@ -103,7 +110,7 @@ export default class Questionnaire extends Component<QuestionnaireProps, Questio
             this.setState(prevState => ({
                 links: [...prevState.links, { url, ts: new Date().toISOString() }],
             }));
-        }
+        };
 
         this.markDown.renderer.rules.link_open = (tokens, idx, options, env, self) => {
             const href = tokens[idx].attrGet('href');
@@ -141,10 +148,10 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
             return (
                 <div
                     key={item.id}
-                    style={styles.divItem}
+                    style={{ ...styles.divItem, ...this.state.json.divStyle }}
                 >
                     <span
-                        style={{ width: '100%', ...item.style }}
+                        style={{ width: '100%', ...this.state.json.itemStyle, ...item.style }}
                         dangerouslySetInnerHTML={{ __html: content }}
                     />
                 </div>
@@ -154,16 +161,16 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         return (
             <div
                 key={item.id}
-                style={styles.divItem}
+                style={{ ...styles.divItem, ...this.state.json.divStyle }}
             >
                 <label
                     htmlFor={item.id}
-                    style={styles.divLabel}
+                    style={{ ...styles.divLabel, ...this.state.json.labelStyle }}
                 >
                     {item.label}
                 </label>
                 <span
-                    style={{ ...styles.divControl, ...item.style }}
+                    style={{ ...styles.divControl, ...this.state.json.itemStyle, ...item.style }}
                     dangerouslySetInnerHTML={{ __html: content }}
                 />
             </div>
@@ -174,18 +181,19 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         return (
             <div
                 key={item.id}
-                style={styles.divItem}
+                style={{ ...styles.divItem, ...this.state.json.divStyle }}
             >
                 <label
                     htmlFor={item.id}
-                    style={styles.divLabel}
+                    style={{ ...styles.divLabel, ...this.state.json.labelStyle }}
                 >
                     {item.label}
+                    {item.required ? ' *' : ''}
                 </label>
                 <Select
                     variant="standard"
                     id={item.id}
-                    style={{ minWidth: 150, ...styles.divControl, ...item.style }}
+                    style={{ minWidth: 150, ...styles.divControl, ...this.state.json.itemStyle, ...item.style }}
                     value={this.state.answers[item.id]?.value || ''}
                     onChange={e => {
                         const value = e.target.value;
@@ -222,16 +230,17 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         return (
             <div
                 key={item.id}
-                style={styles.divItem}
+                style={{ ...styles.divItem, ...this.state.json.divStyle }}
             >
                 <label
                     htmlFor={item.id}
-                    style={styles.divLabel}
+                    style={{ ...styles.divLabel, ...this.state.json.labelStyle }}
                 >
                     {item.label}
+                    {item.required ? ' *' : ''}
                 </label>
                 <TextField
-                    style={{ ...styles.divControl, ...item.style }}
+                    style={{ ...styles.divControl, ...this.state.json.itemStyle, ...item.style }}
                     variant="standard"
                     value={(this.state.answers[item.id]?.value as string) || ''}
                     onChange={e => {
@@ -260,17 +269,18 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         return (
             <div
                 key={item.id}
-                style={styles.divItem}
+                style={{ ...styles.divItem, ...this.state.json.divStyle }}
             >
                 <label
                     htmlFor={item.id}
-                    style={styles.divLabel}
+                    style={{ ...styles.divLabel, ...this.state.json.labelStyle }}
                 >
                     {item.label}
+                    {item.required ? ' *' : ''}
                 </label>
                 <RadioGroup
                     row
-                    style={{ ...styles.divControl, ...item.style }}
+                    style={{ ...styles.divControl, ...this.state.json.itemStyle, ...item.style }}
                 >
                     {item.options?.map(option => (
                         <FormControlLabel
@@ -307,17 +317,18 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         return (
             <div
                 key={item.id}
-                style={styles.divItem}
+                style={{ ...styles.divItem, ...this.state.json.divStyle }}
             >
                 <label
                     htmlFor={item.id}
-                    style={styles.divLabel}
+                    style={{ ...styles.divLabel, ...this.state.json.labelStyle }}
                 >
                     {item.label}
+                    {item.required ? ' *' : ''}
                 </label>
                 <RadioGroup
                     row
-                    style={{ ...styles.divControl, ...item.style }}
+                    style={{ ...styles.divControl, ...this.state.json.itemStyle, ...item.style }}
                 >
                     <FormControlLabel
                         value="yes"
@@ -377,13 +388,14 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         return (
             <div
                 key={item.id}
-                style={styles.divItem}
+                style={{ ...styles.divItem, ...this.state.json.divStyle }}
             >
                 <label
                     htmlFor={item.id}
-                    style={styles.divLabel}
+                    style={{ ...styles.divLabel, ...this.state.json.labelStyle }}
                 >
                     {item.label}
+                    {item.required ? ' *' : ''}
                 </label>
                 <Checkbox
                     checked={!!value}
@@ -457,7 +469,7 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         return (
             <Dialog
                 fullWidth
-                maxWidth="lg"
+                maxWidth="md"
                 open={!0}
                 onClose={(_e, reason?: 'backdropClick' | 'escapeKeyDown') => {
                     if (reason === 'backdropClick' || reason === 'escapeKeyDown') {
@@ -477,7 +489,14 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                     }
                 }}
             >
-                <DialogTitle>{this.state.json.title || 'Abfrage'}</DialogTitle>
+                <DialogTitle
+                    style={{
+                        backgroundColor: this.props.themeType === 'dark' ? '#333' : '#f5f5f5',
+                        ...this.state.json.titleStyle,
+                    }}
+                >
+                    {this.state.json.title || 'Abfrage'}
+                </DialogTitle>
                 <DialogContent
                     style={{
                         display: 'flex',
@@ -492,13 +511,19 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                         <Button
                             variant="contained"
                             color="grey"
-                            onClick={e => {
+                            onClick={async e => {
                                 this.props.reportUxEvent({
                                     id: 'kisshome-defender-questionnaire-cancel',
                                     event: 'click',
                                     isTouchEvent: e instanceof TouchEvent,
                                     ts: Date.now(),
                                 });
+                                // Clear questionnaire without sending answers
+                                await this.props.socket.sendTo(
+                                    `kisshome-defender.${this.props.instance}`,
+                                    'questionnaireCancel',
+                                    { id: this.state.json.id },
+                                );
                                 this.props.onClose();
                             }}
                             startIcon={<Close />}

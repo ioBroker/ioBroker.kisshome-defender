@@ -40,6 +40,7 @@ interface StatisticsTabProps {
     context: VisContext;
     instance: string;
     reportUxEvent: ReportUxHandler;
+    alive: boolean;
 }
 
 interface StatisticsTabState {
@@ -124,7 +125,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                     | 'dataVolumePerDevice'
                     | 'dataVolumePerCountry'
                     | 'dataVolumePerDaytime') || 'dataVolumePerDevice',
-            alive: false,
+            alive: props.alive,
             dataVolumePerDevice: {
                 data: null,
                 ts: 0,
@@ -150,19 +151,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         });
     }
 
-    async componentDidMount(): Promise<void> {
-        const id = `system.adapter.kisshome-defender.${this.props.instance}.alive`;
-        const state = await this.props.context.socket.getState(id);
-        this.onStateAlive(id, state);
-        await this.props.context.socket.subscribeState(id, this.onStateAlive);
-    }
-
     componentWillUnmount(): void {
-        this.props.context.socket.unsubscribeState(
-            `system.adapter.kisshome-defender.${this.props.instance}.alive`,
-            this.onStateAlive,
-        );
-
         if (this.updateTimeout) {
             clearTimeout(this.updateTimeout);
             this.updateTimeout = null;
@@ -170,18 +159,6 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
 
         this.echartsReact?.getEchartsInstance().dispose();
     }
-
-    onStateAlive = (id: string, state: ioBroker.State | null | undefined): void => {
-        if (id === `system.adapter.kisshome-defender.${this.props.instance}.alive`) {
-            if (!!state?.val !== this.state.alive) {
-                this.setState({ alive: !!state?.val }, () => {
-                    if (this.state.alive) {
-                        void this.requestData();
-                    }
-                });
-            }
-        }
-    };
 
     async requestData(): Promise<void> {
         if (this.state.tab === 'dataVolumePerDevice') {
@@ -405,7 +382,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                     ref={this.refDataVolumePerDaytime}
                     style={{ width: '100%', height: '100%' }}
                 >
-                    {this.state.height && options && (
+                    {this.state.height && options ? (
                         <ReactEchartsCore
                             ref={e => {
                                 this.echartsReact = e;
@@ -419,8 +396,12 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                             opts={{ renderer: 'svg' }}
                             onEvents={{ legendselectchanged: this.onLegendDayTimeSelectChanged }}
                         />
-                    )}
-                    {!options && <div style={{ padding: 16 }}>{I18n.t('kisshome-defender_No data available')}</div>}
+                    ) : null}
+                    {!options ? (
+                        <div style={{ padding: 16, paddingLeft: 32 }}>
+                            {I18n.t('kisshome-defender_No data available')}
+                        </div>
+                    ) : null}
                 </div>
             </div>
         );
@@ -578,7 +559,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                     ref={this.refDataVolumePerCountry}
                     style={{ width: '100%', height: '100%' }}
                 >
-                    {this.state.height && options && (
+                    {this.state.height && options ? (
                         <ReactEchartsCore
                             ref={e => {
                                 this.echartsReact = e;
@@ -592,8 +573,12 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                             opts={{ renderer: 'svg' }}
                             onEvents={{ legendselectchanged: this.onLegendSelectChanged }}
                         />
-                    )}
-                    {!options && <div style={{ padding: 16 }}>{I18n.t('kisshome-defender_No data available')}</div>}
+                    ) : null}
+                    {!options ? (
+                        <div style={{ padding: 16, paddingLeft: 32 }}>
+                            {I18n.t('kisshome-defender_No data available')}
+                        </div>
+                    ) : null}
                 </div>
             </div>
         );
@@ -912,7 +897,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                     ref={this.refDataVolumePerDevice}
                     style={{ width: '100%', height: legend ? 'calc(100% - 48px)' : '100%' }}
                 >
-                    {this.state.height && options && (
+                    {this.state.height && options ? (
                         <ReactEchartsCore
                             ref={e => {
                                 this.echartsReact = e;
@@ -925,12 +910,12 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                             style={{ height: `${this.state.height}px`, width: '100%' }}
                             opts={{ renderer: 'svg' }}
                         />
-                    )}
-                    {!options && (
+                    ) : null}
+                    {!options ? (
                         <div style={{ padding: 16, paddingLeft: 32 }}>
                             {I18n.t('kisshome-defender_No data available')}
                         </div>
-                    )}
+                    ) : null}
                 </div>
             </div>
         );
@@ -950,6 +935,16 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
     }
 
     render(): React.JSX.Element {
+        if (this.state.alive !== this.props.alive) {
+            setTimeout(() => {
+                this.setState({ alive: this.props.alive }, () => {
+                    if (this.props.alive) {
+                        void this.requestData();
+                    }
+                });
+            }, 50);
+        }
+
         if (!this.state.alive) {
             return (
                 <div style={{ width: 'calc(100% - 32px)', height: 'calc(100% - 32px)', display: 'flex', padding: 16 }}>

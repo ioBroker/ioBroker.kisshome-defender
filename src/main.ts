@@ -284,13 +284,23 @@ export class KISSHomeResearchAdapter extends Adapter {
                                     `${I18n.translate('Failed to send questionnaire answer')}: ${response.statusText}`,
                                 );
                                 if (msg.callback) {
-                                    this.sendTo(msg.from, msg.command, { error: I18n.translate('Cannot send answer') }, msg.callback);
+                                    this.sendTo(
+                                        msg.from,
+                                        msg.command,
+                                        { error: I18n.translate('Cannot send answer') },
+                                        msg.callback,
+                                    );
                                 }
                             }
                         } catch (e) {
                             this.log.error(`${I18n.translate('Error sending questionnaire answer')}: ${e}`);
                             if (msg.callback) {
-                                this.sendTo(msg.from, msg.command, { error: I18n.translate('Cannot send answer') }, msg.callback);
+                                this.sendTo(
+                                    msg.from,
+                                    msg.command,
+                                    { error: I18n.translate('Cannot send answer') },
+                                    msg.callback,
+                                );
                             }
                         }
                         // If the state has the same ID => delete it
@@ -299,16 +309,45 @@ export class KISSHomeResearchAdapter extends Adapter {
                             const questionnaire = JSON.parse(state.val as string);
                             if (questionnaire.id === msg.message.id) {
                                 // Clear questionnaire
-                                await this.setStateAsync('info.cloudSync.questionnaire', '', true);
+                                await this.setStateAsync('info.cloudSync.questionnaire', JSON.stringify({ id: questionnaire.id }), true);
                             }
                         }
                     } else {
                         // Cannot happen, but just in case
                         this.log.warn(I18n.translate('No email provided for questionnaire answer or empty message'));
                         if (msg.callback) {
-                            this.sendTo(msg.from, msg.command, { error: I18n.translate('Invalid answer') }, msg.callback);
+                            this.sendTo(
+                                msg.from,
+                                msg.command,
+                                { error: I18n.translate('Invalid answer') },
+                                msg.callback,
+                            );
                         }
                     }
+                    break;
+                }
+                case 'questionnaireCancel': {
+                    // Send the questionnaire answer to the server
+                    if (msg.message && typeof msg.message === 'object') {
+                        // If the state has the same ID => delete it
+                        const state = await this.getStateAsync('info.cloudSync.questionnaire');
+                        if (state?.val) {
+                            const questionnaire = JSON.parse(state.val as string);
+                            if (questionnaire.id === msg.message.id) {
+                                // Clear questionnaire
+                                await this.setStateAsync('info.cloudSync.questionnaire', JSON.stringify({ id: questionnaire.id, done: true }), true);
+                            }
+                        }
+                        if (msg.callback) {
+                            this.sendTo(
+                                msg.from,
+                                msg.command,
+                                { result: 'ok' },
+                                msg.callback,
+                            );
+                        }
+                    }
+                    break;
                 }
             }
         }

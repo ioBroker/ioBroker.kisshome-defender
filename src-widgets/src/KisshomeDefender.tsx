@@ -25,6 +25,7 @@ interface KisshomeDefenderState extends VisRxWidgetState {
     lastSeenID: string; // Last seen ID for detections
     questionnaire: QuestionnaireJson | null; // Questionnaire data
     showQuestionnaire: QuestionnaireJson | null; // Currently shown questionnaire
+    alive: boolean;
 }
 
 export default class KisshomeDefender extends (window.visRxWidget as typeof VisRxWidget)<
@@ -38,6 +39,7 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
         super(props);
         this.state = {
             ...this.state,
+            alive: false,
             tab: (window.localStorage.getItem('kisshome-defender-tab') as KisshomeDefenderState['tab']) || 'status',
             detections: null,
             lastSeenID: '',
@@ -108,6 +110,11 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
         const stateQuestionnaire = await this.props.context.socket.getState(idQuestionnaire);
         this.onStateQuestionnaire(idQuestionnaire, stateQuestionnaire);
         await this.props.context.socket.subscribeState(idQuestionnaire, this.onStateQuestionnaire);
+
+        const aliveId = `system.adapter.kisshome-defender.${this.state.rxData.instance || 0}.alive`;
+        const state = await this.props.context.socket.getState(aliveId);
+        this.onStateAlive(aliveId, state);
+        await this.props.context.socket.subscribeState(aliveId, this.onStateAlive);
     }
 
     componentWillUnmount(): void {
@@ -144,16 +151,32 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
             `kisshome-defender.${this.state.rxData.instance || 0}.info.cloudSync.questionnaire`,
             this.onStateQuestionnaire,
         );
+        this.props.context.socket.unsubscribeState(
+            `system.adapter.kisshome-defender.${this.state.rxData.instance || 0}.alive`,
+            this.onStateAlive,
+        );
     }
+
+    onStateAlive = (id: string, state: ioBroker.State | null | undefined): void => {
+        if (id === `system.adapter.kisshome-defender.${this.state.rxData.instance || 0}.alive`) {
+            if (!!state?.val !== this.state.alive) {
+                this.setState({ alive: !!state?.val });
+            }
+        }
+    };
 
     onStateQuestionnaire = (id: string, state: ioBroker.State | null | undefined): void => {
         if (id === `kisshome-defender.${this.state.rxData.instance || 0}.info.cloudSync.questionnaire`) {
-            const questionnaire =
+            const questionnaire: QuestionnaireJson =
                 state?.val && typeof state.val === 'string' && state.val.startsWith('{')
                     ? JSON.parse(state.val as string)
                     : null;
-
-            this.setState({ questionnaire, showQuestionnaire: this.state.showQuestionnaire || questionnaire });
+            if (questionnaire.done !== undefined) {
+                // Do not show questionnaire if it is already done
+                this.setState({ questionnaire });
+            } else {
+                this.setState({ questionnaire, showQuestionnaire: this.state.showQuestionnaire || questionnaire });
+            }
         }
     };
 
@@ -194,7 +217,7 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
     };
 
     renderQuestionnaire(): React.JSX.Element | null {
-        if (!this.state.showQuestionnaire || this.props.editMode) {
+        if (!this.state.showQuestionnaire || this.props.editMode || !this.state.alive) {
             return null;
         }
         return (
@@ -204,7 +227,11 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
                 instance={this.state.rxData.instance || '0'}
                 socket={this.props.context.socket}
                 onClose={() => {
-                    if (this.state.questionnaire && this.state.showQuestionnaire!.id !== this.state.questionnaire.id) {
+                    if (
+                        this.state.questionnaire &&
+                        this.state.showQuestionnaire!.id !== this.state.questionnaire.id &&
+                        this.state.questionnaire.done === undefined
+                    ) {
                         // Show next queued questionnaire
                         this.setState({ showQuestionnaire: JSON.parse(JSON.stringify(this.state.questionnaire)) });
                     } else {
@@ -274,6 +301,7 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
                     ) : null}
                     {this.state.tab === 'statistics' ? (
                         <StatisticsTab
+                            alive={this.state.alive}
                             reportUxEvent={this.reportUxEvent}
                             instance={this.state.rxData.instance || '0'}
                             context={this.props.context}
@@ -281,6 +309,7 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
                     ) : null}
                     {this.state.tab === 'detections' ? (
                         <DetectionsTab
+                            alive={this.state.alive}
                             detections={this.state.detections}
                             lastSeenID={this.state.lastSeenID}
                             reportUxEvent={this.reportUxEvent}

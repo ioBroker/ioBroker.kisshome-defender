@@ -27,14 +27,15 @@ interface DetectionsTabProps {
     detections?: DetectionWithUUID[] | null;
     lastSeenID: string;
     reportUxEvent: ReportUxHandler;
+    alive: boolean;
 }
 interface DetectionsTabState {
     detailed: boolean;
     showOnlyAlarmsAndWarnings: boolean;
-    alive: boolean;
     lastRequest: number;
     requestRunning: boolean;
     results: StoredStatisticsResult | null;
+    alive: boolean;
 }
 
 function bytes2string(bytes: number, maxValue?: number): string {
@@ -61,27 +62,15 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         super(props);
         this.state = {
             detailed: false,
-            alive: false,
             lastRequest: 0,
             requestRunning: false,
             showOnlyAlarmsAndWarnings: false,
             results: null,
+            alive: props.alive,
         };
     }
 
-    async componentDidMount(): Promise<void> {
-        const id = `system.adapter.kisshome-defender.${this.props.instance}.alive`;
-        const state = await this.props.context.socket.getState(id);
-        this.onStateAlive(id, state);
-        await this.props.context.socket.subscribeState(id, this.onStateAlive);
-    }
-
     componentWillUnmount(): void {
-        this.props.context.socket.unsubscribeState(
-            `system.adapter.kisshome-defender.${this.props.instance}.alive`,
-            this.onStateAlive,
-        );
-
         if (this.updateTimeout) {
             clearTimeout(this.updateTimeout);
             this.updateTimeout = null;
@@ -93,18 +82,6 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
             this.setState(state as unknown as DetectionsTabState, resolve);
         });
     }
-
-    onStateAlive = (id: string, state: ioBroker.State | null | undefined): void => {
-        if (id === `system.adapter.kisshome-defender.${this.props.instance}.alive`) {
-            if (!!state?.val !== this.state.alive) {
-                this.setState({ alive: !!state?.val }, () => {
-                    if (this.state.alive) {
-                        void this.requestData();
-                    }
-                });
-            }
-        }
-    };
 
     async requestData(): Promise<void> {
         if (!this.state.lastRequest && Date.now() - this.state.lastRequest > 30_000) {
@@ -228,6 +205,21 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
     render(): React.JSX.Element {
         let unseenDetections = 0;
         let result: string;
+
+        if (this.state.alive !== this.props.alive) {
+            setTimeout(() => {
+                this.setState({ alive: this.props.alive });
+                if (this.props.alive) {
+                    void this.requestData();
+                } else {
+                    if (this.updateTimeout) {
+                        clearTimeout(this.updateTimeout);
+                        this.updateTimeout = null;
+                    }
+                }
+            }, 50);
+        }
+
         if (this.props.lastSeenID) {
             // Find the last detection with this ID
             const lastDetectionIndex = this.props.detections?.findIndex(

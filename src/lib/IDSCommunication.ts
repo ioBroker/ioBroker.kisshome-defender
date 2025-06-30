@@ -43,6 +43,8 @@ export class IDSCommunication {
     private configSent = false;
     private readonly workingFolder: string;
     private readonly statisticsDir: string;
+    private currentStatus: 'Running' | 'Started' | 'Configuring' | 'Analyzing' | 'Exited' | 'No connection' | '' = '';
+    private currentConnectedToFederatedServer?: 'True' | 'False' | '';
     private uploadStatus: {
         status: 'idle' | 'waitingOnResponse' | 'sendingFile';
         fileName?: string;
@@ -260,8 +262,11 @@ export class IDSCommunication {
 
     private async _getStatus(): Promise<void> {
         try {
-            const response = await axios.get(`${this.idsUrl}/status`);
-            this.adapter.log.info(`Status: ${response.status} ${JSON.stringify(response.data)}`);
+            const response = await axios.get(`${this.idsUrl}/status`, { timeout: 3000 });
+            if (this.currentStatus !== response.data.Message?.Status) {
+                this.adapter.log.info(`Status: ${response.status} ${JSON.stringify(response.data)}`);
+                this.currentStatus = response.data.Message?.Status || '';
+            }
             // {
             //   "Result": "Success",
             //   "Message": {
@@ -277,31 +282,48 @@ export class IDSCommunication {
 
             this.triggerUpdate();
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                this.adapter.log.error(`Error getting status: ${error.message}`);
-                if (error.response) {
-                    this.adapter.log.error(`Response data: ${JSON.stringify(error.response.data)}`);
-                    this.adapter.log.error(`Response status: ${error.response.status}`);
+            if (this.currentStatus !== 'No connection') {
+                if (axios.isAxiosError(error)) {
+                    this.adapter.log.error(`Error getting status: ${error.message}`);
+                    if (error.response) {
+                        this.adapter.log.error(`Response data: ${JSON.stringify(error.response.data)}`);
+                        this.adapter.log.error(`Response status: ${error.response.status}`);
+                    }
+                } else {
+                    this.adapter.log.error(`An unexpected error occurred: ${error}`);
                 }
-            } else {
-                this.adapter.log.error(`An unexpected error occurred: ${error}`);
             }
 
             this.lastStatus = {
                 Result: 'Error',
                 Message: {
                     Status: 'No connection',
-                    Error: error.response.data || 'No response data',
+                    Error: error.response?.data || 'No response data',
                 },
             };
         }
-        // Update variables
-        void this.adapter.setState('info.ids.status', this.lastStatus?.Message?.Status || 'No connection', true);
-        void this.adapter.setState(
-            'info.ids.connectedToFederatedServer',
-            this.lastStatus?.Message?.['Has Federated Learning server connection'] === 'True',
-            true,
-        );
+        if (this.currentStatus !== (this.lastStatus?.Message?.Status || 'No connection')) {
+            this.currentStatus = this.lastStatus?.Message?.Status || 'No connection';
+            // Update variables
+            void this.adapter.setState('info.ids.status', this.lastStatus?.Message?.Status || 'No connection', true);
+            void this.adapter.setState(
+                'info.ids.connectedToFederatedServer',
+                this.lastStatus?.Message?.['Has Federated Learning server connection'] === 'True',
+                true,
+            );
+        }
+        if (
+            this.currentConnectedToFederatedServer !==
+            (this.lastStatus?.Message?.['Has Federated Learning server connection'] || '')
+        ) {
+            this.currentConnectedToFederatedServer =
+                this.lastStatus?.Message?.['Has Federated Learning server connection'] || '';
+            void this.adapter.setState(
+                'info.ids.connectedToFederatedServer',
+                this.lastStatus?.Message?.['Has Federated Learning server connection'] === 'True',
+                true,
+            );
+        }
     }
 
     deleteOldStatisticsFiles(): void {
@@ -493,17 +515,9 @@ export class IDSCommunication {
         }
 
         this.statusInterval = setInterval(() => {
-            this._getStatus()
-                .then(() => {
-                    if (this.lastStatus) {
-                        this.adapter.log.info(`Current status: ${JSON.stringify(this.lastStatus)}`);
-                    } else {
-                        this.adapter.log.warn('No status available');
-                    }
-                })
-                .catch(error => {
-                    this.adapter.log.error(`Error getting status: ${error.message}`);
-                });
+            this._getStatus().catch(error => {
+                this.adapter.log.error(`Error getting status: ${error.message}`);
+            });
         }, 10000); // Check status every 10 seconds
     }
 
@@ -579,7 +593,10 @@ export class IDSCommunication {
 
         const filePath = `${this.workingFolder}/${fileName}`;
         const formData = new FormData();
-        formData.append('data', readFileSync(filePath), { filename: fileName, contentType: 'application/octet-stream', });
+        formData.append('data', readFileSync(filePath), {
+            filename: fileName,
+            contentType: 'application/octet-stream',
+        });
 
         axios
             .post(`${this.idsUrl}/pcap`, formData, {
