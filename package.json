@@ -38,7 +38,7 @@
         "@iobroker/types": "^7.0.7",
         "@iobroker/legacy-testing": "^2.0.2",
         "@iobroker/testing": "^5.0.4",
-        "@types/node": "^22.15.30",
+        "@types/node": "^24.0.8",
         "chai": "^4.5.0",
         "mocha": "^11.5.0",
         "typescript": "~5.8.3"
