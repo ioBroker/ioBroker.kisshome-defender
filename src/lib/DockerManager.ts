@@ -97,7 +97,7 @@ export class DockerManager {
                     this.adapter.log.debug(
                         `An update for image ${this.options.image} is available. Pulling latest version...`,
                     );
-                    await this.pullImage(this.options.image);
+                    await this.updateContainer();
                 } else {
                     this.adapter.log.debug(`Image ${this.options.image} is up to date.`);
                 }
@@ -124,15 +124,7 @@ export class DockerManager {
         const running = nameOrId ? await this._isContainerRunning(nameOrId) : false;
         if (!running) {
             this.adapter.log.debug(`Starting container with image ${this.options.image}...`);
-            this.runningId = await this.startContainer({
-                image: this.options.image,
-                name: this.options.name,
-                ports: this.options.ports,
-                volumes: this.options.volumes,
-                env: this.options.env,
-                detached: this.options.detached,
-                removeAfterStop: this.options.removeAfterStop,
-            });
+            this.runningId = await this.runContainer();
             this.adapter.log.debug(`Container started with ID: ${this.runningId}`);
         } else {
             this.adapter.log.debug(`Container with name ${this.options.name} is already running.`);
@@ -228,6 +220,14 @@ export class DockerManager {
         );
         // Pull latest image
         await this._executeCommand(`${this.options.dockerCommand} pull ${imageName}`);
+        // iob@kisshome:~ $ sudo docker pull kisshome/ids:stable-backports
+        // OUTPUT:
+        //      stable-backports: Pulling from kisshome/ids
+        //      Digest: sha256:42ed5bfd32fecfba638b683774c711ac74f5d10baaab09b4e2581c0b0105c291
+        //      Status: Image is up to date for kisshome/ids:stable-backports
+        //      docker.io/kisshome/ids:stable-backports
+        // We can analyse the output to determine if the image was updated, but is it the same in all languages?
+
         // Get new image ID
         const { stdout: remoteId } = await this._executeCommand(
             `${this.options.dockerCommand} images --no-trunc --quiet ${imageName}`,
@@ -248,13 +248,63 @@ export class DockerManager {
         return stdout;
     }
 
+    private async runContainer(): Promise<string> {
+        // Check if the container with the specified name is already existing
+        const exist = await this.isContainerExist();
+        if (exist) {
+            this.adapter.log.debug(`Container with name ${this.options.name} already exists.`);
+            return await this.startContainer();
+        }
+
+        // Start a new container
+        this.runningId = await this.initContainer({
+            image: this.options.image,
+            name: this.options.name,
+            ports: this.options.ports,
+            volumes: this.options.volumes,
+            env: this.options.env,
+            detached: this.options.detached,
+            removeAfterStop: this.options.removeAfterStop,
+        });
+
+        return this.runningId;
+    }
+
+    private async isContainerExist(name?: string): Promise<boolean> {
+        name ||= this.options.name || ''; // Use the provided name or the default one
+        if (!name) {
+            throw new Error('Image name is required to check if a container exists.');
+        }
+        const command = `${this.options.dockerCommand} ps -a --filter "name=${name}" --format "{{.ID}}"`;
+        try {
+            const { stdout } = await this._executeCommand(command)
+            return !!stdout.trim().length;
+        } catch (error) {
+            this.adapter.log.error(`Error checking if container exists: ${error as Error}`);
+            return false; // If the command fails, assume the container does not exist
+        }
+    }
+
+    private async startContainer(name?: string): Promise<string> {
+        name ||= this.options.name || ''; // Use the provided name or the default one
+        let command = `${this.options.dockerCommand} start`;
+        if (!name) {
+            throw new Error('Image name is required to start a container.');
+        }
+
+        command += ` ${name}`;
+        this.adapter.log.debug(`Re-starting container with command: ${command}`);
+        const { stdout } = await this._executeCommand(command);
+        return stdout.trim(); // The container ID is returned
+    }
+
     /**
      * Starts a new Docker container.
      *
      * @param options The configuration for the new container.
      * @returns A promise that resolves with the ID of the new container.
      */
-    private async startContainer(options: StartContainerOptions): Promise<string> {
+    private async initContainer(options: StartContainerOptions): Promise<string> {
         const { image, name, ports, volumes, env, detached = true, removeAfterStop } = options;
 
         let command = `${this.options.dockerCommand} run`;
@@ -267,7 +317,13 @@ export class DockerManager {
         }
         if (ports) {
             ports.forEach(p => {
-                command += ` -p ${p}`;
+                if (p.includes(':')) {
+                    // If the port mapping is in the format 'hostPort:containerPort'
+                    command += ` -p ${p}`;
+                } else {
+                    // If only the container port is specified, map it to the same port on the host
+                    command += ` -p ${p}:${p}`;
+                }
             });
         }
         if (volumes) {
@@ -298,35 +354,28 @@ export class DockerManager {
     /**
      * Updates a Docker image and restarts the associated container.
      *
-     * @param image Name of the image (e.g. 'nginx:alpine')
-     * @param containerName Name of the container
-     * @param options Start options for the new container
      * @returns A promise that resolves with the ID of the new container or an empty string if the container was not running.
      */
-    private async updateContainer(
-        image: string,
-        containerName: string,
-        options: StartContainerOptions,
-    ): Promise<string> {
+    private async updateContainer(): Promise<string> {
         // Pull the latest image
-        await this.pullImage(image);
-
+        await this.pullImage(this.options.image);
+        // Check if a container with the specified name is already running
+        if (!this.options.name) {
+            this.runningId = await this.getContainerIdByImage(this.options.image);
+        }
+        const nameOrId = this.options.name || this.runningId;
         // Stop the container if it is running
-        const running = await this._isContainerRunning(containerName);
+        const running = nameOrId ? await this._isContainerRunning(nameOrId) : false;
         if (running) {
-            await this.stopContainer(containerName);
+            await this.stopContainer(nameOrId!);
         }
 
         // Remove the container if it exists
-        try {
-            await this._executeCommand(`${this.options.dockerCommand} rm ${containerName}`);
-        } catch {
-            // Ignore if the container does not exist
-        }
+        await this.remove();
 
         if (running) {
-            this.adapter.log.info(`Container ${containerName} stopped and removed. Starting a new container...`);
-            return await this.startContainer({ ...options, image, name: containerName });
+            this.adapter.log.info(`Container ${nameOrId} stopped and removed. Starting a new container...`);
+            return await this.start();
         }
         return '';
     }
@@ -339,6 +388,14 @@ export class DockerManager {
         return await this.start();
     }
 
+    public async remove(): Promise<void> {
+        // Remove the container if it exists
+        try {
+            await this._executeCommand(`${this.options.dockerCommand} rm ${this.options.image}`);
+        } catch {
+            // Ignore if the container does not exist
+        }
+    }
     /**
      * Stops a running container.
      *

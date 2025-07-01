@@ -309,7 +309,11 @@ export class KISSHomeResearchAdapter extends Adapter {
                             const questionnaire = JSON.parse(state.val as string);
                             if (questionnaire.id === msg.message.id) {
                                 // Clear questionnaire
-                                await this.setStateAsync('info.cloudSync.questionnaire', JSON.stringify({ id: questionnaire.id }), true);
+                                await this.setStateAsync(
+                                    'info.cloudSync.questionnaire',
+                                    JSON.stringify({ id: questionnaire.id }),
+                                    true,
+                                );
                             }
                         }
                     } else {
@@ -335,16 +339,15 @@ export class KISSHomeResearchAdapter extends Adapter {
                             const questionnaire = JSON.parse(state.val as string);
                             if (questionnaire.id === msg.message.id) {
                                 // Clear questionnaire
-                                await this.setStateAsync('info.cloudSync.questionnaire', JSON.stringify({ id: questionnaire.id, done: true }), true);
+                                await this.setStateAsync(
+                                    'info.cloudSync.questionnaire',
+                                    JSON.stringify({ id: questionnaire.id, done: true }),
+                                    true,
+                                );
                             }
                         }
                         if (msg.callback) {
-                            this.sendTo(
-                                msg.from,
-                                msg.command,
-                                { result: 'ok' },
-                                msg.callback,
-                            );
+                            this.sendTo(msg.from, msg.command, { result: 'ok' }, msg.callback);
                         }
                     }
                     break;
@@ -364,6 +367,7 @@ export class KISSHomeResearchAdapter extends Adapter {
         }
 
         await I18n.init(__dirname, this);
+        console.log(I18n.translate('Saved UX events to file "%s"', 'aaa'));
 
         // remove running flag
         const runningState = await this.getStateAsync('info.connection');
@@ -582,7 +586,7 @@ export class KISSHomeResearchAdapter extends Adapter {
         }
     }
 
-    readQuestionnaire() {
+    readQuestionnaire(): void {
         if (this.questionnaireTimer) {
             this.clearTimeout(this.questionnaireTimer);
             this.questionnaireTimer = null;

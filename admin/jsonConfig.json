@@ -223,6 +223,7 @@
                 "_restart": {
                     "newLine": true,
                     "type": "state",
+                    "oid": "info.ids.restart",
                     "control": "button",
                     "sm": 12,
                     "label": "Restart Docker Container",

@@ -95,7 +95,7 @@
         "anomalySensitivity": "medium",
         "saveThresholdSeconds": 900,
         "docker": {
-            "selfHosted": false,
+            "selfHosted": true,
             "url": ""
         }
     },

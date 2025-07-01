@@ -246,7 +246,7 @@ export class IDSCommunication {
                     ...formData.getHeaders(),
                 },
             });
-            this.adapter.log.info(`Config successful: ${response.status} ${response.data}`);
+            this.adapter.log.info(`Config successful: ${response.status} ${JSON.stringify(response.data)}`);
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 this.adapter.log.error(`Error uploading config: ${error.message}`);
@@ -265,7 +265,6 @@ export class IDSCommunication {
             const response = await axios.get(`${this.idsUrl}/status`, { timeout: 3000 });
             if (this.currentStatus !== response.data.Message?.Status) {
                 this.adapter.log.info(`Status: ${response.status} ${JSON.stringify(response.data)}`);
-                this.currentStatus = response.data.Message?.Status || '';
             }
             // {
             //   "Result": "Success",
@@ -306,11 +305,6 @@ export class IDSCommunication {
             this.currentStatus = this.lastStatus?.Message?.Status || 'No connection';
             // Update variables
             void this.adapter.setState('info.ids.status', this.lastStatus?.Message?.Status || 'No connection', true);
-            void this.adapter.setState(
-                'info.ids.connectedToFederatedServer',
-                this.lastStatus?.Message?.['Has Federated Learning server connection'] === 'True',
-                true,
-            );
         }
         if (
             this.currentConnectedToFederatedServer !==
@@ -490,6 +484,7 @@ export class IDSCommunication {
             this.dockerManager ||= new DockerManager(this.adapter, {
                 image: 'kisshome/ids:stable-backports',
                 name: 'iobroker-defender-ids',
+                ports: ['5000'],
                 autoUpdate: true,
                 autoStart: false,
             });
