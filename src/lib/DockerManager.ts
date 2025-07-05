@@ -1,6 +1,9 @@
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
 
+// Debug with
+// sudo docker exec -it iobroker-defender-ids bash
+
 // Promisify exec for use with async/await
 const execPromise = promisify(exec);
 
@@ -426,6 +429,16 @@ export class DockerManager {
             // If the command fails, it is unlikely that the container is running.
             return false;
         }
+    }
+
+    async getIpOfContainer(): Promise<string> {
+        const command = `${this.options.dockerCommand} inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${this.options.name || this.runningId}`;
+        const { stdout } = await this._executeCommand(command);
+        const ip = stdout.trim();
+        if (!ip) {
+            throw new Error(`No IP address found for container ${this.options.name || this.runningId}`);
+        }
+        return ip;
     }
 
     /**

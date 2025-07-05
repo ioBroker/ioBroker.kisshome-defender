@@ -30,6 +30,7 @@
   "Recording enabled": "Nagrywanie włączone",
   "Recording is not running": "Nagrywanie nie działa",
   "Recording is running": "Nagrywanie jest uruchomione",
+  "Restart Docker Container": "Uruchom ponownie kontener Docker",
   "Save threshold in seconds": "Zapisz próg w sekundach",
   "Self-hosted": "Samodzielnie hostowany",
   "The MAC address is important, but if you enter the IP address, the system will try to find the MAC address automatically.": "Adres MAC jest istotny, ale jeśli wpiszesz adres IP, system spróbuje automatycznie znaleźć adres MAC.",

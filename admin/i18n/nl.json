@@ -30,6 +30,7 @@
   "Recording enabled": "Opname ingeschakeld",
   "Recording is not running": "Opname is niet actief",
   "Recording is running": "Opname is bezig",
+  "Restart Docker Container": "Docker-container opnieuw opstarten",
   "Save threshold in seconds": "Drempelwaarde in seconden opslaan",
   "Self-hosted": "Zelf gehost",
   "The MAC address is important, but if you enter the IP address, the system will try to find the MAC address automatically.": "Het MAC-adres is belangrijk, maar als u het IP-adres invoert, probeert het systeem het MAC-adres automatisch te vinden.",

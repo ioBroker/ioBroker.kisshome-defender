@@ -30,6 +30,7 @@
   "Recording enabled": "Запис увімкнено",
   "Recording is not running": "Запис не ведеться",
   "Recording is running": "Запис йде",
+  "Restart Docker Container": "Перезапустіть Docker-контейнер",
   "Save threshold in seconds": "Поріг збереження за секунди",
   "Self-hosted": "Самостійно розміщено",
   "The MAC address is important, but if you enter the IP address, the system will try to find the MAC address automatically.": "MAC-адреса важлива, але якщо ви введете IP-адресу, система спробує знайти MAC-адресу автоматично.",

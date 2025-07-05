@@ -30,6 +30,7 @@
   "Recording enabled": "已启用录制功能",
   "Recording is not running": "录音未进行",
   "Recording is running": "正在录制",
+  "Restart Docker Container": "重启 Docker 容器",
   "Save threshold in seconds": "保存阈值（以秒为单位）",
   "Self-hosted": "自托管",
   "The MAC address is important, but if you enter the IP address, the system will try to find the MAC address automatically.": "MAC 地址很重要，但如果您输入 IP 地址，系统将尝试自动查找 MAC 地址。",
