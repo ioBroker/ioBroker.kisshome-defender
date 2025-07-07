@@ -75,7 +75,7 @@ export default class CloudSync {
         try {
             // register on the cloud
             const response = await axios.post(
-                `https://${PCAP_HOST}/api/v1/checkEmail/${encodeURIComponent(this.config.email)}?uuid=${encodeURIComponent(this.uuid)}`,
+                `https://${PCAP_HOST}/api/v2/checkEmail/${encodeURIComponent(this.config.email)}?uuid=${encodeURIComponent(this.uuid)}`,
                 {
                     timeout: 10_000, // 10-second timeout
                 },
@@ -196,7 +196,7 @@ export default class CloudSync {
             // check if the file was sent successfully
             try {
                 const responseCheck = await axios.get(
-                    `https://${PCAP_HOST}/api/v1/upload/${encodeURIComponent(this.config.email)}/${encodeURIComponent(name)}?uuid=${encodeURIComponent(this.uuid)}`,
+                    `https://${PCAP_HOST}/api/v2/upload/${encodeURIComponent(this.config.email)}/${encodeURIComponent(name)}?uuid=${encodeURIComponent(this.uuid)}`,
                 );
                 if (responseCheck.data?.command === 'terminate') {
                     const obj = await this.adapter.getForeignObjectAsync(`system.adapter.${this.adapter.namespace}`);
@@ -221,14 +221,14 @@ export default class CloudSync {
 
             const responsePost = await axios({
                 method: 'post',
-                url: `https://${PCAP_HOST}/api/v1/upload/${encodeURIComponent(this.config.email)}/${encodeURIComponent(name)}?&uuid=${encodeURIComponent(this.uuid)}`,
+                url: `https://${PCAP_HOST}/api/v2/upload/${encodeURIComponent(this.config.email)}/${encodeURIComponent(name)}?&uuid=${encodeURIComponent(this.uuid)}`,
                 data,
                 headers: { 'Content-Type': 'application/vnd.tcpdump.pcap' },
             });
 
             // check if the file was sent successfully
             const response = await axios.get(
-                `https://${PCAP_HOST}/api/v1/upload/${encodeURIComponent(this.config.email)}/${encodeURIComponent(name)}?&uuid=${encodeURIComponent(this.uuid)}`,
+                `https://${PCAP_HOST}/api/v2/upload/${encodeURIComponent(this.config.email)}/${encodeURIComponent(name)}?&uuid=${encodeURIComponent(this.uuid)}`,
             );
             if (response.status === 200 && response.data === md5) {
                 if (name.endsWith('.pcap')) {

@@ -160,7 +160,7 @@ export class IDSCommunication {
             this.adapter.log.warn('No IDS URL configured, using localhost as fallback');
             throw new Error('No IDS URL configured');
         } else if (!this.idsUrl) {
-            this.idsUrl = `http://${this.dockerManager.getIpOfContainer()}:5000`;
+            this.idsUrl = `http://${this.dockerManager!.getIpOfContainer()}:5000`;
         }
 
         const parsed = new URL(this.idsUrl);
