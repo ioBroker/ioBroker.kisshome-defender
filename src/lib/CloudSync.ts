@@ -6,7 +6,7 @@ import { basename } from 'node:path';
 import { createHash } from 'node:crypto';
 import axios, { type AxiosResponse } from 'axios';
 import { getDescriptionFile, getTimestamp, size2text } from './utils';
-const SYNC_INTERVAL = 3_600_000; // 3_600_000;
+const SYNC_INTERVAL = 3_600_000; // 1 hour;
 export const PCAP_HOST = 'kisshome-experiments.if-is.net';
 
 export default class CloudSync {
@@ -75,7 +75,7 @@ export default class CloudSync {
         try {
             // register on the cloud
             const response = await axios.post(
-                `https://${PCAP_HOST}/api/v2/checkEmail/${encodeURIComponent(this.config.email)}?uuid=${encodeURIComponent(this.uuid)}`,
+                `https://${PCAP_HOST}/api/v2/checkEmail?email=${encodeURIComponent(this.config.email)}&uuid=${encodeURIComponent(this.uuid)}`,
                 {
                     timeout: 10_000, // 10-second timeout
                 },

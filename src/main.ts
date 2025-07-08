@@ -271,7 +271,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                     if (msg.message && typeof msg.message === 'object' && this.config.email) {
                         try {
                             const response = await axios.post(
-                                `https://${PCAP_HOST}/api/v1/questionnaire?email=${encodeURIComponent(this.config.email)}`,
+                                `https://${PCAP_HOST}/api/v2/questionnaire?email=${encodeURIComponent(this.config.email)}`,
                                 msg.message,
                             );
                             if (response.status === 200) {
@@ -593,7 +593,7 @@ export class KISSHomeResearchAdapter extends Adapter {
         }
         // Read the questionnaire file
         axios
-            .get(`https://${PCAP_HOST}/api/v1/questionnaire?email=${encodeURIComponent(this.config.email)}`)
+            .get(`https://${PCAP_HOST}/api/v2/questionnaire?email=${encodeURIComponent(this.config.email)}`)
             .then(async response => {
                 if (response.status === 200 && typeof response.data === 'object' && response.data?.id) {
                     // Check if the questionnaire file has changed

@@ -221,8 +221,16 @@ export class DockerManager {
         const { stdout: localId } = await this._executeCommand(
             `${this.options.dockerCommand} images --no-trunc --quiet ${imageName}`,
         );
-        // Pull latest image
-        await this._executeCommand(`${this.options.dockerCommand} pull ${imageName}`);
+        try {
+            // Pull latest image
+            this.adapter.log.debug(`Downloading latest image: ${imageName}... please wait.`);
+            const { stdout: log } = await this._executeCommand(`${this.options.dockerCommand} pull -q ${imageName}`);
+            console.log('Pull log:', log);
+            this.adapter.log.debug(`Image ${imageName} pulled successfully.`);
+        } catch (error) {
+            this.adapter.log.error(`Error pulling image ${imageName}: ${error as Error}`);
+            return false; // If pulling fails, assume no update is available
+        }
         // iob@kisshome:~ $ sudo docker pull kisshome/ids:stable-backports
         // OUTPUT:
         //      stable-backports: Pulling from kisshome/ids
@@ -247,7 +255,7 @@ export class DockerManager {
      */
     private async pullImage(imageName: string): Promise<string> {
         this.adapter.log.debug(`Pulling image: ${imageName}...`);
-        const { stdout } = await this._executeCommand(`${this.options.dockerCommand} pull ${imageName}`);
+        const { stdout } = await this._executeCommand(`${this.options.dockerCommand} pull -q ${imageName}`);
         return stdout;
     }
 
