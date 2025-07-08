@@ -367,7 +367,6 @@ export class KISSHomeResearchAdapter extends Adapter {
         }
 
         await I18n.init(__dirname, this);
-        console.log(I18n.translate('Saved UX events to file "%s"', 'aaa'));
 
         // remove running flag
         const runningState = await this.getStateAsync('info.connection');
@@ -561,6 +560,9 @@ export class KISSHomeResearchAdapter extends Adapter {
             IPs: this.IPs,
             version: this.versionPack,
         });
+
+        console.log(I18n.translate('Saved UX events to file "%s"', `${this.cloudSync.workingDir}/${getTimestamp()}_ux_events.json`));
+
         this.idsCommunication = new IDSCommunication(
             this,
             this.config,

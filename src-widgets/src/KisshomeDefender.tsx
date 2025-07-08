@@ -294,9 +294,23 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
                 <div style={{ width: '100%', height: 'calc(100% - 48px)' }}>
                     {this.state.tab === 'status' ? (
                         <StatusTab
+                            themeType={this.props.context.themeType}
+                            alive={this.state.alive}
                             reportUxEvent={this.reportUxEvent}
                             instance={this.state.rxData.instance || '0'}
                             context={this.props.context}
+                            detections={this.state.detections}
+                            lastSeenID={this.state.lastSeenID}
+                            onNavigateToDetections={() => {
+                                this.setState({ tab: 'detections' });
+                                window.localStorage.setItem('kisshome-defender-tab', 'detections');
+                                this.reportUxEvent({
+                                    id: 'kisshome-defender-tabs',
+                                    event: 'change',
+                                    ts: Date.now(),
+                                    data: 'detections',
+                                });
+                            }}
                         />
                     ) : null}
                     {this.state.tab === 'statistics' ? (

@@ -38,23 +38,6 @@ interface DetectionsTabState {
     alive: boolean;
 }
 
-function bytes2string(bytes: number, maxValue?: number): string {
-    if (maxValue !== undefined && maxValue > 1024 * 1024) {
-        // Use a part of MB
-        return `${(bytes / (1024 * 1024)).toFixed(1).replace('.', ',')}Mb`;
-    }
-    if (bytes < 1024) {
-        return `${bytes}b`;
-    }
-    if (bytes < 1024 * 1024) {
-        return `${(bytes / 1024).toFixed(1).replace('.', ',')}kb`;
-    }
-    if (bytes < 1024 * 1024 * 1024) {
-        return `${(bytes / (1024 * 1024)).toFixed(1).replace('.', ',')}Mb`;
-    }
-    return `${(bytes / (1024 * 1024 * 1024)).toFixed(1).replace('.', ',')}Gb`;
-}
-
 export default class DetectionsTab extends Component<DetectionsTabProps, DetectionsTabState> {
     private updateTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -68,6 +51,11 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
             results: null,
             alive: props.alive,
         };
+    }
+
+    componentDidMount() {
+        this.requestData()
+            .catch(e => console.error(e));
     }
 
     componentWillUnmount(): void {

@@ -13,7 +13,7 @@ export default class CloudSync {
     private readonly adapter: ioBroker.Adapter;
     private readonly config: DefenderAdapterConfig;
     private syncRunning: boolean = false;
-    private readonly workingDir: string;
+    public readonly workingDir: string;
     private syncTimer: NodeJS.Timeout | null = null;
     private readonly context: Context;
     private readonly uuid: string;
