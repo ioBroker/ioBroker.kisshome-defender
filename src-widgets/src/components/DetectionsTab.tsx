@@ -445,6 +445,21 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 this.props.detections?.length || 0,
             );
         }
+        if (!this.state.alive) {
+            return (
+                <div
+                    style={{
+                        width: 'calc(100% - 32px)',
+                        height: 'calc(100% - 32px)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        padding: 16,
+                    }}
+                >
+                    <p>{I18n.t('kisshome-defender_Instance is not running')}</p>
+                </div>
+            );
+        }
 
         return (
             <div
