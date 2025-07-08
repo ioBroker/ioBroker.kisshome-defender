@@ -500,6 +500,7 @@ export class IDSCommunication {
         };
 
         // Aggregate the statistics
+        statistics.analysisDurationMs = Math.round(statistics.analysisDurationMs);
         data.analysisDurationMs += statistics.analysisDurationMs;
         data.totalBytes += statistics.totalBytes;
         data.packets += statistics.packets;

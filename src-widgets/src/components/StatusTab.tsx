@@ -27,7 +27,7 @@ interface StatusTabState {
 
 const styles: Record<'title' | 'row', React.CSSProperties> = {
     title: {
-        minWidth: 200,
+        minWidth: 220,
     },
     row: {
         height: 38,
@@ -172,7 +172,7 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
             if (unseenAlertsCount > 0) {
                 detectionsTest.push(
                     <span style={{ color: 'red' }}>
-                        {I18n.t('Alerts')} - {unseenAlertsCount} ⚠
+                        {I18n.t('kisshome-defender_Alerts')} - {unseenAlertsCount} ⚠
                     </span>,
                 );
             }
@@ -182,7 +182,7 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                 }
                 detectionsTest.push(
                     <span style={{ color: 'orange' }}>
-                        {I18n.t('Warnings')} - {unseenWarningsCount}
+                        {I18n.t('kisshome-defender_Warnings')} - {unseenWarningsCount}
                     </span>,
                 );
             }
@@ -204,21 +204,21 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                         <tbody>
                             <tr style={styles.row}>
                                 <td colSpan={2}>
-                                    <h2>{I18n.t('Status')}</h2>
+                                    <h2>{I18n.t('kisshome-defender_Status')}</h2>
                                 </td>
                             </tr>
                             <tr style={styles.row}>
-                                <td style={styles.title}>{I18n.t('Instance is running')}</td>
+                                <td style={styles.title}>{I18n.t('kisshome-defender_Instance is running')}</td>
                                 <td style={{ color: this.props.alive ? 'green' : 'red' }}>
                                     {this.props.alive ? '✓' : '🗙'}
                                 </td>
                             </tr>
                             <tr style={styles.row}>
-                                <td style={styles.title}>{I18n.t('Detection engine status')}</td>
-                                <td style={{ color: this.getStatusColor() }}>{I18n.t(this.state.idsStatus)}</td>
+                                <td style={styles.title}>{I18n.t('kisshome-defender_Detection engine status')}</td>
+                                <td style={{ color: this.getStatusColor() }}>{I18n.t(`kisshome-defender_${this.state.idsStatus}`)}</td>
                             </tr>
                             <tr style={styles.row}>
-                                <td style={styles.title}>{I18n.t('Recording enabled')}</td>
+                                <td style={styles.title}>{I18n.t('kisshome-defender_Recording enabled')}</td>
                                 <td style={{ color: this.state.recordingEnabled ? 'green' : 'red' }}>
                                     <Switch
                                         checked={this.state.recordingEnabled}
@@ -256,7 +256,7 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                             </tr>
                             {this.state.recordingEnabled ? (
                                 <tr style={styles.row}>
-                                    <td style={styles.title}>{I18n.t('Recording running')}</td>
+                                    <td style={styles.title}>{I18n.t('kisshome-defender_Recording running')}</td>
                                     <td style={{ color: this.state.recordingRunning ? 'green' : 'red' }}>
                                         {this.state.recordingRunning ? '✓' : '🗙'}
                                     </td>
@@ -264,7 +264,7 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                             ) : null}
                             {this.state.recordingRunning ? (
                                 <tr style={styles.row}>
-                                    <td style={styles.title}>{I18n.t('Number of captured packets')}</td>
+                                    <td style={styles.title}>{I18n.t('kisshome-defender_Number of captured packets')}</td>
                                     <td style={{ color: this.state.recordingCaptured ? 'green' : 'orange' }}>
                                         {this.state.recordingCaptured}
                                     </td>
@@ -295,13 +295,13 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                 >
                     {unseenAlertsCount || unseenWarningsCount ? (
                         <div>
-                            <div style={{ ...styles.title, display: 'inline-block' }}>{I18n.t('New detections')}:</div>{' '}
+                            <div style={{ ...styles.title, display: 'inline-block' }}>{I18n.t('kisshome-defender_New detections')}:</div>{' '}
                             {detectionsTest}
                         </div>
                     ) : this.props.detections?.length ? (
-                        <div>{I18n.t('No unseen detections')}</div>
+                        <div>{I18n.t('kisshome-defender_No unseen detections')}</div>
                     ) : (
-                        <div>{I18n.t('No detections')}</div>
+                        <div>{I18n.t('kisshome-defender_No detections')}</div>
                     )}
                 </Paper>
             </div>

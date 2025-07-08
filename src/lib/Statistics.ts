@@ -58,6 +58,7 @@ export default class Statistics {
         lastWeek.setMilliseconds(0);
 
         const cache: string[] = [];
+        const fileNames: string[] = [];
         // Read the size of the files
         for (const file of files) {
             const fileDate = fileNameToDate(file);
@@ -68,6 +69,7 @@ export default class Statistics {
             try {
                 const stats = statSync(join(this.workingDir, file));
                 cache.push(`${file}_${stats.size}`);
+                fileNames.push(file);
             } catch (error) {
                 this.adapter.log.error(`Error reading file ${file}: ${error}`);
             }
@@ -75,7 +77,7 @@ export default class Statistics {
         if (this.cache.hash !== cache.join(',')) {
             const results: StatisticsResult[] = [];
 
-            for (const file of files) {
+            for (const file of fileNames) {
                 try {
                     const data: StoredStatisticsResult = JSON.parse(
                         readFileSync(join(this.workingDir, file)).toString(),

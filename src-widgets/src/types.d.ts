@@ -64,6 +64,7 @@ export interface StoredStatisticsResult {
     packets: number;
     results: StatisticsResult[];
     countries: { [country: string]: number };
+    names: { [mac: MACAddress]: { ip: string; desc: string; vendor?: string } };
 }
 
 export interface Detection {

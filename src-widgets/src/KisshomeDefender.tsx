@@ -329,6 +329,7 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
                             reportUxEvent={this.reportUxEvent}
                             instance={this.state.rxData.instance || '0'}
                             context={this.props.context}
+                            themeType={this.props.context.themeType}
                         />
                     ) : null}
                     {this.state.tab === 'settings' ? (
