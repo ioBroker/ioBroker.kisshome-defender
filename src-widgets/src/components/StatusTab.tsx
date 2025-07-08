@@ -191,7 +191,7 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
         return (
             <div
                 className="status-tab"
-                style={{ padding: '10px' }}
+                style={{ padding: 10 }}
             >
                 <Paper
                     style={{

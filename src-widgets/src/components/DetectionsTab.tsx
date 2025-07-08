@@ -11,6 +11,7 @@ import {
     DialogContent,
     DialogTitle,
     FormControlLabel,
+    Paper,
     Tooltip,
     Typography,
 } from '@mui/material';
@@ -128,10 +129,59 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
     }
 
     renderLastDetection(): React.JSX.Element {
+        const item = this.state.results?.results?.[0];
+        if (!item) {
+            return (
+                <div className="last-detection">
+                    <h3>{I18n.t('kisshome-defender_Last Detection')}</h3>
+                    <div>{I18n.t('kisshome-defender_No detections yet done')}</div>
+                </div>
+            );
+        }
+
+        const detections = this.props.detections?.filter(d => d.scanUUID === item.uuid);
+        const worstDetection = detections?.reduce(
+            (worst, current) => {
+                if (!worst || (current.type === 'Alert' && worst.type !== 'Alert')) {
+                    return current;
+                }
+                if (current.type === 'Warning' && worst.type !== 'Alert') {
+                    return current;
+                }
+                return worst;
+            },
+            null as DetectionWithUUID | null,
+        );
+
         return (
             <div className="last-detection">
-                <h3>Last Detection</h3>
-                <p>No detections yet.</p>
+                <div style={styles.row}>
+                    <div style={styles.title}>{I18n.t('kisshome-defender_Last Detection')}:</div>
+                    <div style={styles.value}>{new Date(item.time).toLocaleString()}</div>
+                </div>
+                <div style={styles.row}>
+                    <div style={styles.title}>{I18n.t('kisshome-defender_Checked packets')}:</div>
+                    <div style={styles.value}>{item.packets}</div>
+                </div>
+                <div style={styles.row}>
+                    <div style={styles.title}>{I18n.t('kisshome-defender_Spent time')}:</div>
+                    <div style={styles.value}>{time2string(item.analysisDurationMs)}</div>
+                </div>
+                <div style={styles.row}>
+                    <div style={styles.title}>{I18n.t('kisshome-defender_Total bytes')}:</div>
+                    <div style={styles.value}>{bytes2string(item.totalBytes)}</div>
+                </div>
+                <div style={styles.row}>
+                    <div style={styles.title}>{I18n.t('kisshome-defender_Detected problems')}:</div>
+                    <div style={styles.value}>
+                        {detections?.length || 0}
+                        {worstDetection?.type === 'Warning' ? (
+                            <Warning style={{ marginLeft: 8, color: 'orange' }} />
+                        ) : worstDetection?.type === 'Alert' ? (
+                            <Alarm style={{ marginLeft: 8, color: 'red' }} />
+                        ) : null}
+                    </div>
+                </div>
             </div>
         );
     }
@@ -397,19 +447,28 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         }
 
         return (
-            <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <div
+                style={{
+                    width: 'calc(100% - 20px)',
+                    height: 'calc(100% - 20px)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: 10,
+                }}
+            >
                 {this.renderDetections()}
-                <div style={{ flexGrow: 1 }}>{this.renderLastDetection()}</div>
+                <Paper style={{ flexGrow: 1, padding: 10 }}>{this.renderLastDetection()}</Paper>
                 <Tooltip
                     title={I18n.t('kisshome-defender_Click to see all detections')}
                     placement="top"
                 >
-                    <div
-                        style={{ height: 80, padding: 16, cursor: 'pointer' }}
+                    <Paper
+                        variant="outlined"
+                        style={{ height: 80, padding: 10, cursor: 'pointer' }}
                         onClick={() => this.setState({ detailed: true })}
                     >
                         {I18n.t('kisshome-defender_Results')}: {result}
-                    </div>
+                    </Paper>
                 </Tooltip>
             </div>
         );
