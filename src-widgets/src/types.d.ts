@@ -69,7 +69,7 @@ export interface StoredStatisticsResult {
 
 export interface Detection {
     mac: MACAddress;
-    type: 'Warning' | 'Alert';
+    type: 'Warning' | 'Alert' | 'Info';
     description: string;
     country: string;
     time: string;
