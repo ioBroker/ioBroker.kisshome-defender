@@ -239,6 +239,13 @@ export class KISSHomeResearchAdapter extends Adapter {
                     }
                     break;
 
+                case 'getTotals': {
+                    if (msg.callback) {
+                        this.sendTo(msg.from, msg.command, this.statistics?.getTotals(), msg.callback);
+                    }
+                    break;
+                }
+
                 case 'getData': {
                     if (msg.callback) {
                         const requestType: DataRequestType = msg.message.type || 'allStatistics';
@@ -275,9 +282,11 @@ export class KISSHomeResearchAdapter extends Adapter {
                                 result.totalBytes += result.results[r].totalBytes;
                                 result.packets += result.results[r].packets;
                                 result.results[r].devices.forEach(device => {
-                                    device.countries?.forEach(country => {
-                                        result.countries[country.country] ||= 0;
-                                        result.countries[country.country] += country.bytes;
+                                    const ips = Object.keys(device.external_ips);
+                                    ips.forEach(ip => {
+                                        const country = device.external_ips[ip].country;
+                                        result.countries[country] ||= 0;
+                                        result.countries[country] += device.external_ips[ip].data_volume_bytes;
                                     });
                                 });
                             }

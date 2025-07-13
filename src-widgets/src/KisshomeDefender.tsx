@@ -15,6 +15,10 @@ import SettingsTab from './components/SettingsTab';
 import type { DetectionWithUUID, ReportUxEventType, ReportUxHandler, UXEvent } from './types';
 import Questionnaire, { type QuestionnaireJson } from './components/Questionnaire';
 
+function isMobile(): boolean {
+    return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
 interface KisshomeDefenderRxData {
     instance: `${number}`;
 }
@@ -28,12 +32,19 @@ interface KisshomeDefenderState extends VisRxWidgetState {
     alive: boolean;
 }
 
+const styles: Record<string, React.CSSProperties> = {
+    tabLabel: {
+        textTransform: 'none',
+    },
+};
+
 export default class KisshomeDefender extends (window.visRxWidget as typeof VisRxWidget)<
     KisshomeDefenderRxData,
     KisshomeDefenderState
 > {
     private uxEvents: UXEvent[] | null = null;
     private uxEventsTimeout: ReturnType<typeof setTimeout> | null = null;
+    private isMobile = isMobile();
 
     constructor(props: VisRxWidgetProps) {
         super(props);
@@ -168,9 +179,7 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
     onStateQuestionnaire = (id: string, state: ioBroker.State | null | undefined): void => {
         if (id === `kisshome-defender.${this.state.rxData.instance || 0}.info.cloudSync.questionnaire`) {
             const questionnaire: QuestionnaireJson =
-                state?.val && typeof state.val === 'string' && state.val.startsWith('{')
-                    ? JSON.parse(state.val as string)
-                    : null;
+                state?.val && typeof state.val === 'string' && state.val.startsWith('{') ? JSON.parse(state.val) : null;
             if (questionnaire.done !== undefined) {
                 // Do not show questionnaire if it is already done
                 this.setState({ questionnaire });
@@ -200,9 +209,11 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
         isTouchEvent?: boolean;
         ts: number;
         data?: string;
+        mobile?: boolean; // Optional, will be set automatically
     }): void => {
         // Aggregate UX events by 10 seconds
         this.uxEvents ||= [];
+        event.mobile = this.isMobile;
         this.uxEvents.push(event);
         this.uxEventsTimeout ||= setTimeout(() => {
             this.uxEventsTimeout = null;
@@ -247,15 +258,22 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
         super.renderWidgetBody(props);
 
         return (
-            <Card style={{ width: '100%', height: '100%' }}>
+            <Card
+                style={{
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: this.props.context.themeType === 'dark' ? undefined : '#E6E6E6',
+                }}
+            >
                 {this.renderQuestionnaire()}
                 <Toolbar
                     variant="dense"
-                    style={{ width: 'calc(100% - 48px)', display: 'flex' }}
+                    style={{ width: 'calc(100% - 48px)', display: 'flex', backgroundColor: '#333E50', color: 'white' }}
                 >
+                    <span>KISSHOME</span>
                     <img
                         src={logo}
-                        style={{ height: 32, marginRight: 8, marginLeft: 8 }}
+                        style={{ height: 32, marginRight: 8, marginLeft: 16 }}
                         alt="KISShome Defender"
                     />
                     <Tabs
@@ -274,19 +292,36 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
                     >
                         <Tab
                             value="status"
+                            style={{
+                                ...styles.tabLabel,
+                                color: this.state.tab === 'status' ? '#66ccff' : 'white',
+                            }}
                             label={I18n.t('kisshome-defender_Status')}
                         />
                         <Tab
                             value="statistics"
+                            style={{
+                                ...styles.tabLabel,
+                                color: this.state.tab === 'statistics' ? '#66ccff' : 'white',
+                            }}
                             label={I18n.t('kisshome-defender_Statistics')}
                         />
                         <Tab
                             value="detections"
+                            style={{
+                                ...styles.tabLabel,
+                                color: this.state.tab === 'detections' ? '#66ccff' : 'white',
+                            }}
                             label={I18n.t('kisshome-defender_Detections')}
                         />
                         <div style={{ flexGrow: 1 }} />
                         <Tab
                             value="settings"
+                            style={{
+                                ...styles.tabLabel,
+                                fontStyle: 'italic',
+                                color: this.state.tab === 'settings' ? '#66ccff' : 'white',
+                            }}
                             label={I18n.t('kisshome-defender_Settings')}
                         />
                     </Tabs>
@@ -319,6 +354,7 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
                             reportUxEvent={this.reportUxEvent}
                             instance={this.state.rxData.instance || '0'}
                             context={this.props.context}
+                            themeType={this.props.context.themeType}
                         />
                     ) : null}
                     {this.state.tab === 'detections' ? (

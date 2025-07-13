@@ -41,12 +41,13 @@ export interface DefenderAdapterConfig {
 
 export interface DeviceStatistics {
     mac: MACAddress;
-    countries?: {
-        country: string;
-        bytes: number;
-    }[];
-    // Show the total bytes per device
-    bytes: number;
+    external_ips: {
+        [ip: string]: { country: string; data_volume_bytes: number };
+    };
+    data_volume: {
+        packet_count: number;
+        data_volume_bytes: number;
+    };
 }
 
 export interface StatisticsResult {
@@ -73,6 +74,8 @@ export interface Detection {
     description: string;
     country: string;
     time: string;
+    score?: number;
+    source?: string;
 }
 
 export interface DetectionWithUUID extends Detection {

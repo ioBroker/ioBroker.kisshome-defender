@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 
 import type { VisContext } from '@iobroker/types-vis-2';
-import { I18n } from '@iobroker/adapter-react-v5';
-import { Checkbox, LinearProgress, ListItemText, MenuItem, Select, Tab, Tabs } from '@mui/material';
+import { I18n, type ThemeType } from '@iobroker/adapter-react-v5';
+import { Checkbox, LinearProgress, ListItemText, MenuItem, Paper, Select, Tab, Tabs } from '@mui/material';
 import type {
     DataVolumePerCountryResult,
     DataVolumePerDaytimeResult,
@@ -42,6 +42,7 @@ interface StatisticsTabProps {
     instance: string;
     reportUxEvent: ReportUxHandler;
     alive: boolean;
+    themeType: ThemeType;
 }
 
 interface StatisticsTabState {
@@ -63,6 +64,8 @@ interface StatisticsTabState {
     height: number;
     legendMacs: { [mac: MACAddress]: boolean };
     legendOpened: boolean;
+    deviceMostCountries?: string;
+    deviceMostDataVolume?: string;
 }
 
 interface BarSeriesTooltipParams {
@@ -129,6 +132,10 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         };
     }
 
+    async componentDidMount(): Promise<void> {
+        await this.requestData();
+    }
+
     setStateAsync(state: Partial<StatisticsTabState>): Promise<void> {
         return new Promise(resolve => {
             this.setState(state as unknown as StatisticsTabState, resolve);
@@ -142,6 +149,37 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         }
 
         this.echartsReact?.getEchartsInstance().dispose();
+    }
+
+    async getCommonStats(): Promise<void> {
+        if (this.state.alive) {
+            const result = await this.props.context.socket.sendTo(
+                `kisshome-defender.${this.props.instance}`,
+                'getTotals',
+                {},
+            );
+            if (result) {
+                this.setState({
+                    deviceMostCountries: (
+                        result as {
+                            deviceMostCountries?: string;
+                            dataVolumePerDevice?: string;
+                        }
+                    ).deviceMostCountries,
+                    deviceMostDataVolume: (
+                        result as {
+                            deviceMostCountries?: string;
+                            dataVolumePerDevice?: string;
+                        }
+                    ).dataVolumePerDevice,
+                });
+            } else {
+                this.setState({
+                    deviceMostCountries: '',
+                    deviceMostDataVolume: '',
+                });
+            }
+        }
     }
 
     async requestData(): Promise<void> {
@@ -167,6 +205,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                     } else {
                         this.setState({ requestRunning: false });
                     }
+                    await this.getCommonStats();
                 }
             }
             // else the data is already loaded and still valid
@@ -192,6 +231,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                     } else {
                         this.setState({ requestRunning: false });
                     }
+                    await this.getCommonStats();
                 }
             }
             // else the data is already loaded and still valid
@@ -217,6 +257,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                     } else {
                         this.setState({ requestRunning: false });
                     }
+                    await this.getCommonStats();
                 }
             }
             // else the data is already loaded and still valid
@@ -918,6 +959,33 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         return <div>...</div>;
     }
 
+    renderStatInfo(): React.JSX.Element {
+        return (
+            <div>
+                {this.state.deviceMostDataVolume || this.state.deviceMostCountries ? (
+                    <div style={{ fontWeight: 'bold' }}>
+                        {I18n.t(
+                            'kisshome-defender_Statistics on aggregated transmitted data volume over the past 7 days',
+                        )}
+                        :
+                    </div>
+                ) : null}
+                {this.state.deviceMostDataVolume ? (
+                    <div>
+                        {I18n.t('kisshome-defender_Device with the highest transmitted data volume')}:
+                        <span style={{ fontWeight: 'bold', marginLeft: 8 }}>{this.state.deviceMostDataVolume}</span>
+                    </div>
+                ) : null}
+                {this.state.deviceMostCountries ? (
+                    <div>
+                        {I18n.t('kisshome-defender_Device that contacted the most countries')}:
+                        <span style={{ fontWeight: 'bold', marginLeft: 8 }}>{this.state.deviceMostCountries}</span>
+                    </div>
+                ) : null}
+            </div>
+        );
+    }
+
     render(): React.JSX.Element {
         if (this.state.alive !== this.props.alive) {
             setTimeout(() => {
@@ -939,7 +1007,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
 
         return (
             <div style={{ width: '100%', height: '100%', display: 'flex' }}>
-                <div style={{ width: 150 }}>
+                <div style={{ width: 150, backgroundColor: this.props.context.themeType === 'dark' ? '#333' : '#CCC' }}>
                     <Tabs
                         value={this.state.tab}
                         style={{ backgroundColor: this.props.context.themeType === 'dark' ? '#333' : '#CCC' }}
@@ -969,22 +1037,51 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                     >
                         <Tab
                             value="dataVolumePerDevice"
-                            style={{ alignItems: 'start' }}
+                            style={{ alignItems: 'start', textTransform: 'none' }}
                             label={I18n.t('kisshome-defender_Data volume')}
                         />
                         <Tab
                             value="dataVolumePerCountry"
-                            style={{ alignItems: 'start' }}
+                            style={{ alignItems: 'start', textTransform: 'none' }}
                             label={I18n.t('kisshome-defender_By country')}
                         />
                         <Tab
                             value="dataVolumePerDaytime"
-                            style={{ alignItems: 'start' }}
+                            style={{ alignItems: 'start', textTransform: 'none' }}
                             label={I18n.t('kisshome-defender_By day-time')}
                         />
                     </Tabs>
                 </div>
-                <div style={{ flexGrow: 1 }}>{this.renderChart()}</div>
+                <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 20, padding: 10 }}>
+                    <Paper
+                        style={{
+                            flexGrow: 1,
+                            padding: 10,
+                            border: `2px solid ${this.props.themeType === 'dark' ? 'white' : 'black'}`,
+                            borderRadius: 0,
+                            backgroundColor: this.props.context.themeType === 'dark' ? undefined : '#E6E6E6',
+                            boxShadow: 'none',
+                        }}
+                    >
+                        {this.renderChart()}
+                    </Paper>
+                    <Paper
+                        style={{
+                            height: 80,
+                            padding: 10,
+                            border: `2px solid ${this.props.themeType === 'dark' ? 'white' : 'black'}`,
+                            borderRadius: 0,
+                            backgroundColor: this.props.context.themeType === 'dark' ? undefined : '#E6E6E6',
+                            boxShadow: 'none',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '1.3rem',
+                        }}
+                    >
+                        {this.renderStatInfo()}
+                    </Paper>
+                </div>
             </div>
         );
     }

@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 
 import { Paper, Switch } from '@mui/material';
+import { Check, Close } from '@mui/icons-material';
 
 import type { VisContext } from '@iobroker/types-vis-2';
-import type { DetectionWithUUID, ReportUxHandler } from '../types';
 import { I18n, type ThemeType } from '@iobroker/adapter-react-v5';
+import type { DetectionWithUUID, ReportUxHandler } from '../types';
+import { bytes2string } from './utils';
 
 interface StatusTabProps {
     context: VisContext;
@@ -25,14 +27,38 @@ interface StatusTabState {
     federatedServer: boolean;
 }
 
-const styles: Record<'title' | 'row', React.CSSProperties> = {
+const styles: Record<'title' | 'row' | 'result', React.CSSProperties> = {
     title: {
         minWidth: 220,
     },
     row: {
         height: 38,
     },
+    result: {
+        width: 180,
+        display: 'flex',
+        gap: 10,
+        alignItems: 'center',
+    },
 };
+
+function StatusIcon(props: { ok: boolean }): React.JSX.Element {
+    return (
+        <span
+            style={{
+                borderRadius: 30,
+                backgroundColor: props.ok ? 'green' : 'red',
+                width: 30,
+                height: 30,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}
+        >
+            {props.ok ? <Check style={{ color: 'white' }} /> : <Close style={{ color: 'white' }} />}
+        </span>
+    );
+}
 
 export default class StatusTab extends Component<StatusTabProps, StatusTabState> {
     constructor(props: StatusTabProps) {
@@ -72,7 +98,7 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
         await this.props.context.socket.subscribeState(recordingCapturedId, this.onRecordingCapturedChanged);
     }
 
-    componentWillUnmount() {
+    componentWillUnmount(): void {
         this.props.context.socket.unsubscribeState(
             `kisshome-defender.${this.props.instance}.info.ids.status`,
             this.onIdsStatusChanged,
@@ -143,7 +169,7 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
         }
     };
 
-    getStatusColor() {
+    getStatusColor(): 'green' | 'red' | 'orange' {
         if (this.state.idsStatus === 'Exited') {
             return 'red';
         }
@@ -156,70 +182,101 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
     render(): React.JSX.Element {
         let unseenAlertsCount = 0;
         let unseenWarningsCount = 0;
-        let detectionsTest: React.JSX.Element[] = [];
+        let unseenInfoCount = 0;
+        const detectionsTest: React.JSX.Element[] = [];
         if (this.props.detections?.length && this.props.detections[0].uuid !== this.props.lastSeenID) {
             for (let i = 0; i < this.props.detections.length; i += 1) {
                 if (this.props.detections[i].uuid !== this.props.lastSeenID) {
                     if (this.props.detections[i].type === 'Alert') {
                         unseenAlertsCount += 1;
-                    } else {
+                    } else if (this.props.detections[i].type === 'Warning') {
                         unseenWarningsCount += 1;
+                    } else if (this.props.detections[i].type === 'Info') {
+                        unseenInfoCount += 1;
                     }
                 } else {
                     break; // We found the last seen ID, so we can stop counting
                 }
             }
+            let currentColor: string | undefined = undefined;
             if (unseenAlertsCount > 0) {
+                currentColor = 'red';
                 detectionsTest.push(
-                    <span style={{ color: 'red' }}>
+                    <span style={{ color: currentColor }}>
                         {I18n.t('kisshome-defender_Alerts')} - {unseenAlertsCount} ⚠
                     </span>,
                 );
             }
+
             if (unseenWarningsCount > 0) {
-                if (detectionsTest) {
-                    detectionsTest.push(<span>, </span>);
+                if (detectionsTest.length) {
+                    detectionsTest.push(<span style={{ color: currentColor }}>, </span>);
                 }
+                currentColor = 'orange';
                 detectionsTest.push(
                     <span style={{ color: 'orange' }}>
-                        {I18n.t('kisshome-defender_Warnings')} - {unseenWarningsCount}
+                        {I18n.t('kisshome-defender_Warnings')} - {unseenWarningsCount} ⚠
+                    </span>,
+                );
+            }
+
+            if (unseenInfoCount > 0) {
+                if (detectionsTest.length) {
+                    detectionsTest.push(<span style={{ color: currentColor }}>, </span>);
+                }
+                detectionsTest.push(
+                    <span>
+                        {I18n.t('kisshome-defender_Info')} - {unseenInfoCount} 🛈
                     </span>,
                 );
             }
         }
+        let problem = '';
+        if (!this.props.alive) {
+            problem = I18n.t('kisshome-defender_Instance is not running');
+        } else if (this.state.idsStatus === 'Exited') {
+            problem = I18n.t('kisshome-defender_Detection engine exited');
+        } else if (!this.state.recordingRunning) {
+            problem = I18n.t('kisshome-defender_Recording is not running. Please check the log for more details');
+        }
+
 
         return (
             <div
                 className="status-tab"
-                style={{ padding: 10 }}
+                style={{
+                    width: 'calc(100% - 20px)',
+                    height: 'calc(100% - 20px)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: 10,
+                    gap: 20,
+                }}
             >
                 <Paper
                     style={{
-                        width: 'calc(100% - 20px)',
-                        backgroundColor: this.props.themeType === 'dark' ? '#333' : '#ddd',
+                        flexGrow: 1,
                         padding: 10,
+                        border: `2px solid ${this.props.themeType === 'dark' ? 'white' : 'black'}`,
+                        borderRadius: 0,
+                        backgroundColor: this.props.context.themeType === 'dark' ? undefined : '#E6E6E6',
+                        boxShadow: 'none',
                     }}
                 >
                     <table>
                         <tbody>
                             <tr style={styles.row}>
-                                <td colSpan={2}>
-                                    <h2>{I18n.t('kisshome-defender_Status')}</h2>
+                                <td style={styles.result}>
+                                    <StatusIcon ok={this.props.alive} />
                                 </td>
-                            </tr>
-                            <tr style={styles.row}>
                                 <td style={styles.title}>{I18n.t('kisshome-defender_Instance is running')}</td>
-                                <td style={{ color: this.props.alive ? 'green' : 'red' }}>
-                                    {this.props.alive ? '✓' : '🗙'}
+                            </tr>
+                            <tr style={styles.row}>
+                                <td style={styles.result} title={problem}>
+                                    <StatusIcon ok={this.props.alive && this.state.recordingRunning} />
                                 </td>
-                            </tr>
-                            <tr style={styles.row}>
-                                <td style={styles.title}>{I18n.t('kisshome-defender_Detection engine status')}</td>
-                                <td style={{ color: this.getStatusColor() }}>{I18n.t(`kisshome-defender_${this.state.idsStatus}`)}</td>
-                            </tr>
-                            <tr style={styles.row}>
-                                <td style={styles.title}>{I18n.t('kisshome-defender_Recording enabled')}</td>
-                                <td style={{ color: this.state.recordingEnabled ? 'green' : 'red' }}>
+                                <td style={styles.title}>
+                                    {I18n.t('kisshome-defender_Software activated')}
                                     <Switch
                                         checked={this.state.recordingEnabled}
                                         onMouseDown={(event: React.MouseEvent<HTMLButtonElement>) => {
@@ -254,20 +311,25 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                                     />
                                 </td>
                             </tr>
-                            {this.state.recordingEnabled ? (
-                                <tr style={styles.row}>
-                                    <td style={styles.title}>{I18n.t('kisshome-defender_Recording running')}</td>
-                                    <td style={{ color: this.state.recordingRunning ? 'green' : 'red' }}>
-                                        {this.state.recordingRunning ? '✓' : '🗙'}
-                                    </td>
-                                </tr>
-                            ) : null}
+                            <tr style={styles.row}>
+                                <td style={{ ...styles.result, color: this.getStatusColor() }}>
+                                    <StatusIcon ok={this.getStatusColor() === 'green'} />
+                                    <span>{I18n.t(`kisshome-defender_${this.state.idsStatus}`)}</span>
+                                </td>
+                                <td style={styles.title}>{I18n.t('kisshome-defender_Detection engine status')}</td>
+                            </tr>
                             {this.state.recordingRunning ? (
                                 <tr style={styles.row}>
-                                    <td style={styles.title}>{I18n.t('kisshome-defender_Number of captured packets')}</td>
-                                    <td style={{ color: this.state.recordingCaptured ? 'green' : 'orange' }}>
-                                        {this.state.recordingCaptured}
+                                    <td style={{ ...styles.result, fontSize: 8 }}>
+                                        <StatusIcon ok />
+                                        <span>
+                                            {I18n.t(
+                                                'kisshome-defender_%s collected',
+                                                bytes2string(this.state.recordingCaptured),
+                                            )}
+                                        </span>
                                     </td>
+                                    <td style={styles.title}>{I18n.t('kisshome-defender_Recording is running')}</td>
                                 </tr>
                             ) : null}
                         </tbody>
@@ -275,12 +337,17 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                 </Paper>
                 <Paper
                     style={{
-                        width: 'calc(100% - 20px)',
-                        paddingLeft: 10,
-                        paddingRight: 10,
-                        paddingTop: 20,
-                        paddingBottom: 20,
+                        height: 80,
+                        padding: 10,
+                        border: `2px solid ${this.props.themeType === 'dark' ? 'white' : 'black'}`,
+                        borderRadius: 0,
+                        backgroundColor: this.props.context.themeType === 'dark' ? undefined : '#E6E6E6',
+                        boxShadow: 'none',
                         cursor: this.props.detections?.length ? 'pointer' : 'default',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '1.3rem',
                     }}
                     onClick={() => {
                         if (this.props.detections?.length) {
@@ -295,7 +362,9 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                 >
                     {unseenAlertsCount || unseenWarningsCount ? (
                         <div>
-                            <div style={{ ...styles.title, display: 'inline-block' }}>{I18n.t('kisshome-defender_New detections')}:</div>{' '}
+                            <div style={{ ...styles.title, display: 'inline-block' }}>
+                                {I18n.t('kisshome-defender_Actual information')}:
+                            </div>
                             {detectionsTest}
                         </div>
                     ) : this.props.detections?.length ? (

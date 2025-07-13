@@ -22,5 +22,5 @@ export function time2string(ms: number): string {
     if (ms < 60_000) {
         return `${(Math.floor(ms / 100) / 10).toString().replace('.', ',')}s`;
     }
-    return `${Math.floor(ms / (60_000))}m ${Math.floor((ms % 60_000) / 1000).toString()}s`;
+    return `${Math.floor(ms / 60_000)}m ${Math.floor((ms % 60_000) / 1000).toString()}s`;
 }

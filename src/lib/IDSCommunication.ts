@@ -506,9 +506,11 @@ export class IDSCommunication {
         data.packets += statistics.packets;
 
         statistics.devices.forEach((device: DeviceStatistics) => {
-            device.countries?.forEach(country => {
-                data.countries[country.country] ||= 0;
-                data.countries[country.country] += country.bytes;
+            const ips = Object.keys(device.external_ips);
+            ips.forEach(ip => {
+                const country = device.external_ips[ip].country;
+                data.countries[country] ||= 0;
+                data.countries[country] += device.external_ips[ip].data_volume_bytes;
             });
         });
         statistics.time = new Date().toISOString();

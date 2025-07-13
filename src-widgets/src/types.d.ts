@@ -73,6 +73,8 @@ export interface Detection {
     description: string;
     country: string;
     time: string;
+    score?: number;
+    source?: string;
 }
 
 export interface DetectionWithUUID extends Detection {
@@ -112,4 +114,5 @@ export type ReportUxHandler = (event: {
     isTouchEvent?: boolean;
     ts: number;
     data?: string;
+    mobile?: boolean;
 }) => void;

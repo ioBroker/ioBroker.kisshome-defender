@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { Check, Close } from '@mui/icons-material';
 
-import type { ReportUxHandler } from '../types';
+import type { DefenderAdapterConfig, ReportUxHandler } from '../types';
 
 export type QuestionnaireItemType = 'text' | 'select' | 'checkbox' | 'radio' | 'input' | 'yesNo';
 
@@ -29,6 +29,8 @@ export interface QuestionnaireItem {
     required?: boolean;
     text?: string; // For text items, this can be used to render Markdown or other content
     style?: React.CSSProperties; // Optional style for the item
+    variant?: 'bottom' | 'end'; // Position of the radio button variant
+    delimiter?: boolean; // if false, no delimiter will be rendered
 }
 
 export interface QuestionnaireJson {
@@ -59,6 +61,7 @@ interface QuestionnaireState {
     endTs: string;
     links: { url: string; ts: string }[];
     json: QuestionnaireJson;
+    email: string;
 }
 
 interface QuestionnaireAnswer {
@@ -78,9 +81,14 @@ const styles: Record<string, React.CSSProperties> = {
     },
     divLabel: {
         minWidth: '30%',
-        fontWeight: 'bold',
+        // fontWeight: 'bold',
+        maxWidth: '50%',
     },
     divControl: {},
+    delimiter: {
+        paddingBottom: 10,
+        borderBottom: '1px dotted #888',
+    },
 };
 
 export default class Questionnaire extends Component<QuestionnaireProps, QuestionnaireState> {
@@ -95,6 +103,7 @@ export default class Questionnaire extends Component<QuestionnaireProps, Questio
             endTs: '',
             links: [],
             json: JSON.parse(JSON.stringify(props.json)),
+            email: '',
         };
 
         // @ts-expect-error
@@ -112,8 +121,13 @@ export default class Questionnaire extends Component<QuestionnaireProps, Questio
             }));
         };
 
-        this.markDown.renderer.rules.link_open = (tokens, idx, options, env, self) => {
-            const href = tokens[idx].attrGet('href');
+        this.markDown.renderer.rules.link_open = (tokens, idx) => {
+            let href = tokens[idx].attrGet('href');
+            if (href) {
+                href = href
+                    .replace(/\{\{email}}/g, encodeURIComponent(this.state.email))
+                    .replace(/%7B%7Bemail%7D%7D/g, encodeURIComponent(this.state.email)); // Escape quotes for HTML
+            }
             // Hier kannst du z. B. ein data-Attribut setzen oder eine eigene Klasse
             return `<a
 href="${href}"
@@ -125,7 +139,13 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         };
     }
 
-    componentDidMount() {
+    componentDidMount(): void {
+        void this.props.socket.getObject(`system.adapter.kisshome-defender.${this.props.instance}`).then(obj => {
+            if (obj.native) {
+                this.setState({ email: (obj.native as DefenderAdapterConfig).email });
+            }
+        });
+
         this.props.reportUxEvent({
             id: this.state.json.id,
             event: 'show',
@@ -133,7 +153,7 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         });
     }
 
-    componentWillUnmount() {
+    componentWillUnmount(): void {
         this.props.reportUxEvent({
             id: this.state.json.id,
             event: 'hide',
@@ -148,7 +168,11 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
             return (
                 <div
                     key={item.id}
-                    style={{ ...styles.divItem, ...this.state.json.divStyle }}
+                    style={{
+                        ...styles.divItem,
+                        ...this.state.json.divStyle,
+                        ...(item.delimiter === false ? undefined : styles.delimiter),
+                    }}
                 >
                     <span
                         style={{ width: '100%', ...this.state.json.itemStyle, ...item.style }}
@@ -161,11 +185,18 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         return (
             <div
                 key={item.id}
-                style={{ ...styles.divItem, ...this.state.json.divStyle }}
+                style={{
+                    ...styles.divItem,
+                    ...this.state.json.divStyle,
+                    ...(item.delimiter === false ? undefined : styles.delimiter),
+                }}
             >
                 <label
                     htmlFor={item.id}
-                    style={{ ...styles.divLabel, ...this.state.json.labelStyle }}
+                    style={{
+                        ...styles.divLabel,
+                        ...this.state.json.labelStyle,
+                    }}
                 >
                     {item.label}
                 </label>
@@ -181,7 +212,11 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         return (
             <div
                 key={item.id}
-                style={{ ...styles.divItem, ...this.state.json.divStyle }}
+                style={{
+                    ...styles.divItem,
+                    ...this.state.json.divStyle,
+                    ...(item.delimiter === false ? undefined : styles.delimiter),
+                }}
             >
                 <label
                     htmlFor={item.id}
@@ -230,7 +265,11 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         return (
             <div
                 key={item.id}
-                style={{ ...styles.divItem, ...this.state.json.divStyle }}
+                style={{
+                    ...styles.divItem,
+                    ...this.state.json.divStyle,
+                    ...(item.delimiter === false ? undefined : styles.delimiter),
+                }}
             >
                 <label
                     htmlFor={item.id}
@@ -242,6 +281,7 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                 <TextField
                     style={{ ...styles.divControl, ...this.state.json.itemStyle, ...item.style }}
                     variant="standard"
+                    fullWidth
                     value={(this.state.answers[item.id]?.value as string) || ''}
                     onChange={e => {
                         const value = e.target.value;
@@ -269,7 +309,12 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         return (
             <div
                 key={item.id}
-                style={{ ...styles.divItem, ...this.state.json.divStyle }}
+                style={{
+                    ...styles.divItem,
+                    justifyContent: item.options!.length > 5 ? 'space-between' : undefined,
+                    ...this.state.json.divStyle,
+                    ...(item.delimiter === false ? undefined : styles.delimiter),
+                }}
             >
                 <label
                     htmlFor={item.id}
@@ -284,6 +329,7 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                 >
                     {item.options?.map(option => (
                         <FormControlLabel
+                            key={option.value.toString()}
                             control={
                                 <Radio
                                     checked={value === option.value}
@@ -305,6 +351,21 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                                 />
                             }
                             label={option.label}
+                            labelPlacement={item.variant || 'bottom'}
+                            sx={{
+                                '& .MuiFormControlLabel-label':
+                                    !item.variant || item.variant === 'bottom'
+                                        ? {
+                                              maxWidth: 80,
+                                              textAlign: 'center',
+                                              fontSize: item.options!.length > 5 ? '0.8rem' : undefined,
+                                          }
+                                        : null,
+                                '&.MuiFormControlLabel-root': {
+                                    marginLeft: item.options!.length > 5 ? '2px' : undefined,
+                                    marginRight: item.options!.length > 5 ? '2px' : undefined,
+                                },
+                            }}
                         />
                     ))}
                 </RadioGroup>
@@ -317,7 +378,11 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         return (
             <div
                 key={item.id}
-                style={{ ...styles.divItem, ...this.state.json.divStyle }}
+                style={{
+                    ...styles.divItem,
+                    ...this.state.json.divStyle,
+                    ...(item.delimiter === false ? undefined : styles.delimiter),
+                }}
             >
                 <label
                     htmlFor={item.id}
@@ -388,7 +453,11 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         return (
             <div
                 key={item.id}
-                style={{ ...styles.divItem, ...this.state.json.divStyle }}
+                style={{
+                    ...styles.divItem,
+                    ...this.state.json.divStyle,
+                    ...(item.delimiter === false ? undefined : styles.delimiter),
+                }}
             >
                 <label
                     htmlFor={item.id}
@@ -451,17 +520,13 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
             })),
         };
 
-        const result = await this.props.socket.sendTo(
-            `kisshome-defender.${this.props.instance}`,
-            'questionnaireAnswer',
-            answer,
-        );
+        await this.props.socket.sendTo(`kisshome-defender.${this.props.instance}`, 'questionnaireAnswer', answer);
     }
 
     render(): React.JSX.Element {
         let allRequiredAnswered = true;
         this.state.json.items?.forEach((item: QuestionnaireItem) => {
-            if (item.required && !this.state.answers[item.id]) {
+            if (item.required && !this.state.answers[item.id] && item.type !== 'text') {
                 allRequiredAnswered = false;
             }
         });
@@ -469,9 +534,9 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         return (
             <Dialog
                 fullWidth
-                maxWidth="md"
+                maxWidth="lg"
                 open={!0}
-                onClose={(_e, reason?: 'backdropClick' | 'escapeKeyDown') => {
+                onClose={async (_e, reason?: 'backdropClick' | 'escapeKeyDown') => {
                     if (reason === 'backdropClick' || reason === 'escapeKeyDown') {
                         this.props.reportUxEvent({
                             id: 'kisshome-defender-questionnaire-dialog',
@@ -482,9 +547,15 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                         });
                     }
 
-                    if (this.state.json.required === false) {
-                        this.props.onClose();
-                    } else if (reason !== 'backdropClick' && reason !== 'escapeKeyDown') {
+                    if (
+                        this.state.json.required === false ||
+                        (reason !== 'backdropClick' && reason !== 'escapeKeyDown')
+                    ) {
+                        await this.props.socket.sendTo(
+                            `kisshome-defender.${this.props.instance}`,
+                            'questionnaireCancel',
+                            { id: this.state.json.id },
+                        );
                         this.props.onClose();
                     }
                 }}
@@ -504,7 +575,7 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                         gap: 10,
                     }}
                 >
-                    {this.state.json.items?.map(item => this.renderItem(item))}
+                    {this.state.email ? this.state.json.items?.map(item => this.renderItem(item)) : '...'}
                 </DialogContent>
                 <DialogActions>
                     {this.state.json.required === false ? (

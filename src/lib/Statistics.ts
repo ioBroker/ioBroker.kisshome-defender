@@ -108,7 +108,7 @@ export default class Statistics {
             const ts = new Date(result.time).getTime(); // Get date in YYYY-MM-DD format
             result.devices.forEach(device => {
                 macs[device.mac] ||= { series: [], info: this.MAC2DESC[device.mac] };
-                macs[device.mac].series.push([ts, device.bytes]);
+                macs[device.mac].series.push([ts, device.data_volume.data_volume_bytes]);
             });
         }
         return macs;
@@ -121,15 +121,61 @@ export default class Statistics {
         const macs: DataVolumePerCountryResult = {};
         for (const result of results) {
             result.devices.forEach(device => {
-                device.countries?.forEach(country => {
+                const ips = Object.keys(device.external_ips);
+                ips.forEach(ip => {
+                    const country = device.external_ips[ip].country;
                     macs[device.mac] ||= { countries: {}, info: this.MAC2DESC[device.mac] };
-                    macs[device.mac].countries[country.country] ||= 0;
-                    macs[device.mac].countries[country.country] += country.bytes;
+                    macs[device.mac].countries[country] ||= 0;
+                    macs[device.mac].countries[country] += device.external_ips[ip].data_volume_bytes;
                 });
             });
         }
 
         return macs;
+    }
+
+    public getTotals(): {
+        deviceMostCountries?: string;
+        dataVolumePerDevice?: string;
+    } {
+        // For this information, we need all data for the last 7 days.
+        const results = this.getData();
+        const devices: { [mac: string]: { volume: number; countries: string[] } } = {};
+        for (const result of results) {
+            result.devices.forEach(device => {
+                devices[device.mac] ||= { volume: 0, countries: [] };
+                devices[device.mac].volume += device.data_volume.data_volume_bytes;
+                const ips = Object.keys(device.external_ips);
+                ips.forEach(ip => {
+                    const country = device.external_ips[ip].country;
+                    if (!devices[device.mac].countries.includes(country)) {
+                        devices[device.mac].countries.push(country);
+                    }
+                });
+            });
+        }
+        let deviceMostCountries = '';
+        let dataVolumePerDevice = '';
+
+        // Find device with most countries
+        const macs = Object.keys(devices);
+        for (const mac of macs) {
+            if (!deviceMostCountries || devices[mac].countries.length > devices[deviceMostCountries].countries.length) {
+                deviceMostCountries = mac;
+            }
+            if (!dataVolumePerDevice || devices[mac].volume > devices[deviceMostCountries].volume) {
+                dataVolumePerDevice = mac;
+            }
+        }
+
+        return {
+            deviceMostCountries: this.MAC2DESC[deviceMostCountries]
+                ? `${this.MAC2DESC[deviceMostCountries].desc} / ${this.MAC2DESC[deviceMostCountries].ip} [${deviceMostCountries}]`
+                : deviceMostCountries,
+            dataVolumePerDevice: this.MAC2DESC[dataVolumePerDevice]
+                ? `${this.MAC2DESC[dataVolumePerDevice].desc} / ${this.MAC2DESC[dataVolumePerDevice].ip} [${dataVolumePerDevice}]`
+                : dataVolumePerDevice,
+        };
     }
 
     public getDataVolumePerDaytime(): DataVolumePerDaytimeResult {
@@ -139,11 +185,9 @@ export default class Statistics {
         for (const result of results) {
             const dayTime: 0 | 1 | 2 | 3 = Math.floor(new Date(result.time).getHours() / 6) as 0 | 1 | 2 | 3; // 0-3
             result.devices.forEach(device => {
-                device.countries?.forEach(country => {
-                    macs[device.mac] ||= { dayTime: {}, info: this.MAC2DESC[device.mac] };
-                    macs[device.mac].dayTime[dayTime] ||= 0;
-                    macs[device.mac].dayTime[dayTime]! += country.bytes;
-                });
+                macs[device.mac] ||= { dayTime: {}, info: this.MAC2DESC[device.mac] };
+                macs[device.mac].dayTime[dayTime] ||= 0;
+                macs[device.mac].dayTime[dayTime]! += device.data_volume.data_volume_bytes;
             });
         }
 

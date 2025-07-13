@@ -54,21 +54,24 @@ for (let i = -7; i <= 0; i++) {
             oneResult.totalBytes += bytes;
             oneResult.devices.push({
                 mac,
-                bytes,
-                countries: [
-                    {
+                data_volume: {
+                    packet_count: 5,
+                    data_volume_bytes: bytes,
+                },
+                external_ips: {
+                    '1.1.1.1': {
                         country: 'DE',
-                        bytes: Math.floor(bytes * 0.5), // 50% of bytes for Germany
+                        data_volume_bytes: Math.floor(bytes * 0.5), // 50% of bytes for Germany
                     },
-                    {
+                    '1.1.1.2': {
                         country: 'US',
-                        bytes: Math.floor(bytes * 0.3), // 30% of bytes for US
+                        data_volume_bytes: Math.floor(bytes * 0.3), // 30% of bytes for US
                     },
-                    {
+                    '1.1.1.3': {
                         country: 'FR',
-                        bytes: Math.floor(bytes * 0.2), // 20% of bytes for France
+                        data_volume_bytes: Math.floor(bytes * 0.2), // 20% of bytes for France
                     },
-                ],
+                },
             });
 
             result.totalBytes += bytes;

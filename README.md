@@ -30,17 +30,20 @@ After the adapter is uninstalled, the key must be deleted manually.
 This was required to make it possible to uninstall and install the adapter again without any problems.
 
 ## Todo
-- Allow the placement of radio buttons text on the bottom of the buttons
-- Allow to use `{{email}}` pattern in the link
-- Send button does not work in the widget
-- Place on the settings tab the components on the top and not in the middle
-- Show delimiter on the questionnaire form between the components if defined
-- Allow layout as on picture: https://github.com/ioBroker/ioBroker.kisshome-defender/issues/14
-- MAC-Adresse => Device (in the widget). Place name on the first place and MAC on the second place
-- Erkennungen => Ergebnisse (in the widget)
-- Title for test result, instead of simple time => Test ergebnis vom 2025-01-01 12:00:00
+- [X] Allow the placement of radio buttons text on the bottom of the buttons
+- [X] Allow to use `{{email}}` pattern in the link
+- [X] Send button does not work in the widget
+- [X] Place on the settings tab the components on the top and not in the middle
+- [X] Show delimiter on the questionnaire form between the components if defined
+- [X] Allow layout as on picture: https://github.com/ioBroker/ioBroker.kisshome-defender/issues/14
+- [X] MAC-Adresse => Device (in the widget). Place name on the first place and MAC on the second place
+- [X] Erkennungen => Ergebnisse (in the widget)
+- [X] Title for test result, instead of simple time => Test ergebnis vom 2025-01-01 12:00:00
 - Add "mobile": true/false to every UX event
 - Add UX event when the Alarm/Warning is triggered with alarm UUID
+- Send Alarm and warning via email
+- Send push notification via iobroker.iot
+- Send notification via admin
 
 <!--
 	Placeholder for the next version (at the beginning of the line):

@@ -138,14 +138,19 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
         return (
             <Paper
                 style={{
-                    width: 'calc(100% - 32px)',
-                    height: 'calc(100% - 32px)',
+                    width: 'calc(100% - 52px)',
+                    height: 'calc(100% - 56px)',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    justifyContent: 'center',
+                    justifyContent: 'start',
                     gap: 16,
                     padding: 16,
+                    margin: 10,
+                    borderRadius: 0,
+                    border: `2px solid ${this.props.context.themeType === 'dark' ? 'white' : 'black'}`,
+                    backgroundColor: this.props.context.themeType === 'dark' ? undefined : '#E6E6E6',
+                    boxShadow: 'none',
                 }}
             >
                 {this.state.adminLink ? (

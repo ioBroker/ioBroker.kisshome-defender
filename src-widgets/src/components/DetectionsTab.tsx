@@ -16,7 +16,7 @@ import {
     Typography,
 } from '@mui/material';
 import { I18n, type ThemeType } from '@iobroker/adapter-react-v5';
-import { Close, ExpandMore, ErrorOutline as Warning, Warning as Alarm } from '@mui/icons-material';
+import { Close, ExpandMore, ErrorOutline as Warning, Warning as Alarm, Info } from '@mui/icons-material';
 import type { VisContext } from '@iobroker/types-vis-2';
 
 import type { ReportUxHandler, StatisticsResult, StoredStatisticsResult } from '../types';
@@ -30,7 +30,7 @@ const styles: Record<string, React.CSSProperties> = {
         fontWeight: 'bold',
         marginBottom: 8,
         display: 'inline-block',
-        minWidth: 200,
+        minWidth: 250,
     },
     value: {
         fontSize: '1em',
@@ -76,7 +76,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         };
     }
 
-    componentDidMount() {
+    componentDidMount(): void {
         this.requestData().catch(e => console.error(e));
     }
 
@@ -133,8 +133,8 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         if (!item) {
             return (
                 <div className="last-detection">
-                    <h3>{I18n.t('kisshome-defender_Last Detection')}</h3>
-                    <div>{I18n.t('kisshome-defender_No detections yet done')}</div>
+                    <h3>{I18n.t('kisshome-defender_Last result')}</h3>
+                    <div>{I18n.t('kisshome-defender_No results yet exist')}</div>
                 </div>
             );
         }
@@ -148,6 +148,9 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 if (current.type === 'Warning' && worst.type !== 'Alert') {
                     return current;
                 }
+                if (current.type === 'Info' && worst.type !== 'Alert' && worst.type !== 'Warning') {
+                    return current;
+                }
                 return worst;
             },
             null as DetectionWithUUID | null,
@@ -156,7 +159,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         return (
             <div className="last-detection">
                 <div style={styles.row}>
-                    <div style={styles.title}>{I18n.t('kisshome-defender_Last Detection')}:</div>
+                    <div style={styles.title}>{I18n.t('kisshome-defender_Last control')}:</div>
                     <div style={styles.value}>{new Date(item.time).toLocaleString()}</div>
                 </div>
                 <div style={styles.row}>
@@ -179,6 +182,8 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                             <Warning style={{ marginLeft: 8, color: 'orange' }} />
                         ) : worstDetection?.type === 'Alert' ? (
                             <Alarm style={{ marginLeft: 8, color: 'red' }} />
+                        ) : worstDetection?.type === 'Info' ? (
+                            <Info style={{ marginLeft: 8 }} />
                         ) : null}
                     </div>
                 </div>
@@ -194,6 +199,9 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                     return current;
                 }
                 if (current.type === 'Warning' && worst.type !== 'Alert') {
+                    return current;
+                }
+                if (current.type === 'Info' && worst.type !== 'Alert' && worst.type !== 'Warning') {
                     return current;
                 }
                 return worst;
@@ -234,11 +242,15 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 expanded={this.state.openedItem === item.uuid}
             >
                 <AccordionSummary expandIcon={<ExpandMore />}>
-                    <Typography component="span">{new Date(item.time).toLocaleString()}</Typography>
+                    <Typography component="span">
+                        {I18n.t('kisshome-defender_Test result at %s', new Date(item.time).toLocaleString())}
+                    </Typography>
                     {worstDetection?.type === 'Warning' ? (
                         <Warning style={{ marginLeft: 8, color: 'orange' }} />
                     ) : worstDetection?.type === 'Alert' ? (
                         <Alarm style={{ marginLeft: 8, color: 'red' }} />
+                    ) : worstDetection?.type === 'Info' ? (
+                        <Info style={{ marginLeft: 8 }} />
                     ) : null}
                 </AccordionSummary>
                 <AccordionDetails>
@@ -286,7 +298,9 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                                                     title={
                                                         detection.type === 'Alert'
                                                             ? I18n.t('kisshome-defender_Alert')
-                                                            : I18n.t('kisshome-defender_Warning')
+                                                            : detection.type === 'Info'
+                                                              ? I18n.t('kisshome-defender_Info')
+                                                              : I18n.t('kisshome-defender_Warning')
                                                     }
                                                 >
                                                     <span>{detection.description}</span>
@@ -302,18 +316,19 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                                             <div style={{ ...styles.title, minWidth: 172 }} />
                                             <div style={styles.value}>
                                                 <span style={{ marginRight: 8, fontWeight: 'bold' }}>
-                                                    {I18n.t('kisshome-defender_MAC address')}:
+                                                    {I18n.t('kisshome-defender_Device')}:
                                                 </span>
                                                 <span>
-                                                    {detection.mac}
                                                     {desc ? (
-                                                        <span
-                                                            style={{ opacity: 0.7, fontSize: 'smaller', marginLeft: 8 }}
-                                                        >
-                                                            ([{desc.ip}] {desc.desc}
-                                                            {desc.vendor ? ` / ${desc.vendor}` : ''})
+                                                        <span>
+                                                            {desc.desc}
+                                                            {desc.vendor ? ` / ${desc.vendor}` : ''}
                                                         </span>
                                                     ) : null}
+                                                    <span style={{ opacity: 0.7, fontSize: 'smaller', marginLeft: 8 }}>
+                                                        [{desc?.ip}
+                                                        {desc?.ip ? ` / ${detection.mac}` : detection.mac}]
+                                                    </span>
                                                 </span>
                                             </div>
                                         </div>
@@ -357,12 +372,12 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 maxWidth="lg"
                 fullWidth
             >
-                <DialogTitle>{I18n.t('kisshome-defender_Detections')}</DialogTitle>
+                <DialogTitle>{I18n.t('kisshome-defender_Results')}</DialogTitle>
                 <DialogContent>
                     {results ? (
                         results.map(item => this.renderOneDetection(item))
                     ) : (
-                        <p>{I18n.t('kisshome-defender_No detections available')}</p>
+                        <p>{I18n.t('kisshome-defender_No results available')}</p>
                     )}
                 </DialogContent>
                 <DialogActions>
@@ -469,17 +484,41 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                     display: 'flex',
                     flexDirection: 'column',
                     padding: 10,
+                    gap: 20,
                 }}
             >
                 {this.renderDetections()}
-                <Paper style={{ flexGrow: 1, padding: 10 }}>{this.renderLastDetection()}</Paper>
+                <Paper
+                    style={{
+                        flexGrow: 1,
+                        padding: 10,
+                        border: `2px solid ${this.props.themeType === 'dark' ? 'white' : 'black'}`,
+                        borderRadius: 0,
+                        backgroundColor: this.props.context.themeType === 'dark' ? undefined : '#E6E6E6',
+                        boxShadow: 'none',
+                    }}
+                >
+                    {this.renderLastDetection()}
+                </Paper>
                 <Tooltip
                     title={I18n.t('kisshome-defender_Click to see all detections')}
                     placement="top"
                 >
                     <Paper
                         variant="outlined"
-                        style={{ height: 80, padding: 10, cursor: 'pointer' }}
+                        style={{
+                            height: 80,
+                            padding: 10,
+                            cursor: 'pointer',
+                            border: `2px solid ${this.props.themeType === 'dark' ? 'white' : 'black'}`,
+                            borderRadius: 0,
+                            backgroundColor: this.props.context.themeType === 'dark' ? undefined : '#E6E6E6',
+                            boxShadow: 'none',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '1.3rem',
+                        }}
                         onClick={() => this.setState({ detailed: true })}
                     >
                         {I18n.t('kisshome-defender_Results')}: {result}

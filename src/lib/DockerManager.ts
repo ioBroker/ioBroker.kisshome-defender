@@ -288,7 +288,7 @@ export class DockerManager {
         }
         const command = `${this.options.dockerCommand} ps -a --filter "name=${name}" --format "{{.ID}}"`;
         try {
-            const { stdout } = await this._executeCommand(command)
+            const { stdout } = await this._executeCommand(command);
             return !!stdout.trim().length;
         } catch (error) {
             this.adapter.log.error(`Error checking if container exists: ${error as Error}`);
