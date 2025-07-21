@@ -55,7 +55,7 @@ export default class CloudSync {
             this.adapter.log.error(
                 `${I18n.translate('Cannot register on the kisshome-cloud')}: ${I18n.translate('UUID changed. Please contact us via kisshome@internet-sicherheit.de')}`,
             );
-            await this.adapter.registerNotification('kisshome-defender', 'uuid', 'UUID changed');
+            await this.adapter.registerNotification('kisshome-defender', 'uuid', 'UUID wurde geändert');
         } else if (response.status === 401) {
             this.adapter.log.error(
                 `${I18n.translate('Cannot register on the kisshome-cloud')}: ${I18n.translate('invalid password')}`,

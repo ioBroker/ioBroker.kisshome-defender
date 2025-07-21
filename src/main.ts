@@ -21,13 +21,14 @@ import {
     getRecordURL,
 } from './lib/recording';
 import { getFritzBoxFilter, getFritzBoxInterfaces, getFritzBoxToken, getFritzBoxUsers } from './lib/fritzbox';
-import type {
+import {
     DataRequestType,
     DefenderAdapterConfig,
     Device,
     MACAddress,
     StoredStatisticsResult,
     UXEvent,
+    UXEventType,
 } from './types';
 import CloudSync, { PCAP_HOST } from './lib/CloudSync';
 import { IDSCommunication } from './lib/IDSCommunication';
@@ -46,6 +47,8 @@ export class KISSHomeResearchAdapter extends Adapter {
     private uniqueMacs: MACAddress[] = [];
 
     private sid: string = '';
+
+    private emailText: string = '';
 
     private sidCreated: number = 0;
 
@@ -86,6 +89,8 @@ export class KISSHomeResearchAdapter extends Adapter {
     private monitorInterval: ioBroker.Interval | undefined;
 
     private uuid: string = '';
+
+    private iotInstance: string = '';
 
     private recordingEnabled: boolean = false;
 
@@ -527,6 +532,12 @@ export class KISSHomeResearchAdapter extends Adapter {
         }
     }
 
+    generateEmail(message: string, title: string): string {
+        this.emailText ||= readFileSync(`${__dirname}/../emails/alert.html`, 'utf8');
+
+        return this.emailText.replace('{{title}}', title).replace('{{message}}', message);
+    }
+
     async onReady(): Promise<void> {
         // read UUID
         const uuidObj = await this.getForeignObjectAsync('system.meta.uuid');
@@ -744,6 +755,7 @@ export class KISSHomeResearchAdapter extends Adapter {
             this.config,
             getDescriptionObject(this.IPs),
             this.workingIdsDir,
+            this.generateEvent,
         );
 
         if (this.recordingEnabled) {
@@ -1169,6 +1181,72 @@ export class KISSHomeResearchAdapter extends Adapter {
 
         return result;
     }
+
+    generateEvent = async (
+        type: 'Info' | 'Warning' | 'Alert',
+        id: string,
+        message: string,
+        title: string,
+    ): Promise<void> => {
+        // admin
+        await this.registerNotification('kisshome-research', 'alert', message);
+
+        // email
+        try {
+            await axios.post(
+                `https://${PCAP_HOST}/api/v2/sendEmail/${encodeURIComponent(this.config.email)}?uuid=${encodeURIComponent(this.uuid)}`,
+                {
+                    title,
+                    message: this.generateEmail(message, title),
+                },
+            );
+        } catch (e) {
+            this.log.error(`${I18n.translate('Cannot send email')}: ${e}`);
+            return;
+        }
+
+        // iobroker.iot
+        // find iobroker.iot instance
+        const instances = await this.getObjectViewAsync('system', 'instance', {
+            startkey: 'iot.',
+            endkey: 'iot.\u9999',
+        });
+
+        // Find alive iobroker.iot instance
+        for (const instance of instances?.rows || []) {
+            const aliveState = await this.getStateAsync(`${instance.id}.alive`);
+            if (aliveState?.val) {
+                this.iotInstance = instance.id.replace('system.adapter.', '');
+                break;
+            }
+        }
+
+        if (this.iotInstance) {
+            this.setState(
+                `${this.iotInstance}.app.message`,
+                JSON.stringify({
+                    message,
+                    title,
+                    expire: 3600,
+                    priority: type === 'Alert' || type === 'Warning' ? 'normal' : 'high',
+                    payload: {
+                        // Todo: find project and view with kisshome widget
+                        openUrl: 'https://iobroker.pro/vis-2/?main#kisshome',
+                    },
+                }),
+            );
+        }
+
+        // generate UX event
+        this.cloudSync?.reportUxEvents([
+            {
+                id: 'background-alarm',
+                event: 'create',
+                ts: Date.now(),
+                data: id,
+            },
+        ]);
+    };
 
     async onUnload(callback: () => void): Promise<void> {
         this.context.terminate = true;

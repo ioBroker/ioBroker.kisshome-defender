@@ -424,7 +424,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
 
         if (this.state.alive !== this.props.alive) {
             setTimeout(() => {
-                this.setState({ alive: this.props.alive }, () => {
+                this.setState({ alive: this.props.alive, lastRequest: 0 }, () => {
                     void this.requestData();
                 });
             }, 50);

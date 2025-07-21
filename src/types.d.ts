@@ -83,7 +83,7 @@ export interface DetectionWithUUID extends Detection {
     uuid: string;
 }
 
-export type UXEventType = 'click' | 'down' | 'up' | 'show' | 'hide' | 'change';
+export type UXEventType = 'click' | 'down' | 'up' | 'show' | 'hide' | 'change' | 'create';
 export interface UXEvent {
     id: string;
     event: UXEventType;

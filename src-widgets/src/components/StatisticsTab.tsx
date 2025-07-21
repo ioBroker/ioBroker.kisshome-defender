@@ -12,6 +12,7 @@ import type {
 } from '../types';
 import ReactEchartsCore from 'echarts-for-react/lib/core';
 import type { EChartsOption, YAXisComponentOption } from 'echarts/types/dist/echarts';
+import type { ZRColor } from 'echarts/types/src/util/types';
 import * as echarts from 'echarts/core';
 
 import { LineChart, BarChart, type LineSeriesOption, type BarSeriesOption } from 'echarts/charts';
@@ -103,6 +104,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
     private echartsReact: ReactEchartsCore | null = null;
     private countrySelected: { [country: string]: boolean } = {};
     private dayTimeSelected: { [dayTime: string]: boolean } = {};
+    private readonly refInfo = React.createRef<HTMLDivElement | null>();
 
     constructor(props: StatisticsTabProps) {
         super(props);
@@ -280,6 +282,25 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
             return null;
         }
 
+        const selectedMacs: { [mac: MACAddress]: boolean } = { ...this.state.legendMacs };
+        const allMacs: MACAddress[] = Object.keys(this.state.dataVolumePerDaytime.data);
+        allMacs.forEach((mac: MACAddress): void => {
+            selectedMacs[mac] ??= true; // Select all by default
+        });
+        // delete non-existing MACs
+        Object.keys(selectedMacs).forEach(mac => {
+            if (!allMacs.includes(mac)) {
+                delete selectedMacs[mac];
+            }
+        });
+
+        if (JSON.stringify(selectedMacs) !== JSON.stringify(this.state.legendMacs)) {
+            // If all selected MACs are the same as in state, do not update state
+            setTimeout(() => {
+                this.setState({ legendMacs: selectedMacs });
+            }, 100);
+        }
+
         const series: BarSeriesOption[] = [];
         let maxY = 0;
         const xData: string[] = [];
@@ -301,10 +322,15 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
             this.dayTimeSelected[i] ??= true; // Select country by default
         }
 
-        // Collect all possible countries
-        Object.keys(this.state.dataVolumePerDaytime.data).forEach(mac => {
+        allMacs.forEach(mac => {
+            // Collect all possible countries
             if (this.state.dataVolumePerDaytime.data) {
+                if (!selectedMacs[mac]) {
+                    return; // Skip this MAC if not selected
+                }
+
                 const item = this.state.dataVolumePerDaytime.data[mac];
+
                 let sum = 0;
                 if (item.dayTime) {
                     xData.push(item.info?.desc || item.info?.ip || mac);
@@ -328,6 +354,8 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         if (!series.length) {
             return null;
         }
+
+        const maxYNice = StatisticsTab.getNiceMax(maxY);
 
         series.push({
             name: '',
@@ -359,6 +387,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         return {
             backgroundColor: 'transparent',
             grid: {
+                top: 28,
                 bottom: 100,
             },
             tooltip: {
@@ -389,8 +418,17 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
             yAxis: {
                 type: 'value',
                 axisLabel: {
-                    formatter: (value: number) => bytes2string(value, maxY),
+                    formatter: (value: number) => bytes2string(value, maxYNice, true),
                 },
+                axisLine: {
+                    show: true, // Show Y-Axis-Line
+                },
+                min: 0,
+                max: maxYNice,
+                interval: maxYNice / 5,
+                name: I18n.t('kisshome-defender_Data volume'), // Y-Achsen-Beschreibung
+                nameLocation: 'end', // Position: 'start', 'middle', 'end'
+                nameGap: 5,
             },
             // @ts-expect-error fix later
             series,
@@ -400,12 +438,15 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
     renderDayTimeChart(): React.JSX.Element {
         const options = this.getDataVolumePerDaytimeChartOptions();
 
+        const legend = this.renderVolumeLegend(this.state.dataVolumePerDaytime.data, true);
+
         return (
             <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                 {this.renderLoading(!!this.state.dataVolumePerDaytime.data)}
+                {legend}
                 <div
                     ref={this.refDataVolumePerDaytime}
-                    style={{ width: '100%', height: '100%' }}
+                    style={{ width: '100%', height: legend ? 'calc(100% - 48px)' : '100%' }}
                 >
                     {this.state.height && options ? (
                         <ReactEchartsCore
@@ -437,14 +478,36 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
             return null;
         }
 
+        const selectedMacs: { [mac: MACAddress]: boolean } = { ...this.state.legendMacs };
+        const allMacs: MACAddress[] = Object.keys(this.state.dataVolumePerCountry.data);
+        allMacs.forEach((mac: MACAddress): void => {
+            selectedMacs[mac] ??= true; // Select all by default
+        });
+        // delete non-existing MACs
+        Object.keys(selectedMacs).forEach(mac => {
+            if (!allMacs.includes(mac)) {
+                delete selectedMacs[mac];
+            }
+        });
+
+        if (JSON.stringify(selectedMacs) !== JSON.stringify(this.state.legendMacs)) {
+            // If all selected MACs are the same as in state, do not update state
+            setTimeout(() => {
+                this.setState({ legendMacs: selectedMacs });
+            }, 100);
+        }
+
         const series: BarSeriesOption[] = [];
         let maxY = 0;
         const xData: string[] = [];
         const totalData: number[] = [];
         const macAddresses: string[] = [];
-        // Collect all possible countries
-        Object.keys(this.state.dataVolumePerCountry.data).forEach(mac => {
+
+        allMacs.forEach(mac => {
             if (this.state.dataVolumePerCountry.data) {
+                if (!selectedMacs[mac]) {
+                    return; // Skip this MAC if not selected
+                }
                 const item = this.state.dataVolumePerCountry.data[mac];
                 const data = item.countries;
                 let sum = 0;
@@ -454,7 +517,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                         let countryItem = series.find(s => s.name === country);
                         // Initialize series for each country
                         if (!countryItem) {
-                            countryItem ||= {
+                            countryItem = {
                                 name: country,
                                 type: 'bar',
                                 stack: 'total',
@@ -511,9 +574,12 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
             data: totalData,
         });
 
+        const maxYNice = StatisticsTab.getNiceMax(maxY);
+
         return {
             backgroundColor: 'transparent',
             grid: {
+                top: 28,
                 bottom: 100,
             },
             tooltip: {
@@ -524,7 +590,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                 },
                 formatter: (_params: any): string => {
                     const params = _params as BarSeriesTooltipParams[];
-                    let content = `${params[0].axisValueLabel}<br/>`;
+                    let content = `${params[0].axisValueLabel}A<br/>`;
                     params.forEach(item => {
                         content += `${item.marker + item.seriesName}: ${bytes2string(item.data, maxY)}<br/>`;
                     });
@@ -544,8 +610,17 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
             yAxis: {
                 type: 'value',
                 axisLabel: {
-                    formatter: (value: number) => bytes2string(value, maxY),
+                    formatter: (value: number) => bytes2string(value, maxYNice, true),
                 },
+                axisLine: {
+                    show: true, // Show Y-Axis-Line
+                },
+                min: 0,
+                max: maxYNice,
+                interval: maxYNice / 5,
+                name: I18n.t('kisshome-defender_Data volume'), // Y-Achsen-Beschreibung
+                nameLocation: 'end', // Position: 'start', 'middle', 'end'
+                nameGap: 5,
             },
             // @ts-expect-error fix later
             series,
@@ -576,13 +651,15 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
 
     renderDataVolumePerCountryChart(): React.JSX.Element {
         const options = this.getDataVolumePerCountryChartOptions();
+        const legend = this.renderVolumeLegend(this.state.dataVolumePerCountry.data, true);
 
         return (
             <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                 {this.renderLoading(!!this.state.dataVolumePerCountry.data)}
+                {legend}
                 <div
                     ref={this.refDataVolumePerCountry}
-                    style={{ width: '100%', height: '100%' }}
+                    style={{ width: '100%', height: legend ? 'calc(100% - 48px)' : '100%' }}
                 >
                     {this.state.height && options ? (
                         <ReactEchartsCore
@@ -642,6 +719,24 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         }
     }
 
+    static getNiceMax(value: number): number {
+        if (value > 1024 * 1024) {
+            // Convert to MB and then round
+            const mb = Math.ceil(value / (1024 * 1024));
+            const exponent = Math.floor(Math.log10(mb));
+            const base = Math.pow(10, exponent);
+            return Math.ceil(mb / base) * base * (1024 * 1024);
+        }
+        if (value < 1024) {
+            return 1024 * 5;
+        }
+        // Convert to Kb
+        const mb = Math.ceil(value / 1024);
+        const exponent = Math.floor(Math.log10(mb));
+        const base = Math.pow(10, exponent);
+        return Math.ceil(mb / base) * base * 1024;
+    }
+
     getDataVolumePerDeviceOptions(): EChartsOption | null {
         if (!this.state.dataVolumePerDevice.data) {
             return null;
@@ -658,7 +753,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
             }
         });
 
-        const colors = this.echartsReact?.getEchartsInstance().getOption()?.color;
+        const colors = this.echartsReact?.getEchartsInstance().getOption()?.color as ZRColor[] | undefined;
         const series: LineSeriesOption[] = [];
         let maxY = 0;
         let colorIndex = 0;
@@ -682,10 +777,10 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                         showSymbol: false,
                         animation: false,
                         lineStyle: {
-                            color: (colors as string[])?.[colorIndex] || undefined,
+                            color: colors?.[colorIndex] || undefined,
                         },
                         itemStyle: {
-                            color: (colors as string[])?.[colorIndex] || undefined,
+                            color: colors?.[colorIndex] || undefined,
                         },
                         data,
                     });
@@ -711,19 +806,30 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
             return null;
         }
 
+        const maxYNice = StatisticsTab.getNiceMax(maxY);
+
+        console.log('Max: ', maxYNice, 'Interval:', maxYNice / 5);
+
         const yAxis: YAXisComponentOption = {
             type: 'value',
             axisLabel: {
-                formatter: (value: number) => {
-                    return bytes2string(value, maxY);
-                },
-                showMaxLabel: true,
-                showMinLabel: true,
+                formatter: (value: number) => bytes2string(value, maxYNice, true),
+                // showMaxLabel: true,
+                // showMinLabel: true,
+            },
+            min: 0,
+            max: maxYNice,
+            interval: maxYNice / 5,
+            axisLine: {
+                show: true, // Show Y-Axis-Line
             },
             axisTick: {
                 // @ts-expect-error fix later
                 alignWithLabel: true,
             },
+            name: I18n.t('kisshome-defender_Data volume'), // Y-Achsen-Beschreibung
+            nameLocation: 'end', // Position: 'start', 'middle', 'end'
+            nameGap: 5,
         };
 
         const max = new Date();
@@ -742,9 +848,21 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                 axisPointer: {
                     animation: true,
                 },
+                formatter: (_params: any): string => {
+                    const params = _params as any[];
+                    let content = `${params[0].axisValueLabel}<table><tbody>`;
+                    params.forEach(item => {
+                        content += `<tr>
+    <td>${item.marker + item.seriesName}</td>
+    <td style="font-weight: bold; margin-left: 4px">${bytes2string(item.data[1], maxY)}</td>
+</tr>`;
+                    });
+                    content += '</tbody></table>';
+                    return content;
+                },
             },
             grid: {
-                top: 8,
+                top: 28,
                 right: 16,
                 bottom: 20,
             },
@@ -776,16 +894,21 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         };
     }
 
-    renderVolumeLegend(): React.JSX.Element | null {
-        if (!this.state.dataVolumePerDevice.data) {
+    renderVolumeLegend(
+        data: DataVolumePerDeviceResult | DataVolumePerCountryResult | DataVolumePerDaytimeResult | null,
+        noColors?: boolean,
+    ): React.JSX.Element | null {
+        if (!data) {
             return null; // No data to show legend
         }
         // Get MACs
-        const allMacs: MACAddress[] = Object.keys(this.state.dataVolumePerDevice.data);
-        if (allMacs.length < SHOW_SELECT_LEGEND) {
+        const allMacs: MACAddress[] = Object.keys(data);
+        if (!noColors && allMacs.length < SHOW_SELECT_LEGEND) {
             return null; // Do not show legend if there are less than 5 series
         }
-        const colors = this.echartsReact?.getEchartsInstance().getOption()?.color;
+        const colors = noColors
+            ? undefined
+            : (this.echartsReact?.getEchartsInstance().getOption()?.color as ZRColor[] | undefined);
 
         let countSelected = 0;
         Object.keys(this.state.legendMacs).forEach(mac => {
@@ -822,7 +945,10 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                             isTouchEvent: e instanceof TouchEvent,
                         });
                     }}
+                    displayEmpty
                     renderValue={selected => {
+                        // Ignore the __selector__ value
+                        selected = (selected as MACAddress[]).filter(mac => mac !== '__selector__');
                         if (!selected?.length) {
                             return I18n.t('kisshome-defender_Nothing selected');
                         }
@@ -878,7 +1004,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                     </MenuItem>
                     {allMacs.map((mac, i) => (
                         <MenuItem
-                            style={{ color: (colors as string[])?.[i] || undefined }}
+                            style={colors ? { color: (colors as string[])?.[i] || undefined } : {}}
                             key={mac}
                             value={mac}
                             onClick={e => {
@@ -912,7 +1038,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
     renderDataVolumePerDeviceChart(): React.JSX.Element {
         const options = this.getDataVolumePerDeviceOptions();
 
-        const legend = this.renderVolumeLegend();
+        const legend = this.renderVolumeLegend(this.state.dataVolumePerDevice.data);
 
         return (
             <div style={{ position: 'relative', width: '100%', height: '100%' }}>
@@ -960,8 +1086,18 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
     }
 
     renderStatInfo(): React.JSX.Element {
+        let fontSize = '1.3rem';
+        if (this.refInfo.current) {
+            const height = this.refInfo.current.clientHeight;
+            if (height < 120) {
+                fontSize = '1rem';
+            }
+            if (height < 80) {
+                fontSize = '0.8rem';
+            }
+        }
         return (
-            <div>
+            <div style={{ fontSize }}>
                 {this.state.deviceMostDataVolume || this.state.deviceMostCountries ? (
                     <div style={{ fontWeight: 'bold' }}>
                         {I18n.t(
@@ -972,13 +1108,13 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                 ) : null}
                 {this.state.deviceMostDataVolume ? (
                     <div>
-                        {I18n.t('kisshome-defender_Device with the highest transmitted data volume')}:
+                        - {I18n.t('kisshome-defender_Device with the highest transmitted data volume')}:
                         <span style={{ fontWeight: 'bold', marginLeft: 8 }}>{this.state.deviceMostDataVolume}</span>
                     </div>
                 ) : null}
                 {this.state.deviceMostCountries ? (
                     <div>
-                        {I18n.t('kisshome-defender_Device that contacted the most countries')}:
+                        - {I18n.t('kisshome-defender_Device that contacted the most countries')}:
                         <span style={{ fontWeight: 'bold', marginLeft: 8 }}>{this.state.deviceMostCountries}</span>
                     </div>
                 ) : null}
@@ -1066,6 +1202,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                         {this.renderChart()}
                     </Paper>
                     <Paper
+                        ref={this.refInfo}
                         style={{
                             height: 80,
                             padding: 10,

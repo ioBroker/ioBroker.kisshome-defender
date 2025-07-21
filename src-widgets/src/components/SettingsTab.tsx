@@ -4,6 +4,7 @@ import type { VisContext } from '@iobroker/types-vis-2';
 import { Button, LinearProgress, Link, MenuItem, Paper, Select, Slider, Switch } from '@mui/material';
 import { I18n } from '@iobroker/adapter-react-v5';
 import type { ReportUxHandler } from '../types';
+import { findAdminLink } from './utils';
 
 interface SettingsTabProps {
     context: VisContext;
@@ -35,18 +36,6 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
         };
     }
 
-    async findAdminLink(host: string): Promise<string> {
-        const adminInstances = await this.props.context.socket.getAdapterInstances('admin');
-        // Find active admin instance
-        let activeAdmin = adminInstances.find(instance => instance.common.enabled && instance.common.host === host);
-        activeAdmin ||= adminInstances.find(instance => instance.common.enabled);
-        activeAdmin ||= adminInstances[0];
-        if (activeAdmin) {
-            return `http${activeAdmin.native.secure ? 's' : ''}://${activeAdmin.common.host === host ? window.location.hostname : activeAdmin.common.host}:${activeAdmin.native.port}/#tab-instances/config/system.adapter.kisshome-defender.${this.props.instance}/_instances`;
-        }
-        return '';
-    }
-
     async componentDidMount(): Promise<void> {
         // Read configuration from the adapter
         const obj = await this.props.context.socket.getObject(
@@ -67,7 +56,7 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                     anomalySensitivity: (obj.native.anomalySensitivity as 'low' | 'medium' | 'high') || 'medium',
                     saveThresholdSeconds: obj.native.saveThresholdSeconds || 60,
                 },
-                adminLink: await this.findAdminLink(obj.common.host),
+                adminLink: await findAdminLink(this.props.context.socket, this.props.instance),
             });
         } else {
             console.error('Failed to load adapter configuration');

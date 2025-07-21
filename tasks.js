@@ -49,6 +49,7 @@ function widgetsCopyFiles() {
 if (process.argv.includes('--build-backend')) {
     execSync(`tsc --project ${__dirname}/src/tsconfig.build.json`, { stdio: 'inherit', cwd: `${__dirname}/src` });
     copyFiles([`src/i18n/**/*`], `build/i18n/`);
+    copyFiles([`src/emails/**/*`], `build/emails/`);
     process.exit();
 } else if (process.argv.includes('--admin-0-clean')) {
     adminClean();

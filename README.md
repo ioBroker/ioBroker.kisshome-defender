@@ -39,11 +39,20 @@ This was required to make it possible to uninstall and install the adapter again
 - [X] MAC-Adresse => Device (in the widget). Place name on the first place and MAC on the second place
 - [X] Erkennungen => Ergebnisse (in the widget)
 - [X] Title for test result, instead of simple time => Test ergebnis vom 2025-01-01 12:00:00
-- Add "mobile": true/false to every UX event
+- [X] Add "mobile": true/false to every UX event
 - Add UX event when the Alarm/Warning is triggered with alarm UUID
 - Send Alarm and warning via email
 - Send push notification via iobroker.iot
 - Send notification via admin
+- [X] Show on the day time chart show Y axis with description (Data volume)
+- [X] Show on the day time chart device selector as on the data volume chart
+- [X] Show on the country chart device selector as on the data volume chart
+- [X] Show version of IDS as a state
+- In the case of 503 oder Exited state, restart the IDS (Show warning in log)
+- [X] Hide all other statuses if instance is not running on the status. If instance is running do not show this point
+- [X] If instance is not running, show the link to activate the instance
+- [X] Add to status the information about connection to federated server
+- [X] Update information on detections page by change from not alive to alive
 
 <!--
 	Placeholder for the next version (at the beginning of the line):

@@ -161,6 +161,38 @@
                     },
                     "regex": [],
                     "limit": 1
+                },
+                {
+                    "category": "alert",
+                    "name": {
+                        "en": "Event from KISSHome-Defender",
+                        "de": "Ereignis bei KISSHome-Defender",
+                        "ru": "Событие KISSHome-Defender",
+                        "pt": "Evento do KISSHome-Defender",
+                        "nl": "Gebeurtenis van KISSHome-Defender",
+                        "fr": "Événement de KISSHome-Defender",
+                        "it": "Evento di KISSHome-Defender",
+                        "es": "Evento de KISSHome-Defender",
+                        "pl": "Zdarzenie KISSHome-Defender",
+                        "uk": "Подія KISSHome-Defender",
+                        "zh-cn": "KISSHome-Defender事件"
+                    },
+                    "severity": "alert",
+                    "description": {
+                        "en": "Check the KISSHome-Defender instance for more information.",
+                        "de": "Überprüfen Sie die KISSHome-Defender-Instanz für weitere Informationen.",
+                        "ru": "Проверьте экземпляр KISSHome-Defender для получения дополнительной информации.",
+                        "pt": "Verifique a instância KISSHome-Defender para obter mais informações.",
+                        "nl": "Controleer de KISSHome-Defender-instantie voor meer informatie.",
+                        "fr": "Vérifiez l'instance KISSHome-Defender pour plus d'informations.",
+                        "it": "Controlla l'istanza KISSHome-Defender per ulteriori informazioni.",
+                        "es": "Verifique la instancia KISSHome-Defender para obtener más información.",
+                        "pl": "Sprawdź instancję KISSHome-Defender, aby uzyskać więcej informacji.",
+                        "uk": "Перевірте екземпляр KISSHome-Defender для отримання додаткової інформації.",
+                        "zh-cn": "检查KISSHome-Defender实例以获取更多信息。"
+                    },
+                    "regex": [],
+                    "limit": 1
                 }
             ]
         }
@@ -544,6 +576,30 @@
                     "Exited": "Exited",
                     "No connection": "No connection"
                 },
+                "role": "state",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.ids.version",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Version of KISSHome IDS container",
+                    "de": "Version des KISSHome IDS Containers",
+                    "ru": "Версия контейнера KISSHome IDS",
+                    "pt": "Versão do contêiner KISSHome IDS",
+                    "nl": "Versie van de KISSHome IDS-container",
+                    "fr": "Version du conteneur KISSHome IDS",
+                    "it": "Versione del contenitore KISSHome IDS",
+                    "es": "Versión del contenedor KISSHome IDS",
+                    "pl": "Wersja kontenera KISSHome IDS",
+                    "uk": "Версія контейнера KISSHome IDS",
+                    "zh-cn": "KISSHome IDS容器的版本"
+                },
+                "type": "string",
                 "role": "state",
                 "read": true,
                 "write": false

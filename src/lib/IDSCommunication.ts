@@ -6,7 +6,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, unlinkSync, writeFile
 import { networkInterfaces } from 'node:os';
 import axios from 'axios';
 import FormData from 'form-data';
-import { getAbsoluteDefaultDataDir } from '@iobroker/adapter-core'; // Get common adapter utils
+import { getAbsoluteDefaultDataDir, I18n } from '@iobroker/adapter-core'; // Get common adapter utils
 
 import type {
     DefenderAdapterConfig,
@@ -28,13 +28,14 @@ export class IDSCommunication {
     private idsUrl: string;
     private readonly ownPort = 18001; // Default port for IDS communication and it can be changed if needed
     private readonly config: DefenderAdapterConfig;
-    private readonly metaData?: { [mac: MACAddress]: { ip: string; desc: string } };
+    private readonly metaData: { [mac: MACAddress]: { ip: string; desc: string } };
     private lastStatus: {
         Result: 'Success' | 'Error';
         Message?: {
-            Status: 'Running' | 'Started' | 'Configuring' | 'Analyzing' | 'Exited' | 'No connection';
+            Status: 'Started' | 'Configuring' | 'Running' | 'Analyzing' | 'Exited' | 'No connection';
             'Has Federated Learning server connection'?: 'True' | 'False';
             Error?: string;
+            Version?: string;
         };
     } | null = null;
     private webServer: http.Server | null = null;
@@ -45,6 +46,7 @@ export class IDSCommunication {
     private readonly workingFolder: string;
     private readonly statisticsDir: string;
     private currentStatus: 'Running' | 'Started' | 'Configuring' | 'Analyzing' | 'Exited' | 'No connection' | '' = '';
+    private currentVersion: string = '';
     private currentConnectedToFederatedServer?: 'True' | 'False' | '';
     private uploadStatus: {
         status: 'idle' | 'waitingOnResponse' | 'sendingFile';
@@ -53,17 +55,30 @@ export class IDSCommunication {
         status: 'idle',
     };
     private lastCheckedDate = '';
+    private readonly generateEvent: (
+        type: 'Info' | 'Warning' | 'Alert',
+        id: string,
+        message: string,
+        title: string,
+    ) => Promise<void>;
 
     constructor(
         adapter: ioBroker.Adapter,
         config: DefenderAdapterConfig,
         metaData: { [mac: MACAddress]: { ip: string; desc: string } },
         workingFolder: string,
+        generateEvent: (
+            type: 'Info' | 'Warning' | 'Alert',
+            id: string,
+            message: string,
+            title: string,
+        ) => Promise<void>,
     ) {
         this.adapter = adapter;
         this.config = config;
         this.metaData = metaData;
         this.workingFolder = workingFolder;
+        this.generateEvent = generateEvent;
         this.idsUrl = (this.config.docker?.selfHosted ? '' : this.config.docker?.url) || '';
 
         if (this.idsUrl.endsWith('/')) {
@@ -369,7 +384,7 @@ export class IDSCommunication {
                     ...formData.getHeaders(),
                 },
             });
-            this.adapter.log.info(`Config successful: ${response.status} ${JSON.stringify(response.data)}`);
+            this.adapter.log.info(`${I18n.translate('Config successful')}: ${response.status} ${JSON.stringify(response.data)}`);
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 this.adapter.log.error(`Error uploading config: ${error.message}`);
@@ -387,7 +402,7 @@ export class IDSCommunication {
         try {
             const response = await axios.get(`${this.idsUrl}/status`, { timeout: 3000 });
             if (this.currentStatus !== response.data.Message?.Status) {
-                this.adapter.log.info(`Status: ${response.status} ${JSON.stringify(response.data)}`);
+                this.adapter.log.debug(`Status: ${response.status} ${JSON.stringify(response.data)}`);
             }
             // {
             //   "Result": "Success",
@@ -397,9 +412,12 @@ export class IDSCommunication {
             //   }
             // }
             this.lastStatus = response.data;
-            if (!this.configSent) {
+            if (!this.configSent && this.lastStatus?.Message?.Status === 'Started') {
                 await this._sendConfig();
                 this.configSent = true;
+            }
+            if (this.configSent && this.lastStatus?.Message?.Status !== 'Started') {
+                this.configSent = false;
             }
 
             this.triggerUpdate();
@@ -426,9 +444,15 @@ export class IDSCommunication {
             };
         }
         if (this.currentStatus !== (this.lastStatus?.Message?.Status || 'No connection')) {
+            this.configSent = false;
             this.currentStatus = this.lastStatus?.Message?.Status || 'No connection';
             // Update variables
             void this.adapter.setState('info.ids.status', this.lastStatus?.Message?.Status || 'No connection', true);
+        }
+        if (this.currentVersion !== (this.lastStatus?.Message?.Version || '--')) {
+            this.currentVersion = this.lastStatus?.Message?.Version || '--';
+            // Update version
+            void this.adapter.setState('info.ids.version', this.lastStatus?.Message?.Version || '--', true);
         }
         if (
             this.currentConnectedToFederatedServer !==
@@ -534,9 +558,9 @@ export class IDSCommunication {
             return 'Invalid data format';
         }
         if (data.file === this.uploadStatus.fileName || (!this.uploadStatus.fileName && data.file?.includes('test'))) {
-            this.adapter.log.info(`Received response for file ${data.file}: ${JSON.stringify(data)}`);
+            this.adapter.log.debug(`Received response for file ${data.file}: ${JSON.stringify(data)}`);
             if (data.result.status === 'success') {
-                this.adapter.log.info(`File ${data.file} processed successfully`);
+                this.adapter.log.debug(`File ${data.file} processed successfully`);
             } else {
                 this.adapter.log.error(`Error processing file ${data.file}: ${data.result.error}`);
             }
@@ -584,6 +608,16 @@ export class IDSCommunication {
                     );
                     detections.push(detection);
                     // save it in the state
+                    this.generateEvent(
+                        detection.type,
+                        detection.uuid,
+                        detection.description,
+                        I18n.translate(
+                            `IDS message: %s for device %s`,
+                            I18n.translate(detection.type),
+                            this.metaData[detection.mac]?.desc || this.metaData[detection.mac]?.ip || detection.mac,
+                        ),
+                    );
                 }
 
                 void this.adapter.setState('info.detections.json', JSON.stringify(detections), true);
@@ -607,7 +641,7 @@ export class IDSCommunication {
 
     async manageIdsContainer(): Promise<void> {
         if (this.config.docker?.selfHosted) {
-            this.adapter.log.info('Managing IDS container');
+            this.adapter.log.info(I18n.translate('Managing IDS container'));
             this.dockerManager ||= new DockerManager(this.adapter, {
                 image: 'kisshome/ids:stable-backports',
                 name: DOCKER_CONTAINER_NAME,
@@ -622,7 +656,7 @@ export class IDSCommunication {
     }
 
     async start(): Promise<void> {
-        this.adapter.log.info(`Starting IDSCommunication with URL: ${this.idsUrl}`);
+        this.adapter.log.info(`${I18n.translate('Starting IDS communication with URL')}: ${this.idsUrl}`);
         try {
             await this.manageIdsContainer();
             await this.startWebServer();
@@ -640,7 +674,7 @@ export class IDSCommunication {
             this._getStatus().catch(error => {
                 this.adapter.log.error(`Error getting status: ${error.message}`);
             });
-        }, 10000); // Check status every 10 seconds
+        }, 10_000); // Check status every 10 seconds
     }
 
     private async startWebServer(): Promise<void> {
@@ -730,7 +764,7 @@ export class IDSCommunication {
             })
             .then(response => {
                 if (this.uploadStatus.status === 'sendingFile' && this.uploadStatus.fileName === fileName) {
-                    this.adapter.log.info(`File ${fileName} uploaded successfully: ${response.status}`);
+                    this.adapter.log.debug(`File ${fileName} uploaded successfully: ${response.status}`);
                     this.uploadStatus.status = 'waitingOnResponse';
                 } else {
                     // Unexpected state. Ignore the response

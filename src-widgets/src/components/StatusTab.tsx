@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 
-import { Paper, Switch } from '@mui/material';
+import { Button, Link, Paper, Switch } from '@mui/material';
 import { Check, Close } from '@mui/icons-material';
 
 import type { VisContext } from '@iobroker/types-vis-2';
 import { I18n, type ThemeType } from '@iobroker/adapter-react-v5';
 import type { DetectionWithUUID, ReportUxHandler } from '../types';
-import { bytes2string } from './utils';
+import { bytes2string, findAdminLink } from './utils';
 
 interface StatusTabProps {
     context: VisContext;
@@ -25,6 +25,7 @@ interface StatusTabState {
     recordingCaptured: number;
     idsStatus: 'Running' | 'Started' | 'Configuring' | 'Analyzing' | 'Exited' | 'No connection' | 'Unknown';
     federatedServer: boolean;
+    adminLink: string;
 }
 
 const styles: Record<'title' | 'row' | 'result', React.CSSProperties> = {
@@ -39,6 +40,7 @@ const styles: Record<'title' | 'row' | 'result', React.CSSProperties> = {
         display: 'flex',
         gap: 10,
         alignItems: 'center',
+        height: 38,
     },
 };
 
@@ -69,6 +71,7 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
             idsStatus: 'Unknown',
             recordingCaptured: 0,
             recordingRunning: false,
+            adminLink: '',
         };
     }
 
@@ -96,6 +99,11 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
         await this.props.context.socket.subscribeState(recordingEnabledId, this.onRecordingEnabledChanged);
         await this.props.context.socket.subscribeState(recordingRunningId, this.onRecordingRunningChanged);
         await this.props.context.socket.subscribeState(recordingCapturedId, this.onRecordingCapturedChanged);
+
+        // Read configuration from the adapter
+        this.setState({
+            adminLink: await findAdminLink(this.props.context.socket, this.props.instance),
+        });
     }
 
     componentWillUnmount(): void {
@@ -240,7 +248,6 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
             problem = I18n.t('kisshome-defender_Recording is not running. Please check the log for more details');
         }
 
-
         return (
             <div
                 className="status-tab"
@@ -261,64 +268,76 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                         borderRadius: 0,
                         backgroundColor: this.props.context.themeType === 'dark' ? undefined : '#E6E6E6',
                         boxShadow: 'none',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        fontSize: '1.3rem',
                     }}
                 >
                     <table>
                         <tbody>
-                            <tr style={styles.row}>
-                                <td style={styles.result}>
-                                    <StatusIcon ok={this.props.alive} />
-                                </td>
-                                <td style={styles.title}>{I18n.t('kisshome-defender_Instance is running')}</td>
-                            </tr>
-                            <tr style={styles.row}>
-                                <td style={styles.result} title={problem}>
-                                    <StatusIcon ok={this.props.alive && this.state.recordingRunning} />
-                                </td>
-                                <td style={styles.title}>
-                                    {I18n.t('kisshome-defender_Software activated')}
-                                    <Switch
-                                        checked={this.state.recordingEnabled}
-                                        onMouseDown={(event: React.MouseEvent<HTMLButtonElement>) => {
-                                            this.props.reportUxEvent({
-                                                id: 'kisshome-defender-status-recording-enabled',
-                                                event: 'down',
-                                                ts: Date.now(),
-                                                isTouchEvent: event instanceof TouchEvent,
-                                            });
-                                        }}
-                                        onMouseUp={(event: React.MouseEvent<HTMLButtonElement>) => {
-                                            this.props.reportUxEvent({
-                                                id: 'kisshome-defender-status-recording-enabled',
-                                                event: 'up',
-                                                ts: Date.now(),
-                                                isTouchEvent: event instanceof TouchEvent,
-                                            });
-                                        }}
-                                        onChange={async (event, checked) => {
-                                            this.props.reportUxEvent({
-                                                id: 'kisshome-defender-status-recording-enabled',
-                                                event: 'change',
-                                                ts: Date.now(),
-                                                isTouchEvent: event instanceof TouchEvent,
-                                            });
-
-                                            await this.props.context.socket.setState(
-                                                `kisshome-defender.${this.props.instance}.info.recording.enabled`,
-                                                checked,
-                                            );
-                                        }}
-                                    />
-                                </td>
-                            </tr>
-                            <tr style={styles.row}>
-                                <td style={{ ...styles.result, color: this.getStatusColor() }}>
-                                    <StatusIcon ok={this.getStatusColor() === 'green'} />
-                                    <span>{I18n.t(`kisshome-defender_${this.state.idsStatus}`)}</span>
-                                </td>
-                                <td style={styles.title}>{I18n.t('kisshome-defender_Detection engine status')}</td>
-                            </tr>
-                            {this.state.recordingRunning ? (
+                            {this.props.alive ? null : (
+                                <tr style={styles.row}>
+                                    <td style={styles.result}>
+                                        <StatusIcon ok={this.props.alive} />
+                                    </td>
+                                    <td style={styles.title}>{I18n.t('kisshome-defender_Instance is not running')}</td>
+                                </tr>
+                            )}
+                            {this.props.alive && this.state.adminLink ? null : (
+                                <tr style={styles.row}>
+                                    <td style={styles.result} />
+                                    <td style={styles.title}>
+                                        <Link
+                                            href={this.state.adminLink}
+                                            target="settings"
+                                            onClick={e => {
+                                                this.props.reportUxEvent({
+                                                    id: 'kisshome-defender-settings-admin-link',
+                                                    event: 'click',
+                                                    data: this.state.adminLink,
+                                                    ts: Date.now(),
+                                                    isTouchEvent: e instanceof TouchEvent,
+                                                });
+                                            }}
+                                        >
+                                            {I18n.t('kisshome-defender_Enable the instance in the admin')}
+                                        </Link>
+                                    </td>
+                                </tr>
+                            )}
+                            {this.props.alive ? (
+                                <tr style={styles.row}>
+                                    <td
+                                        style={styles.result}
+                                        title={problem}
+                                    >
+                                        <StatusIcon ok={this.props.alive && this.state.recordingRunning} />
+                                    </td>
+                                    <td style={styles.title}>{I18n.t('kisshome-defender_Software activated')}</td>
+                                </tr>
+                            ) : null}
+                            {this.props.alive ? (
+                                <tr style={styles.row}>
+                                    <td style={{ ...styles.result, color: this.getStatusColor() }}>
+                                        <StatusIcon ok={this.getStatusColor() === 'green'} />
+                                        <span style={{ fontSize: 'smaller', fontStyle: 'italic' }}>
+                                            {I18n.t(`kisshome-defender_${this.state.idsStatus}`)}
+                                        </span>
+                                    </td>
+                                    <td style={styles.title}>{I18n.t('kisshome-defender_Detection engine status')}</td>
+                                </tr>
+                            ) : null}
+                            {this.props.alive && this.state.recordingRunning ? (
+                                <tr style={styles.row}>
+                                    <td style={{ ...styles.result, fontSize: 8 }}>
+                                        <StatusIcon ok={this.state.federatedServer} />
+                                        <span>{I18n.t('kisshome-defender_Connected to federated server')}</span>
+                                    </td>
+                                    <td style={styles.title}>{I18n.t('kisshome-defender_Recording is running')}</td>
+                                </tr>
+                            ) : null}
+                            {this.props.alive && this.state.recordingRunning ? (
                                 <tr style={styles.row}>
                                     <td style={{ ...styles.result, fontSize: 8 }}>
                                         <StatusIcon ok />
@@ -334,6 +353,28 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                             ) : null}
                         </tbody>
                     </table>
+                    <Button
+                        variant="contained"
+                        color={this.state.recordingEnabled ? 'grey' : 'primary'}
+                        style={{ position: 'absolute', top: 80, right: 30 }}
+                        onClick={async event => {
+                            this.props.reportUxEvent({
+                                id: 'kisshome-defender-status-recording-enabled',
+                                event: 'change',
+                                ts: Date.now(),
+                                isTouchEvent: event instanceof TouchEvent,
+                            });
+
+                            await this.props.context.socket.setState(
+                                `kisshome-defender.${this.props.instance}.info.recording.enabled`,
+                                !this.state.recordingEnabled,
+                            );
+                        }}
+                    >
+                        {this.state.recordingEnabled
+                            ? I18n.t('kisshome-defender_Deactivate protection')
+                            : I18n.t('kisshome-defender_Activate protection')}
+                    </Button>
                 </Paper>
                 <Paper
                     style={{
