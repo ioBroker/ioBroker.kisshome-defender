@@ -74,11 +74,9 @@ export class DockerManager {
             autoStart: options.autoStart === undefined ? true : options.autoStart,
             needSudo: options.needSudo === undefined ? true : options.needSudo,
         };
-
-        void this.init();
     }
 
-    private async init(): Promise<void> {
+    public async init(): Promise<void> {
         if (!this.options.image) {
             throw new Error('Image name is required to initialize DockerManager.');
         }
@@ -378,11 +376,19 @@ export class DockerManager {
         // Stop the container if it is running
         const running = nameOrId ? await this._isContainerRunning(nameOrId) : false;
         if (running) {
-            await this.stopContainer(nameOrId!);
+            try {
+                await this.stopContainer(nameOrId!);
+            } catch (error) {
+                this.adapter.log.warn(`Error stopping container ${nameOrId}: ${error as Error}. But we still try to start a new one.`);
+            }
         }
 
         // Remove the container if it exists
-        await this.remove();
+        try {
+            await this.remove();
+        } catch (error) {
+            this.adapter.log.warn(`Error removing container ${nameOrId}: ${error as Error}. But we still try to start a new one.`);
+        }
 
         if (running) {
             this.adapter.log.info(`Container ${nameOrId} stopped and removed. Starting a new container...`);

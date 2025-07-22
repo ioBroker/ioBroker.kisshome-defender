@@ -651,6 +651,8 @@ export class IDSCommunication {
                 removeAfterStop: true,
             });
 
+            await this.dockerManager.init();
+
             await this.dockerManager.start();
         }
     }

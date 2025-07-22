@@ -1186,7 +1186,7 @@ export class KISSHomeResearchAdapter extends Adapter {
         type: 'Info' | 'Warning' | 'Alert',
         id: string,
         message: string,
-        title: string,
+        subject: string,
     ): Promise<void> => {
         // admin
         await this.registerNotification('kisshome-research', 'alert', message);
@@ -1196,8 +1196,8 @@ export class KISSHomeResearchAdapter extends Adapter {
             await axios.post(
                 `https://${PCAP_HOST}/api/v2/sendEmail/${encodeURIComponent(this.config.email)}?uuid=${encodeURIComponent(this.uuid)}`,
                 {
-                    title,
-                    message: this.generateEmail(message, title),
+                    subject,
+                    text: this.generateEmail(message, subject),
                 },
             );
         } catch (e) {
@@ -1226,7 +1226,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                 `${this.iotInstance}.app.message`,
                 JSON.stringify({
                     message,
-                    title,
+                    title: subject,
                     expire: 3600,
                     priority: type === 'Alert' || type === 'Warning' ? 'normal' : 'high',
                     payload: {
