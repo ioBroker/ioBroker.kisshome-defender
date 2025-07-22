@@ -180,7 +180,7 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
         if (id === `kisshome-defender.${this.state.rxData.instance || 0}.info.cloudSync.questionnaire`) {
             const questionnaire: QuestionnaireJson =
                 state?.val && typeof state.val === 'string' && state.val.startsWith('{') ? JSON.parse(state.val) : null;
-            if (questionnaire.done !== undefined) {
+            if (questionnaire?.done !== undefined) {
                 // Do not show questionnaire if it is already done
                 this.setState({ questionnaire });
             } else {

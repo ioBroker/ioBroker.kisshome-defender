@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Button, Link, Paper, Switch } from '@mui/material';
+import { Button, CircularProgress, Link, Paper, Switch } from '@mui/material';
 import { Check, Close } from '@mui/icons-material';
 
 import type { VisContext } from '@iobroker/types-vis-2';
@@ -274,49 +274,54 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                         fontSize: '1.3rem',
                     }}
                 >
+                    {this.props.alive ? null : (
+                        <div
+                            style={{ ...styles.row, display: 'flex', alignItems: 'center', gap: 10, width: undefined }}
+                        >
+                            <div style={styles.result}>
+                                <StatusIcon ok={this.props.alive} />
+                            </div>
+                            <div style={styles.title}>{I18n.t('kisshome-defender_Instance is not running')}</div>
+                        </div>
+                    )}
+                    {this.props.alive && this.state.adminLink ? null : (
+                        <div
+                            style={{ ...styles.row, display: 'flex', alignItems: 'center', gap: 10, width: undefined }}
+                        >
+                            <Link
+                                href={this.state.adminLink}
+                                target="settings"
+                                onClick={e => {
+                                    this.props.reportUxEvent({
+                                        id: 'kisshome-defender-settings-admin-link',
+                                        event: 'click',
+                                        data: this.state.adminLink,
+                                        ts: Date.now(),
+                                        isTouchEvent: e instanceof TouchEvent,
+                                    });
+                                }}
+                            >
+                                {I18n.t('kisshome-defender_Enable the instance in the admin')}
+                            </Link>
+                        </div>
+                    )}
+                    {this.props.alive ? (
+                        <tr style={styles.row}>
+                            <td
+                                style={styles.result}
+                                title={problem}
+                            >
+                                <StatusIcon ok={this.state.recordingRunning} />
+                            </td>
+                            <td style={styles.title}>
+                                {this.state.recordingRunning
+                                    ? I18n.t('kisshome-defender_Software activated')
+                                    : I18n.t('kisshome-defender_Software not activated')}
+                            </td>
+                        </tr>
+                    ) : null}
                     <table>
                         <tbody>
-                            {this.props.alive ? null : (
-                                <tr style={styles.row}>
-                                    <td style={styles.result}>
-                                        <StatusIcon ok={this.props.alive} />
-                                    </td>
-                                    <td style={styles.title}>{I18n.t('kisshome-defender_Instance is not running')}</td>
-                                </tr>
-                            )}
-                            {this.props.alive && this.state.adminLink ? null : (
-                                <tr style={styles.row}>
-                                    <td style={styles.result} />
-                                    <td style={styles.title}>
-                                        <Link
-                                            href={this.state.adminLink}
-                                            target="settings"
-                                            onClick={e => {
-                                                this.props.reportUxEvent({
-                                                    id: 'kisshome-defender-settings-admin-link',
-                                                    event: 'click',
-                                                    data: this.state.adminLink,
-                                                    ts: Date.now(),
-                                                    isTouchEvent: e instanceof TouchEvent,
-                                                });
-                                            }}
-                                        >
-                                            {I18n.t('kisshome-defender_Enable the instance in the admin')}
-                                        </Link>
-                                    </td>
-                                </tr>
-                            )}
-                            {this.props.alive ? (
-                                <tr style={styles.row}>
-                                    <td
-                                        style={styles.result}
-                                        title={problem}
-                                    >
-                                        <StatusIcon ok={this.props.alive && this.state.recordingRunning} />
-                                    </td>
-                                    <td style={styles.title}>{I18n.t('kisshome-defender_Software activated')}</td>
-                                </tr>
-                            ) : null}
                             {this.props.alive ? (
                                 <tr style={styles.row}>
                                     <td style={{ ...styles.result, color: this.getStatusColor() }}>
@@ -332,15 +337,19 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                                 <tr style={styles.row}>
                                     <td style={{ ...styles.result, fontSize: 8 }}>
                                         <StatusIcon ok={this.state.federatedServer} />
-                                        <span>{I18n.t('kisshome-defender_Connected to federated server')}</span>
                                     </td>
-                                    <td style={styles.title}>{I18n.t('kisshome-defender_Recording is running')}</td>
+                                    <td style={styles.title}>
+                                        {this.state.federatedServer
+                                            ? I18n.t('kisshome-defender_Connected to federated server')
+                                            : I18n.t('kisshome-defender_Not connected to federated server')}
+                                    </td>
                                 </tr>
                             ) : null}
                             {this.props.alive && this.state.recordingRunning ? (
                                 <tr style={styles.row}>
                                     <td style={{ ...styles.result, fontSize: 8 }}>
                                         <StatusIcon ok />
+                                        <CircularProgress />
                                         <span>
                                             {I18n.t(
                                                 'kisshome-defender_%s collected',

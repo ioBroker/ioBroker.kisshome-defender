@@ -287,6 +287,10 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         allMacs.forEach((mac: MACAddress): void => {
             selectedMacs[mac] ??= true; // Select all by default
         });
+        if (!allMacs.length) {
+            return null;
+        }
+
         // delete non-existing MACs
         Object.keys(selectedMacs).forEach(mac => {
             if (!allMacs.includes(mac)) {
@@ -489,6 +493,10 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                 delete selectedMacs[mac];
             }
         });
+
+        if (!allMacs.length) {
+            return null;
+        }
 
         if (JSON.stringify(selectedMacs) !== JSON.stringify(this.state.legendMacs)) {
             // If all selected MACs are the same as in state, do not update state
@@ -905,6 +913,9 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         const allMacs: MACAddress[] = Object.keys(data);
         if (!noColors && allMacs.length < SHOW_SELECT_LEGEND) {
             return null; // Do not show legend if there are less than 5 series
+        }
+        if (!allMacs.length) {
+            return null;
         }
         const colors = noColors
             ? undefined
