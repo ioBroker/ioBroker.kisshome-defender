@@ -305,23 +305,23 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                             </Link>
                         </div>
                     )}
-                    {this.props.alive ? (
-                        <tr style={styles.row}>
-                            <td
-                                style={styles.result}
-                                title={problem}
-                            >
-                                <StatusIcon ok={this.state.recordingRunning} />
-                            </td>
-                            <td style={styles.title}>
-                                {this.state.recordingRunning
-                                    ? I18n.t('kisshome-defender_Software activated')
-                                    : I18n.t('kisshome-defender_Software not activated')}
-                            </td>
-                        </tr>
-                    ) : null}
                     <table>
                         <tbody>
+                            {this.props.alive ? (
+                                <tr style={styles.row}>
+                                    <td
+                                        style={styles.result}
+                                        title={problem}
+                                    >
+                                        <StatusIcon ok={this.state.recordingRunning} />
+                                    </td>
+                                    <td style={styles.title}>
+                                        {this.state.recordingRunning
+                                            ? I18n.t('kisshome-defender_Software activated')
+                                            : I18n.t('kisshome-defender_Software not activated')}
+                                    </td>
+                                </tr>
+                            ) : null}
                             {this.props.alive ? (
                                 <tr style={styles.row}>
                                     <td style={{ ...styles.result, color: this.getStatusColor() }}>
