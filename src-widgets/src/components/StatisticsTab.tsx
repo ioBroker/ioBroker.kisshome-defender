@@ -48,7 +48,11 @@ interface StatisticsTabProps {
 
 interface StatisticsTabState {
     alive: boolean;
-    tab: 'dataVolumePerDevice' | 'dataVolumePerCountry' | 'dataVolumePerDaytime';
+    tab: 'dataVolumePerDevice' | 'dataVolumePerCountry' | 'dataVolumePerDaytime' | 'dataVolumePerDay';
+    dataVolumePerDay: {
+        data: DataVolumePerDeviceResult | null;
+        ts: number;
+    };
     dataVolumePerDevice: {
         data: DataVolumePerDeviceResult | null;
         ts: number;
@@ -98,6 +102,7 @@ interface BarSeriesTooltipParams {
 
 export default class StatisticsTab extends Component<StatisticsTabProps, StatisticsTabState> {
     private updateTimeout: ReturnType<typeof setTimeout> | null = null;
+    private readonly refDataVolumePerDay = React.createRef<HTMLDivElement | null>();
     private readonly refDataVolumePerDevice = React.createRef<HTMLDivElement | null>();
     private readonly refDataVolumePerCountry = React.createRef<HTMLDivElement | null>();
     private readonly refDataVolumePerDaytime = React.createRef<HTMLDivElement | null>();
@@ -113,9 +118,14 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                 (window.localStorage.getItem('kisshome-defender-tab.statisticsTab') as
                     | 'dataVolumePerDevice'
                     | 'dataVolumePerCountry'
-                    | 'dataVolumePerDaytime') || 'dataVolumePerDevice',
+                    | 'dataVolumePerDaytime'
+                    | 'dataVolumePerDay') || 'dataVolumePerDay',
             alive: props.alive,
             dataVolumePerDevice: {
+                data: null,
+                ts: 0,
+            },
+            dataVolumePerDay: {
                 data: null,
                 ts: 0,
             },
@@ -185,7 +195,33 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
     }
 
     async requestData(): Promise<void> {
-        if (this.state.tab === 'dataVolumePerDevice') {
+        if (this.state.tab === 'dataVolumePerDay') {
+            if (!this.state.dataVolumePerDay.ts && Date.now() - this.state.dataVolumePerDay.ts > 30_000) {
+                if (this.state.alive) {
+                    await this.setStateAsync({ requestRunning: true });
+                    const result = await this.props.context.socket.sendTo(
+                        `kisshome-defender.${this.props.instance}`,
+                        'getData',
+                        {
+                            type: 'dataVolumePerDay',
+                        },
+                    );
+                    if (result) {
+                        this.setState({
+                            requestRunning: false,
+                            dataVolumePerDay: {
+                                data: result as DataVolumePerDeviceResult,
+                                ts: Date.now(),
+                            },
+                        });
+                    } else {
+                        this.setState({ requestRunning: false });
+                    }
+                    await this.getCommonStats();
+                }
+            }
+            // else the data is already loaded and still valid
+        } else if (this.state.tab === 'dataVolumePerDevice') {
             if (!this.state.dataVolumePerDevice.ts && Date.now() - this.state.dataVolumePerDevice.ts > 30_000) {
                 if (this.state.alive) {
                     await this.setStateAsync({ requestRunning: true });
@@ -709,7 +745,12 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
     }
 
     componentDidUpdate(): void {
-        if (this.state.tab === 'dataVolumePerDevice' && this.refDataVolumePerDevice.current) {
+        if (this.state.tab === 'dataVolumePerDay' && this.refDataVolumePerDay.current) {
+            const height = this.refDataVolumePerDay.current.clientHeight;
+            if (height !== this.state.height) {
+                this.setState({ height });
+            }
+        } else if (this.state.tab === 'dataVolumePerDevice' && this.refDataVolumePerDevice.current) {
             const height = this.refDataVolumePerDevice.current.clientHeight;
             if (height !== this.state.height) {
                 this.setState({ height });
@@ -1083,7 +1124,204 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         );
     }
 
+    getDataVolumePerDayOptions(): EChartsOption | null {
+        if (!this.state.dataVolumePerDay.data) {
+            return null;
+        }
+        const selectedMacs: { [mac: MACAddress]: boolean } = { ...this.state.legendMacs };
+        const allMacs: MACAddress[] = Object.keys(this.state.dataVolumePerDay.data);
+        allMacs.forEach((mac: MACAddress): void => {
+            selectedMacs[mac] ??= true; // Select all by default
+        });
+        // delete non-existing MACs
+        Object.keys(selectedMacs).forEach(mac => {
+            if (!allMacs.includes(mac)) {
+                delete selectedMacs[mac];
+            }
+        });
+
+        const colors = this.echartsReact?.getEchartsInstance().getOption()?.color as ZRColor[] | undefined;
+        const series: LineSeriesOption[] = [];
+        let maxY = 0;
+        let colorIndex = 0;
+        allMacs.forEach(mac => {
+            if (this.state.dataVolumePerDay.data) {
+                const item = this.state.dataVolumePerDay.data[mac];
+                const data = item.series;
+
+                if (data?.length) {
+                    // if length > SHOW_SELECT_LEGEND, filter selected MACs
+                    if (allMacs.length >= SHOW_SELECT_LEGEND) {
+                        if (!selectedMacs[mac]) {
+                            colorIndex++;
+                            return; // Skip this MAC if not selected
+                        }
+                    }
+                    series.push({
+                        xAxisIndex: 0,
+                        name: item.info?.desc || item.info?.ip || mac,
+                        type: 'line',
+                        showSymbol: false,
+                        animation: false,
+                        lineStyle: {
+                            color: colors?.[colorIndex] || undefined,
+                        },
+                        itemStyle: {
+                            color: colors?.[colorIndex] || undefined,
+                        },
+                        data,
+                    });
+
+                    // Find max Y value
+                    const maxValue = Math.max(...data.map(d => d[1]));
+                    if (maxValue > maxY) {
+                        maxY = maxValue;
+                    }
+                    colorIndex++;
+                }
+            }
+        });
+
+        if (JSON.stringify(selectedMacs) !== JSON.stringify(this.state.legendMacs)) {
+            // If all selected MACs are the same as in state, do not update state
+            setTimeout(() => {
+                this.setState({ legendMacs: selectedMacs });
+            }, 100);
+        }
+
+        if (!series.length) {
+            return null;
+        }
+
+        const maxYNice = StatisticsTab.getNiceMax(maxY);
+
+        // Aggregate data per day
+
+        const yAxis: YAXisComponentOption = {
+            type: 'value',
+            axisLabel: {
+                formatter: (value: number) => bytes2string(value, maxYNice, true),
+                // showMaxLabel: true,
+                // showMinLabel: true,
+            },
+            min: 0,
+            max: maxYNice,
+            interval: maxYNice / 5,
+            axisLine: {
+                show: true, // Show Y-Axis-Line
+            },
+            axisTick: {
+                // @ts-expect-error fix later
+                alignWithLabel: true,
+            },
+            name: I18n.t('kisshome-defender_Data volume'), // Y-Achsen-Beschreibung
+            nameLocation: 'end', // Position: 'start', 'middle', 'end'
+            nameGap: 5,
+        };
+
+        const max = new Date();
+        max.setHours(0);
+        max.setMinutes(0);
+        max.setSeconds(0);
+        max.setMilliseconds(0);
+        max.setDate(max.getDate() + 1);
+        const min = new Date(max);
+        min.setDate(min.getDate() - 7);
+
+        return {
+            backgroundColor: 'transparent',
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    animation: true,
+                },
+                formatter: (_params: any): string => {
+                    const params = _params as any[];
+                    let content = `${params[0].axisValueLabel}<table><tbody>`;
+                    params.forEach(item => {
+                        content += `<tr>
+    <td>${item.marker + item.seriesName}</td>
+    <td style="font-weight: bold; margin-left: 4px">${bytes2string(item.data[1], maxY)}</td>
+</tr>`;
+                    });
+                    content += '</tbody></table>';
+                    return content;
+                },
+            },
+            grid: {
+                top: 28,
+                right: 16,
+                bottom: 20,
+            },
+            legend: {
+                show: allMacs.length < SHOW_SELECT_LEGEND,
+            },
+            xAxis: {
+                type: 'time',
+                splitLine: {
+                    show: false,
+                },
+                min: min.getTime(),
+                max: max.getTime(),
+                axisTick: {
+                    // @ts-expect-error fix later
+                    alignWithLabel: true,
+                },
+                axisLabel: {
+                    formatter: (value: number) => {
+                        const date = new Date(value);
+                        // Get day of the week and day of the month
+                        return date.toLocaleDateString(this.props.context.lang, { weekday: 'short' });
+                    },
+                },
+            },
+            yAxis,
+            // @ts-expect-error fix later
+            series,
+        };
+    }
+
+    renderDataVolumePerDayChart(): React.JSX.Element {
+        const options = this.getDataVolumePerDayOptions();
+
+        const legend = this.renderVolumeLegend(this.state.dataVolumePerDay.data);
+
+        return (
+            <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                {this.renderLoading(!!this.state.dataVolumePerDay.data)}
+                {legend}
+                <div
+                    ref={this.refDataVolumePerDay}
+                    style={{ width: '100%', height: legend ? 'calc(100% - 48px)' : '100%' }}
+                >
+                    {this.state.height && options ? (
+                        <ReactEchartsCore
+                            ref={e => {
+                                this.echartsReact = e;
+                            }}
+                            echarts={echarts}
+                            option={options}
+                            notMerge
+                            lazyUpdate
+                            theme={this.props.context.themeType === 'dark' ? 'dark' : ''}
+                            style={{ height: `${this.state.height}px`, width: '100%' }}
+                            opts={{ renderer: 'svg' }}
+                        />
+                    ) : null}
+                    {!options ? (
+                        <div style={{ padding: 16, paddingLeft: 32 }}>
+                            {I18n.t('kisshome-defender_No data available')}
+                        </div>
+                    ) : null}
+                </div>
+            </div>
+        );
+    }
+
     renderChart(): React.JSX.Element {
+        if (this.state.tab === 'dataVolumePerDay') {
+            return this.renderDataVolumePerDayChart();
+        }
         if (this.state.tab === 'dataVolumePerDevice') {
             return this.renderDataVolumePerDeviceChart();
         }
@@ -1167,6 +1405,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                                     tab: value as
                                         | 'dataVolumePerDevice'
                                         | 'dataVolumePerCountry'
+                                        | 'dataVolumePerDay'
                                         | 'dataVolumePerDaytime',
                                 },
                                 () => this.requestData(),
@@ -1182,6 +1421,11 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                             });
                         }}
                     >
+                        <Tab
+                            value="dataVolumePerDay"
+                            style={{ alignItems: 'start', textTransform: 'none' }}
+                            label={I18n.t('kisshome-defender_Day-volume')}
+                        />
                         <Tab
                             value="dataVolumePerDevice"
                             style={{ alignItems: 'start', textTransform: 'none' }}

@@ -598,6 +598,8 @@ export class IDSCommunication {
                     const detectionTime = new Date(detection.time).getTime();
                     return detectionTime >= sevenDaysAgo;
                 });
+                let sendEvent = 0;
+                let worthstEvent: DetectionWithUUID | null = null;
 
                 for (let i = 0; i < newDetections.length; i++) {
                     const detection: DetectionWithUUID = newDetections[i] as DetectionWithUUID;
@@ -607,17 +609,21 @@ export class IDSCommunication {
                         `Detection: ${detection.type} for device ${detection.mac} (${detection.country}) at ${detection.time}: ${detection.description}`,
                     );
                     detections.push(detection);
+                    sendEvent++;
+                }
+
+                if (sendEvent) {
                     // save it in the state
-                    this.generateEvent(
-                        detection.type,
-                        detection.uuid,
-                        detection.description,
-                        I18n.translate(
-                            `IDS message: %s for device %s`,
-                            I18n.translate(detection.type),
-                            this.metaData[detection.mac]?.desc || this.metaData[detection.mac]?.ip || detection.mac,
-                        ),
-                    );
+                    // this.generateEvent(
+                    //     detection.type,
+                    //     detection.uuid,
+                    //     detection.description,
+                    //     I18n.translate(
+                    //         `IDS message: %s for device %s`,
+                    //         I18n.translate(detection.type),
+                    //         this.metaData[detection.mac]?.desc || this.metaData[detection.mac]?.ip || detection.mac,
+                    //     ),
+                    // );
                 }
 
                 void this.adapter.setState('info.detections.json', JSON.stringify(detections), true);

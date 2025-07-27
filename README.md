@@ -53,6 +53,11 @@ This was required to make it possible to uninstall and install the adapter again
 - [X] If instance is not running, show the link to activate the instance
 - [X] Add to status the information about connection to federated server
 - [X] Update information on detections page by change from not alive to alive
+- [X] Aggregate the line chart per day and not per measurement and add as Day-volume tab to chart (Tagesvollumen)
+- [X] Error in the questionnaire form: Radio buttons are not displayed correctly
+- [X] Solid delimiter in questionnaire form: "delimiter": "solid"
+- [ ] Send questionnaire does not work in the widget
+- [ ] Status tab as in the: https://github.com/ioBroker/ioBroker.kisshome-defender/issues/16
 
 <!--
 	Placeholder for the next version (at the beginning of the line):

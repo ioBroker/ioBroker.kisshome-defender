@@ -37,6 +37,8 @@ export interface DefenderAdapterConfig {
     allowTraining: boolean;
     /** Interval in seconds to save the pcap data at least every x seconds */
     saveThresholdSeconds: number;
+    /** If the user does not want to receive email notifications */
+    emailDisabled: boolean;
 }
 
 export interface DeviceStatistics {
@@ -92,7 +94,7 @@ export interface UXEvent {
     data?: string;
 }
 
-export type DataRequestType = 'dataVolumePerDevice' | 'dataVolumePerCountry' | 'dataVolumePerDaytime' | 'allStatistics';
+export type DataRequestType = 'dataVolumePerDevice' | 'dataVolumePerCountry' | 'dataVolumePerDaytime' | 'dataVolumePerDay' | 'allStatistics';
 
 export interface DataVolumePerDeviceResult {
     [mac: MACAddress]: { series: [number, number][]; info?: { ip: string; desc: string } };

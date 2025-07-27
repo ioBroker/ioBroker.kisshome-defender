@@ -254,7 +254,9 @@ export class KISSHomeResearchAdapter extends Adapter {
                 case 'getData': {
                     if (msg.callback) {
                         const requestType: DataRequestType = msg.message.type || 'allStatistics';
-                        if (requestType === 'dataVolumePerDevice') {
+                        if (requestType === 'dataVolumePerDay') {
+                            this.sendTo(msg.from, msg.command, this.statistics?.getDataVolumePerDay(), msg.callback);
+                        } else if (requestType === 'dataVolumePerDevice') {
                             this.sendTo(msg.from, msg.command, this.statistics?.getDataVolumePerDevice(), msg.callback);
                         } else if (requestType === 'dataVolumePerCountry') {
                             this.sendTo(
@@ -1188,21 +1190,25 @@ export class KISSHomeResearchAdapter extends Adapter {
         message: string,
         subject: string,
     ): Promise<void> => {
-        // admin
-        await this.registerNotification('kisshome-research', 'alert', message);
+        if (type !== 'Info') {
+            // admin
+            await this.registerNotification('kisshome-research', 'alert', message);
+        }
 
-        // email
-        try {
-            await axios.post(
-                `https://${PCAP_HOST}/api/v2/sendEmail/${encodeURIComponent(this.config.email)}?uuid=${encodeURIComponent(this.uuid)}`,
-                {
-                    subject,
-                    text: this.generateEmail(message, subject),
-                },
-            );
-        } catch (e) {
-            this.log.error(`${I18n.translate('Cannot send email')}: ${e}`);
-            return;
+        if (!this.config.emailDisabled) {
+            // email
+            try {
+                await axios.post(
+                    `https://${PCAP_HOST}/api/v2/sendEmail/${encodeURIComponent(this.config.email)}?uuid=${encodeURIComponent(this.uuid)}`,
+                    {
+                        subject,
+                        text: this.generateEmail(message, subject),
+                    },
+                );
+            } catch (e) {
+                this.log.error(`${I18n.translate('Cannot send email')}: ${e}`);
+                return;
+            }
         }
 
         // iobroker.iot

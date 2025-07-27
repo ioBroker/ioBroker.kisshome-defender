@@ -114,6 +114,30 @@ export default class Statistics {
         return macs;
     }
 
+    public getDataVolumePerDay(): DataVolumePerDeviceResult {
+        // For this information, we need all data for the last 7 days.
+        const results = this.getData();
+        const macs: DataVolumePerDeviceResult = {};
+        for (const result of results) {
+            const nextDayTime = new Date(result.time); // Get date in YYYY-MM-DD format
+            nextDayTime.setDate(nextDayTime.getDate() + 1); // Set to the next day to avoid multiple entries for the same day
+            nextDayTime.setHours(0, 0, 0, 0); // Set time
+            const ts = nextDayTime.getTime()
+            result.devices.forEach(device => {
+                macs[device.mac] ||= { series: [], info: this.MAC2DESC[device.mac] };
+                const series = macs[device.mac].series;
+                // Summarize all data for the same day
+                if (series.length > 0 && series[series.length - 1][0] === ts) {
+                    series[series.length - 1][1] += device.data_volume.data_volume_bytes;
+                    return;
+                }
+                // Add new entry for the day
+                series.push([ts, device.data_volume.data_volume_bytes]);
+            });
+        }
+        return macs;
+    }
+
     public getDataVolumePerCountry(): DataVolumePerCountryResult {
         // For this information, we need all data for the last 7 days.
         const results = this.getData();

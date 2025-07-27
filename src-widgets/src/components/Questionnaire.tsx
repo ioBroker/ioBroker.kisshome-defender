@@ -30,7 +30,7 @@ export interface QuestionnaireItem {
     text?: string; // For text items, this can be used to render Markdown or other content
     style?: React.CSSProperties; // Optional style for the item
     variant?: 'bottom' | 'end'; // Position of the radio button variant
-    delimiter?: boolean; // if false, no delimiter will be rendered
+    delimiter?: boolean | 'solid'; // if false, no delimiter will be rendered
 }
 
 export interface QuestionnaireJson {
@@ -88,6 +88,10 @@ const styles: Record<string, React.CSSProperties> = {
     delimiter: {
         paddingBottom: 10,
         borderBottom: '1px dotted #888',
+    },
+    delimiterSolid: {
+        paddingBottom: 10,
+        borderBottom: '2px solid #888',
     },
 };
 
@@ -171,7 +175,11 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                     style={{
                         ...styles.divItem,
                         ...this.state.json.divStyle,
-                        ...(item.delimiter === false ? undefined : styles.delimiter),
+                        ...(item.delimiter === false
+                            ? undefined
+                            : item.delimiter === 'solid'
+                              ? styles.delimiterSolid
+                              : styles.delimiter),
                     }}
                 >
                     <span
@@ -188,7 +196,11 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                 style={{
                     ...styles.divItem,
                     ...this.state.json.divStyle,
-                    ...(item.delimiter === false ? undefined : styles.delimiter),
+                    ...(item.delimiter === false
+                        ? undefined
+                        : item.delimiter === 'solid'
+                          ? styles.delimiterSolid
+                          : styles.delimiter),
                 }}
             >
                 <label
@@ -215,7 +227,11 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                 style={{
                     ...styles.divItem,
                     ...this.state.json.divStyle,
-                    ...(item.delimiter === false ? undefined : styles.delimiter),
+                    ...(item.delimiter === false
+                        ? undefined
+                        : item.delimiter === 'solid'
+                          ? styles.delimiterSolid
+                          : styles.delimiter),
                 }}
             >
                 <label
@@ -268,7 +284,11 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                 style={{
                     ...styles.divItem,
                     ...this.state.json.divStyle,
-                    ...(item.delimiter === false ? undefined : styles.delimiter),
+                    ...(item.delimiter === false
+                        ? undefined
+                        : item.delimiter === 'solid'
+                          ? styles.delimiterSolid
+                          : styles.delimiter),
                 }}
             >
                 <label
@@ -313,7 +333,11 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                     ...styles.divItem,
                     justifyContent: item.options!.length > 5 ? 'space-between' : undefined,
                     ...this.state.json.divStyle,
-                    ...(item.delimiter === false ? undefined : styles.delimiter),
+                    ...(item.delimiter === false
+                        ? undefined
+                        : item.delimiter === 'solid'
+                          ? styles.delimiterSolid
+                          : styles.delimiter),
                 }}
             >
                 <label
@@ -381,7 +405,11 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                 style={{
                     ...styles.divItem,
                     ...this.state.json.divStyle,
-                    ...(item.delimiter === false ? undefined : styles.delimiter),
+                    ...(item.delimiter === false
+                        ? undefined
+                        : item.delimiter === 'solid'
+                          ? styles.delimiterSolid
+                          : styles.delimiter),
                 }}
             >
                 <label
@@ -456,7 +484,11 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                 style={{
                     ...styles.divItem,
                     ...this.state.json.divStyle,
-                    ...(item.delimiter === false ? undefined : styles.delimiter),
+                    ...(item.delimiter === false
+                        ? undefined
+                        : item.delimiter === 'solid'
+                          ? styles.delimiterSolid
+                          : styles.delimiter),
                 }}
             >
                 <label
