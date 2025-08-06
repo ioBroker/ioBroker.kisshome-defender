@@ -35,7 +35,7 @@ function adminCopyFiles() {
 
 function widgetsClean() {
     deleteFoldersRecursive(`${srcWidgets}build`);
-    deleteFoldersRecursive(`${__dirname}/widgets`, ['kisshomeDefender.umd.js', 'Prev_widget.png']);
+    deleteFoldersRecursive(`${__dirname}/widgets/kisshome-defender/assets`);
 
     // Update version in src-widgets/package.json
     const widgetsPackageJson = require(`${srcWidgets}package.json`);
