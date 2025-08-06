@@ -3,7 +3,7 @@ import type { LegacyConnection } from '@iobroker/adapter-react-v5';
 export function bytes2string(bytes: number, maxValue?: number, noFloat?: boolean): string {
     if (maxValue !== undefined && maxValue > 1024 * 1024 * 1024) {
         // Use a part of GB
-        return `${(bytes / (1024 * 1024 * 1024)).toFixed(noFloat ? 0 : 1).replace('.', ',')}Gb`;
+        return `${(bytes / (1024 * 1024 * 1024)).toFixed(1).replace('.', ',')}Gb`;
     }
 
     if (maxValue !== undefined && maxValue > 1024 * 1024) {

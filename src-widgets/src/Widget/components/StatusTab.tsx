@@ -56,11 +56,11 @@ export function StatusIcon(props: { ok: boolean; warning?: boolean; size?: numbe
             }}
         >
             {props.ok ? (
-                <Check style={{ color: 'white', width: props.size, height: props.size }} />
+                <Check style={{ color: 'white', width: props.size, height: props.size, fill: 'currentColor' }} />
             ) : props.warning ? (
-                <Warning style={{ color: 'red', width: props.size, height: props.size }} />
+                <Warning style={{ color: 'red', width: props.size, height: props.size, fill: 'currentColor' }} />
             ) : (
-                <Close style={{ color: 'white', width: props.size, height: props.size }} />
+                <Close style={{ color: 'white', width: props.size, height: props.size, fill: 'currentColor' }} />
             )}
         </span>
     );
@@ -177,7 +177,6 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
     render(): React.JSX.Element {
         let unseenAlertsCount = 0;
         let unseenWarningsCount = 0;
-        let unseenInfoCount = 0;
         const detectionsTest: React.JSX.Element[] = [];
         if (this.props.detections?.length && this.props.detections[0].uuid !== this.props.lastSeenID) {
             for (let i = 0; i < this.props.detections.length; i++) {
@@ -186,8 +185,6 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                         unseenAlertsCount++;
                     } else if (this.props.detections[i].type === 'Warning') {
                         unseenWarningsCount++;
-                    } else if (this.props.detections[i].type === 'Info') {
-                        unseenInfoCount++;
                     }
                 } else {
                     break; // We found the last seen ID, so we can stop counting
@@ -195,7 +192,7 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
             }
             if (unseenWarningsCount || unseenAlertsCount) {
                 detectionsTest.push(
-                    <span>
+                    <span key="warning">
                         {I18n.t('kisshome-defender_Unusual activities detected')}:{' '}
                         {unseenWarningsCount + unseenAlertsCount}
                     </span>,

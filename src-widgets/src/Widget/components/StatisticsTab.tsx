@@ -167,14 +167,14 @@ interface BarSeriesTooltipParams {
 
 export default class StatisticsTab extends Component<StatisticsTabProps, StatisticsTabState> {
     private updateTimeout: ReturnType<typeof setTimeout> | null = null;
-    private readonly refDataVolumePerDay = React.createRef<HTMLDivElement | null>();
-    private readonly refDataVolumePerDevice = React.createRef<HTMLDivElement | null>();
-    private readonly refDataVolumePerCountry = React.createRef<HTMLDivElement | null>();
-    private readonly refDataVolumePerDaytime = React.createRef<HTMLDivElement | null>();
+    private readonly refDataVolumePerDay = React.createRef<HTMLDivElement>();
+    private readonly refDataVolumePerDevice = React.createRef<HTMLDivElement>();
+    private readonly refDataVolumePerCountry = React.createRef<HTMLDivElement>();
+    private readonly refDataVolumePerDaytime = React.createRef<HTMLDivElement>();
     private echartsReact: ReactEchartsCore | null = null;
     private countrySelected: { [country: string]: boolean } = {};
     private dayTimeSelected: { [dayTime: string]: boolean } = {};
-    private readonly refInfo = React.createRef<HTMLDivElement | null>();
+    private readonly refInfo = React.createRef<HTMLDivElement>();
 
     constructor(props: StatisticsTabProps) {
         super(props);
@@ -209,14 +209,8 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         };
     }
 
-    async componentDidMount(): Promise<void> {
-        await this.requestData();
-    }
-
-    setStateAsync(state: Partial<StatisticsTabState>): Promise<void> {
-        return new Promise(resolve => {
-            this.setState(state as unknown as StatisticsTabState, resolve);
-        });
+    componentDidMount(): void {
+        void this.requestData();
     }
 
     componentWillUnmount(): void {
@@ -228,138 +222,109 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         this.echartsReact?.getEchartsInstance().dispose();
     }
 
-    async getCommonStats(): Promise<void> {
+    async getCommonStats(newState: Partial<StatisticsTabState>): Promise<void> {
         if (this.state.alive) {
             const result = await this.props.socket.sendTo(`kisshome-defender.${this.props.instance}`, 'getTotals', {});
             if (result) {
-                this.setState({
-                    deviceMostCountries: (
-                        result as {
-                            deviceMostCountries?: string;
-                            dataVolumePerDevice?: string;
-                        }
-                    ).deviceMostCountries,
-                    deviceMostDataVolume: (
-                        result as {
-                            deviceMostCountries?: string;
-                            dataVolumePerDevice?: string;
-                        }
-                    ).dataVolumePerDevice,
-                });
+                newState.deviceMostCountries = (
+                    result as {
+                        deviceMostCountries?: string;
+                        dataVolumePerDevice?: string;
+                    }
+                ).deviceMostCountries;
+                newState.deviceMostDataVolume = (
+                    result as {
+                        deviceMostCountries?: string;
+                        dataVolumePerDevice?: string;
+                    }
+                ).dataVolumePerDevice;
             } else {
-                this.setState({
-                    deviceMostCountries: '',
-                    deviceMostDataVolume: '',
-                });
+                newState.deviceMostCountries = '';
+                newState.deviceMostDataVolume = '';
             }
         }
     }
 
     async requestData(): Promise<void> {
+        if (!this.state.alive) {
+            if (this.updateTimeout) {
+                clearTimeout(this.updateTimeout);
+                this.updateTimeout = null;
+            }
+            return;
+        }
+
+        const newState: Partial<StatisticsTabState> = {
+            requestRunning: false,
+        };
+        let changed = false;
         if (this.state.tab === 'dataVolumePerDay') {
             if (!this.state.dataVolumePerDay.ts && Date.now() - this.state.dataVolumePerDay.ts > 30_000) {
-                if (this.state.alive) {
-                    await this.setStateAsync({ requestRunning: true });
-                    const result = await this.props.socket.sendTo(
-                        `kisshome-defender.${this.props.instance}`,
-                        'getData',
-                        {
-                            type: 'dataVolumePerDay',
-                        },
-                    );
-                    if (result) {
-                        this.setState({
-                            requestRunning: false,
-                            dataVolumePerDay: {
-                                data: result as DataVolumePerDeviceResult,
-                                ts: Date.now(),
-                            },
-                        });
-                    } else {
-                        this.setState({ requestRunning: false });
-                    }
-                    await this.getCommonStats();
+                const result = await this.props.socket.sendTo(`kisshome-defender.${this.props.instance}`, 'getData', {
+                    type: 'dataVolumePerDay',
+                });
+
+                if (result) {
+                    newState.dataVolumePerDay = {
+                        data: result as DataVolumePerDeviceResult,
+                        ts: Date.now(),
+                    };
+                    changed = true;
                 }
             }
             // else the data is already loaded and still valid
         } else if (this.state.tab === 'dataVolumePerDevice') {
             if (!this.state.dataVolumePerDevice.ts && Date.now() - this.state.dataVolumePerDevice.ts > 30_000) {
-                if (this.state.alive) {
-                    await this.setStateAsync({ requestRunning: true });
-                    const result = await this.props.socket.sendTo(
-                        `kisshome-defender.${this.props.instance}`,
-                        'getData',
-                        {
-                            type: 'dataVolumePerDevice',
-                        },
-                    );
-                    if (result) {
-                        this.setState({
-                            requestRunning: false,
-                            dataVolumePerDevice: {
-                                data: result as DataVolumePerDeviceResult,
-                                ts: Date.now(),
-                            },
-                        });
-                    } else {
-                        this.setState({ requestRunning: false });
-                    }
-                    await this.getCommonStats();
+                const result = await this.props.socket.sendTo(`kisshome-defender.${this.props.instance}`, 'getData', {
+                    type: 'dataVolumePerDevice',
+                });
+                if (result) {
+                    changed = true;
+                    newState.dataVolumePerDevice = {
+                        data: result as DataVolumePerDeviceResult,
+                        ts: Date.now(),
+                    };
                 }
             }
             // else the data is already loaded and still valid
         } else if (this.state.tab === 'dataVolumePerCountry') {
             if (!this.state.dataVolumePerCountry.ts && Date.now() - this.state.dataVolumePerCountry.ts > 30_000) {
-                if (this.state.alive) {
-                    await this.setStateAsync({ requestRunning: true });
-                    const result = await this.props.socket.sendTo(
-                        `kisshome-defender.${this.props.instance}`,
-                        'getData',
-                        {
-                            type: 'dataVolumePerCountry',
-                        },
-                    );
-                    if (result) {
-                        this.setState({
-                            requestRunning: false,
-                            dataVolumePerCountry: {
-                                data: result as DataVolumePerCountryResult,
-                                ts: Date.now(),
-                            },
-                        });
-                    } else {
-                        this.setState({ requestRunning: false });
-                    }
-                    await this.getCommonStats();
+                const result = await this.props.socket.sendTo(`kisshome-defender.${this.props.instance}`, 'getData', {
+                    type: 'dataVolumePerCountry',
+                });
+                if (result) {
+                    changed = true;
+                    newState.dataVolumePerCountry = {
+                        data: result as DataVolumePerCountryResult,
+                        ts: Date.now(),
+                    };
                 }
             }
             // else the data is already loaded and still valid
         } else if (this.state.tab === 'dataVolumePerDaytime') {
             if (!this.state.dataVolumePerDaytime.ts && Date.now() - this.state.dataVolumePerDaytime.ts > 30_000) {
-                if (this.state.alive) {
-                    await this.setStateAsync({ requestRunning: true });
-                    const result = await this.props.socket.sendTo(
-                        `kisshome-defender.${this.props.instance}`,
-                        'getData',
-                        {
-                            type: 'dataVolumePerDaytime',
-                        },
-                    );
-                    if (result) {
-                        this.setState({
-                            requestRunning: false,
-                            dataVolumePerDaytime: {
-                                data: result as DataVolumePerDaytimeResult,
-                                ts: Date.now(),
-                            },
-                        });
-                    } else {
-                        this.setState({ requestRunning: false });
-                    }
-                    await this.getCommonStats();
+                const result = await this.props.socket.sendTo(`kisshome-defender.${this.props.instance}`, 'getData', {
+                    type: 'dataVolumePerDaytime',
+                });
+                if (result) {
+                    changed = true;
+                    newState.dataVolumePerDaytime = {
+                        data: result as DataVolumePerDaytimeResult,
+                        ts: Date.now(),
+                    };
                 }
             }
             // else the data is already loaded and still valid
+        }
+        if (changed) {
+            await this.getCommonStats(newState);
+            setTimeout(
+                state => {
+                    this.setState(state as StatisticsTabState);
+                },
+                1000,
+                newState,
+            );
         }
 
         if (this.updateTimeout) {
@@ -807,26 +772,33 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         return null;
     }
 
-    componentDidUpdate(): void {
+    componentDidUpdate(prevProps: StatisticsTabProps): void {
+        if (this.props.alive !== prevProps.alive && this.props.alive) {
+            // If the adapter is now alive, request data
+            setTimeout(() => {
+                void this.requestData();
+            }, 50);
+        }
+
         if (this.state.tab === 'dataVolumePerDay' && this.refDataVolumePerDay.current) {
             const height = this.refDataVolumePerDay.current.clientHeight;
             if (height !== this.state.height) {
-                this.setState({ height });
+                setTimeout(h => this.setState({ height: h }), 50, height);
             }
         } else if (this.state.tab === 'dataVolumePerDevice' && this.refDataVolumePerDevice.current) {
             const height = this.refDataVolumePerDevice.current.clientHeight;
             if (height !== this.state.height) {
-                this.setState({ height });
+                setTimeout(h => this.setState({ height: h }), 50, height);
             }
         } else if (this.state.tab === 'dataVolumePerCountry' && this.refDataVolumePerCountry.current) {
             const height = this.refDataVolumePerCountry.current.clientHeight;
             if (height !== this.state.height) {
-                this.setState({ height });
+                setTimeout(h => this.setState({ height: h }), 50, height);
             }
         } else if (this.state.tab === 'dataVolumePerDaytime' && this.refDataVolumePerDaytime.current) {
             const height = this.refDataVolumePerDaytime.current.clientHeight;
             if (height !== this.state.height) {
-                this.setState({ height });
+                setTimeout(h => this.setState({ height: h }), 50, height);
             }
         }
     }
@@ -1440,16 +1412,6 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
     }
 
     render(): React.JSX.Element {
-        if (this.state.alive !== this.props.alive) {
-            setTimeout(() => {
-                this.setState({ alive: this.props.alive }, () => {
-                    if (this.props.alive) {
-                        void this.requestData();
-                    }
-                });
-            }, 50);
-        }
-
         if (!this.state.alive) {
             return (
                 <div style={{ width: 'calc(100% - 32px)', height: 'calc(100% - 32px)', display: 'flex', padding: 16 }}>
@@ -1462,6 +1424,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
             <div style={{ width: '100%', height: '100%', display: 'flex' }}>
                 <div style={{ width: 150, backgroundColor: this.props.themeType === 'dark' ? '#333' : '#CCC' }}>
                     <Tabs
+                        className="Mui-vertical-tabs"
                         value={this.state.tab}
                         style={{ backgroundColor: this.props.themeType === 'dark' ? '#333' : '#CCC' }}
                         orientation="vertical"

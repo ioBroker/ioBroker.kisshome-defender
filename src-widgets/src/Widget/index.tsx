@@ -232,6 +232,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
                         alt="KISShome Defender"
                     />
                     <Tabs
+                        className="Mui-horizontal-tabs"
                         style={{ flexGrow: 1 }}
                         value={this.state.tab || 'status'}
                         onChange={(_event, value: string) => {

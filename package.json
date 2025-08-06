@@ -77,6 +77,7 @@
         "widget-2-compile": "node tasks --widget-2-compile",
         "widget-3-copy": "node tasks --widget-3-copy",
         "widget-build": "node tasks --widget-build",
+        "widget-v1-build": "node tasks --widget-v1-build",
         "tab-build": "node tasks --tab-build",
         "build:gui": "node tasks"
     },

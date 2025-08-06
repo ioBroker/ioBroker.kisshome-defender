@@ -1,0 +1,35 @@
+{
+    "name": "@iobroker/webcomponent-selectid-dialog",
+    "private": true,
+    "version": "0.0.1",
+    "type": "module",
+    "scripts": {
+        "start": "vite dev",
+        "build": "vite build",
+        "lint": "eslint -c eslint.config.mjs"
+    },
+    "main": "./dist/kisshomeDefender.es.js",
+    "module": "./dist/kisshomeDefender.es.js",
+    "exports": {
+        ".": "./dist/kisshomeDefender.es.js"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.32.0",
+        "@iobroker/adapter-react-v5": "^7.7.2",
+        "@iobroker/eslint-config": "^2.0.3",
+        "@iobroker/types": "^7.0.7",
+        "@iobroker/ws": "^3.0.3",
+        "@mui/material": "^6.5.0",
+        "@types/react": "^18.3.23",
+        "@types/react-dom": "^18.3.7",
+        "@vitejs/plugin-react": "^4.7.0",
+        "echarts": "^5.6.0",
+        "echarts-for-react": "^3.0.2",
+        "globals": "^16.3.0",
+        "markdown-it": "^14.1.0",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
+        "typescript": "^5.8.3",
+        "vite": "^7.0.6"
+    }
+}

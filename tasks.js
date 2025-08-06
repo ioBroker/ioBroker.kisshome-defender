@@ -35,7 +35,7 @@ function adminCopyFiles() {
 
 function widgetsClean() {
     deleteFoldersRecursive(`${srcWidgets}build`);
-    deleteFoldersRecursive(`${__dirname}/widgets`);
+    deleteFoldersRecursive(`${__dirname}/widgets`, ['kisshomeDefender.umd.js', 'Prev_widget.png']);
 
     // Update version in src-widgets/package.json
     const widgetsPackageJson = require(`${srcWidgets}package.json`);
@@ -91,6 +91,12 @@ async function buildAdminTab() {
         );
         process.exit(1);
     }
+    if (!compareDirectories(`${__dirname}/src-widgets-v1/src/Widget`, `${__dirname}/src-widgets/src/Widget`)) {
+        console.error(
+            `[${new Date().toISOString()}] src-widgets-v1/src/Widget and src-widgets/src/Widget directories differ!`,
+        );
+        process.exit(1);
+    }
 
     // clean
     deleteFoldersRecursive(`${__dirname}/admin/assets`);
@@ -98,11 +104,34 @@ async function buildAdminTab() {
         unlinkSync(`${__dirname}/admin/tab_m.html`);
     }
     deleteFoldersRecursive(`${__dirname}/src-admin-tab/build`);
-    await npmInstall(`${__dirname}/src-admin-tab/build`);
+    await npmInstall(`${__dirname}/src-admin-tab`);
     await buildReact(`${__dirname}/src-admin-tab`, { rootDir: __dirname, vite: true });
     copyFiles([`${__dirname}/src-admin-tab/build/assets/*.*`], `${__dirname}/admin/assets`);
     writeFileSync(`${__dirname}/admin/tab_m.html`, readFileSync(`${__dirname}/src-admin-tab/build/index.html`));
     await patchHtmlFile(`${__dirname}/admin/tab_m.html`);
+}
+
+async function buildWidgetV1() {
+    if (!compareDirectories(`${__dirname}/src-admin-tab/src/Widget`, `${__dirname}/src-widgets/src/Widget`)) {
+        console.error(
+            `[${new Date().toISOString()}] src-admin-tab/src/Widget and src-widgets/src/Widget directories differ!`,
+        );
+        process.exit(1);
+    }
+    if (!compareDirectories(`${__dirname}/src-widgets-v1/src/Widget`, `${__dirname}/src-widgets/src/Widget`)) {
+        console.error(
+            `[${new Date().toISOString()}] src-widgets-v1/src/Widget and src-widgets/src/Widget directories differ!`,
+        );
+        process.exit(1);
+    }
+    // clean
+    if (existsSync(`${__dirname}/widgets/kisshome-defender/kisshomeDefender.umd.js`)) {
+        unlinkSync(`${__dirname}/widgets/kisshome-defender/kisshomeDefender.umd.js`);
+    }
+    deleteFoldersRecursive(`${__dirname}/src-widgets-v1/dist`);
+    await npmInstall(`${__dirname}/src-widgets-v1`);
+    await buildReact(`${__dirname}/src-widgets-v1`, { rootDir: __dirname, vite: true });
+    copyFiles([`${__dirname}/src-widgets-v1/dist/kisshomeDefender.umd.js`], `widgets/kisshome-defender`);
 }
 
 function widgetsCopyFiles() {
@@ -159,6 +188,11 @@ if (process.argv.includes('--build-backend')) {
         console.error(`[${new Date().toISOString()}] Cannot build all: ${e}`);
         process.exit(1);
     });
+} else if (process.argv.includes('--widget-v1-build')) {
+    buildWidgetV1().catch(e => {
+        console.error(`[${new Date().toISOString()}] Cannot build all: ${e}`);
+        process.exit(1);
+    });
 } else {
     adminClean();
     widgetsClean();
@@ -169,6 +203,7 @@ if (process.argv.includes('--build-backend')) {
         .then(() => buildReact(srcWidgets, { rootDir: __dirname, vite: true }))
         .then(() => widgetsCopyFiles())
         .then(() => buildAdminTab())
+        .then(() => buildWidgetV1())
         .catch(e => {
             console.error(`[${new Date().toISOString()}] Cannot build all: ${e}`);
             process.exit(1);
