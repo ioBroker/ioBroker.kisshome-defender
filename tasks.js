@@ -3,7 +3,8 @@
  * Date: 2024-07-16
  */
 const { deleteFoldersRecursive, npmInstall, buildReact, copyFiles, patchHtmlFile } = require('@iobroker/build-tools');
-const { existsSync, writeFileSync, readFileSync, unlinkSync } = require('node:fs');
+const { existsSync, writeFileSync, readFileSync, unlinkSync, readdirSync, statSync } = require('node:fs');
+const { join } = require('node:path');
 const { execSync } = require('node:child_process');
 const adapterName = require('./package.json').name.replace('iobroker.', '');
 
@@ -42,7 +43,55 @@ function widgetsClean() {
     writeFileSync(`${srcWidgets}package.json`, JSON.stringify(widgetsPackageJson, null, 2));
 }
 
+function compareDirectories(dir1, dir2) {
+    const files1 = readdirSync(dir1);
+    const files2 = readdirSync(dir2);
+
+    if (files1.length !== files2.length) {
+        console.error(`Directories ${dir1} and ${dir2} have different number of files.`);
+        return false;
+    }
+
+    for (const file of files1) {
+        const filePath1 = join(dir1, file);
+        const filePath2 = join(dir2, file);
+
+        if (!existsSync(filePath2)) {
+            console.error(`File ${filePath2} does not exist in directory ${dir2}.`);
+            return false;
+        }
+
+        const stats1 = statSync(filePath1);
+        const stats2 = statSync(filePath2);
+
+        if (stats1.isDirectory() && stats2.isDirectory()) {
+            if (!compareDirectories(filePath1, filePath2)) {
+                return false;
+            }
+        } else if (stats1.isFile() && stats2.isFile()) {
+            const content1 = readFileSync(filePath1, 'utf8');
+            const content2 = readFileSync(filePath2, 'utf8');
+            if (content1 !== content2) {
+                console.error(`Files ${filePath1} and ${filePath2} differ.`);
+                return false;
+            }
+        } else {
+            console.error(`File type mismatch between ${filePath1} and ${filePath2}.`);
+            return false; // One is a file and the other is a directory
+        }
+    }
+
+    return true;
+}
+
 async function buildAdminTab() {
+    if (!compareDirectories(`${__dirname}/src-admin-tab/src/Widget`, `${__dirname}/src-widgets/src/Widget`)) {
+        console.error(
+            `[${new Date().toISOString()}] src-admin-tab/src/Widget and src-widgets/src/Widget directories differ!`,
+        );
+        process.exit(1);
+    }
+
     // clean
     deleteFoldersRecursive(`${__dirname}/admin/assets`);
     if (existsSync(`${__dirname}/admin/tab_m.html`)) {

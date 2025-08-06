@@ -324,8 +324,11 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         );
     }
 
-    renderRadio(item: QuestionnaireItem): React.JSX.Element {
+    renderRadio(item: QuestionnaireItem): React.JSX.Element | null {
         const value = this.state.answers[item.id]?.value || '';
+        if (!item.options) {
+            return null;
+        }
         return (
             <div
                 key={item.id}
@@ -351,47 +354,52 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                     row
                     style={{ ...styles.divControl, ...this.state.json.itemStyle, ...item.style }}
                 >
-                    {item.options?.map(option => (
-                        <FormControlLabel
-                            key={option.value.toString()}
-                            control={
-                                <Radio
-                                    checked={value === option.value}
-                                    onClick={e => {
-                                        this.props.reportUxEvent({
-                                            id: item.id,
-                                            event: 'change',
-                                            isTouchEvent: e instanceof TouchEvent,
-                                            ts: Date.now(),
-                                            data: value.toString(),
-                                        });
-                                        this.setState(prevState => ({
-                                            answers: {
-                                                ...prevState.answers,
-                                                [item.id]: { ts: new Date().toISOString(), value: option.value },
-                                            },
-                                        }));
-                                    }}
-                                />
-                            }
-                            label={option.label}
-                            labelPlacement={item.variant || 'bottom'}
-                            sx={{
-                                '& .MuiFormControlLabel-label':
-                                    !item.variant || item.variant === 'bottom'
-                                        ? {
-                                              maxWidth: 80,
-                                              textAlign: 'center',
-                                              fontSize: item.options.length > 5 ? '0.8rem' : undefined,
-                                          }
-                                        : null,
-                                '&.MuiFormControlLabel-root': {
-                                    marginLeft: item.options.length > 5 ? '2px' : undefined,
-                                    marginRight: item.options.length > 5 ? '2px' : undefined,
-                                },
-                            }}
-                        />
-                    ))}
+                    {item.options?.map(option => {
+                        if (!item.options) {
+                            return null;
+                        }
+                        return (
+                            <FormControlLabel
+                                key={option.value.toString()}
+                                control={
+                                    <Radio
+                                        checked={value === option.value}
+                                        onClick={e => {
+                                            this.props.reportUxEvent({
+                                                id: item.id,
+                                                event: 'change',
+                                                isTouchEvent: e instanceof TouchEvent,
+                                                ts: Date.now(),
+                                                data: value.toString(),
+                                            });
+                                            this.setState(prevState => ({
+                                                answers: {
+                                                    ...prevState.answers,
+                                                    [item.id]: { ts: new Date().toISOString(), value: option.value },
+                                                },
+                                            }));
+                                        }}
+                                    />
+                                }
+                                label={option.label}
+                                labelPlacement={item.variant || 'bottom'}
+                                sx={{
+                                    '& .MuiFormControlLabel-label':
+                                        !item.variant || item.variant === 'bottom'
+                                            ? {
+                                                  maxWidth: 80,
+                                                  textAlign: 'center',
+                                                  fontSize: item.options.length > 5 ? '0.8rem' : undefined,
+                                              }
+                                            : null,
+                                    '&.MuiFormControlLabel-root': {
+                                        marginLeft: item.options.length > 5 ? '2px' : undefined,
+                                        marginRight: item.options.length > 5 ? '2px' : undefined,
+                                    },
+                                }}
+                            />
+                        );
+                    })}
                 </RadioGroup>
             </div>
         );
@@ -520,7 +528,7 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         );
     }
 
-    renderItem(item: QuestionnaireItem): React.JSX.Element {
+    renderItem(item: QuestionnaireItem): React.JSX.Element | null {
         switch (item.type) {
             case 'text':
                 return this.renderText(item);

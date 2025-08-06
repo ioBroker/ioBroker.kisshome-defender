@@ -196,7 +196,8 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
                 onClose={() => {
                     if (
                         this.state.questionnaire &&
-                        this.state.showQuestionnaire!.id !== this.state.questionnaire.id &&
+                        (!this.state.showQuestionnaire ||
+                            this.state.showQuestionnaire.id !== this.state.questionnaire.id) &&
                         this.state.questionnaire.done === undefined
                     ) {
                         // Show next queued questionnaire

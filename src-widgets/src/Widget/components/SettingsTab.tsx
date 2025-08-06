@@ -239,7 +239,7 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                                 label: I18n.t('kisshome-defender_one hour'),
                             },
                         ]}
-                        value={this.state.newConfig.saveThresholdSeconds!}
+                        value={this.state.newConfig.saveThresholdSeconds || 60}
                         onChange={(event, value) => {
                             this.props.reportUxEvent({
                                 id: 'kisshome-defender-settings-save-threshold',
@@ -249,7 +249,7 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                             });
                             this.setState({
                                 newConfig: {
-                                    anomalySensitivity: this.state.newConfig!.anomalySensitivity,
+                                    anomalySensitivity: this.state.newConfig?.anomalySensitivity || 'medium',
                                     saveThresholdSeconds: value as number,
                                 },
                             });
@@ -318,13 +318,15 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                             this.setState(
                                 {
                                     initialConfig: {
-                                        anomalySensitivity: this.state.newConfig!.anomalySensitivity!,
-                                        saveThresholdSeconds: this.state.newConfig!.saveThresholdSeconds!,
+                                        anomalySensitivity: this.state.newConfig?.anomalySensitivity || 'medium',
+                                        saveThresholdSeconds: this.state.newConfig?.saveThresholdSeconds || 60,
                                     },
                                 },
                                 () => {
-                                    configObj.native.anomalySensitivity = this.state.newConfig!.anomalySensitivity;
-                                    configObj.native.saveThresholdSeconds = this.state.newConfig!.saveThresholdSeconds;
+                                    configObj.native.anomalySensitivity =
+                                        this.state.newConfig?.anomalySensitivity || 'medium';
+                                    configObj.native.saveThresholdSeconds =
+                                        this.state.newConfig?.saveThresholdSeconds || 60;
                                     void this.props.socket.setObject(
                                         `system.adapter.kisshome-defender.${this.props.instance}`,
                                         configObj,

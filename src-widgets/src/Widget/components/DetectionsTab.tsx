@@ -486,9 +486,12 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         if (this.state.showOnlyAlarmsAndWarnings && this.props.detections?.length) {
             results =
                 this.props.detections && this.state.results?.results
-                    ? this.state.results.results.filter(item =>
-                          this.props.detections!.find(d => d.scanUUID === item.uuid),
-                      )
+                    ? this.state.results.results.filter(item => {
+                          if (this.props.detections) {
+                              return this.props.detections.find(d => d.scanUUID === item.uuid);
+                          }
+                          return false;
+                      })
                     : [];
         }
 

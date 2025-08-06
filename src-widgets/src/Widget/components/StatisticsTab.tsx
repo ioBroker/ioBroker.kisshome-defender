@@ -12,7 +12,6 @@ import type {
 } from '../types';
 import ReactEchartsCore from 'echarts-for-react/lib/core';
 import type { EChartsOption, YAXisComponentOption } from 'echarts/types/dist/echarts';
-import type { ZRColor } from 'echarts/types/src/util/types';
 import * as echarts from 'echarts/core';
 
 import { LineChart, BarChart, type LineSeriesOption, type BarSeriesOption } from 'echarts/charts';
@@ -36,6 +35,71 @@ echarts.use([
     BarChart,
     SVGRenderer,
 ]);
+export interface GradientColorStop {
+    offset: number;
+    color: string;
+}
+export interface GradientObject {
+    id?: number;
+    type: string;
+    colorStops: GradientColorStop[];
+    global?: boolean;
+}
+export interface LinearGradientObject extends GradientObject {
+    type: 'linear';
+    x: number;
+    y: number;
+    x2: number;
+    y2: number;
+}
+export declare type ColorString = string;
+export interface RadialGradientObject extends GradientObject {
+    type: 'radial';
+    x: number;
+    y: number;
+    r: number;
+}
+export type SVGVNodeAttrs = Record<string, string | number | undefined | boolean>;
+export interface SVGVNode {
+    tag: string;
+    attrs: SVGVNodeAttrs;
+    children?: SVGVNode[];
+    text?: string;
+
+    // For patching
+    elm?: Node;
+    key: string;
+}
+export interface SVGPatternObject extends PatternObjectBase {
+    /**
+     * svg vnode can only be used in svg renderer currently.
+     * svgWidth, svgHeight defines width and height used for pattern.
+     */
+    svgElement?: SVGVNode;
+    svgWidth?: number;
+    svgHeight?: number;
+}
+export type PatternObject = ImagePatternObject | SVGPatternObject;
+export type ImageLike = HTMLImageElement | HTMLCanvasElement | HTMLVideoElement;
+export interface PatternObjectBase {
+    id?: number;
+    // type is now unused, so make it optional
+    type?: 'pattern';
+    x?: number;
+    y?: number;
+    rotation?: number;
+    scaleX?: number;
+    scaleY?: number;
+}
+type ImagePatternRepeat = 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat';
+export interface ImagePatternObject extends PatternObjectBase {
+    image: ImageLike | string;
+    repeat?: ImagePatternRepeat;
+    imageWidth?: number;
+    imageHeight?: number;
+}
+export declare type ZRColor = ColorString | LinearGradientObject | RadialGradientObject | PatternObject;
+
 const SHOW_SELECT_LEGEND = 5; // Show legend if more than 4 series
 
 interface StatisticsTabProps {
