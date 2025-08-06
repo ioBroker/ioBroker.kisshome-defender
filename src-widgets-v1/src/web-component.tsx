@@ -600,7 +600,7 @@ label[data-shrink='false'] + .MuiInputBase-formControl .MuiSelect-select.MuiInpu
     }
 
     static get observedAttributes(): string[] {
-        return ['open', 'selected', 'all'];
+        return ['editMode'];
     }
 
     // eslint-disable-next-line class-methods-use-this

@@ -1,5 +1,25 @@
 <script src="widgets/kisshome-defender/kisshomeDefender.umd.js"></script>
 
+<script>
+    vis.binds.kisshomeDefender = {
+        create: function (wid, view, data, style) {
+            const $div = $(`#${wid}`);
+            if (!$div.length) {
+                setTimeout(function () {
+                    vis.binds.kisshomeDefender.create(wid, view, data, style);
+                }, 100);
+                return;
+            }
+            // Create the widget instance
+            const instance = document.createElement('kisshome-defender');
+            instance.setAttribute('instance', data.instance || '0');
+            instance.setAttribute('editMode', vis.editMode ? 'true' : 'false');
+
+            // Append the instance to the widget container
+            document.getElementById(wid).appendChild(instance);
+        },
+    };
+</script>
 <script id="tplKissHomeDefender"
         type="text/ejs"
         class="vis-tpl"
@@ -9,12 +29,9 @@
         data-vis-prev='<img src="widgets/kisshome-defender/prev_kisshome-defender.png"></img>'
         data-vis-attrs="instance"
     >
-    <div class="vis-widget <%== this.data.attr('class') %>" style="overflow: hidden; width: 100%; height: 100%; id="<%= this.data.attr('wid') %>">
-        <kisshome-defender
-            instance="<%= this.data.attr('instance') %>"
-            editMode="false"
-            language="de"
-            theme="light"
-        ></kisshome-defender>
+    <div class="vis-widget <%== this.data.attr('class') %>" style="overflow: hidden; width: 100%; height: 100%; top: 0; left: 0" id="<%= this.data.attr('wid') %>">
+        <%
+             vis.binds.kisshomeDefender.create(this.data.wid, this.view, this.data, this.style);
+        %>
     </div>
 </script>
