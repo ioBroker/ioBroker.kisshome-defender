@@ -56,8 +56,12 @@ This was required to make it possible to uninstall and install the adapter again
 - [X] Aggregate the line chart per day and not per measurement and add as Day-volume tab to chart (Tagesvollumen)
 - [X] Error in the questionnaire form: Radio buttons are not displayed correctly
 - [X] Solid delimiter in questionnaire form: "delimiter": "solid"
-- [ ] Send questionnaire does not work in the widget
-- [ ] Status tab as in the: https://github.com/ioBroker/ioBroker.kisshome-defender/issues/16
+- [X] Send questionnaire does not work in the widget
+- [X] Status tab as in the: https://github.com/ioBroker/ioBroker.kisshome-defender/issues/16
+- [ ] Show device names in day-volume drop-down menu
+- [ ] Add description about training to the admin settings GUI
+- [ ] Polling of the model status for every device on the admin device list. For every device show the status of the model in percent?
+- [ ] Show hint in the admin settings GUI, that the docker saves the data in the `<IOBROKER-PATH>/iobroker-data/kisshome-defender` folder
 
 <!--
 	Placeholder for the next version (at the beginning of the line):

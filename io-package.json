@@ -39,7 +39,12 @@
         "connectionType": "local",
         "dataSource": "push",
         "adminUI": {
-            "config": "json"
+            "config": "json",
+            "tab": "materialize"
+        },
+        "adminTab": {
+            "singleton": false,
+            "name": "KISSHome"
         },
         "os": "linux",
         "tier": 3,
@@ -315,6 +320,31 @@
             "native": {}
         },
         {
+            "_id": "info.detections.running",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Is detection is running",
+                    "de": "Wird die Erkennung durchgeführt",
+                    "ru": "Идет обнаружение",
+                    "pt": "A detecção está em execução",
+                    "nl": "Wordt detectie uitgevoerd",
+                    "fr": "La détection est en cours",
+                    "it": "Il rilevamento è in corso",
+                    "es": "La detección está en curso",
+                    "pl": "Wykrywanie jest w toku",
+                    "uk": "Виявлення виконується",
+                    "zh-cn": "检测正在进行中"
+                },
+                "type": "boolean",
+                "role": "state",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },
+        {
             "_id": "info.recording",
             "type": "channel",
             "common": {
@@ -458,6 +488,30 @@
                 "read": true,
                 "write": true,
                 "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.recording.nextWrite",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Next PCAP file creation",
+                    "de": "Nächste PCAP-Dateierstellung",
+                    "ru": "Следующее создание файла PCAP",
+                    "pt": "Próxima criação de arquivo PCAP",
+                    "nl": "Volgende PCAP-bestandscreatie",
+                    "fr": "Prochaine création de fichier PCAP",
+                    "it": "Prossima creazione del file PCAP",
+                    "es": "Próxima creación de archivo PCAP",
+                    "pl": "Następne tworzenie pliku PCAP",
+                    "uk": "Наступне створення файлу PCAP",
+                    "zh-cn": "下一个PCAP文件创建"
+                },
+                "type": "string",
+                "role": "date",
+                "read": true,
+                "write": true
             },
             "native": {}
         },
@@ -631,26 +685,27 @@
             "native": {}
         },
         {
-            "_id": "info.ids.connectedToFederatedServer",
+            "_id": "info.ids.group",
             "type": "state",
             "common": {
                 "name": {
-                    "en": "Is KISSHome IDS connected to federated server",
-                    "de": "Ist KISSHome IDS mit dem föderierten Server verbunden",
-                    "ru": "Подключен ли KISSHome IDS к федеративному серверу",
-                    "pt": "KISSHome IDS está conectado ao servidor federado",
-                    "nl": "Is KISSHome IDS verbonden met de gefedereerde server",
-                    "fr": "KISSHome IDS est-il connecté au serveur fédéré",
-                    "it": "KISSHome IDS è connesso al server federato",
-                    "es": "KISSHome IDS está conectado al servidor federado",
-                    "pl": "Czy KISSHome IDS jest połączony z serwerem federacyjnym",
-                    "uk": "Чи підключено KISSHome IDS до федеративного сервера",
-                    "zh-cn": "KISSHome IDS是否连接到联合服务器"
+                    "en": "Group name",
+                    "de": "Gruppenname",
+                    "ru": "Имя группы",
+                    "pt": "Nome do grupo",
+                    "nl": "Groepsnaam",
+                    "fr": "Nom du groupe",
+                    "it": "Nome del gruppo",
+                    "es": "Nombre del grupo",
+                    "pl": "Nazwa grupy",
+                    "uk": "Назва групи",
+                    "zh-cn": "组名"
                 },
-                "type": "boolean",
+                "type": "string",
                 "role": "state",
                 "read": true,
-                "write": false
+                "write": false,
+                "def": "A"
             },
             "native": {}
         }

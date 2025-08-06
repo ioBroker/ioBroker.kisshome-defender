@@ -30,6 +30,8 @@ export interface DefenderAdapterConfig {
         selfHosted: boolean;
         /** Url of the foreign docker container */
         url: string;
+        /** Docker volume */
+        volume: string;
     };
     /** Level of anomaly sensitivity */
     anomalySensitivity: 'low' | 'medium' | 'high';

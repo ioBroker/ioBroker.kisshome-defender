@@ -33,10 +33,10 @@ export class IDSCommunication {
         Result: 'Success' | 'Error';
         Message?: {
             Status: 'Started' | 'Configuring' | 'Running' | 'Analyzing' | 'Exited' | 'No connection';
-            'Has Federated Learning server connection'?: 'True' | 'False';
             Error?: string;
             Version?: string;
         };
+        Model_status?: { [mac: MACAddress]: number };
     } | null = null;
     private webServer: http.Server | null = null;
     private ownIp: string | null = null;
@@ -47,13 +47,13 @@ export class IDSCommunication {
     private readonly statisticsDir: string;
     private currentStatus: 'Running' | 'Started' | 'Configuring' | 'Analyzing' | 'Exited' | 'No connection' | '' = '';
     private currentVersion: string = '';
-    private currentConnectedToFederatedServer?: 'True' | 'False' | '';
     private uploadStatus: {
         status: 'idle' | 'waitingOnResponse' | 'sendingFile';
         fileName?: string;
     } = {
         status: 'idle',
     };
+    private group: 'A' | 'B'; // Group A or B
     private lastCheckedDate = '';
     private readonly generateEvent: (
         type: 'Info' | 'Warning' | 'Alert',
@@ -66,19 +66,23 @@ export class IDSCommunication {
         adapter: ioBroker.Adapter,
         config: DefenderAdapterConfig,
         metaData: { [mac: MACAddress]: { ip: string; desc: string } },
-        workingFolder: string,
-        generateEvent: (
-            type: 'Info' | 'Warning' | 'Alert',
-            id: string,
-            message: string,
-            title: string,
-        ) => Promise<void>,
+        options: {
+            workingFolder: string;
+            generateEvent: (
+                type: 'Info' | 'Warning' | 'Alert',
+                id: string,
+                message: string,
+                title: string,
+            ) => Promise<void>;
+            group: 'A' | 'B';
+        },
     ) {
         this.adapter = adapter;
         this.config = config;
         this.metaData = metaData;
-        this.workingFolder = workingFolder;
-        this.generateEvent = generateEvent;
+        this.workingFolder = options.workingFolder;
+        this.generateEvent = options.generateEvent;
+        this.group = options.group;
         this.idsUrl = (this.config.docker?.selfHosted ? '' : this.config.docker?.url) || '';
 
         if (this.idsUrl.endsWith('/')) {
@@ -93,9 +97,18 @@ export class IDSCommunication {
                 this.adapter.log.error(`Error creating statistics directory: ${error.message}`);
             }
         }
+        if (this.config.docker.selfHosted && !existsSync(`${this.statisticsDir}/volume`)) {
+            try {
+                // Create the volume directory if it does not exist
+                mkdirSync(`${this.statisticsDir}/volume`, { recursive: true });
+            } catch (error) {
+                this.adapter.log.error(`Error creating statistics volume directory: ${error.message}`);
+            }
+        }
 
         // Set initial state
         void this.adapter.setState('info.ids.status', 'No connection', true);
+        void this.adapter.setState('info.detections.running', false, true);
     }
 
     static ip6toNumber(ip: string): bigint {
@@ -384,7 +397,9 @@ export class IDSCommunication {
                     ...formData.getHeaders(),
                 },
             });
-            this.adapter.log.info(`${I18n.translate('Config successful')}: ${response.status} ${JSON.stringify(response.data)}`);
+            this.adapter.log.info(
+                `${I18n.translate('Config successful')}: ${response.status} ${JSON.stringify(response.data)}`,
+            );
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 this.adapter.log.error(`Error uploading config: ${error.message}`);
@@ -398,6 +413,10 @@ export class IDSCommunication {
         }
     }
 
+    public getModelStatus(): { [mac: string]: number } {
+        return this.lastStatus?.Model_status || {};
+    }
+
     private async _getStatus(): Promise<void> {
         try {
             const response = await axios.get(`${this.idsUrl}/status`, { timeout: 3000 });
@@ -408,7 +427,6 @@ export class IDSCommunication {
             //   "Result": "Success",
             //   "Message": {
             //     "Status": "Running",
-            //     "Has Federated Learning server connection": "False"
             //   }
             // }
             this.lastStatus = response.data;
@@ -453,18 +471,6 @@ export class IDSCommunication {
             this.currentVersion = this.lastStatus?.Message?.Version || '--';
             // Update version
             void this.adapter.setState('info.ids.version', this.lastStatus?.Message?.Version || '--', true);
-        }
-        if (
-            this.currentConnectedToFederatedServer !==
-            (this.lastStatus?.Message?.['Has Federated Learning server connection'] || '')
-        ) {
-            this.currentConnectedToFederatedServer =
-                this.lastStatus?.Message?.['Has Federated Learning server connection'] || '';
-            void this.adapter.setState(
-                'info.ids.connectedToFederatedServer',
-                this.lastStatus?.Message?.['Has Federated Learning server connection'] === 'True',
-                true,
-            );
         }
     }
 
@@ -566,6 +572,7 @@ export class IDSCommunication {
             }
             this.uploadStatus.fileName = undefined;
             this.uploadStatus.status = 'idle';
+            this.adapter.setState('info.detections.running', false, true);
         } else {
             // Unexpected file name in response, but we delete the file anyway
             this.adapter.log.warn(`Unexpected response from IDS for file ${data.file}`);
@@ -574,6 +581,7 @@ export class IDSCommunication {
                     `Upload status was 'waitingOnResponse', but received unexpected file name: ${data.file}`,
                 );
                 this.uploadStatus.status = 'idle';
+                this.adapter.setState('info.detections.running', false, true);
             }
         }
         if (data.statistics) {
@@ -599,7 +607,7 @@ export class IDSCommunication {
                     return detectionTime >= sevenDaysAgo;
                 });
                 let sendEvent = 0;
-                let worthstEvent: DetectionWithUUID | null = null;
+                let badEvent: DetectionWithUUID | null = null;
 
                 for (let i = 0; i < newDetections.length; i++) {
                     const detection: DetectionWithUUID = newDetections[i] as DetectionWithUUID;
@@ -610,20 +618,54 @@ export class IDSCommunication {
                     );
                     detections.push(detection);
                     sendEvent++;
+
+                    if (
+                        !badEvent ||
+                        detection.type === 'Alert' ||
+                        (detection.type === 'Warning' && badEvent.type === 'Info')
+                    ) {
+                        // If we have no bad event or the current one is worse, replace it
+                        badEvent = detection;
+                    }
                 }
 
-                if (sendEvent) {
+                if (badEvent) {
+                    let text = '';
+                    if (this.group === 'A') {
+                        if (sendEvent === 1) {
+                            text = I18n.translate(
+                                `Bei der Kontrolle wurde eine Anomalie festgestellt, die auf ein mögliches Sicherheitsrisiko hinweisen könnte`,
+                            );
+                        } else {
+                            text = I18n.translate(
+                                `Bei der Kontrolle wurden %s Anomalien festgestellt, die auf ein mögliches Sicherheitsrisiko hinweisen könnten`,
+                                sendEvent,
+                            );
+                        }
+                    } else {
+                        if (sendEvent === 1) {
+                            text = I18n.translate(
+                                `Bei einer Kontrolle wurde Anomalie-Bewertung von %s festgestellt, die auf ein mögliches Sicherheitsrisiko hinweisen könnten.`,
+                                (0.5).toString().replace(/./g, ','),
+                            );
+                        } else {
+                            // Average ??
+                            text = I18n.translate(
+                                `Bei einer Kontrolle wurden Anomalie-Bewertungen von %s festgestellt, die auf ein mögliches Sicherheitsrisiko hinweisen könnten.`,
+                                (0.5).toString().replace(/./g, ','),
+                            );
+                        }
+                    }
+
                     // save it in the state
-                    // this.generateEvent(
-                    //     detection.type,
-                    //     detection.uuid,
-                    //     detection.description,
-                    //     I18n.translate(
-                    //         `IDS message: %s for device %s`,
-                    //         I18n.translate(detection.type),
-                    //         this.metaData[detection.mac]?.desc || this.metaData[detection.mac]?.ip || detection.mac,
-                    //     ),
-                    // );
+                    void this.generateEvent(
+                        badEvent.type,
+                        useUUD,
+                        text,
+                        I18n.translate('Unusual activities were detected'),
+                    ).catch(error => {
+                        this.adapter.log.error(`Error generating event: ${error.message}`);
+                    });
                 }
 
                 void this.adapter.setState('info.detections.json', JSON.stringify(detections), true);
@@ -655,6 +697,7 @@ export class IDSCommunication {
                 autoUpdate: true,
                 autoStart: false,
                 removeAfterStop: true,
+                volumes: [`${this.statisticsDir}/volume:/shared`],
             });
 
             await this.dockerManager.init();
@@ -757,6 +800,8 @@ export class IDSCommunication {
             fileName,
         };
 
+        this.adapter.setState('info.detections.running', true, true);
+
         const filePath = `${this.workingFolder}/${fileName}`;
         const formData = new FormData();
         formData.append('data', readFileSync(filePath), {
@@ -782,6 +827,7 @@ export class IDSCommunication {
             .catch(error => {
                 this.adapter.log.error(`Error uploading file ${fileName}: ${error.message}`);
                 this.uploadStatus = { status: 'idle' };
+                this.adapter.setState('info.detections.running', false, true);
             });
     }
 

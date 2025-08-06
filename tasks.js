@@ -2,8 +2,8 @@
  * ioBroker gulpfile
  * Date: 2024-07-16
  */
-const { deleteFoldersRecursive, npmInstall, buildReact, copyFiles } = require('@iobroker/build-tools');
-const { existsSync, writeFileSync } = require('node:fs');
+const { deleteFoldersRecursive, npmInstall, buildReact, copyFiles, patchHtmlFile } = require('@iobroker/build-tools');
+const { existsSync, writeFileSync, readFileSync, unlinkSync } = require('node:fs');
 const { execSync } = require('node:child_process');
 const adapterName = require('./package.json').name.replace('iobroker.', '');
 
@@ -17,6 +17,7 @@ function adminClean() {
         'kisshome-defender.svg',
         'jsonConfig.json',
         'i18n',
+        'tab.html',
     ]);
     deleteFoldersRecursive(`${srcAdmin}build`);
 }
@@ -30,6 +31,7 @@ function adminCopyFiles() {
     copyFiles(['src-admin/build/customComponents.js'], 'admin/custom');
     copyFiles(['src-admin/src/i18n/*.json'], 'admin/custom/i18n');
 }
+
 function widgetsClean() {
     deleteFoldersRecursive(`${srcWidgets}build`);
     deleteFoldersRecursive(`${__dirname}/widgets`);
@@ -38,6 +40,20 @@ function widgetsClean() {
     const widgetsPackageJson = require(`${srcWidgets}package.json`);
     widgetsPackageJson.version = require('./package.json').version;
     writeFileSync(`${srcWidgets}package.json`, JSON.stringify(widgetsPackageJson, null, 2));
+}
+
+async function buildAdminTab() {
+    // clean
+    deleteFoldersRecursive(`${__dirname}/admin/assets`);
+    if (existsSync(`${__dirname}/admin/tab_m.html`)) {
+        unlinkSync(`${__dirname}/admin/tab_m.html`);
+    }
+    deleteFoldersRecursive(`${__dirname}/src-admin-tab/build`);
+    await npmInstall(`${__dirname}/src-admin-tab/build`);
+    await buildReact(`${__dirname}/src-admin-tab`, { rootDir: __dirname, vite: true });
+    copyFiles([`${__dirname}/src-admin-tab/build/assets/*.*`], `${__dirname}/admin/assets`);
+    writeFileSync(`${__dirname}/admin/tab_m.html`, readFileSync(`${__dirname}/src-admin-tab/build/index.html`));
+    await patchHtmlFile(`${__dirname}/admin/tab_m.html`);
 }
 
 function widgetsCopyFiles() {
@@ -89,6 +105,11 @@ if (process.argv.includes('--build-backend')) {
     widgetsClean();
     const promise = existsSync(`${srcWidgets}node_modules`) ? Promise.resolve() : npmInstall(srcWidgets);
     promise.then(() => buildReact(srcWidgets, { rootDir: __dirname, vite: true })).then(() => widgetsCopyFiles());
+} else if (process.argv.includes('--tab-build')) {
+    buildAdminTab().catch(e => {
+        console.error(`[${new Date().toISOString()}] Cannot build all: ${e}`);
+        process.exit(1);
+    });
 } else {
     adminClean();
     widgetsClean();
@@ -98,6 +119,7 @@ if (process.argv.includes('--build-backend')) {
         .then(() => npmInstall(srcWidgets))
         .then(() => buildReact(srcWidgets, { rootDir: __dirname, vite: true }))
         .then(() => widgetsCopyFiles())
+        .then(() => buildAdminTab())
         .catch(e => {
             console.error(`[${new Date().toISOString()}] Cannot build all: ${e}`);
             process.exit(1);

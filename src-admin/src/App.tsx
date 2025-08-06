@@ -29,14 +29,14 @@ import zhCNLocal from './i18n/zh-cn.json';
 
 const styles: Record<string, any> = {
     app: (theme: IobTheme): React.CSSProperties => ({
-    backgroundColor: theme.palette.background.default,
-    color: theme.palette.text.primary,
-    height: '100%',
-}),
+        backgroundColor: theme.palette.background.default,
+        color: theme.palette.text.primary,
+        height: '100%',
+    }),
     item: {
-    padding: 50,
+        padding: 50,
         width: 400,
-},
+    },
 };
 
 interface AppState extends GenericAppState {

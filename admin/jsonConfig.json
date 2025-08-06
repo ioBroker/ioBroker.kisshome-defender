@@ -220,6 +220,12 @@
                     "help": "Like http://dockerIp:5000",
                     "hidden": "!!data.docker?.selfHosted"
                 },
+                "docker.volume": {
+                    "newLine": true,
+                    "type": "text",
+                    "label": "Path to store models and persistent data",
+                    "hidden": "!!data.docker?.selfHosted"
+                },
                 "_restart": {
                     "newLine": true,
                     "type": "state",

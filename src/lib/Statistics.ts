@@ -122,7 +122,7 @@ export default class Statistics {
             const nextDayTime = new Date(result.time); // Get date in YYYY-MM-DD format
             nextDayTime.setDate(nextDayTime.getDate() + 1); // Set to the next day to avoid multiple entries for the same day
             nextDayTime.setHours(0, 0, 0, 0); // Set time
-            const ts = nextDayTime.getTime()
+            const ts = nextDayTime.getTime();
             result.devices.forEach(device => {
                 macs[device.mac] ||= { series: [], info: this.MAC2DESC[device.mac] };
                 const series = macs[device.mac].series;
@@ -194,10 +194,14 @@ export default class Statistics {
 
         return {
             deviceMostCountries: this.MAC2DESC[deviceMostCountries]
-                ? `${this.MAC2DESC[deviceMostCountries].desc} / ${this.MAC2DESC[deviceMostCountries].ip} [${deviceMostCountries}]`
+                ? this.MAC2DESC[deviceMostCountries].desc ||
+                  this.MAC2DESC[deviceMostCountries].ip ||
+                  deviceMostCountries
                 : deviceMostCountries,
             dataVolumePerDevice: this.MAC2DESC[dataVolumePerDevice]
-                ? `${this.MAC2DESC[dataVolumePerDevice].desc} / ${this.MAC2DESC[dataVolumePerDevice].ip} [${dataVolumePerDevice}]`
+                ? this.MAC2DESC[dataVolumePerDevice].desc ||
+                  this.MAC2DESC[dataVolumePerDevice].ip ||
+                  dataVolumePerDevice
                 : dataVolumePerDevice,
         };
     }

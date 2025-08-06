@@ -21,18 +21,11 @@ import {
     getRecordURL,
 } from './lib/recording';
 import { getFritzBoxFilter, getFritzBoxInterfaces, getFritzBoxToken, getFritzBoxUsers } from './lib/fritzbox';
-import {
-    DataRequestType,
-    DefenderAdapterConfig,
-    Device,
-    MACAddress,
-    StoredStatisticsResult,
-    UXEvent,
-    UXEventType,
-} from './types';
+import { DataRequestType, DefenderAdapterConfig, Device, MACAddress, StoredStatisticsResult, UXEvent } from './types';
 import CloudSync, { PCAP_HOST } from './lib/CloudSync';
 import { IDSCommunication } from './lib/IDSCommunication';
 import Statistics from './lib/Statistics';
+import { createHash } from 'node:crypto';
 
 // save files every 60 minutes
 const SAVE_DATA_EVERY_MS = 3_600_000;
@@ -50,9 +43,13 @@ export class KISSHomeResearchAdapter extends Adapter {
 
     private emailText: string = '';
 
-    private sidCreated: number = 0;
+    private sidCreated = 0;
 
     private startTimeout: ioBroker.Timeout | undefined;
+
+    private nextSave = 0;
+
+    private group: 'A' | 'B' = 'A';
 
     private context: Context = {
         terminate: false,
@@ -190,6 +187,15 @@ export class KISSHomeResearchAdapter extends Adapter {
                             this.sendTo(msg.from, msg.command, { error: e.message }, msg.callback);
                         }
                     }
+                    break;
+                }
+                case 'getModelStatus': {
+                    this.sendTo(
+                        msg.from,
+                        msg.command,
+                        { modelStatus: this.idsCommunication?.getModelStatus() || {} },
+                        msg.callback,
+                    );
                     break;
                 }
 
@@ -489,7 +495,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                                 // Clear questionnaire
                                 await this.setStateAsync(
                                     'info.cloudSync.questionnaire',
-                                    JSON.stringify({ id: questionnaire.id }),
+                                    JSON.stringify({ id: questionnaire.id, done: true }),
                                     true,
                                 );
                             }
@@ -530,6 +536,11 @@ export class KISSHomeResearchAdapter extends Adapter {
                     }
                     break;
                 }
+
+                case 'detectNow': {
+                    this.triggerWriteFile();
+                    break;
+                }
             }
         }
     }
@@ -545,6 +556,9 @@ export class KISSHomeResearchAdapter extends Adapter {
         const uuidObj = await this.getForeignObjectAsync('system.meta.uuid');
         if (uuidObj?.native?.uuid) {
             this.uuid = uuidObj.native.uuid;
+            const hash = createHash('sha256').update(this.uuid).digest();
+            this.group = hash[hash.length - 1] & 1 ? 'B' : 'A';
+            await this.setState('info.ids.group', this.group, true);
         } else {
             this.log.error('Cannot read UUID');
             return;
@@ -752,13 +766,11 @@ export class KISSHomeResearchAdapter extends Adapter {
             ),
         );
 
-        this.idsCommunication = new IDSCommunication(
-            this,
-            this.config,
-            getDescriptionObject(this.IPs),
-            this.workingIdsDir,
-            this.generateEvent,
-        );
+        this.idsCommunication = new IDSCommunication(this, this.config, getDescriptionObject(this.IPs), {
+            workingFolder: this.workingIdsDir,
+            generateEvent: this.generateEvent,
+            group: this.group,
+        });
 
         if (this.recordingEnabled) {
             // Send the data every hour to the cloud
@@ -848,20 +860,26 @@ export class KISSHomeResearchAdapter extends Adapter {
                 }
             } else if (id === `${this.namespace}.info.recording.triggerWrite` && !state.ack) {
                 if (state.val) {
-                    if (this.recordingRunning) {
-                        void this.setState('info.recording.triggerWrite', false, true).catch(e =>
-                            this.log.error(`${I18n.translate('Cannot set triggerWrite')}: ${e}`),
-                        );
-                        this.savePacketsToFile();
-
-                        setTimeout(() => {
-                            this.cloudSync?.startCloudSynchronization().catch(e => {
-                                this.log.error(`[RSYNC] ${I18n.translate('Cannot synchronize')}: ${e}`);
-                            });
-                        }, 2000);
-                    }
+                    this.triggerWriteFile();
                 }
             }
+        }
+    }
+
+    triggerWriteFile(): void {
+        if (this.recordingRunning) {
+            void this.setState('info.recording.triggerWrite', false, true).catch(e =>
+                this.log.error(`${I18n.translate('Cannot set triggerWrite')}: ${e}`),
+            );
+            this.savePacketsToFile();
+
+            setTimeout(() => {
+                this.cloudSync?.startCloudSynchronization().catch(e => {
+                    this.log.error(`[RSYNC] ${I18n.translate('Cannot synchronize')}: ${e}`);
+                });
+            }, 2000);
+
+            this.idsCommunication?.triggerUpdate();
         }
     }
 
@@ -1127,6 +1145,10 @@ export class KISSHomeResearchAdapter extends Adapter {
                                     this.log.error(`[RSYNC] ${I18n.translate('Cannot synchronize')}: ${e}`);
                                 });
                             }
+                            if (this.nextSave !== this.context.lastSaved + SAVE_DATA_EVERY_MS) {
+                                this.nextSave = this.context.lastSaved + SAVE_DATA_EVERY_MS;
+                                this.setState('info.recording.nextWrite', new Date(this.nextSave).toISOString(), true);
+                            }
                         }, 10000);
                     }
 
@@ -1242,16 +1264,6 @@ export class KISSHomeResearchAdapter extends Adapter {
                 }),
             );
         }
-
-        // generate UX event
-        this.cloudSync?.reportUxEvents([
-            {
-                id: 'background-alarm',
-                event: 'create',
-                ts: Date.now(),
-                data: id,
-            },
-        ]);
     };
 
     async onUnload(callback: () => void): Promise<void> {

@@ -257,12 +257,14 @@ interface ConfigCustomInstancesSelectorState extends ConfigGenericState {
     IP2MAC: Record<string, string>;
     MAC2VENDOR: Record<string, string>;
     runningRequest?: boolean;
+    modelStatus: { [mac: string]: number };
 }
 
 class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, ConfigCustomInstancesSelectorState> {
     private resolveDone = false;
 
     private validateTimeout: ReturnType<typeof setTimeout> | null = null;
+    private statusPolling: ReturnType<typeof setInterval> | null = null;
 
     async componentDidMount(): Promise<void> {
         super.componentDidMount();
@@ -314,6 +316,7 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
             alive: this.props.alive,
             resolving: false,
             showMessage: false,
+            modelStatus: {},
         };
         this.resolveDone = false;
 
@@ -328,6 +331,42 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
         }
         this.disableFritzBox();
         this.checkDevices(devices);
+        this.getModelStatus();
+        this.pollModelStatus();
+    }
+
+    getModelStatus(): void {
+        if (this.state.alive) {
+            void this.props.oContext.socket
+                .sendTo(`kisshome-defender.${this.props.oContext.instance}`, 'getModelStatus', null)
+                .then(result => {
+                    if (result.modelStatus) {
+                        this.setState({
+                            modelStatus: result.modelStatus as { [mac: string]: number },
+                        });
+                    }
+                });
+        }
+    }
+
+    pollModelStatus(): void {
+        if (this.state.alive) {
+            this.statusPolling ||= setInterval(() => {
+                if (!this.state.alive) {
+                    if (this.statusPolling) {
+                        clearInterval(this.statusPolling);
+                        this.statusPolling = null;
+                    }
+                    return;
+                }
+                this.getModelStatus();
+            }, 10_000);
+        } else {
+            if (this.statusPolling) {
+                clearInterval(this.statusPolling);
+                this.statusPolling = null;
+            }
+        }
     }
 
     resolveMACs(): void {
@@ -447,6 +486,10 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
             clearTimeout(this.validateTimeout);
             this.validateTimeout = null;
         }
+        if (this.statusPolling) {
+            clearInterval(this.statusPolling);
+            this.statusPolling = null;
+        }
     }
 
     onAliveChanged = (id: string, state: ioBroker.State | null | undefined): void => {
@@ -458,6 +501,7 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
                     } else {
                         this.resolveMACs();
                     }
+                    this.pollModelStatus();
                 }
             });
         }
@@ -811,7 +855,7 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
                                             });
                                             _devices.forEach(item => (item.enabled = true));
                                         }
-                                        this.onChange('devices', _devices);
+                                        void this.onChange('devices', _devices);
                                     }}
                                 />
                                 <Fab
@@ -820,7 +864,7 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
                                             ...(ConfigGeneric.getValue(this.props.data, 'devices') || []),
                                         ];
                                         _devices.push({ ip: '', mac: '', desc: '', enabled: true, uuid: uuid() });
-                                        this.onChange('devices', _devices);
+                                        void this.onChange('devices', _devices);
                                         this.checkDevices(_devices);
                                     }}
                                     size="small"
@@ -833,6 +877,12 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
                             <TableCell style={styles.header}>{I18n.t('custom_kisshome_mac')}</TableCell>
                             <TableCell style={styles.header}>{I18n.t('custom_kisshome_vendor')}</TableCell>
                             <TableCell style={styles.header}>{I18n.t('custom_kisshome_name')}</TableCell>
+                            <TableCell
+                                style={styles.header}
+                                title={'custom_kisshome_training_status_tooltip'}
+                            >
+                                {I18n.t('custom_kisshome_training_status')}
+                            </TableCell>
                             <TableCell style={styles.header} />
                         </TableRow>
                     </TableHead>
@@ -885,7 +935,7 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
                                             } else {
                                                 _devices.splice(pos, 1);
                                             }
-                                            this.onChange('devices', _devices);
+                                            void this.onChange('devices', _devices);
                                         }}
                                     />
                                 </TableCell>
@@ -895,6 +945,11 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
                                     {this.state.MAC2VENDOR?.[normalizeMacAddress(row.mac)] || ''}
                                 </TableCell>
                                 <TableCell style={styles.td}>{row.desc}</TableCell>
+                                <TableCell style={styles.td}>
+                                    {row.mac && this.state.modelStatus[row.mac]
+                                        ? this.state.modelStatus[row.mac]
+                                        : '--'}
+                                </TableCell>
                                 <TableCell style={styles.td} />
                             </TableRow>
                         ))}
@@ -932,7 +987,7 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
                                                     }
 
                                                     dev.enabled = !dev.enabled;
-                                                    this.onChange('devices', _devices);
+                                                    void this.onChange('devices', _devices);
                                                 }
                                             }}
                                         />
@@ -963,7 +1018,7 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
                                                         setTimeout(() => this.disableFritzBox(), 300);
                                                     }
 
-                                                    this.onChange('devices', _devices);
+                                                    void this.onChange('devices', _devices);
                                                     this.validateAddresses();
                                                     this.checkDevices(_devices);
                                                 }
@@ -978,7 +1033,7 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
                                                         const dev = _devices.find(item => item.uuid === row.uuid);
                                                         if (dev) {
                                                             dev.ip = normalizedIp;
-                                                            this.onChange('devices', _devices);
+                                                            void this.onChange('devices', _devices);
                                                             this.checkDevices(_devices);
                                                         }
                                                     }
@@ -1011,7 +1066,7 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
                                                 const dev = _devices.find(item => item.uuid === row.uuid);
                                                 if (dev) {
                                                     dev.mac = e.target.value;
-                                                    this.onChange('devices', _devices);
+                                                    void this.onChange('devices', _devices);
                                                     this.validateAddresses();
                                                     this.checkDevices(_devices);
                                                 }
@@ -1027,7 +1082,7 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
                                                         const dev = _devices.find(item => item.uuid === row.uuid);
                                                         if (dev) {
                                                             dev.mac = normalized;
-                                                            this.onChange('devices', _devices);
+                                                            void this.onChange('devices', _devices);
                                                             this.checkDevices(_devices);
                                                         }
                                                     }
@@ -1055,7 +1110,7 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
                                                 const dev = _devices.find(item => item.uuid === row.uuid);
                                                 if (dev) {
                                                     dev.desc = e.target.value;
-                                                    this.onChange('devices', _devices);
+                                                    void this.onChange('devices', _devices);
                                                     // check that all devices have a name
                                                     this.checkDevices(_devices);
                                                 }
@@ -1079,7 +1134,7 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
                                                 const devIndex = _devices.findIndex(item => item.uuid === row.uuid);
                                                 if (devIndex !== -1) {
                                                     _devices.splice(devIndex, 1);
-                                                    this.onChange('devices', _devices);
+                                                    void this.onChange('devices', _devices);
                                                     this.checkDevices(_devices);
                                                 }
                                             }}
