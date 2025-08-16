@@ -43,6 +43,28 @@ export interface DefenderAdapterConfig {
     emailDisabled: boolean;
 }
 
+type DetectionAlert = {
+    type: 'Warning' | 'Alert' | 'Info';
+    description: string;
+    first_occurrence: string;
+    number_occurrences: number;
+    score: number;
+};
+
+type DetectionML = {
+    type: 'Warning' | 'Alert' | 'Info';
+    description: string;
+    first_occurrence: string;
+    number_occurrences: number;
+    score: number;
+};
+
+type Detection = {
+    mac: string;
+    suricata: DetectionAlert[];
+    ml: DetectionML;
+};
+
 export interface DeviceStatistics {
     mac: MACAddress;
     external_ips: {
@@ -53,6 +75,26 @@ export interface DeviceStatistics {
         data_volume_bytes: number;
     };
 }
+type Statistics = {
+    suricataTotalRules: number;
+    suricataAnalysisDurationMs: number;
+    analysisDurationMs: number;
+    totalBytes: number;
+    packets: number;
+    devices: DeviceStatistics[];
+};
+
+type Result = {
+    status: string;
+};
+
+type AnalysisJson = {
+    file: string;
+    time: string;
+    result: Result;
+    statistics: Statistics;
+    detections: Detection[];
+};
 
 export interface StatisticsResult {
     analysisDurationMs: number;
@@ -72,19 +114,10 @@ export interface StoredStatisticsResult {
     names?: { [mac: MACAddress]: { ip: string; desc: string; vendor?: string } };
 }
 
-export interface Detection {
-    mac: MACAddress;
-    type: 'Warning' | 'Alert' | 'Info';
-    description: string;
-    country: string;
-    time: string;
-    score?: number;
-    source?: string;
-}
-
 export interface DetectionWithUUID extends Detection {
     scanUUID: string;
     uuid: string;
+    time: string;
 }
 
 export type UXEventType = 'click' | 'down' | 'up' | 'show' | 'hide' | 'change' | 'create';
@@ -96,7 +129,12 @@ export interface UXEvent {
     data?: string;
 }
 
-export type DataRequestType = 'dataVolumePerDevice' | 'dataVolumePerCountry' | 'dataVolumePerDaytime' | 'dataVolumePerDay' | 'allStatistics';
+export type DataRequestType =
+    | 'dataVolumePerDevice'
+    | 'dataVolumePerCountry'
+    | 'dataVolumePerDaytime'
+    | 'dataVolumePerDay'
+    | 'allStatistics';
 
 export interface DataVolumePerDeviceResult {
     [mac: MACAddress]: { series: [number, number][]; info?: { ip: string; desc: string } };

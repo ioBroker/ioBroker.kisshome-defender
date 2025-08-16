@@ -593,6 +593,7 @@ export class IDSCommunication {
         if (data.detections?.length) {
             const newDetections = data.detections;
             const useUUD = data.statistics?.uuid || '';
+
             void this.adapter.getStateAsync('info.detections.json').then(state => {
                 let detections: DetectionWithUUID[] = [];
                 try {
@@ -607,25 +608,32 @@ export class IDSCommunication {
                     return detectionTime >= sevenDaysAgo;
                 });
                 let sendEvent = 0;
-                let badEvent: DetectionWithUUID | null = null;
+                let badEvent: 'Warning' | 'Alert' | 'Info' | '' = '';
 
                 for (let i = 0; i < newDetections.length; i++) {
                     const detection: DetectionWithUUID = newDetections[i] as DetectionWithUUID;
+
+                    detection.time = new Date().toString(); // Use the earliest occurrence time
                     detection.scanUUID = useUUD; // Get the parent UUID if available
                     detection.uuid = randomUUID(); // Generate a unique ID for the detection
-                    this.adapter.log.warn(
-                        `Detection: ${detection.type} for device ${detection.mac} (${detection.country}) at ${detection.time}: ${detection.description}`,
-                    );
                     detections.push(detection);
                     sendEvent++;
 
-                    if (
-                        !badEvent ||
-                        detection.type === 'Alert' ||
-                        (detection.type === 'Warning' && badEvent.type === 'Info')
-                    ) {
+                    // Find the worst event
+                    let type: 'Warning' | 'Alert' | 'Info' | '' = '';
+                    detection.suricata.forEach(suricata => {
+                        if (suricata.type === 'Alert') {
+                            type = 'Alert';
+                        } else if (suricata.type === 'Warning' && type !== 'Alert') {
+                            type = 'Warning';
+                        } else if (suricata.type === 'Info' && type !== 'Alert' && type !== 'Warning') {
+                            type = 'Info';
+                        }
+                    });
+
+                    if (type && (!badEvent || type === 'Alert' || (type === 'Warning' && badEvent !== 'Alert'))) {
                         // If we have no bad event or the current one is worse, replace it
-                        badEvent = detection;
+                        badEvent = type;
                     }
                 }
 
@@ -659,7 +667,7 @@ export class IDSCommunication {
 
                     // save it in the state
                     void this.generateEvent(
-                        badEvent.type,
+                        badEvent,
                         useUUD,
                         text,
                         I18n.translate('Unusual activities were detected'),
