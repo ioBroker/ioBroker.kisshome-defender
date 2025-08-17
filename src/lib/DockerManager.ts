@@ -379,7 +379,9 @@ export class DockerManager {
             try {
                 await this.stopContainer(nameOrId!);
             } catch (error) {
-                this.adapter.log.warn(`Error stopping container ${nameOrId}: ${error as Error}. But we still try to start a new one.`);
+                this.adapter.log.warn(
+                    `Error stopping container ${nameOrId}: ${error as Error}. But we still try to start a new one.`,
+                );
             }
         }
 
@@ -387,7 +389,9 @@ export class DockerManager {
         try {
             await this.remove();
         } catch (error) {
-            this.adapter.log.warn(`Error removing container ${nameOrId}: ${error as Error}. But we still try to start a new one.`);
+            this.adapter.log.warn(
+                `Error removing container ${nameOrId}: ${error as Error}. But we still try to start a new one.`,
+            );
         }
 
         if (running) {

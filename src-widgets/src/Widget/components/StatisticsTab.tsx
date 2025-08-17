@@ -112,7 +112,6 @@ interface StatisticsTabProps {
 }
 
 interface StatisticsTabState {
-    alive: boolean;
     tab: 'dataVolumePerDevice' | 'dataVolumePerCountry' | 'dataVolumePerDaytime' | 'dataVolumePerDay';
     dataVolumePerDay: {
         data: DataVolumePerDeviceResult | null;
@@ -185,7 +184,6 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                     | 'dataVolumePerCountry'
                     | 'dataVolumePerDaytime'
                     | 'dataVolumePerDay') || 'dataVolumePerDay',
-            alive: props.alive,
             dataVolumePerDevice: {
                 data: null,
                 ts: 0,
@@ -223,7 +221,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
     }
 
     async getCommonStats(newState: Partial<StatisticsTabState>): Promise<void> {
-        if (this.state.alive) {
+        if (this.props.alive) {
             const result = await this.props.socket.sendTo(`kisshome-defender.${this.props.instance}`, 'getTotals', {});
             if (result) {
                 newState.deviceMostCountries = (
@@ -246,7 +244,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
     }
 
     async requestData(): Promise<void> {
-        if (!this.state.alive) {
+        if (!this.props.alive) {
             if (this.updateTimeout) {
                 clearTimeout(this.updateTimeout);
                 this.updateTimeout = null;
@@ -260,6 +258,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         let changed = false;
         if (this.state.tab === 'dataVolumePerDay') {
             if (!this.state.dataVolumePerDay.ts && Date.now() - this.state.dataVolumePerDay.ts > 30_000) {
+                this.setState({ requestRunning: true });
                 const result = await this.props.socket.sendTo(`kisshome-defender.${this.props.instance}`, 'getData', {
                     type: 'dataVolumePerDay',
                 });
@@ -275,6 +274,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
             // else the data is already loaded and still valid
         } else if (this.state.tab === 'dataVolumePerDevice') {
             if (!this.state.dataVolumePerDevice.ts && Date.now() - this.state.dataVolumePerDevice.ts > 30_000) {
+                this.setState({ requestRunning: true });
                 const result = await this.props.socket.sendTo(`kisshome-defender.${this.props.instance}`, 'getData', {
                     type: 'dataVolumePerDevice',
                 });
@@ -289,6 +289,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
             // else the data is already loaded and still valid
         } else if (this.state.tab === 'dataVolumePerCountry') {
             if (!this.state.dataVolumePerCountry.ts && Date.now() - this.state.dataVolumePerCountry.ts > 30_000) {
+                this.setState({ requestRunning: true });
                 const result = await this.props.socket.sendTo(`kisshome-defender.${this.props.instance}`, 'getData', {
                     type: 'dataVolumePerCountry',
                 });
@@ -303,6 +304,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
             // else the data is already loaded and still valid
         } else if (this.state.tab === 'dataVolumePerDaytime') {
             if (!this.state.dataVolumePerDaytime.ts && Date.now() - this.state.dataVolumePerDaytime.ts > 30_000) {
+                this.setState({ requestRunning: true });
                 const result = await this.props.socket.sendTo(`kisshome-defender.${this.props.instance}`, 'getData', {
                     type: 'dataVolumePerDaytime',
                 });
@@ -331,7 +333,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
             clearTimeout(this.updateTimeout);
             this.updateTimeout = null;
         }
-        if (this.state.alive) {
+        if (this.props.alive) {
             this.updateTimeout = setTimeout(() => {
                 this.updateTimeout = null;
                 void this.requestData();
@@ -759,10 +761,10 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
     }
 
     renderLoading(anyData: boolean): React.JSX.Element | null {
-        if (this.state.alive && this.state.requestRunning) {
+        if (this.props.alive && this.state.requestRunning) {
             return <LinearProgress style={{ position: 'absolute', top: 0, left: 0, right: 0 }} />;
         }
-        if (!anyData && !this.state.alive) {
+        if (!anyData && !this.props.alive) {
             return (
                 <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
                     <p>{I18n.t('kisshome-defender_Adapter is not running')}</p>
@@ -1412,7 +1414,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
     }
 
     render(): React.JSX.Element {
-        if (!this.state.alive) {
+        if (!this.props.alive) {
             return (
                 <div style={{ width: 'calc(100% - 32px)', height: 'calc(100% - 32px)', display: 'flex', padding: 16 }}>
                     <p>{I18n.t('kisshome-defender_Instance is not running')}</p>

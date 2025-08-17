@@ -359,8 +359,8 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                     }}
                 >
                     {unseenAlertsCount || unseenWarningsCount ? (
-                        <div>
-                            <div style={{ ...styles.title, display: 'inline-block' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <div style={{ display: 'inline-block' }}>
                                 {I18n.t('kisshome-defender_Actual information')}:
                             </div>
                             {detectionsTest ? (

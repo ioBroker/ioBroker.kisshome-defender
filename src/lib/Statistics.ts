@@ -9,7 +9,7 @@ import type {
     DataVolumePerDeviceResult,
     Device,
     MACAddress,
-    StatisticsResult,
+    StoredAnalysisResult,
     StoredStatisticsResult,
 } from '../types';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
@@ -22,7 +22,7 @@ export default class Statistics {
     private readonly workingDir: string;
     private readonly cache: {
         hash: string;
-        results: StatisticsResult[];
+        results: StoredAnalysisResult[];
     } = {
         hash: '',
         results: [],
@@ -45,7 +45,7 @@ export default class Statistics {
     /**
      * Fetches the data from the statistics files in the working directory.
      */
-    private getData(): StatisticsResult[] {
+    private getData(): StoredAnalysisResult[] {
         const files = readdirSync(this.workingDir)
             .filter(file => file.endsWith('.json'))
             .sort();
@@ -74,8 +74,9 @@ export default class Statistics {
                 this.adapter.log.error(`Error reading file ${file}: ${error}`);
             }
         }
+
         if (this.cache.hash !== cache.join(',')) {
-            const results: StatisticsResult[] = [];
+            const results: StoredAnalysisResult[] = [];
 
             for (const file of fileNames) {
                 try {
@@ -106,7 +107,7 @@ export default class Statistics {
         const macs: DataVolumePerDeviceResult = {};
         for (const result of results) {
             const ts = new Date(result.time).getTime(); // Get date in YYYY-MM-DD format
-            result.devices.forEach(device => {
+            result.statistics.devices.forEach(device => {
                 macs[device.mac] ||= { series: [], info: this.MAC2DESC[device.mac] };
                 macs[device.mac].series.push([ts, device.data_volume.data_volume_bytes]);
             });
@@ -123,7 +124,7 @@ export default class Statistics {
             nextDayTime.setDate(nextDayTime.getDate() + 1); // Set to the next day to avoid multiple entries for the same day
             nextDayTime.setHours(0, 0, 0, 0); // Set time
             const ts = nextDayTime.getTime();
-            result.devices.forEach(device => {
+            result.statistics.devices.forEach(device => {
                 macs[device.mac] ||= { series: [], info: this.MAC2DESC[device.mac] };
                 const series = macs[device.mac].series;
                 // Summarize all data for the same day
@@ -144,7 +145,7 @@ export default class Statistics {
 
         const macs: DataVolumePerCountryResult = {};
         for (const result of results) {
-            result.devices.forEach(device => {
+            result.statistics.devices.forEach(device => {
                 const ips = Object.keys(device.external_ips);
                 ips.forEach(ip => {
                     const country = device.external_ips[ip].country;
@@ -166,7 +167,7 @@ export default class Statistics {
         const results = this.getData();
         const devices: { [mac: string]: { volume: number; countries: string[] } } = {};
         for (const result of results) {
-            result.devices.forEach(device => {
+            result.statistics.devices.forEach(device => {
                 devices[device.mac] ||= { volume: 0, countries: [] };
                 devices[device.mac].volume += device.data_volume.data_volume_bytes;
                 const ips = Object.keys(device.external_ips);
@@ -212,7 +213,7 @@ export default class Statistics {
         const macs: DataVolumePerDaytimeResult = {};
         for (const result of results) {
             const dayTime: 0 | 1 | 2 | 3 = Math.floor(new Date(result.time).getHours() / 6) as 0 | 1 | 2 | 3; // 0-3
-            result.devices.forEach(device => {
+            result.statistics.devices.forEach(device => {
                 macs[device.mac] ||= { dayTime: {}, info: this.MAC2DESC[device.mac] };
                 macs[device.mac].dayTime[dayTime] ||= 0;
                 macs[device.mac].dayTime[dayTime]! += device.data_volume.data_volume_bytes;
@@ -222,7 +223,7 @@ export default class Statistics {
         return macs;
     }
 
-    getAllStatistics(): StatisticsResult[] {
+    getAllStatistics(): StoredAnalysisResult[] {
         // Returns all statistics from the last 7 days
         return this.getData();
     }

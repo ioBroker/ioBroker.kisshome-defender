@@ -11,7 +11,7 @@
   "custom_kisshome_name_ip_and_mac_missing": "IP- oder MAC-Adresse muss angegeben werden",
   "custom_kisshome_name_too_short": "Beschreibung ist zu kurz (mindestens 3 Zeichen)",
   "custom_kisshome_select_all": "Alle aktivieren",
-  "custom_kisshome_training_status": "",
+  "custom_kisshome_training_status": "Training",
   "custom_kisshome_training_status_tooltip": "",
   "custom_kisshome_unselect_all": "Alle deaktivieren",
   "custom_kisshome_vendor": "Hersteller"

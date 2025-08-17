@@ -43,26 +43,20 @@ export interface DefenderAdapterConfig {
     emailDisabled: boolean;
 }
 
-type DetectionAlert = {
-    type: 'Warning' | 'Alert' | 'Info';
-    description: string;
-    first_occurrence: string;
-    number_occurrences: number;
-    score: number;
-};
-
-type DetectionML = {
-    type: 'Warning' | 'Alert' | 'Info';
-    description: string;
-    first_occurrence: string;
-    number_occurrences: number;
-    score: number;
-};
-
 type Detection = {
-    mac: string;
-    suricata: DetectionAlert[];
-    ml: DetectionML;
+    type: 'Warning' | 'Alert' | 'Info';
+    description: string;
+    first_occurrence: string;
+    number_occurrences: number;
+    score: number;
+};
+
+type DetectionsForDevice = {
+    mac: MACAddress;
+    suricata: Detection[];
+    ml: Detection;
+
+    worstType: '' | 'Warning' | 'Alert'; // Worst type of detection for this device added by adapter
 };
 
 export interface DeviceStatistics {
@@ -75,48 +69,47 @@ export interface DeviceStatistics {
         data_volume_bytes: number;
     };
 }
-type Statistics = {
+
+export interface Statistics {
     suricataTotalRules: number;
     suricataAnalysisDurationMs: number;
     analysisDurationMs: number;
     totalBytes: number;
     packets: number;
     devices: DeviceStatistics[];
-};
-
-type Result = {
-    status: string;
-};
-
-type AnalysisJson = {
-    file: string;
-    time: string;
-    result: Result;
-    statistics: Statistics;
-    detections: Detection[];
-};
-
-export interface StatisticsResult {
-    analysisDurationMs: number;
-    totalBytes: number;
-    packets: number;
-    time: string;
-    devices: DeviceStatistics[];
-    uuid: string;
 }
+
+type AnalysisResult = {
+    file: `${string}.pcap`;
+    time: string;
+    result: {
+        status: 'success';
+        error?: string;
+    };
+    statistics: Statistics;
+    detections: DetectionsForDevice[];
+};
+
+type StoredAnalysisResult = {
+    uuid: string;
+    time: string;
+
+    statistics: Statistics;
+    detections: DetectionsForDevice[];
+};
 
 export interface StoredStatisticsResult {
     analysisDurationMs: number;
     totalBytes: number;
     packets: number;
-    results: StatisticsResult[];
+    results: StoredAnalysisResult[];
     countries: { [country: string]: number };
     names?: { [mac: MACAddress]: { ip: string; desc: string; vendor?: string } };
 }
 
-export interface DetectionWithUUID extends Detection {
-    scanUUID: string;
-    uuid: string;
+export interface DetectionsForDeviceWithUUID extends DetectionsForDevice {
+    scanUUID: string; // UUID of the scan that created this detection
+    uuid: string; // Own UUID for the detection
     time: string;
 }
 
@@ -145,8 +138,17 @@ export interface DataVolumePerCountryResult {
 }
 
 export interface DataVolumePerDaytimeResult {
-    [mac: string]: {
+    [mac: MACAddress]: {
         dayTime: { '0'?: number; '1'?: number; '2'?: number; '3'?: number };
         info?: { ip: string; desc: string };
     };
 }
+export type ReportUxEventType = 'click' | 'down' | 'up' | 'show' | 'hide' | 'change';
+export type ReportUxHandler = (event: {
+    id: string;
+    event: ReportUxEventType;
+    isTouchEvent?: boolean;
+    ts: number;
+    data?: string;
+    mobile?: boolean;
+}) => void;

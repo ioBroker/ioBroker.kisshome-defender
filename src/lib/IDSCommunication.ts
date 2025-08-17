@@ -9,12 +9,12 @@ import FormData from 'form-data';
 import { getAbsoluteDefaultDataDir, I18n } from '@iobroker/adapter-core'; // Get common adapter utils
 
 import type {
+    AnalysisResult,
     DefenderAdapterConfig,
-    Detection,
-    DetectionWithUUID,
+    DetectionsForDevice,
+    DetectionsForDeviceWithUUID,
     DeviceStatistics,
     MACAddress,
-    StatisticsResult,
     StoredStatisticsResult,
 } from '../types';
 import { DockerManager } from './DockerManager';
@@ -22,6 +22,28 @@ import { fileNameToDate } from './utils';
 
 const MAX_FILES_ON_DISK = 3; // Maximum number of files to keep on disk
 const DOCKER_CONTAINER_NAME = 'iobroker-defender-ids';
+const CHANGE_TIME = '2025-10-16T00:00:00Z'; // Calculation time
+
+function betaRandom(a: number, b: number): number {
+    // Verwende die Methode von Cheng (1978) für Beta(a, b) mit a, b > 0
+    // Für a = b = 0.5 ist die Verteilung U-förmig
+    const u = Math.random() * a;
+    const v = Math.random() * b;
+    return Math.sin(Math.PI * u) ** 2 / (Math.sin(Math.PI * u) ** 2 + Math.sin(Math.PI * v) ** 2);
+}
+
+function generateFluctuatingTimes(realTime: number, size = 100): number {
+    const minVal = realTime;
+    const maxVal = realTime * 4;
+    const a = 0.5;
+    const b = 0.5;
+    const betaSamples: number[] = [];
+    for (let i = 0; i < size; i++) {
+        betaSamples.push(betaRandom(a, b));
+    }
+    const scaled = betaSamples.map(sample => sample * (maxVal - minVal) + minVal);
+    return scaled.map(val => Math.round(val * 100) / 100)[0];
+}
 
 export class IDSCommunication {
     private readonly adapter: ioBroker.Adapter;
@@ -53,7 +75,7 @@ export class IDSCommunication {
     } = {
         status: 'idle',
     };
-    private group: 'A' | 'B'; // Group A or B
+    private readonly group: 'A' | 'B'; // Group A or B
     private lastCheckedDate = '';
     private readonly generateEvent: (
         type: 'Info' | 'Warning' | 'Alert',
@@ -61,6 +83,11 @@ export class IDSCommunication {
         message: string,
         title: string,
     ) => Promise<void>;
+
+    private simulation = false;
+    private simulateInterval: NodeJS.Timeout | null = null;
+    private simulateIntervalRecording: NodeJS.Timeout | null = null;
+    private simulateRecordingBytes = 0;
 
     constructor(
         adapter: ioBroker.Adapter,
@@ -271,117 +298,119 @@ export class IDSCommunication {
 
         let metaJsonString = JSON.stringify(this.metaData);
 
-        // Just for test
-        metaJsonString = JSON.stringify({
-            '00:06:78:A6:8F:F0': {
-                ip: '192.168.188.113',
-                desc: 'denon',
-            },
-            '12:72:74:40:F2:D0': {
-                ip: '192.168.188.119',
-                desc: 'upnp',
-            },
-            '0A:B4:FE:A0:2F:1A': {
-                ip: '192.168.188.122',
-                desc: 'upnp',
-            },
-            'B0:B2:1C:18:CB:7C': {
-                ip: '192.168.188.126',
-                desc: 'shelly',
-            },
-            '24:A1:60:20:85:08': {
-                ip: '192.168.188.131',
-                desc: 'shelly',
-            },
-            '3C:61:05:DC:AD:24': {
-                ip: '192.168.188.133',
-                desc: 'shelly',
-            },
-            '8C:98:06:07:AA:80': {
-                ip: '192.168.188.156',
-                desc: 'upnp',
-            },
-            'D8:BB:C1:0A:1C:89': {
-                ip: '192.168.188.157',
-                desc: 'shelly',
-            },
-            '8C:98:06:08:61:3D': {
-                ip: '192.168.188.158',
-                desc: 'upnp',
-            },
-            'B0:B2:1C:18:F4:A8': {
-                ip: '192.168.188.168',
-                desc: 'shelly',
-            },
-            'E0:98:06:B5:7B:65': {
-                ip: '192.168.188.29',
-                desc: 'shelly',
-            },
-            '8C:CE:4E:E1:8E:F9': {
-                ip: '192.168.188.31',
-                desc: 'shelly',
-            },
-            '00:17:88:4B:A3:FC': {
-                ip: '192.168.188.32',
-                desc: 'hue',
-            },
-            '22:A6:2F:E7:25:3B': {
-                ip: '192.168.188.35',
-                desc: 'upnp',
-            },
-            '40:F5:20:01:A5:99': {
-                ip: '192.168.188.36',
-                desc: 'shelly',
-            },
-            'E0:98:06:B4:B5:8C': {
-                ip: '192.168.188.39',
-                desc: 'shelly',
-            },
-            'E0:98:06:B5:22:8B': {
-                ip: '192.168.188.41',
-                desc: 'shelly',
-            },
-            '22:A6:2F:4A:82:CB': {
-                ip: '192.168.188.43',
-                desc: 'upnp',
-            },
-            '00:04:20:FC:3A:C7': {
-                ip: '192.168.188.49',
-                desc: 'upnp',
-            },
-            '34:94:54:7A:EB:E4': {
-                ip: '192.168.188.51',
-                desc: 'shelly',
-            },
-            '70:2A:D5:CD:77:03': {
-                ip: '192.168.188.54',
-                desc: 'upnp',
-            },
-            '80:C7:55:7B:86:C0': {
-                ip: '192.168.188.56',
-                desc: 'upnp',
-            },
-            '00:11:32:B2:A0:50': {
-                ip: '192.168.188.66',
-                desc: 'synology',
-            },
-            '44:17:93:CE:4B:50': {
-                ip: '192.168.188.70',
-                desc: 'shelly',
-            },
-            'DC:A6:32:93:B7:AF': {
-                ip: '192.168.188.90',
-                desc: 'hm-rpc',
-            },
-            '64:1C:AE:46:50:F3': {
-                ip: '192.168.188.92',
-                desc: 'upnp',
-            },
-            '00:07:E9:13:37:46': {
-                ip: '192.168.178.2',
-                desc: 'qemu',
-            },
-        });
+        if (process.env.TEST) {
+            // Just for test
+            metaJsonString = JSON.stringify({
+                '00:06:78:A6:8F:F0': {
+                    ip: '192.168.188.113',
+                    desc: 'denon',
+                },
+                '12:72:74:40:F2:D0': {
+                    ip: '192.168.188.119',
+                    desc: 'upnp',
+                },
+                '0A:B4:FE:A0:2F:1A': {
+                    ip: '192.168.188.122',
+                    desc: 'upnp',
+                },
+                'B0:B2:1C:18:CB:7C': {
+                    ip: '192.168.188.126',
+                    desc: 'shelly',
+                },
+                '24:A1:60:20:85:08': {
+                    ip: '192.168.188.131',
+                    desc: 'shelly',
+                },
+                '3C:61:05:DC:AD:24': {
+                    ip: '192.168.188.133',
+                    desc: 'shelly',
+                },
+                '8C:98:06:07:AA:80': {
+                    ip: '192.168.188.156',
+                    desc: 'upnp',
+                },
+                'D8:BB:C1:0A:1C:89': {
+                    ip: '192.168.188.157',
+                    desc: 'shelly',
+                },
+                '8C:98:06:08:61:3D': {
+                    ip: '192.168.188.158',
+                    desc: 'upnp',
+                },
+                'B0:B2:1C:18:F4:A8': {
+                    ip: '192.168.188.168',
+                    desc: 'shelly',
+                },
+                'E0:98:06:B5:7B:65': {
+                    ip: '192.168.188.29',
+                    desc: 'shelly',
+                },
+                '8C:CE:4E:E1:8E:F9': {
+                    ip: '192.168.188.31',
+                    desc: 'shelly',
+                },
+                '00:17:88:4B:A3:FC': {
+                    ip: '192.168.188.32',
+                    desc: 'hue',
+                },
+                '22:A6:2F:E7:25:3B': {
+                    ip: '192.168.188.35',
+                    desc: 'upnp',
+                },
+                '40:F5:20:01:A5:99': {
+                    ip: '192.168.188.36',
+                    desc: 'shelly',
+                },
+                'E0:98:06:B4:B5:8C': {
+                    ip: '192.168.188.39',
+                    desc: 'shelly',
+                },
+                'E0:98:06:B5:22:8B': {
+                    ip: '192.168.188.41',
+                    desc: 'shelly',
+                },
+                '22:A6:2F:4A:82:CB': {
+                    ip: '192.168.188.43',
+                    desc: 'upnp',
+                },
+                '00:04:20:FC:3A:C7': {
+                    ip: '192.168.188.49',
+                    desc: 'upnp',
+                },
+                '34:94:54:7A:EB:E4': {
+                    ip: '192.168.188.51',
+                    desc: 'shelly',
+                },
+                '70:2A:D5:CD:77:03': {
+                    ip: '192.168.188.54',
+                    desc: 'upnp',
+                },
+                '80:C7:55:7B:86:C0': {
+                    ip: '192.168.188.56',
+                    desc: 'upnp',
+                },
+                '00:11:32:B2:A0:50': {
+                    ip: '192.168.188.66',
+                    desc: 'synology',
+                },
+                '44:17:93:CE:4B:50': {
+                    ip: '192.168.188.70',
+                    desc: 'shelly',
+                },
+                'DC:A6:32:93:B7:AF': {
+                    ip: '192.168.188.90',
+                    desc: 'hm-rpc',
+                },
+                '64:1C:AE:46:50:F3': {
+                    ip: '192.168.188.92',
+                    desc: 'upnp',
+                },
+                '00:07:E9:13:37:46': {
+                    ip: '192.168.178.2',
+                    desc: 'qemu',
+                },
+            });
+        }
 
         formData.append('meta_json', metaJsonString, {
             filename: 'meta.json', // Der Dateiname ist oft auch für String-Daten erforderlich
@@ -417,6 +446,18 @@ export class IDSCommunication {
         return this.lastStatus?.Model_status || {};
     }
 
+    static normalizeMacAddress(mac: string | undefined): MACAddress {
+        if (!mac) {
+            return '';
+        }
+        mac = mac
+            .toUpperCase()
+            .trim()
+            .replace(/[\s:-]/g, '');
+        // convert to 00:11:22:33:44:55
+        return mac.replace(/(..)(..)(..)(..)(..)(..)/, '$1:$2:$3:$4:$5:$6');
+    }
+
     private async _getStatus(): Promise<void> {
         try {
             const response = await axios.get(`${this.idsUrl}/status`, { timeout: 3000 });
@@ -436,6 +477,22 @@ export class IDSCommunication {
             }
             if (this.configSent && this.lastStatus?.Message?.Status !== 'Started') {
                 this.configSent = false;
+            }
+
+            // Restart the IDS if it exited
+            if (this.dockerManager && this.lastStatus?.Message?.Status === 'Exited') {
+                this.adapter.log.warn('IDS exited, restarting...');
+                await this.dockerManager.restart();
+            }
+
+            if (this.lastStatus?.Model_status) {
+                // Normalize all MACs
+                const normalizedModelStatus: { [mac: MACAddress]: number } = {};
+                for (const mac in this.lastStatus.Model_status) {
+                    const normalizedMac = IDSCommunication.normalizeMacAddress(mac); // Normalize MAC address
+                    normalizedModelStatus[normalizedMac] = this.lastStatus.Model_status[mac];
+                }
+                this.lastStatus.Model_status = normalizedModelStatus;
             }
 
             this.triggerUpdate();
@@ -508,7 +565,7 @@ export class IDSCommunication {
         }
     }
 
-    aggregateStatistics(statistics: StatisticsResult): void {
+    aggregateStatistics(result: AnalysisResult, resultUUID: string): void {
         // Get file name for current time.
         const now = new Date();
         const fileName = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}_${Math.floor(now.getHours() / 6).toString()}.json`;
@@ -530,12 +587,12 @@ export class IDSCommunication {
         };
 
         // Aggregate the statistics
-        statistics.analysisDurationMs = Math.round(statistics.analysisDurationMs);
-        data.analysisDurationMs += statistics.analysisDurationMs;
-        data.totalBytes += statistics.totalBytes;
-        data.packets += statistics.packets;
+        result.statistics.analysisDurationMs = Math.round(result.statistics.analysisDurationMs);
+        data.analysisDurationMs += result.statistics.analysisDurationMs;
+        data.totalBytes += result.statistics.totalBytes;
+        data.packets += result.statistics.packets;
 
-        statistics.devices.forEach((device: DeviceStatistics) => {
+        result.statistics.devices.forEach((device: DeviceStatistics) => {
             const ips = Object.keys(device.external_ips);
             ips.forEach(ip => {
                 const country = device.external_ips[ip].country;
@@ -543,154 +600,330 @@ export class IDSCommunication {
                 data.countries[country] += device.external_ips[ip].data_volume_bytes;
             });
         });
-        statistics.time = new Date().toISOString();
-        data.results.push(statistics);
+
+        data.results.push({
+            uuid: resultUUID,
+            time: result.time,
+            statistics: result.statistics,
+            detections: result.detections,
+        });
 
         writeFileSync(join(this.statisticsDir, fileName), JSON.stringify(data));
 
         this.deleteOldStatisticsFiles();
     }
 
-    private onData = (data: {
-        file: `${string}.pcap`;
-        result: {
-            status: 'success' | 'error';
-            error?: 'Optional error text';
+    activateSimulation(enabled: boolean, onStart?: boolean): void {
+        if (this.simulation !== enabled) {
+            this.simulation = enabled;
+            if (enabled) {
+                this.simulateRecordingBytes = 0;
+                void this.adapter.setState('info.recording.enabled', true, true);
+                void this.adapter.setState('info.recording.running', true, true);
+                this.simulateInterval = setInterval(() => this.simulateEvents(), 60000);
+                this.simulateIntervalRecording = setInterval(() => {
+                    this.simulateRecordingBytes += Math.floor(Math.random() * 1000000); // Simulate random bytes
+                    void this.adapter.setState('info.recording.capturedFull', this.simulateRecordingBytes, true);
+                }, 1000);
+                if (!onStart) {
+                    void this.simulateEvents();
+                } else {
+                    void this.adapter.setState('info.recording.capturedFull', this.simulateRecordingBytes, true);
+                    void this.adapter.setState(
+                        'info.recording.nextWrite',
+                        new Date(Date.now() + 60_000).toISOString(),
+                        true,
+                    );
+                }
+            } else {
+                void this.adapter.setState('info.recording.enabled', false, true);
+                void this.adapter.setState('info.recording.running', false, true);
+                if (this.simulateInterval) {
+                    clearInterval(this.simulateInterval);
+                    this.simulateInterval = null;
+                }
+                if (this.simulateIntervalRecording) {
+                    clearInterval(this.simulateIntervalRecording);
+                    this.simulateIntervalRecording = null;
+                }
+            }
+        }
+    }
+
+    private async simulateEvents(): Promise<void> {
+        const MACs: string[] = [
+            '00:11:22:33:44:55',
+            '66:77:88:99:AA:BB',
+            'CC:DD:EE:FF:00:11',
+            '22:33:44:55:66:77',
+            '88:99:AA:BB:CC:DD',
+        ];
+        const time = new Date().toISOString();
+        const result: AnalysisResult = {
+            file: 'test.pcap',
+            time: time,
+            result: {
+                status: 'success',
+            },
+            statistics: {
+                suricataTotalRules: 0,
+                suricataAnalysisDurationMs: 0,
+                analysisDurationMs: 0,
+                totalBytes: 0,
+                packets: 0,
+                devices: [],
+            },
+            detections: [],
         };
-        statistics?: StatisticsResult;
-        detections?: Detection[];
-    }): string => {
-        if (!data || typeof data !== 'object') {
+
+        for (let a = 0; a < MACs.length; a++) {
+            const mac = MACs[a];
+            const bytes =
+                mac === '88:99:AA:BB:CC:DD'
+                    ? Math.floor(Math.random() * 100000000)
+                    : Math.floor(Math.random() * 1000000);
+            const packets = Math.floor(bytes / 1000); // Assuming 1000 bytes per packet
+
+            result.statistics.packets += packets;
+            result.statistics.totalBytes += bytes;
+            result.statistics.devices.push({
+                mac,
+                data_volume: {
+                    packet_count: Math.floor(bytes / 1000), // Random packet count
+                    data_volume_bytes: bytes,
+                },
+                external_ips: {
+                    '1.1.1.1': {
+                        country: 'DE',
+                        data_volume_bytes: Math.floor(bytes * 0.5), // 50% of bytes for Germany
+                    },
+                    '1.1.1.2': {
+                        country: 'US',
+                        data_volume_bytes: Math.floor(bytes * 0.3), // 30% of bytes for US
+                    },
+                    '1.1.1.3': {
+                        country: 'FR',
+                        data_volume_bytes: Math.floor(bytes * 0.2), // 20% of bytes for France
+                    },
+                },
+            });
+
+            const score =
+                Math.random() > 0.95 ? Math.floor(Math.random() * 1000) / 10 : Math.floor(Math.random() * 100) / 10; // Random score between 0 and 100
+            const scoreMl =
+                Math.random() > 0.95 ? Math.floor(Math.random() * 1000) / 10 : Math.floor(Math.random() * 100) / 10; // Random score between 0 and 100
+            // Generate for each MAC a detection
+            const detection: DetectionsForDevice = {
+                mac,
+                suricata: [
+                    {
+                        type: score > 70 ? 'Alert' : score > 10 ? 'Warning' : 'Info',
+                        description: score > 70 ? 'Dangerous alert' : score > 10 ? 'Just warning' : 'Nothing special',
+                        first_occurrence: time,
+                        number_occurrences: score > 10 ? Math.floor(Math.random() * 5) + 1 : 0, // Random occurrences between 1 and 5
+                        score, // Random score between 0 and 99
+                    },
+                ],
+                ml: {
+                    type: scoreMl > 70 ? 'Alert' : scoreMl > 10 ? 'Warning' : 'Info',
+                    description: scoreMl > 70 ? 'Dangerous ML alert' : scoreMl > 10 ? 'Just ML warning' : 'OK',
+                    first_occurrence: time,
+                    number_occurrences: scoreMl > 10 ? Math.floor(Math.random() * 3) + 1 : 0, // Random occurrences between 1 and 3
+                    score: 0,
+                },
+                worstType: 'Alert', // Assuming the worst type is Alert for this example
+            };
+            result.detections.push(detection);
+        }
+
+        await this.onData(result);
+        this.simulateRecordingBytes = 0; // Reset the simulated recording bytes
+        void this.adapter.setState('info.recording.capturedFull', this.simulateRecordingBytes, true);
+        void this.adapter.setState('info.recording.nextWrite', new Date(Date.now() + 60_000).toISOString(), true);
+    }
+
+    private onData = async (analysisResult: AnalysisResult): Promise<string> => {
+        if (!analysisResult || typeof analysisResult !== 'object') {
             return 'Invalid data format';
         }
-        if (data.file === this.uploadStatus.fileName || (!this.uploadStatus.fileName && data.file?.includes('test'))) {
-            this.adapter.log.debug(`Received response for file ${data.file}: ${JSON.stringify(data)}`);
-            if (data.result.status === 'success') {
-                this.adapter.log.debug(`File ${data.file} processed successfully`);
+        if (
+            analysisResult.file === this.uploadStatus.fileName ||
+            (!this.uploadStatus.fileName && analysisResult.file?.includes('test'))
+        ) {
+            this.adapter.log.debug(
+                `Received response for file ${analysisResult.file}: ${JSON.stringify(analysisResult)}`,
+            );
+            if (analysisResult.result.status === 'success') {
+                this.adapter.log.debug(`File ${analysisResult.file} processed successfully`);
             } else {
-                this.adapter.log.error(`Error processing file ${data.file}: ${data.result.error}`);
+                this.adapter.log.error(`Error processing file ${analysisResult.file}: ${analysisResult.result.error}`);
             }
             this.uploadStatus.fileName = undefined;
             this.uploadStatus.status = 'idle';
-            this.adapter.setState('info.detections.running', false, true);
+            void this.adapter.setState('info.detections.running', false, true);
         } else {
             // Unexpected file name in response, but we delete the file anyway
-            this.adapter.log.warn(`Unexpected response from IDS for file ${data.file}`);
+            this.adapter.log.warn(`Unexpected response from IDS for file ${analysisResult.file}`);
             if (this.uploadStatus.status === 'waitingOnResponse') {
                 this.adapter.log.warn(
-                    `Upload status was 'waitingOnResponse', but received unexpected file name: ${data.file}`,
+                    `Upload status was 'waitingOnResponse', but received unexpected file name: ${analysisResult.file}`,
                 );
                 this.uploadStatus.status = 'idle';
-                this.adapter.setState('info.detections.running', false, true);
+                void this.adapter.setState('info.detections.running', false, true);
             }
         }
-        if (data.statistics) {
-            data.statistics.uuid ||= randomUUID(); // Ensure statistics have a UUID
-            void this.aggregateStatistics(data.statistics);
-        }
+        const resultUUID = randomUUID();
 
         // Save detected events if available
-        if (data.detections?.length) {
-            const newDetections = data.detections;
-            const useUUD = data.statistics?.uuid || '';
+        if (analysisResult.detections?.length) {
+            const newDetections = analysisResult.detections;
 
-            void this.adapter.getStateAsync('info.detections.json').then(state => {
-                let detections: DetectionWithUUID[] = [];
-                try {
-                    detections = state?.val ? JSON.parse(state.val as string) : [];
-                } catch (e) {
-                    this.adapter.log.error(`Error parsing detections state: ${e.message}`);
+            // Save all dangerous detections in the state
+            const state = await this.adapter.getStateAsync('info.detections.json');
+            let detections: DetectionsForDeviceWithUUID[] = [];
+            try {
+                detections = state?.val ? JSON.parse(state.val as string) : [];
+            } catch (e) {
+                this.adapter.log.error(`Error parsing detections state: ${e.message}`);
+            }
+            // delete all detections older than 7 days
+            const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+            detections = detections.filter(detection => {
+                const detectionTime = new Date(detection.time).getTime();
+                return detectionTime >= sevenDaysAgo;
+            });
+            let sendEvent = 0;
+            let badEvent: 'Warning' | 'Alert' | 'Info' | '' = '';
+            let biggestScore = 0;
+
+            // After 15 October
+            if (new Date(CHANGE_TIME).getTime() <= Date.now() && this.group === 'B') {
+                analysisResult.statistics.analysisDurationMs = generateFluctuatingTimes(
+                    analysisResult.statistics.analysisDurationMs,
+                );
+            }
+
+            for (let i = 0; i < newDetections.length; i++) {
+                const detection: DetectionsForDeviceWithUUID = newDetections[i] as DetectionsForDeviceWithUUID;
+
+                // Find the earliest occurrence time
+                let type: 'Warning' | 'Alert' | 'Info' | '' =
+                    detection.ml?.type === 'Warning' || detection.ml?.type === 'Alert' ? detection.ml.type : '';
+
+                if (detection.ml && new Date(CHANGE_TIME).getTime() > Date.now()) {
+                    detection.ml.score ||=
+                        detection.ml.type === 'Warning' || detection.ml.type === 'Alert'
+                            ? Math.floor(Math.random() * 90 * 100) / 100 + 10
+                            : Math.floor(Math.random() * 10 * 100) / 100;
                 }
-                // delete all detections older than 7 days
-                const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
-                detections = detections.filter(detection => {
-                    const detectionTime = new Date(detection.time).getTime();
-                    return detectionTime >= sevenDaysAgo;
+
+                let score = detection.ml?.type === 'Warning' || detection.ml?.type === 'Alert' ? detection.ml.score : 0;
+
+                let earliestOccurrence: number | null =
+                    detection.ml?.first_occurrence && (detection.ml.type === 'Alert' || detection.ml.type === 'Warning')
+                        ? new Date(detection.ml.first_occurrence).getTime()
+                        : null;
+
+                detection.suricata?.forEach(suricata => {
+                    if (suricata.first_occurrence && (suricata.type === 'Alert' || suricata.type === 'Warning')) {
+                        if (!type || (suricata.type === 'Alert' && type !== 'Alert')) {
+                            type = 'Alert'; // Set the type to Alert or Warning if not already set
+                        }
+                        if (suricata.score > score) {
+                            score = suricata.score; // Use the highest score from Suricata
+                        }
+
+                        const occurrenceTime = new Date(suricata.first_occurrence).getTime();
+                        if (!earliestOccurrence || occurrenceTime < earliestOccurrence) {
+                            earliestOccurrence = occurrenceTime;
+                        }
+                    }
                 });
-                let sendEvent = 0;
-                let badEvent: 'Warning' | 'Alert' | 'Info' | '' = '';
 
-                for (let i = 0; i < newDetections.length; i++) {
-                    const detection: DetectionWithUUID = newDetections[i] as DetectionWithUUID;
+                detection.worstType = type; // Store the worst type found
 
-                    detection.time = new Date().toString(); // Use the earliest occurrence time
-                    detection.scanUUID = useUUD; // Get the parent UUID if available
+                if (earliestOccurrence) {
+                    detection.time = new Date(earliestOccurrence).toISOString(); // Ensure time is in ISO format
+                    detection.scanUUID = resultUUID; // Get the parent UUID if available
                     detection.uuid = randomUUID(); // Generate a unique ID for the detection
                     detections.push(detection);
                     sendEvent++;
-
-                    // Find the worst event
-                    let type: 'Warning' | 'Alert' | 'Info' | '' = '';
-                    detection.suricata.forEach(suricata => {
-                        if (suricata.type === 'Alert') {
-                            type = 'Alert';
-                        } else if (suricata.type === 'Warning' && type !== 'Alert') {
-                            type = 'Warning';
-                        } else if (suricata.type === 'Info' && type !== 'Alert' && type !== 'Warning') {
-                            type = 'Info';
-                        }
-                    });
 
                     if (type && (!badEvent || type === 'Alert' || (type === 'Warning' && badEvent !== 'Alert'))) {
                         // If we have no bad event or the current one is worse, replace it
                         badEvent = type;
                     }
+                    if (biggestScore < score) {
+                        biggestScore = score; // Keep the highest score
+                    }
                 }
+            }
 
-                if (badEvent) {
-                    let text = '';
+            if (badEvent) {
+                let text: string;
+                let title: string;
+                if (new Date(CHANGE_TIME).getTime() > Date.now()) {
+                    // Before 15 October
                     if (this.group === 'A') {
                         if (sendEvent === 1) {
                             text = I18n.translate(
-                                `Bei der Kontrolle wurde eine Anomalie festgestellt, die auf ein mögliches Sicherheitsrisiko hinweisen könnte`,
+                                `During the inspection, an anomaly was detected that could indicate a potential security risk.`,
                             );
                         } else {
                             text = I18n.translate(
-                                `Bei der Kontrolle wurden %s Anomalien festgestellt, die auf ein mögliches Sicherheitsrisiko hinweisen könnten`,
+                                `During the inspection, %s anomalies were detected that could indicate a potential security risk.`,
                                 sendEvent,
                             );
                         }
                     } else {
                         if (sendEvent === 1) {
                             text = I18n.translate(
-                                `Bei einer Kontrolle wurde Anomalie-Bewertung von %s festgestellt, die auf ein mögliches Sicherheitsrisiko hinweisen könnten.`,
-                                (0.5).toString().replace(/./g, ','),
+                                `During an inspection, an anomaly score of %s was detected that could indicate a potential security risk.`,
+                                biggestScore.toString().replace(/./g, ','),
                             );
                         } else {
-                            // Average ??
+                            // TODO: Average or biggest score?
                             text = I18n.translate(
-                                `Bei einer Kontrolle wurden Anomalie-Bewertungen von %s festgestellt, die auf ein mögliches Sicherheitsrisiko hinweisen könnten.`,
-                                (0.5).toString().replace(/./g, ','),
+                                `During an inspection, anomaly scores of %s were detected that could indicate a potential security risk.`,
+                                biggestScore.toString().replace(/./g, ','),
                             );
                         }
                     }
-
-                    // save it in the state
-                    void this.generateEvent(
-                        badEvent,
-                        useUUD,
-                        text,
-                        I18n.translate('Unusual activities were detected'),
-                    ).catch(error => {
-                        this.adapter.log.error(`Error generating event: ${error.message}`);
-                    });
+                    title = I18n.translate('Unusual activities were detected');
+                } else {
+                    // After 15 October
+                    text = I18n.translate(
+                        `During an inspection, we discovered an anomaly that could indicate a potential security risk.`,
+                    );
+                    title = I18n.translate('Anomaly detected during an inspection');
                 }
 
-                void this.adapter.setState('info.detections.json', JSON.stringify(detections), true);
-            });
+                // save it in the state
+                void this.generateEvent(badEvent, resultUUID, text, title).catch(error => {
+                    this.adapter.log.error(`Error generating event: ${error.message}`);
+                });
+            }
+
+            await this.adapter.setStateAsync('info.detections.json', JSON.stringify(detections), true);
         }
 
-        if (data.file && existsSync(`${this.workingFolder}/${data.file}`)) {
-            this.adapter.log.info(`Deleting file ${data.file} from working folder`);
+        if (analysisResult.statistics) {
+            this.aggregateStatistics(analysisResult, resultUUID);
+        }
+
+        if (analysisResult.file && existsSync(`${this.workingFolder}/${analysisResult.file}`)) {
+            this.adapter.log.info(`Deleting file ${analysisResult.file} from working folder`);
             try {
-                unlinkSync(`${this.workingFolder}/${data.file}`);
+                unlinkSync(`${this.workingFolder}/${analysisResult.file}`);
             } catch (error) {
-                this.adapter.log.error(`Error deleting file ${data.file}: ${error.message}`);
+                this.adapter.log.error(`Error deleting file ${analysisResult.file}: ${error.message}`);
             }
         }
 
         // send the next file if available
         setTimeout(() => this.triggerUpdate(), 100);
+
+        void this.adapter.setState('info.detections.lastAnalysis', new Date().toISOString(), true);
 
         return '';
     };
@@ -699,7 +932,7 @@ export class IDSCommunication {
         if (this.config.docker?.selfHosted) {
             this.adapter.log.info(I18n.translate('Managing IDS container'));
             this.dockerManager ||= new DockerManager(this.adapter, {
-                image: 'kisshome/ids:stable-backports',
+                image: 'kisshome/ids:stable',
                 name: DOCKER_CONTAINER_NAME,
                 ports: ['5000'],
                 autoUpdate: true,
@@ -745,14 +978,14 @@ export class IDSCommunication {
             req.on('data', chunk => {
                 body += chunk.toString(); // Convert Buffer to string
             });
-            req.on('end', () => {
+            req.on('end', async (): Promise<void> => {
                 this.adapter.log.debug(`Received POST data: ${body}`);
                 // try to parse the body as JSON
                 try {
-                    const jsonData = JSON.parse(body);
+                    const jsonData: AnalysisResult = JSON.parse(body);
 
                     // Handle the parsed data
-                    const error = this.onData(jsonData);
+                    const error = await this.onData(jsonData);
                     if (error) {
                         this.adapter.log.error(`Error processing data: ${error}`);
                         res.writeHead(500, { 'Content-Type': 'application/json' });
@@ -795,6 +1028,14 @@ export class IDSCommunication {
             });
             this.webServer = null;
         }
+        if (this.simulateInterval) {
+            clearInterval(this.simulateInterval);
+            this.simulateInterval = null;
+        }
+        if (this.simulateIntervalRecording) {
+            clearInterval(this.simulateIntervalRecording);
+            this.simulateIntervalRecording = null;
+        }
     }
 
     sendFile(fileName: string): void {
@@ -808,7 +1049,7 @@ export class IDSCommunication {
             fileName,
         };
 
-        this.adapter.setState('info.detections.running', true, true);
+        void this.adapter.setState('info.detections.running', true, true);
 
         const filePath = `${this.workingFolder}/${fileName}`;
         const formData = new FormData();
@@ -835,7 +1076,7 @@ export class IDSCommunication {
             .catch(error => {
                 this.adapter.log.error(`Error uploading file ${fileName}: ${error.message}`);
                 this.uploadStatus = { status: 'idle' };
-                this.adapter.setState('info.detections.running', false, true);
+                void this.adapter.setState('info.detections.running', false, true);
             });
     }
 

@@ -58,10 +58,11 @@ This was required to make it possible to uninstall and install the adapter again
 - [X] Solid delimiter in questionnaire form: "delimiter": "solid"
 - [X] Send questionnaire does not work in the widget
 - [X] Status tab as in the: https://github.com/ioBroker/ioBroker.kisshome-defender/issues/16
-- [ ] Show device names in day-volume drop-down menu
+- [X] Show device names in day-volume drop-down menu
 - [ ] Add description about training to the admin settings GUI
-- [ ] Polling of the model status for every device on the admin device list. For every device show the status of the model in percent?
+- [X] Polling of the model status for every device on the admin device list. For every device show the status of the model in percent?
 - [ ] Show hint in the admin settings GUI, that the docker saves the data in the `<IOBROKER-PATH>/iobroker-data/kisshome-defender` folder
+- [ ] Question: the given random function for analysis time returns array...
 
 <!--
 	Placeholder for the next version (at the beginning of the line):

@@ -946,7 +946,7 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
                                 </TableCell>
                                 <TableCell style={styles.td}>{row.desc}</TableCell>
                                 <TableCell style={styles.td}>
-                                    {row.mac && this.state.modelStatus[row.mac]
+                                    {row.mac && this.state.modelStatus?.[row.mac]
                                         ? this.state.modelStatus[row.mac]
                                         : '--'}
                                 </TableCell>
@@ -1123,6 +1123,11 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
                                             error={(row.desc || '').length < 3}
                                             variant="standard"
                                         />
+                                    </TableCell>
+                                    <TableCell style={styles.td}>
+                                        {row.mac && this.state.modelStatus?.[normalizedMac]
+                                            ? this.state.modelStatus[normalizedMac]
+                                            : '--'}
                                     </TableCell>
                                     <TableCell style={styles.td}>
                                         <IconButton

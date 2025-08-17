@@ -345,6 +345,30 @@
             "native": {}
         },
         {
+            "_id": "info.detections.lastAnalysis",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Time of last analysis",
+                    "de": "Zeit der letzten Analyse",
+                    "ru": "Время последнего анализа",
+                    "pt": "Hora da última análise",
+                    "nl": "Tijd van laatste analyse",
+                    "fr": "Heure de la dernière analyse",
+                    "it": "Ora dell'ultima analisi",
+                    "es": "Hora del último análisis",
+                    "pl": "Czas ostatniej analizy",
+                    "uk": "Час останнього аналізу",
+                    "zh-cn": "上次分析的时间"
+                },
+                "type": "string",
+                "role": "state",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
             "_id": "info.recording",
             "type": "channel",
             "common": {
@@ -706,6 +730,19 @@
                 "read": true,
                 "write": false,
                 "def": "A"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.ids.simulate",
+            "type": "state",
+            "common": {
+                "expert": true,
+                "type": "boolean",
+                "role": "switch",
+                "read": true,
+                "write": true,
+                "def": false
             },
             "native": {}
         }

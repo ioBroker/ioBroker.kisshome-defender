@@ -188,6 +188,19 @@ if (process.argv.includes('--build-backend')) {
         console.error(`[${new Date().toISOString()}] Cannot build all: ${e}`);
         process.exit(1);
     });
+} else if (process.argv.includes('--sync')) {
+    if (!compareDirectories(`${__dirname}/src-admin-tab/src/Widget`, `${__dirname}/src-widgets/src/Widget`)) {
+        console.error(
+            `[${new Date().toISOString()}] src-admin-tab/src/Widget and src-widgets/src/Widget directories differ!`,
+        );
+        process.exit(1);
+    }
+    if (!compareDirectories(`${__dirname}/src-widgets-v1/src/Widget`, `${__dirname}/src-widgets/src/Widget`)) {
+        console.error(
+            `[${new Date().toISOString()}] src-widgets-v1/src/Widget and src-widgets/src/Widget directories differ!`,
+        );
+        process.exit(1);
+    }
 } else if (process.argv.includes('--widget-v1-build')) {
     buildWidgetV1().catch(e => {
         console.error(`[${new Date().toISOString()}] Cannot build all: ${e}`);

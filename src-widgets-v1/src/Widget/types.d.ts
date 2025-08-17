@@ -30,6 +30,8 @@ export interface DefenderAdapterConfig {
         selfHosted: boolean;
         /** Url of the foreign docker container */
         url: string;
+        /** Docker volume */
+        volume: string;
     };
     /** Level of anomaly sensitivity */
     anomalySensitivity: 'low' | 'medium' | 'high';
@@ -37,52 +39,79 @@ export interface DefenderAdapterConfig {
     allowTraining: boolean;
     /** Interval in seconds to save the pcap data at least every x seconds */
     saveThresholdSeconds: number;
+    /** If the user does not want to receive email notifications */
+    emailDisabled: boolean;
 }
+
+type Detection = {
+    type: 'Warning' | 'Alert' | 'Info';
+    description: string;
+    first_occurrence: string;
+    number_occurrences: number;
+    score: number;
+};
+
+type DetectionsForDevice = {
+    mac: MACAddress;
+    suricata: Detection[];
+    ml: Detection;
+};
 
 export interface DeviceStatistics {
     mac: MACAddress;
-    countries?: {
-        country: string;
-        bytes: number;
-    }[];
-    // Show the total bytes per device
-    bytes: number;
+    external_ips: {
+        [ip: string]: { country: string; data_volume_bytes: number };
+    };
+    data_volume: {
+        packet_count: number;
+        data_volume_bytes: number;
+    };
 }
 
-export interface StatisticsResult {
+export interface Statistics {
+    suricataTotalRules: number;
+    suricataAnalysisDurationMs: number;
     analysisDurationMs: number;
     totalBytes: number;
     packets: number;
-    time: string;
     devices: DeviceStatistics[];
-    uuid: string;
 }
+
+type AnalysisResult = {
+    file: `${string}.pcap`;
+    time: string;
+    result: {
+        status: 'success';
+        error?: string;
+    };
+    statistics: Statistics;
+    detections: DetectionsForDevice[];
+};
+
+type StoredAnalysisResult = {
+    uuid: string;
+    time: string;
+
+    statistics: Statistics;
+    detections: DetectionsForDevice[];
+};
 
 export interface StoredStatisticsResult {
     analysisDurationMs: number;
     totalBytes: number;
     packets: number;
-    results: StatisticsResult[];
+    results: StoredAnalysisResult[];
     countries: { [country: string]: number };
-    names: { [mac: MACAddress]: { ip: string; desc: string; vendor?: string } };
+    names?: { [mac: MACAddress]: { ip: string; desc: string; vendor?: string } };
 }
 
-export interface Detection {
-    mac: MACAddress;
-    type: 'Warning' | 'Alert' | 'Info';
-    description: string;
-    country: string;
+export interface DetectionsForDeviceWithUUID extends DetectionsForDevice {
+    scanUUID: string; // UUID of the scan that created this detection
+    uuid: string; // Own UUID for the detection
     time: string;
-    score?: number;
-    source?: string;
 }
 
-export interface DetectionWithUUID extends Detection {
-    scanUUID: string;
-    uuid: string;
-}
-
-export type UXEventType = 'click' | 'down' | 'up' | 'show' | 'hide' | 'change';
+export type UXEventType = 'click' | 'down' | 'up' | 'show' | 'hide' | 'change' | 'create';
 export interface UXEvent {
     id: string;
     event: UXEventType;
@@ -91,7 +120,12 @@ export interface UXEvent {
     data?: string;
 }
 
-export type DataRequestType = 'dataVolumePerDevice' | 'dataVolumePerCountry' | 'dataVolumePerDaytime' | 'allStatistics';
+export type DataRequestType =
+    | 'dataVolumePerDevice'
+    | 'dataVolumePerCountry'
+    | 'dataVolumePerDaytime'
+    | 'dataVolumePerDay'
+    | 'allStatistics';
 
 export interface DataVolumePerDeviceResult {
     [mac: MACAddress]: { series: [number, number][]; info?: { ip: string; desc: string } };
@@ -102,7 +136,7 @@ export interface DataVolumePerCountryResult {
 }
 
 export interface DataVolumePerDaytimeResult {
-    [mac: string]: {
+    [mac: MACAddress]: {
         dayTime: { '0'?: number; '1'?: number; '2'?: number; '3'?: number };
         info?: { ip: string; desc: string };
     };

@@ -65,8 +65,8 @@
         "release-patch": "release-script patch --yes",
         "release-minor": "release-script minor --yes",
         "release-major": "release-script major --yes",
-        "update-packages": "ncu --upgrade && cd src-admin && ncu --upgrade",
-        "npm": "npm i && cd src-admin && npm i",
+        "update-packages": "npx -y npm-check-updates --upgrade && cd src-admin && npx -y npm-check-updates --upgrade && cd ../src-admin-tab && npx -y npm-check-updates --upgrade && cd ../src-widgets && npx -y npm-check-updates --upgrade && cd ../src-widgets-v1 && npx -y npm-check-updates --upgrade",
+        "npm": "npm i && cd src-admin && npm i && cd ../src-admin-tab && npm i && cd ../src-widgets && npm i && cd ../src-widgets-v1 && npm i",
         "dev-server": "dev-server",
         "admin-0-clean": "node tasks --admin-0-clean",
         "admin-1-npm": "node tasks --admin-1-npm",
@@ -79,7 +79,8 @@
         "widget-build": "node tasks --widget-build",
         "widget-v1-build": "node tasks --widget-v1-build",
         "tab-build": "node tasks --tab-build",
-        "build:gui": "node tasks"
+        "build:gui": "node tasks",
+        "sync-gui": "node tasks --sync"
     },
     "license": "MIT",
     "readmeFilename": "README.md"

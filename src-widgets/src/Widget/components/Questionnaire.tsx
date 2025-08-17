@@ -125,7 +125,7 @@ export default class Questionnaire extends Component<QuestionnaireProps, Questio
             }));
         };
 
-        this.markDown.renderer.rules.link_open = (tokens, idx) => {
+        this.markDown.renderer.rules.link_open = (tokens: any[], idx: number): string => {
             let href = tokens[idx].attrGet('href');
             if (href) {
                 href = href
@@ -305,13 +305,6 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                     value={(this.state.answers[item.id]?.value as string) || ''}
                     onChange={e => {
                         const value = e.target.value;
-                        this.props.reportUxEvent({
-                            id: item.id,
-                            event: 'change',
-                            isTouchEvent: e instanceof TouchEvent,
-                            ts: Date.now(),
-                            data: value.toString(),
-                        });
                         this.setState(prevState => ({
                             answers: {
                                 ...prevState.answers,

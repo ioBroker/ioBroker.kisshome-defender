@@ -4,7 +4,7 @@ import { Button, CircularProgress, Link, Paper } from '@mui/material';
 import { Check, Close, Warning } from '@mui/icons-material';
 
 import { I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
-import type { DetectionWithUUID, ReportUxHandler } from '../types';
+import type { DetectionsForDeviceWithUUID, ReportUxHandler } from '../types';
 import { bytes2string, findAdminLink } from './utils';
 
 interface StatusTabProps {
@@ -13,7 +13,7 @@ interface StatusTabProps {
     reportUxEvent: ReportUxHandler;
     alive: boolean;
     themeType: ThemeType;
-    detections: DetectionWithUUID[] | null;
+    detections: DetectionsForDeviceWithUUID[] | null;
     lastSeenID: string; // Last seen ID for detections
     onNavigateToDetections: () => void; // Optional callback for navigation
 }
@@ -28,13 +28,13 @@ interface StatusTabState {
 
 const styles: Record<'title' | 'row' | 'result', React.CSSProperties> = {
     title: {
-        minWidth: 220,
+        paddingLeft: 10,
+        alignItems: 'center',
     },
     row: {
         height: 38,
     },
     result: {
-        width: 180,
         display: 'flex',
         gap: 10,
         alignItems: 'center',
@@ -48,8 +48,8 @@ export function StatusIcon(props: { ok: boolean; warning?: boolean; size?: numbe
             style={{
                 borderRadius: !props.ok && props.warning ? undefined : 30,
                 backgroundColor: props.ok ? 'green' : props.warning ? undefined : 'red',
-                width: 30,
-                height: 30,
+                width: props.size || 30,
+                height: props.size || 30,
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -178,12 +178,13 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
         let unseenAlertsCount = 0;
         let unseenWarningsCount = 0;
         const detectionsTest: React.JSX.Element[] = [];
+
         if (this.props.detections?.length && this.props.detections[0].uuid !== this.props.lastSeenID) {
             for (let i = 0; i < this.props.detections.length; i++) {
                 if (this.props.detections[i].uuid !== this.props.lastSeenID) {
-                    if (this.props.detections[i].type === 'Alert') {
+                    if (this.props.detections[i].worstType === 'Alert') {
                         unseenAlertsCount++;
-                    } else if (this.props.detections[i].type === 'Warning') {
+                    } else if (this.props.detections[i].worstType === 'Warning') {
                         unseenWarningsCount++;
                     }
                 } else {
@@ -234,39 +235,52 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                         fontSize: '1.3rem',
                     }}
                 >
-                    {this.props.alive ? null : (
-                        <div
-                            style={{ ...styles.row, display: 'flex', alignItems: 'center', gap: 10, width: undefined }}
-                        >
-                            <div style={styles.result}>
-                                <StatusIcon ok={this.props.alive} />
-                            </div>
-                            <div style={styles.title}>{I18n.t('kisshome-defender_Instance is not running')}</div>
-                        </div>
-                    )}
-                    {this.props.alive && this.state.adminLink ? null : (
-                        <div
-                            style={{ ...styles.row, display: 'flex', alignItems: 'center', gap: 10, width: undefined }}
-                        >
-                            <Link
-                                href={this.state.adminLink}
-                                target="settings"
-                                onClick={e => {
-                                    this.props.reportUxEvent({
-                                        id: 'kisshome-defender-settings-admin-link',
-                                        event: 'click',
-                                        data: this.state.adminLink,
-                                        ts: Date.now(),
-                                        isTouchEvent: e instanceof TouchEvent,
-                                    });
-                                }}
-                            >
-                                {I18n.t('kisshome-defender_Enable the instance in the admin')}
-                            </Link>
-                        </div>
-                    )}
                     <table>
                         <tbody>
+                            {this.props.alive ? null : (
+                                <tr
+                                    style={{
+                                        ...styles.row,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        width: undefined,
+                                    }}
+                                >
+                                    <td style={styles.result}>
+                                        <StatusIcon ok={this.props.alive} />
+                                    </td>
+                                    <td style={styles.title}>{I18n.t('kisshome-defender_Instance is not running')}</td>
+                                </tr>
+                            )}
+                            {this.props.alive && this.state.adminLink ? null : (
+                                <tr
+                                    style={{
+                                        ...styles.row,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 10,
+                                        width: undefined,
+                                    }}
+                                >
+                                    <td colSpan={2}>
+                                        <Link
+                                            href={this.state.adminLink}
+                                            target="settings"
+                                            onClick={e => {
+                                                this.props.reportUxEvent({
+                                                    id: 'kisshome-defender-settings-admin-link',
+                                                    event: 'click',
+                                                    data: this.state.adminLink,
+                                                    ts: Date.now(),
+                                                    isTouchEvent: e instanceof TouchEvent,
+                                                });
+                                            }}
+                                        >
+                                            {I18n.t('kisshome-defender_Enable the instance in the admin')}
+                                        </Link>
+                                    </td>
+                                </tr>
+                            )}
                             {this.props.alive ? (
                                 <tr style={styles.row}>
                                     <td
@@ -295,7 +309,7 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                             ) : null}
                             {this.props.alive && this.state.recordingRunning ? (
                                 <tr style={styles.row}>
-                                    <td style={{ ...styles.result, fontSize: 8 }}>
+                                    <td style={{ ...styles.result, fontSize: '0.9rem' }}>
                                         <StatusIcon ok />
                                         <CircularProgress />
                                         <span>
@@ -359,12 +373,12 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                     }}
                 >
                     {unseenAlertsCount || unseenWarningsCount ? (
-                        <div>
-                            <div style={{ ...styles.title, display: 'inline-block' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <div style={{ display: 'inline-block' }}>
                                 {I18n.t('kisshome-defender_Actual information')}:
                             </div>
                             {detectionsTest ? (
-                                <div style={{ display: 'flex', gap: 8, marginLeft: 10 }}>
+                                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                                     <StatusIcon
                                         ok={false}
                                         warning
@@ -373,7 +387,7 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                                     {detectionsTest}
                                 </div>
                             ) : (
-                                <div style={{ display: 'flex', gap: 8 }}>
+                                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                                     <StatusIcon
                                         ok
                                         size={42}

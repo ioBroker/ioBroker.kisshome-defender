@@ -2,7 +2,7 @@ import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 
-import type { StatisticsResult, StoredStatisticsResult } from './types';
+import type { DetectionsForDevice, StoredAnalysisResult, StoredStatisticsResult } from './types';
 import { getTimestamp } from './lib/utils';
 
 const workingDir = 'C:/pWork/iobroker-data/kisshome-defender';
@@ -36,23 +36,31 @@ for (let i = -7; i <= 0; i++) {
             0,
         ).toISOString();
 
-        const oneResult: StatisticsResult = {
-            analysisDurationMs: 0,
-            totalBytes: 0,
-            packets: 0,
-            time,
-            devices: [],
+        const oneResult: StoredAnalysisResult = {
             uuid: randomUUID(),
+            time,
+            statistics: {
+                suricataTotalRules: 0,
+                suricataAnalysisDurationMs: 0,
+                analysisDurationMs: 0,
+                totalBytes: 0,
+                packets: 0,
+                devices: [],
+            },
+            detections: [],
         };
 
         for (let a = 0; a < MACs.length; a++) {
             const mac = MACs[a];
-            const bytes = mac === '88:99:AA:BB:CC:DD' ? Math.floor(Math.random() * 100000000) :  Math.floor(Math.random() * 1000000);
-            const packets = bytes / 1000; // Assuming 1000 bytes per packet
+            const bytes =
+                mac === '88:99:AA:BB:CC:DD'
+                    ? Math.floor(Math.random() * 100000000)
+                    : Math.floor(Math.random() * 1000000);
+            const packets = Math.floor(bytes / 1000); // Assuming 1000 bytes per packet
 
-            oneResult.packets += packets;
-            oneResult.totalBytes += bytes;
-            oneResult.devices.push({
+            oneResult.statistics.packets += packets;
+            oneResult.statistics.totalBytes += bytes;
+            oneResult.statistics.devices.push({
                 mac,
                 data_volume: {
                     packet_count: 5,
@@ -76,7 +84,33 @@ for (let i = -7; i <= 0; i++) {
 
             result.totalBytes += bytes;
             result.packets += packets;
+
+            const score = Math.floor(Math.random() * 1000) / 10; // Random score between 0 and 100
+            const scoreMl = Math.floor(Math.random() * 1000) / 10; // Random score between 0 and 100
+            // Generate for each MAC a detection
+            const detection: DetectionsForDevice = {
+                mac,
+                suricata: [
+                    {
+                        type: score > 90 ? 'Alert' : score > 70 ? 'Warning' : 'Info',
+                        description: score > 90 ? 'Dangerous alert' : score > 70 ? 'Just warning' : 'Nothing special',
+                        first_occurrence: time,
+                        number_occurrences: score > 70 ? Math.floor(Math.random() * 5) + 1 : 0, // Random occurrences between 1 and 5
+                        score, // Random score between 0 and 99
+                    },
+                ],
+                ml: {
+                    type: scoreMl > 90 ? 'Alert' : scoreMl > 70 ? 'Warning' : 'Info',
+                    description: scoreMl > 90 ? 'Dangerous ML alert' : scoreMl > 70 ? 'Just ML warning' : 'OK',
+                    first_occurrence: time,
+                    number_occurrences: scoreMl > 70 ? Math.floor(Math.random() * 3) + 1 : 0, // Random occurrences between 1 and 3
+                    score: scoreMl, // Random score between 0 and 49
+                },
+                worstType: 'Alert', // Assuming the worst type is Alert for this example
+            };
+            oneResult.detections.push(detection);
         }
+
         result.results.push(oneResult);
     }
 }
