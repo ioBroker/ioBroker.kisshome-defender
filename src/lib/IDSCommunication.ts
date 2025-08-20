@@ -882,7 +882,7 @@ export class IDSCommunication {
                                 biggestScore.toString().replace(/./g, ','),
                             );
                         } else {
-                            // TODO: Average or biggest score?
+                            // Take the biggest score (ML and Suricata
                             text = I18n.translate(
                                 `During an inspection, anomaly scores of %s were detected that could indicate a potential security risk.`,
                                 biggestScore.toString().replace(/./g, ','),
@@ -939,6 +939,7 @@ export class IDSCommunication {
                 autoStart: false,
                 removeAfterStop: true,
                 volumes: [`${this.statisticsDir}/volume:/shared`],
+                securityOptions: 'apparmor=unconfined',
             });
 
             await this.dockerManager.init();
@@ -1053,13 +1054,15 @@ export class IDSCommunication {
 
         const filePath = `${this.workingFolder}/${fileName}`;
         const formData = new FormData();
-        formData.append('data', readFileSync(filePath), {
+        formData.append('pcap', readFileSync(filePath), {
             filename: fileName,
             contentType: 'application/octet-stream',
         });
 
+        this.adapter.log.debug(`Send file ${fileName} to ${this.idsUrl}/pcap?pcap_name=${fileName}`);
+
         axios
-            .post(`${this.idsUrl}/pcap`, formData, {
+            .post(`${this.idsUrl}/pcap?pcap_name=${fileName}`, formData, {
                 headers: {
                     ...formData.getHeaders(),
                 },

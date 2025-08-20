@@ -24,11 +24,10 @@ import {
 import { I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
 import { Close, ExpandMore, ErrorOutline as Warning, Warning as Alarm, Info } from '@mui/icons-material';
 
-import type { ReportUxHandler, StoredAnalysisResult, StoredStatisticsResult } from '../types';
+import type { DetectionsForDevice, ReportUxHandler, StoredAnalysisResult, StoredStatisticsResult } from '../types';
 
 import { bytes2string } from './utils';
 import { StatusIcon } from './StatusTab';
-import type { DetectionsForDeviceWithUUID } from '../../../../src/types';
 // const CHANGE_TIME = '2025-10-16T00:00:00Z'; // Calculation time
 
 const styles: Record<string, React.CSSProperties> = {
@@ -301,7 +300,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                             style={{ maxWidth: 300, whiteSpace: 'nowrap' }}
                             disabled={this.state.detectionRunning}
                             variant="contained"
-                            color="grey"
+                            color="primary"
                             onClick={async e => {
                                 this.props.reportUxEvent({
                                     id: 'kisshome-defender-detections-trigger-detection',
@@ -327,7 +326,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         );
     }
 
-    renderOneDetectionDetails(item: StoredAnalysisResult, worstType: '' | 'Warning' | 'Alert'): React.JSX.Element {
+    renderOneDetectionDetails(item: StoredAnalysisResult, worstType?: '' | 'Warning' | 'Alert'): React.JSX.Element {
         // const backgroundColor1 = this.props.themeType === 'dark' ? '#303030' : '#eee';
         // const backgroundColor2 = this.props.themeType === 'dark' ? '#404040' : '#f0f0f0';
 
@@ -523,7 +522,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
     renderOneDetection(item: StoredAnalysisResult): React.JSX.Element {
         const detections = item.detections || [];
         const worstDetection = detections?.reduce(
-            (worst, current) => {
+            (worst: DetectionsForDevice | null, current): DetectionsForDevice | null => {
                 if (!worst || (current.worstType === 'Alert' && worst.worstType !== 'Alert')) {
                     return current;
                 }
@@ -535,7 +534,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 }
                 return worst;
             },
-            null as DetectionsForDeviceWithUUID | null,
+            null as DetectionsForDevice | null,
         );
 
         return (
@@ -583,7 +582,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                     ) : null}
                 </AccordionSummary>
                 {this.state.openedItem === item.uuid
-                    ? this.renderOneDetectionDetails(item, worstDetection.worstType)
+                    ? this.renderOneDetectionDetails(item, worstDetection?.worstType)
                     : null}
             </Accordion>
         );

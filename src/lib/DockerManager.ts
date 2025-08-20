@@ -18,6 +18,7 @@ export interface StartContainerOptions {
     env?: Record<string, string>; // Environment variables (e.g. { 'DB_USER': 'admin' })
     detached?: boolean; // Run in detached mode (default: true)
     removeAfterStop?: boolean; // Remove the container after stopping (default: false)
+    securityOptions?: string; // Security options for the container (e.g. 'apparmor=unconfined')
 }
 
 /**
@@ -58,6 +59,7 @@ export class DockerManager {
             autoUpdate?: boolean; // Automatically update the image if an update is available (default: false)
             autoStart?: boolean; // Automatically start the container after creation (default: true)
             needSudo?: boolean; // If true, the Docker commands will be prefixed with 'sudo' (default: true)
+            securityOptions?: string; // Security options for the container (e.g. 'apparmor=unconfined')
         },
     ) {
         this.adapter = adapter;
@@ -314,13 +316,18 @@ export class DockerManager {
      * @returns A promise that resolves with the ID of the new container.
      */
     private async initContainer(options: StartContainerOptions): Promise<string> {
-        const { image, name, ports, volumes, env, detached = true, removeAfterStop } = options;
+        const { image, name, ports, volumes, env, detached = true, removeAfterStop, securityOptions } = options;
 
         let command = `${this.options.dockerCommand} run`;
 
         if (detached) {
             command += ' -d';
         }
+        if (securityOptions) {
+            // Add security options if provided
+            command += ` --security-opt ${securityOptions}`;
+        }
+
         if (name) {
             command += ` --name ${name}`;
         }
@@ -337,7 +344,7 @@ export class DockerManager {
         }
         if (volumes) {
             volumes.forEach(v => {
-                command += ` -v ${v}`;
+                command += ` -v ${v}:Z`; // Use ':Z' for SELinux compatibility
             });
         }
         if (env) {

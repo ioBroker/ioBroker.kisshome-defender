@@ -222,7 +222,7 @@
                 },
                 "docker.volume": {
                     "newLine": true,
-                    "type": "text",
+                    "type": "sendToText",
                     "label": "Path to store models and persistent data",
                     "hidden": "!!data.docker?.selfHosted"
                 },

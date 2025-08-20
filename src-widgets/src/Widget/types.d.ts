@@ -55,6 +55,8 @@ type DetectionsForDevice = {
     mac: MACAddress;
     suricata: Detection[];
     ml: Detection;
+
+    worstType: '' | 'Warning' | 'Alert'; // Worst type of detection for this device added by adapter
 };
 
 export interface DeviceStatistics {

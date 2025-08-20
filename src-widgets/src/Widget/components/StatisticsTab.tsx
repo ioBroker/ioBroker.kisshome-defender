@@ -174,6 +174,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
     private countrySelected: { [country: string]: boolean } = {};
     private dayTimeSelected: { [dayTime: string]: boolean } = {};
     private readonly refInfo = React.createRef<HTMLDivElement>();
+    private detectHeightInterval: ReturnType<typeof setInterval> | null = null;
 
     constructor(props: StatisticsTabProps) {
         super(props);
@@ -209,12 +210,19 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
 
     componentDidMount(): void {
         void this.requestData();
+        this.detectHeightInterval = setInterval(() => {
+            this.updateHeight();
+        }, 3000);
     }
 
     componentWillUnmount(): void {
         if (this.updateTimeout) {
             clearTimeout(this.updateTimeout);
             this.updateTimeout = null;
+        }
+        if (this.detectHeightInterval) {
+            clearInterval(this.detectHeightInterval);
+            this.detectHeightInterval = null;
         }
 
         this.echartsReact?.getEchartsInstance().dispose();
@@ -774,14 +782,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         return null;
     }
 
-    componentDidUpdate(prevProps: StatisticsTabProps): void {
-        if (this.props.alive !== prevProps.alive && this.props.alive) {
-            // If the adapter is now alive, request data
-            setTimeout(() => {
-                void this.requestData();
-            }, 50);
-        }
-
+    updateHeight(): void {
         if (this.state.tab === 'dataVolumePerDay' && this.refDataVolumePerDay.current) {
             const height = this.refDataVolumePerDay.current.clientHeight;
             if (height !== this.state.height) {
@@ -803,6 +804,17 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                 setTimeout(h => this.setState({ height: h }), 50, height);
             }
         }
+    }
+
+    componentDidUpdate(prevProps: StatisticsTabProps): void {
+        if (this.props.alive !== prevProps.alive && this.props.alive) {
+            // If the adapter is now alive, request data
+            setTimeout(() => {
+                void this.requestData();
+            }, 50);
+        }
+
+        this.updateHeight();
     }
 
     static getNiceMax(value: number): number {

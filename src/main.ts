@@ -555,7 +555,7 @@ export class KISSHomeResearchAdapter extends Adapter {
     }
 
     generateEmail(message: string, title: string): string {
-        this.emailText ||= readFileSync(`${__dirname}/../emails/alert.html`, 'utf8');
+        this.emailText ||= readFileSync(`${__dirname}/emails/alert.html`, 'utf8');
 
         return this.emailText.replace('{{title}}', title).replace('{{message}}', message);
     }
@@ -565,7 +565,9 @@ export class KISSHomeResearchAdapter extends Adapter {
         const uuidObj = await this.getForeignObjectAsync('system.meta.uuid');
         if (uuidObj?.native?.uuid) {
             this.uuid = uuidObj.native.uuid;
-            const hash = createHash('sha256').update(this.uuid).digest();
+            const hash = createHash('sha256')
+                .update((this.config.email || '').trim().toLowerCase())
+                .digest();
             this.group = hash[hash.length - 1] & 1 ? 'B' : 'A';
             await this.setState('info.ids.group', this.group, true);
         } else {
@@ -818,7 +820,9 @@ export class KISSHomeResearchAdapter extends Adapter {
         }
         // Read the questionnaire file
         axios
-            .get(`https://${PCAP_HOST}/api/v2/questionnaire?email=${encodeURIComponent(this.config.email)}`)
+            .get(
+                `https://${PCAP_HOST}/api/v2/questionnaire?email=${encodeURIComponent(this.config.email)}&uuid=${encodeURIComponent(this.uuid)}`,
+            )
             .then(async response => {
                 if (response.status === 200 && typeof response.data === 'object' && response.data?.id) {
                     // Check if the questionnaire file has changed

@@ -59,7 +59,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
     private uxEventsTimeout: ReturnType<typeof setTimeout> | null = null;
     private isMobile = isMobile();
     private ignoreNewAlerts: Date | null = window.localStorage.getItem('ignoreNewAlerts')
-        ? new Date(window.localStorage.getItem('ignoreNewAlerts'))
+        ? new Date(window.localStorage.getItem('ignoreNewAlerts')!)
         : null;
 
     constructor(props: KisshomeDefenderProps) {

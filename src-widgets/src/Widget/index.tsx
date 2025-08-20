@@ -1,15 +1,26 @@
 import React, { Component } from 'react';
 
-import { Card, Tab, Tabs, Toolbar } from '@mui/material';
+import {
+    Button,
+    Card,
+    Checkbox,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    FormControlLabel,
+    Tab,
+    Tabs,
+    Toolbar,
+} from '@mui/material';
 
 import logo from './assets/kisshome-defender.svg';
 import { I18n, type ThemeType, type LegacyConnection } from '@iobroker/adapter-react-v5';
 
-import StatusTab from './components/StatusTab';
+import StatusTab, { StatusIcon } from './components/StatusTab';
 import StatisticsTab from './components/StatisticsTab';
 import DetectionsTab from './components/DetectionsTab';
 import SettingsTab from './components/SettingsTab';
-import type { DetectionWithUUID, ReportUxEventType, ReportUxHandler, UXEvent } from './types';
+import type { DetectionsForDeviceWithUUID, ReportUxEventType, ReportUxHandler, UXEvent } from './types';
 import Questionnaire, { type QuestionnaireJson } from './components/Questionnaire';
 
 function isMobile(): boolean {
@@ -26,12 +37,15 @@ interface KisshomeDefenderProps {
 
 interface KisshomeDefenderState {
     tab: 'status' | 'statistics' | 'detections' | 'settings';
-    detections: DetectionWithUUID[] | null;
+    detections: DetectionsForDeviceWithUUID[] | null;
     lastSeenID: string; // Last seen ID for detections
     questionnaire: QuestionnaireJson | null; // Questionnaire data
     showQuestionnaire: QuestionnaireJson | null; // Currently shown questionnaire
     alive: boolean;
     group: 'A' | 'B';
+    showNewAlert: string; // ID of the new alert to show
+    ignoreForNext10Minutes: boolean;
+    showDetectionWithUUID: string;
 }
 
 const styles: Record<string, React.CSSProperties> = {
@@ -44,6 +58,9 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
     private uxEvents: UXEvent[] | null = null;
     private uxEventsTimeout: ReturnType<typeof setTimeout> | null = null;
     private isMobile = isMobile();
+    private ignoreNewAlerts: Date | null = window.localStorage.getItem('ignoreNewAlerts')
+        ? new Date(window.localStorage.getItem('ignoreNewAlerts')!)
+        : null;
 
     constructor(props: KisshomeDefenderProps) {
         super(props);
@@ -55,6 +72,9 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
             questionnaire: null,
             showQuestionnaire: null,
             group: 'A', // Default group
+            showNewAlert: '',
+            ignoreForNext10Minutes: false,
+            showDetectionWithUUID: '',
         };
     }
 
@@ -151,14 +171,45 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
 
     onStateDetections = (id: string, state: ioBroker.State | null | undefined): void => {
         if (id === `kisshome-defender.${this.props.instance || 0}.info.detections.json`) {
-            this.setState({ detections: state?.val ? JSON.parse(state.val as string) : [] });
+            this.setState({ detections: state?.val ? JSON.parse(state.val as string) : [] }, () => {
+                // Check if new alert should be shown
+                if (this.state.detections?.length) {
+                    const lastGeneratedID = this.state.detections[this.state.detections.length - 1].uuid;
+                    if (lastGeneratedID !== this.state.lastSeenID) {
+                        if (
+                            (this.ignoreNewAlerts && this.ignoreNewAlerts > new Date()) ||
+                            this.state.tab === 'detections'
+                        ) {
+                            // Ignore new alerts if ignoreNewAlerts is set, or we are already in the detections tab
+                            void this.props.socket.setState(
+                                `kisshome-defender.${this.props.instance || 0}.info.detections.lastSeen`,
+                                lastGeneratedID,
+                                true,
+                            );
+                        } else {
+                            this.reportUxEvent({
+                                id: 'kisshome-defender-alert',
+                                event: 'show',
+                                ts: Date.now(),
+                                data: lastGeneratedID,
+                            });
+                            this.setState({ showNewAlert: lastGeneratedID, ignoreForNext10Minutes: false });
+                        }
+                    }
+                }
+            });
         }
     };
 
     onStateLastSeen = (id: string, state: ioBroker.State | null | undefined): void => {
         if (id === `kisshome-defender.${this.props.instance || 0}.info.detections.lastSeen`) {
             if ((state?.val || '') !== this.state.lastSeenID) {
-                this.setState({ lastSeenID: (state?.val as string) || '' });
+                this.setState({ lastSeenID: (state?.val as string) || '' }, () => {
+                    if (this.state.showNewAlert === this.state.lastSeenID) {
+                        // If the shown alert is the last seen, hide it
+                        this.setState({ showNewAlert: '' });
+                    }
+                });
             }
         }
     };
@@ -211,6 +262,148 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
         );
     }
 
+    renderAlarm(): React.JSX.Element | null {
+        if (this.props.editMode) {
+            return null;
+        }
+
+        if (!this.state.showNewAlert) {
+            return null;
+        }
+        // Find the detection with the ID of showNewAlert
+        const detection = this.state.detections?.find(d => d.uuid === this.state.showNewAlert);
+        if (!detection) {
+            return null; // No detection found for the alert
+        }
+        // Calculate anomalies count
+        let anomaliesCount = detection.ml?.type === 'Alert' || detection.ml?.type === 'Warning' ? 1 : 0;
+        if (detection.suricata) {
+            anomaliesCount += detection.suricata.filter(d => d.type === 'Alert' || d.type === 'Warning').length;
+        }
+
+        let text: string;
+        if (anomaliesCount === 1) {
+            text = I18n.t(
+                'kisshome-defender_During the inspection on %s at %s, an anomaly was detected that could indicate a potential security risk.',
+                new Date(detection.time).toLocaleDateString(),
+                new Date(detection.time).toLocaleTimeString(),
+            );
+        } else {
+            text = I18n.t(
+                'kisshome-defender_During the inspection on %s at %s, %s anomalies were detected that could indicate a potential security risk.',
+                new Date(detection.time).toLocaleDateString(),
+                new Date(detection.time).toLocaleTimeString(),
+                anomaliesCount,
+            );
+        }
+
+        const onClose = (): void => {
+            void this.props.socket.setState(
+                `kisshome-defender.${this.props.instance || '0'}.info.detections.lastSeen`,
+                this.state.showNewAlert,
+                true,
+            );
+            this.reportUxEvent({
+                id: 'kisshome-defender-alert',
+                event: 'hide',
+                ts: Date.now(),
+                data: this.state.showNewAlert,
+            });
+
+            if (this.state.ignoreForNext10Minutes) {
+                // Set ignoreNewAlerts to 10 minutes in the future
+                this.ignoreNewAlerts = new Date(Date.now() + 10 * 60 * 1000);
+                window.localStorage.setItem('ignoreNewAlerts', this.ignoreNewAlerts.toISOString());
+            } else {
+                this.ignoreNewAlerts = null;
+                window.localStorage.removeItem('ignoreNewAlerts');
+            }
+            this.setState({ showNewAlert: '', ignoreForNext10Minutes: false });
+        };
+
+        return (
+            <Dialog
+                open={!0}
+                onClose={onClose}
+                maxWidth="md"
+                fullWidth
+            >
+                <DialogContent
+                    style={{
+                        display: 'flex',
+                        padding: 24,
+                        alignItems: 'center',
+                    }}
+                >
+                    <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 40 }}>
+                        <div
+                            style={{
+                                fontSize: '1.2rem',
+                                fontWeight: 'bold',
+                            }}
+                        >
+                            {text}
+                        </div>
+                        <div
+                            style={{
+                                cursor: 'pointer',
+                            }}
+                            onClick={() => {
+                                onClose();
+                                // Find to which scan belongs this detection
+                                this.setState({ tab: 'detections', showDetectionWithUUID: detection.scanUUID });
+                                window.localStorage.setItem('kisshome-defender-tab', 'detections');
+                                this.reportUxEvent({
+                                    id: 'kisshome-defender-tabs',
+                                    event: 'change',
+                                    ts: Date.now(),
+                                    data: 'detections',
+                                });
+                            }}
+                        >
+                            {I18n.t('kisshome-defender_Click here to get more information')}
+                        </div>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={!!this.state.ignoreForNext10Minutes}
+                                    onChange={(_event, checked) => {
+                                        this.setState({ ignoreForNext10Minutes: checked });
+                                        this.reportUxEvent({
+                                            id: 'kisshome-defender-ignore-alert',
+                                            event: 'change',
+                                            ts: Date.now(),
+                                            data: checked ? 'true' : 'false',
+                                        });
+                                    }}
+                                    color="primary"
+                                    style={{ marginLeft: 8 }}
+                                />
+                            }
+                            label={I18n.t('kisshome-defender_Do not show this alert again for 10 minutes')}
+                        />
+                    </div>
+                    <div>
+                        <StatusIcon
+                            ok={false}
+                            warning
+                            size={80}
+                        />
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={onClose}
+                    >
+                        {I18n.t('kisshome-defender_Ok')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
+    }
+
     render(): React.JSX.Element | React.JSX.Element[] | null {
         return (
             <Card
@@ -221,11 +414,12 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
                 }}
             >
                 {this.renderQuestionnaire()}
+                {this.renderAlarm()}
                 <Toolbar
                     variant="dense"
                     style={{ width: 'calc(100% - 48px)', display: 'flex', backgroundColor: '#333E50', color: 'white' }}
                 >
-                    <span>KISSHOME</span>
+                    <span style={{ textTransform: 'uppercase' }}>KISSHome</span>
                     <img
                         src={logo}
                         style={{ height: 32, marginRight: 8, marginLeft: 16 }}
@@ -236,7 +430,10 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
                         style={{ flexGrow: 1 }}
                         value={this.state.tab || 'status'}
                         onChange={(_event, value: string) => {
-                            this.setState({ tab: value as KisshomeDefenderState['tab'] });
+                            this.setState({
+                                tab: value as KisshomeDefenderState['tab'],
+                                showDetectionWithUUID: '',
+                            });
                             window.localStorage.setItem('kisshome-defender-tab', value);
                             this.reportUxEvent({
                                 id: 'kisshome-defender-tabs',
@@ -318,11 +515,12 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
                         <DetectionsTab
                             alive={this.state.alive}
                             socket={this.props.socket}
-                            detections={this.state.detections}
                             lastSeenID={this.state.lastSeenID}
                             reportUxEvent={this.reportUxEvent}
                             instance={this.props.instance || '0'}
                             themeType={this.props.themeType}
+                            group={this.state.group}
+                            showDetectionWithUUID={this.state.showDetectionWithUUID}
                         />
                     ) : null}
                     {this.state.tab === 'settings' ? (
