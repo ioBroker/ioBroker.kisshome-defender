@@ -77,12 +77,7 @@ export class IDSCommunication {
     };
     private readonly group: 'A' | 'B'; // Group A or B
     private lastCheckedDate = '';
-    private readonly generateEvent: (
-        type: 'Info' | 'Warning' | 'Alert',
-        id: string,
-        message: string,
-        title: string,
-    ) => Promise<void>;
+    private readonly generateEvent: (isAlert: boolean, id: string, message: string, title: string) => Promise<void>;
 
     private simulation = false;
     private simulateInterval: NodeJS.Timeout | null = null;
@@ -95,12 +90,7 @@ export class IDSCommunication {
         metaData: { [mac: MACAddress]: { ip: string; desc: string } },
         options: {
             workingFolder: string;
-            generateEvent: (
-                type: 'Info' | 'Warning' | 'Alert',
-                id: string,
-                message: string,
-                title: string,
-            ) => Promise<void>;
+            generateEvent: (isAlert: boolean, id: string, message: string, title: string) => Promise<void>;
             group: 'A' | 'B';
         },
     ) {
@@ -135,7 +125,11 @@ export class IDSCommunication {
 
         // Set initial state
         void this.adapter.setState('info.ids.status', 'No connection', true);
-        void this.adapter.setState('info.detections.running', false, true);
+        void this.adapter.setState('info.analysis.running', false, true);
+    }
+
+    getDockerVolumePath(): string {
+        return `${this.statisticsDir}/volume`.replace(/\\/g, '/'); // Ensure the path uses forward slashes
     }
 
     static ip6toNumber(ip: string): bigint {
@@ -565,7 +559,7 @@ export class IDSCommunication {
         }
     }
 
-    aggregateStatistics(result: AnalysisResult, resultUUID: string): void {
+    aggregateStatistics(result: AnalysisResult, resultUUID: string, isAlert: boolean, score: number): void {
         // Get file name for current time.
         const now = new Date();
         const fileName = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}_${Math.floor(now.getHours() / 6).toString()}.json`;
@@ -606,11 +600,15 @@ export class IDSCommunication {
             time: result.time,
             statistics: result.statistics,
             detections: result.detections,
+            isAlert,
+            score,
         });
 
         writeFileSync(join(this.statisticsDir, fileName), JSON.stringify(data));
 
         this.deleteOldStatisticsFiles();
+
+        void this.adapter.setState('info.detections.lastAnalysis', resultUUID, true);
     }
 
     activateSimulation(enabled: boolean, onStart?: boolean): void {
@@ -712,6 +710,8 @@ export class IDSCommunication {
                 Math.random() > 0.95 ? Math.floor(Math.random() * 1000) / 10 : Math.floor(Math.random() * 100) / 10; // Random score between 0 and 100
             const scoreMl =
                 Math.random() > 0.95 ? Math.floor(Math.random() * 1000) / 10 : Math.floor(Math.random() * 100) / 10; // Random score between 0 and 100
+            const biggestScore = Math.max(score, scoreMl);
+
             // Generate for each MAC a detection
             const detection: DetectionsForDevice = {
                 mac,
@@ -731,7 +731,8 @@ export class IDSCommunication {
                     number_occurrences: scoreMl > 10 ? Math.floor(Math.random() * 3) + 1 : 0, // Random occurrences between 1 and 3
                     score: 0,
                 },
-                worstType: 'Alert', // Assuming the worst type is Alert for this example
+                worstScore: biggestScore,
+                isAlert: biggestScore > 10, // Assuming the worst type is Alert for this example
             };
             result.detections.push(detection);
         }
@@ -760,7 +761,7 @@ export class IDSCommunication {
             }
             this.uploadStatus.fileName = undefined;
             this.uploadStatus.status = 'idle';
-            void this.adapter.setState('info.detections.running', false, true);
+            void this.adapter.setState('info.analysis.running', false, true);
         } else {
             // Unexpected file name in response, but we delete the file anyway
             this.adapter.log.warn(`Unexpected response from IDS for file ${analysisResult.file}`);
@@ -769,32 +770,18 @@ export class IDSCommunication {
                     `Upload status was 'waitingOnResponse', but received unexpected file name: ${analysisResult.file}`,
                 );
                 this.uploadStatus.status = 'idle';
-                void this.adapter.setState('info.detections.running', false, true);
+                void this.adapter.setState('info.analysis.running', false, true);
             }
         }
         const resultUUID = randomUUID();
+        let isAlert = false;
+        let biggestScore = 0;
 
         // Save detected events if available
         if (analysisResult.detections?.length) {
             const newDetections = analysisResult.detections;
 
-            // Save all dangerous detections in the state
-            const state = await this.adapter.getStateAsync('info.detections.json');
-            let detections: DetectionsForDeviceWithUUID[] = [];
-            try {
-                detections = state?.val ? JSON.parse(state.val as string) : [];
-            } catch (e) {
-                this.adapter.log.error(`Error parsing detections state: ${e.message}`);
-            }
-            // delete all detections older than 7 days
-            const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
-            detections = detections.filter(detection => {
-                const detectionTime = new Date(detection.time).getTime();
-                return detectionTime >= sevenDaysAgo;
-            });
             let sendEvent = 0;
-            let badEvent: 'Warning' | 'Alert' | 'Info' | '' = '';
-            let biggestScore = 0;
 
             // After 15 October
             if (new Date(CHANGE_TIME).getTime() <= Date.now() && this.group === 'B') {
@@ -807,8 +794,7 @@ export class IDSCommunication {
                 const detection: DetectionsForDeviceWithUUID = newDetections[i] as DetectionsForDeviceWithUUID;
 
                 // Find the earliest occurrence time
-                let type: 'Warning' | 'Alert' | 'Info' | '' =
-                    detection.ml?.type === 'Warning' || detection.ml?.type === 'Alert' ? detection.ml.type : '';
+                let _isAlert: boolean = detection.ml?.type === 'Warning' || detection.ml?.type === 'Alert';
 
                 if (detection.ml && new Date(CHANGE_TIME).getTime() > Date.now()) {
                     detection.ml.score ||=
@@ -817,7 +803,7 @@ export class IDSCommunication {
                             : Math.floor(Math.random() * 10 * 100) / 100;
                 }
 
-                let score = detection.ml?.type === 'Warning' || detection.ml?.type === 'Alert' ? detection.ml.score : 0;
+                let score = _isAlert ? detection.ml.score : 0;
 
                 let earliestOccurrence: number | null =
                     detection.ml?.first_occurrence && (detection.ml.type === 'Alert' || detection.ml.type === 'Warning')
@@ -826,9 +812,7 @@ export class IDSCommunication {
 
                 detection.suricata?.forEach(suricata => {
                     if (suricata.first_occurrence && (suricata.type === 'Alert' || suricata.type === 'Warning')) {
-                        if (!type || (suricata.type === 'Alert' && type !== 'Alert')) {
-                            type = 'Alert'; // Set the type to Alert or Warning if not already set
-                        }
+                        _isAlert ||= suricata.type === 'Alert' || suricata.type === 'Warning';
                         if (suricata.score > score) {
                             score = suricata.score; // Use the highest score from Suricata
                         }
@@ -840,26 +824,25 @@ export class IDSCommunication {
                     }
                 });
 
-                detection.worstType = type; // Store the worst type found
+                detection.isAlert = _isAlert; // Store the worst type found
+                detection.worstScore = biggestScore; // Store the highest score found
 
                 if (earliestOccurrence) {
                     detection.time = new Date(earliestOccurrence).toISOString(); // Ensure time is in ISO format
                     detection.scanUUID = resultUUID; // Get the parent UUID if available
                     detection.uuid = randomUUID(); // Generate a unique ID for the detection
-                    detections.push(detection);
                     sendEvent++;
 
-                    if (type && (!badEvent || type === 'Alert' || (type === 'Warning' && badEvent !== 'Alert'))) {
-                        // If we have no bad event or the current one is worse, replace it
-                        badEvent = type;
-                    }
+                    // If we have no bad event or the current one is worse, replace it
+                    isAlert ||= _isAlert;
+
                     if (biggestScore < score) {
                         biggestScore = score; // Keep the highest score
                     }
                 }
             }
 
-            if (badEvent) {
+            if (isAlert) {
                 let text: string;
                 let title: string;
                 if (new Date(CHANGE_TIME).getTime() > Date.now()) {
@@ -899,16 +882,15 @@ export class IDSCommunication {
                 }
 
                 // save it in the state
-                void this.generateEvent(badEvent, resultUUID, text, title).catch(error => {
+                void this.generateEvent(isAlert, resultUUID, text, title).catch(error => {
                     this.adapter.log.error(`Error generating event: ${error.message}`);
                 });
             }
-
-            await this.adapter.setStateAsync('info.detections.json', JSON.stringify(detections), true);
+            await this.adapter.setStateAsync('info.analysis.lastCreated', resultUUID, true);
         }
 
         if (analysisResult.statistics) {
-            this.aggregateStatistics(analysisResult, resultUUID);
+            this.aggregateStatistics(analysisResult, resultUUID, isAlert, biggestScore);
         }
 
         if (analysisResult.file && existsSync(`${this.workingFolder}/${analysisResult.file}`)) {
@@ -922,8 +904,6 @@ export class IDSCommunication {
 
         // send the next file if available
         setTimeout(() => this.triggerUpdate(), 100);
-
-        void this.adapter.setState('info.detections.lastAnalysis', new Date().toISOString(), true);
 
         return '';
     };
@@ -1050,7 +1030,7 @@ export class IDSCommunication {
             fileName,
         };
 
-        void this.adapter.setState('info.detections.running', true, true);
+        void this.adapter.setState('info.analysis.running', true, true);
 
         const filePath = `${this.workingFolder}/${fileName}`;
         const formData = new FormData();
@@ -1079,7 +1059,7 @@ export class IDSCommunication {
             .catch(error => {
                 this.adapter.log.error(`Error uploading file ${fileName}: ${error.message}`);
                 this.uploadStatus = { status: 'idle' };
-                void this.adapter.setState('info.detections.running', false, true);
+                void this.adapter.setState('info.analysis.running', false, true);
             });
     }
 

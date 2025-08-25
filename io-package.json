@@ -250,7 +250,7 @@
             "native": {}
         },
         {
-            "_id": "info.detections",
+            "_id": "info.analysis",
             "type": "channel",
             "common": {
                 "name": {
@@ -270,32 +270,7 @@
             "native": {}
         },
         {
-            "_id": "info.detections.json",
-            "type": "state",
-            "common": {
-                "name": {
-                    "en": "Detections for last 7 days",
-                    "de": "Erkennungen der letzten 7 Tage",
-                    "ru": "Обнаружения за последние 7 дней",
-                    "pt": "Detecções dos últimos 7 dias",
-                    "nl": "Detecties van de afgelopen 7 dagen",
-                    "fr": "Détections des 7 derniers jours",
-                    "it": "Rilevamenti degli ultimi 7 giorni",
-                    "es": "Detecciones de los últimos 7 días",
-                    "pl": "Wykrycia z ostatnich 7 dni",
-                    "uk": "Виявлення за останні 7 днів",
-                    "zh-cn": "过去7天的检测"
-                },
-                "type": "json",
-                "role": "state",
-                "read": true,
-                "write": false,
-                "def": "[]"
-            },
-            "native": {}
-        },
-        {
-            "_id": "info.detections.lastSeen",
+            "_id": "info.analysis.lastSeen",
             "type": "state",
             "common": {
                 "name": {
@@ -320,7 +295,7 @@
             "native": {}
         },
         {
-            "_id": "info.detections.running",
+            "_id": "info.analysis.running",
             "type": "state",
             "common": {
                 "name": {
@@ -345,7 +320,7 @@
             "native": {}
         },
         {
-            "_id": "info.detections.lastAnalysis",
+            "_id": "info.analysis.lastCreated",
             "type": "state",
             "common": {
                 "name": {

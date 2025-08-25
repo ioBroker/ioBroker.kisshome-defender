@@ -24,7 +24,13 @@ import {
 import { I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
 import { Close, ExpandMore, ErrorOutline as Warning, Warning as Alarm, Info } from '@mui/icons-material';
 
-import type { DetectionsForDevice, ReportUxHandler, StoredAnalysisResult, StoredStatisticsResult } from '../types';
+import type {
+    DetectionsForDevice,
+    DeviceStatistics,
+    ReportUxHandler,
+    StoredAnalysisResult,
+    StoredStatisticsResult,
+} from '../types';
 
 import { bytes2string } from './utils';
 import { StatusIcon } from './StatusTab';
@@ -55,6 +61,7 @@ interface DetectionsTabProps {
     socket: LegacyConnection;
     group: 'A' | 'B';
     showDetectionWithUUID: string;
+    results: StoredStatisticsResult | null;
 }
 
 interface DetectionsTabState {
@@ -62,8 +69,6 @@ interface DetectionsTabState {
     showOnlyAlarmsAndWarnings: boolean;
     lastRequest: number;
     requestRunning: boolean;
-    results: StoredStatisticsResult | null;
-    alive: boolean;
     openedItem: string;
     recordingRunning: boolean;
     recordingCaptured: number;
@@ -75,7 +80,6 @@ interface DetectionsTabState {
 export default class DetectionsTab extends Component<DetectionsTabProps, DetectionsTabState> {
     private updateTimeout: ReturnType<typeof setTimeout> | null = null;
     private showTimeout: ReturnType<typeof setTimeout> | null = null;
-    private lastAnalysis: string | null = null;
 
     constructor(props: DetectionsTabProps) {
         super(props);
@@ -83,9 +87,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
             detailed: false,
             lastRequest: 0,
             requestRunning: false,
-            showOnlyAlarmsAndWarnings: false,
-            results: null,
-            alive: props.alive,
+            showOnlyAlarmsAndWarnings: window.localStorage.getItem('kisshome-defender-alarms') === 'true',
             openedItem: this.props.showDetectionWithUUID || '',
             recordingCaptured: 0,
             recordingRunning: false,
@@ -99,26 +101,22 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         const recordingRunningId = `kisshome-defender.${this.props.instance}.info.recording.running`;
         const recordingCapturedId = `kisshome-defender.${this.props.instance}.info.recording.capturedFull`;
         const recordingNextWriteId = `kisshome-defender.${this.props.instance}.info.recording.nextWrite`;
-        const detectionRunningId = `kisshome-defender.${this.props.instance}.info.detections.running`;
-        const lastAnalysisId = `kisshome-defender.${this.props.instance}.info.detections.lastAnalysis`;
+        const detectionRunningId = `kisshome-defender.${this.props.instance}.info.analysis.running`;
 
         const recordingRunning = await this.props.socket.getState(recordingRunningId);
         const recordingCaptured = await this.props.socket.getState(recordingCapturedId);
         const recordingNextWrite = await this.props.socket.getState(recordingNextWriteId);
         const detectionRunning = await this.props.socket.getState(detectionRunningId);
-        const lastAnalysis = await this.props.socket.getState(lastAnalysisId);
 
         this.onRecordingRunningChanged(recordingRunningId, recordingRunning);
         this.onRecordingCapturedChanged(recordingCapturedId, recordingCaptured);
         this.onRecordingNextTimeChanged(recordingNextWriteId, recordingNextWrite);
         this.onDetectionRunningChanged(detectionRunningId, detectionRunning);
-        await this.onLastAnalysisChanged(lastAnalysisId, lastAnalysis);
 
         await this.props.socket.subscribeState(recordingRunningId, this.onRecordingRunningChanged);
         await this.props.socket.subscribeState(recordingCapturedId, this.onRecordingCapturedChanged);
         await this.props.socket.subscribeState(recordingNextWriteId, this.onRecordingNextTimeChanged);
         await this.props.socket.subscribeState(detectionRunningId, this.onDetectionRunningChanged);
-        await this.props.socket.subscribeState(lastAnalysisId, this.onLastAnalysisChanged);
 
         if (this.state.showDetectionWithUUID) {
             this.setState({ openedItem: this.state.showDetectionWithUUID, detailed: true }, () => {
@@ -172,17 +170,6 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         }
     };
 
-    onLastAnalysisChanged = async (_id: string, state: ioBroker.State | null | undefined): Promise<void> => {
-        if (state?.val !== this.lastAnalysis) {
-            this.lastAnalysis = state?.val as string;
-            try {
-                await this.requestData();
-            } catch (e) {
-                console.error(`Error in DetectionsTab: ${e}`);
-            }
-        }
-    };
-
     componentWillUnmount(): void {
         if (this.showTimeout) {
             clearTimeout(this.showTimeout);
@@ -206,12 +193,8 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
             this.onRecordingCapturedChanged,
         );
         this.props.socket.unsubscribeState(
-            `kisshome-defender.${this.props.instance}.info.detections.running`,
+            `kisshome-defender.${this.props.instance}.info.analysis.running`,
             this.onRecordingCapturedChanged,
-        );
-        this.props.socket.unsubscribeState(
-            `kisshome-defender.${this.props.instance}.info.detections.lastAnalysis`,
-            this.onLastAnalysisChanged,
         );
     }
 
@@ -221,39 +204,8 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         });
     }
 
-    async requestData(): Promise<void> {
-        if (!this.state.lastRequest && Date.now() - this.state.lastRequest > 30_000) {
-            if (this.state.alive) {
-                await this.setStateAsync({ requestRunning: true });
-                const result = await this.props.socket.sendTo(`kisshome-defender.${this.props.instance}`, 'getData', {
-                    type: 'allStatistics',
-                });
-                if (result) {
-                    this.setState({
-                        requestRunning: false,
-                        lastRequest: Date.now(),
-                        results: result as StoredStatisticsResult,
-                    });
-                } else {
-                    this.setState({ requestRunning: false });
-                }
-            }
-        }
-
-        if (this.updateTimeout) {
-            clearTimeout(this.updateTimeout);
-            this.updateTimeout = null;
-        }
-        if (this.state.alive) {
-            this.updateTimeout = setTimeout(() => {
-                this.updateTimeout = null;
-                void this.requestData();
-            }, 60_000);
-        }
-    }
-
     renderLastDetection(): React.JSX.Element {
-        const item = this.state.results?.results?.[0];
+        const item = this.props.results?.results?.[0];
         if (!item) {
             return (
                 <div className="last-detection">
@@ -290,10 +242,11 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                     <div
                         style={{
                             paddingTop: 30,
+                            paddingRight: 30,
                             display: 'flex',
-                            flexDirection: 'column',
-                            gap: 10,
+                            gap: 30,
                             justifyContent: 'space-between',
+                            alignItems: 'center',
                         }}
                     >
                         <Button
@@ -317,7 +270,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                         >
                             {I18n.t('kisshome-defender_Execute control now')}
                         </Button>
-                        <div style={{ maxWidth: 150, flexGrow: 1 }}>
+                        <div style={{ flexGrow: 1 }}>
                             {this.state.detectionRunning ? <LinearProgress /> : null}
                         </div>
                     </div>
@@ -326,13 +279,10 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         );
     }
 
-    renderOneDetectionDetails(item: StoredAnalysisResult, worstType?: '' | 'Warning' | 'Alert'): React.JSX.Element {
-        // const backgroundColor1 = this.props.themeType === 'dark' ? '#303030' : '#eee';
-        // const backgroundColor2 = this.props.themeType === 'dark' ? '#404040' : '#f0f0f0';
-
+    renderOneDetectionDetails(item: StoredAnalysisResult): React.JSX.Element {
         let text: string;
         let title: string;
-        if (!worstType) {
+        if (!item.isAlert) {
             text = I18n.t(
                 'kisshome-defender_Your smart devices were checked on %s at %s. No unusual activities were detected.',
                 new Date(item.time).toLocaleDateString(),
@@ -359,6 +309,46 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 {I18n.t('kisshome-defender_tooltip_score_3')}
             </div>
         );
+        // Create for every device the combined status
+        const devices: {
+            [mac: string]: {
+                type: '' | 'Warning' | 'Alert';
+                description: string[];
+                score: number;
+                name?: string;
+                statistics?: DeviceStatistics;
+            };
+        } = {};
+
+        item.detections?.forEach(detection => {
+            const mac = detection.mac.toLowerCase();
+            const desc = this.props.results?.names?.[mac];
+            if (detection.ml || detection.suricata.length) {
+                devices[mac] ||= { score: 0, type: '', description: [], name: desc ? desc.desc || desc.ip || '' : '' };
+                if (detection.ml) {
+                    devices[mac].score = Math.max(devices[mac].score, detection.ml.score);
+                    devices[mac].type = detection.ml.type === 'Alert' || detection.ml.type === 'Warning' ? 'Alert' : '';
+                    if (detection.ml.description && devices[mac].type) {
+                        devices[mac].description.push(detection.ml.description);
+                    }
+                }
+                if (detection.suricata.length) {
+                    detection.suricata.forEach(sr => {
+                        devices[mac].score = Math.max(devices[mac].score, sr.score);
+                        devices[mac].type = sr.type === 'Alert' || sr.type === 'Warning' ? 'Alert' : devices[mac].type;
+                        if ((sr.description && sr.type === 'Alert') || sr.type === 'Warning') {
+                            devices[mac].description.push(sr.description);
+                        }
+                    });
+                }
+            } else {
+                devices[mac] ||= { score: 0, type: '', description: [], name: desc ? desc.desc || desc.ip || '' : '' };
+            }
+            // Find for this device the statistics
+            devices[mac].statistics = item.statistics.devices.find(device => device.mac.toLowerCase() === mac);
+        });
+
+        const macs = Object.keys(devices).sort();
 
         return (
             <AccordionDetails>
@@ -374,7 +364,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                     }}
                 >
                     <StatusIcon
-                        ok={!worstType}
+                        ok={!item.isAlert}
                         warning
                         size={48}
                     />
@@ -383,136 +373,73 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 <div style={{ fontSize: '1.5rem', fontStyle: 'italic' }}>{text}</div>
                 <Table size="small">
                     <TableHead>
-                        <TableCell>{I18n.t('kisshome-defender_Device')}</TableCell>
-                        <TableCell>{I18n.t('kisshome-defender_Number of packets')}</TableCell>
+                        <TableCell style={{ width: 250 }}>{I18n.t('kisshome-defender_Device')}</TableCell>
+                        <TableCell style={{ width: 120 }}>{I18n.t('kisshome-defender_Number of packets')}</TableCell>
                         <Tooltip title={scoreTooltip}>
-                            <TableCell style={{ fontWeight: 'bold' }}>
+                            <TableCell style={{ fontWeight: 'bold', width: 100 }}>
                                 {I18n.t('kisshome-defender_Anomaly Score')}*
                             </TableCell>
                         </Tooltip>
-                        <TableCell style={{ fontWeight: 'bold' }}>{I18n.t('kisshome-defender_Status')}</TableCell>
+                        <TableCell>{I18n.t('kisshome-defender_Status')}</TableCell>
                     </TableHead>
                     <TableBody>
-                        {item.detections.map((detection, index) => {
-                            const desc = this.state.results?.names?.[detection.mac.toLowerCase()];
-                            const name = desc ? desc.desc || desc.ip || '' : '';
-                            const result: React.JSX.Element[] = [];
-                            // Find for this device the statistics
-                            const statistics = item.statistics.devices.find(
-                                device => device.mac.toLowerCase() === detection.mac.toLowerCase(),
-                            );
-                            if (detection.ml) {
-                                result.push(
-                                    <TableRow key={`${index}-ml`}>
-                                        <TableCell>
-                                            {name ? (
-                                                <div>
-                                                    <div style={{ fontWeight: 'bold' }}>{name}</div>
-                                                    <div
-                                                        style={{
-                                                            fontSize: 'smaller',
-                                                            opacity: 0.8,
-                                                            fontStyle: 'italic',
-                                                        }}
-                                                    >
-                                                        {detection.mac}
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <div style={{ fontWeight: 'bold' }}>{detection.mac}</div>
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {statistics?.data_volume ? statistics.data_volume.packet_count : '--'}
-                                        </TableCell>
-                                        <TableCell
-                                            style={{
-                                                backgroundColor: detection.ml.score > 10 ? 'red' : undefined,
-                                                color: detection.ml.score > 10 ? 'white' : undefined,
-                                            }}
-                                        >
-                                            {this.props.group === 'A'
-                                                ? detection.ml.score <= 10
-                                                    ? I18n.t('kisshome-defender_No anomaly')
-                                                    : I18n.t('kisshome-defender_Anomaly')
-                                                : `${detection.ml.score}/100`}
-                                        </TableCell>
-                                        <TableCell
-                                            style={{
-                                                color: detection.ml.score > 10 ? 'red' : undefined,
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'flex-start',
-                                                gap: 10,
-                                                minHeight: 50,
-                                            }}
-                                        >
-                                            <StatusIcon
-                                                ok={detection.ml.score <= 10}
-                                                warning
-                                            />{' '}
-                                            {detection.ml.description || I18n.t('kisshome-defender_Unusual activity')}
-                                        </TableCell>
-                                    </TableRow>,
-                                );
-                            }
-                            detection.suricata.forEach((sr, idx) => {
-                                result.push(
-                                    <TableRow key={`${index}-${idx}`}>
-                                        <TableCell>
-                                            {name ? (
-                                                <div>
-                                                    <div style={{ fontWeight: 'bold' }}>{name}</div>
-                                                    <div
-                                                        style={{
-                                                            fontSize: 'smaller',
-                                                            opacity: 0.8,
-                                                            fontStyle: 'italic',
-                                                        }}
-                                                    >
-                                                        {detection.mac}
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <div style={{ fontWeight: 'bold' }}>{detection.mac}</div>
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {statistics?.data_volume ? statistics.data_volume.packet_count : '--'}
-                                        </TableCell>
-                                        <TableCell
-                                            style={{
-                                                backgroundColor: sr.score > 10 ? 'red' : undefined,
-                                                color: sr.score > 10 ? 'white' : undefined,
-                                            }}
-                                        >
-                                            {this.props.group === 'A'
-                                                ? sr.score <= 10
-                                                    ? I18n.t('kisshome-defender_No anomaly')
-                                                    : I18n.t('kisshome-defender_Anomaly')
-                                                : `${sr.score}/100`}
-                                        </TableCell>
-                                        <TableCell
-                                            style={{
-                                                color: sr.score > 10 ? 'red' : undefined,
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'flex-start',
-                                                gap: 10,
-                                                minHeight: 50,
-                                            }}
-                                        >
-                                            <StatusIcon
-                                                ok={sr.score <= 10}
-                                                warning
-                                            />{' '}
-                                            {sr.description}
-                                        </TableCell>
-                                    </TableRow>,
-                                );
-                            });
-                            return result;
-                        })}
+                        {macs.map(mac => (
+                            <TableRow key={mac}>
+                                <TableCell>
+                                    {devices[mac].name ? (
+                                        <div>
+                                            <div style={{ fontWeight: 'bold' }}>{devices[mac].name}</div>
+                                            <div
+                                                style={{
+                                                    fontSize: 'smaller',
+                                                    opacity: 0.8,
+                                                    fontStyle: 'italic',
+                                                }}
+                                            >
+                                                {mac}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div style={{ fontWeight: 'bold' }}>{mac}</div>
+                                    )}
+                                </TableCell>
+                                <TableCell style={{ textAlign: 'center' }}>
+                                    {devices[mac].statistics?.data_volume
+                                        ? devices[mac].statistics.data_volume.packet_count
+                                        : '--'}
+                                </TableCell>
+                                <TableCell
+                                    style={{
+                                        backgroundColor: devices[mac].type ? 'red' : 'green',
+                                        color: 'white',
+                                    }}
+                                >
+                                    {this.props.group === 'A'
+                                        ? !devices[mac].type
+                                            ? I18n.t('kisshome-defender_No anomaly')
+                                            : I18n.t('kisshome-defender_Anomaly')
+                                        : `${devices[mac].score}/100`}
+                                </TableCell>
+                                <TableCell
+                                    style={{
+                                        color: devices[mac].type ? 'red' : undefined,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'flex-start',
+                                        gap: 10,
+                                        minHeight: 50,
+                                    }}
+                                >
+                                    <StatusIcon
+                                        ok={!devices[mac].type}
+                                        warning
+                                    />{' '}
+                                    {devices[mac].description.length
+                                        ? devices[mac].description.join(', ')
+                                        : I18n.t('kisshome-defender_Ok')}
+                                </TableCell>
+                            </TableRow>
+                        ))}
                     </TableBody>
                 </Table>
             </AccordionDetails>
@@ -520,23 +447,6 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
     }
 
     renderOneDetection(item: StoredAnalysisResult): React.JSX.Element {
-        const detections = item.detections || [];
-        const worstDetection = detections?.reduce(
-            (worst: DetectionsForDevice | null, current): DetectionsForDevice | null => {
-                if (!worst || (current.worstType === 'Alert' && worst.worstType !== 'Alert')) {
-                    return current;
-                }
-                if (current.worstType === 'Warning' && worst.worstType !== 'Alert') {
-                    return current;
-                }
-                if (!current.worstType && worst.worstType !== 'Alert' && worst.worstType !== 'Warning') {
-                    return current;
-                }
-                return worst;
-            },
-            null as DetectionsForDevice | null,
-        );
-
         return (
             <Accordion
                 id={item.uuid}
@@ -570,20 +480,16 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 expanded={this.state.openedItem === item.uuid}
             >
                 <AccordionSummary expandIcon={<ExpandMore />}>
+                    <StatusIcon
+                        ok={!item.isAlert}
+                        warning
+                        style={{ marginRight: 8 }}
+                    />
                     <Typography component="span">
                         {I18n.t('kisshome-defender_Test result at %s', new Date(item.time).toLocaleString())}
                     </Typography>
-                    {worstDetection?.worstType === 'Warning' ? (
-                        <Warning style={{ marginLeft: 8, color: 'orange' }} />
-                    ) : worstDetection?.worstType === 'Alert' ? (
-                        <Alarm style={{ marginLeft: 8, color: 'red' }} />
-                    ) : !worstDetection?.worstType ? (
-                        <Info style={{ marginLeft: 8 }} />
-                    ) : null}
                 </AccordionSummary>
-                {this.state.openedItem === item.uuid
-                    ? this.renderOneDetectionDetails(item, worstDetection?.worstType)
-                    : null}
+                {this.state.openedItem === item.uuid ? this.renderOneDetectionDetails(item) : null}
             </Accordion>
         );
     }
@@ -599,10 +505,34 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
             return null;
         }
 
+        results = [...results];
+
+        results.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+
+        const onClose = (e: any): void => {
+            this.props.reportUxEvent({
+                id: 'kisshome-defender-detections-close',
+                event: 'click',
+                ts: Date.now(),
+                isTouchEvent: e instanceof TouchEvent,
+            });
+            // Set all known detections as known
+            const firstAlert = results?.find(item => item.isAlert);
+            if (firstAlert) {
+                this.props.socket.setState(
+                    `kisshome-defender.${this.props.instance || 0}.info.analysis.lastSeen`,
+                    firstAlert.uuid,
+                    true,
+                );
+            }
+
+            this.setState({ detailed: false });
+        };
+
         return (
             <Dialog
                 open={!0}
-                onClose={() => this.setState({ detailed: false })}
+                onClose={e => onClose(e)}
                 maxWidth="lg"
                 fullWidth
             >
@@ -618,6 +548,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                     {onlyWarningsAndAlerts?.length ? (
                         <FormControlLabel
                             label={I18n.t('kisshome-defender_Show only alarms and warnings')}
+                            checked={this.state.showOnlyAlarmsAndWarnings}
                             control={
                                 <Checkbox
                                     onClick={e => {
@@ -643,15 +574,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                     <Button
                         variant="contained"
                         color="primary"
-                        onClick={e => {
-                            this.props.reportUxEvent({
-                                id: 'kisshome-defender-detections-close',
-                                event: 'click',
-                                ts: Date.now(),
-                                isTouchEvent: e instanceof TouchEvent,
-                            });
-                            this.setState({ detailed: false });
-                        }}
+                        onClick={onClose}
                         startIcon={<Close />}
                     >
                         {I18n.t('kisshome-defender_Close')}
@@ -662,15 +585,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
     }
 
     render(): React.JSX.Element {
-        if (this.state.alive !== this.props.alive) {
-            setTimeout(() => {
-                this.setState({ alive: this.props.alive, lastRequest: 0 }, () => {
-                    void this.requestData();
-                });
-            }, 50);
-        }
-
-        if (!this.state.alive) {
+        if (!this.props.alive) {
             return (
                 <div
                     style={{
@@ -686,12 +601,33 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
             );
         }
 
-        const results = this.state.results?.results || [];
-        const onlyWarningsAndAlerts =
-            this.state.results?.results?.filter(item =>
+        const results = this.props.results?.results || [];
+        const onlyWarningsAndAlerts = results.filter(
+            item =>
                 // If any detection has a worstType of Alert or Warning
-                item.detections.find(detection => detection.worstType === 'Alert' || detection.worstType === 'Warning'),
-            ) || [];
+                item.isAlert,
+        );
+
+        // Calculate detections after last seen ID
+        let unseenWarningsCount = 0;
+        if (this.props.lastSeenID) {
+            let found = false;
+            for (let i = 0; i < onlyWarningsAndAlerts.length; i++) {
+                if (found) {
+                    unseenWarningsCount++;
+                }
+                if (onlyWarningsAndAlerts[i].uuid === this.props.lastSeenID) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                // If lastSeenID is not found, count all warnings and alerts
+                unseenWarningsCount = onlyWarningsAndAlerts.length;
+            }
+        } else {
+            unseenWarningsCount = onlyWarningsAndAlerts.length;
+        }
+
         return (
             <div
                 style={{
@@ -747,11 +683,11 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                     >
                         {I18n.t('kisshome-defender_Show results')}
                     </Button>
-                    {onlyWarningsAndAlerts?.length
-                        ? `${I18n.t('kisshome-defender_Unusual activities detected')}: ${onlyWarningsAndAlerts?.length}`
+                    {unseenWarningsCount
+                        ? `${I18n.t('kisshome-defender_New problem detected')}: ${unseenWarningsCount}`
                         : I18n.t('kisshome-defender_Everything OK')}
                     <StatusIcon
-                        ok={!onlyWarningsAndAlerts?.length}
+                        ok={!unseenWarningsCount}
                         warning
                         size={52}
                     />

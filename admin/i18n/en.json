@@ -26,6 +26,7 @@
   "Low": "Low",
   "MAC address": "MAC address",
   "Medium": "Medium",
+  "Path to store models and persistent data": "Path to store models and persistent data",
   "Recording": "Recording",
   "Recording enabled": "Recording enabled",
   "Recording is not running": "Recording is not running",

@@ -59,19 +59,19 @@ This was required to make it possible to uninstall and install the adapter again
 - [X] Send questionnaire does not work in the widget
 - [X] Status tab as in the: https://github.com/ioBroker/ioBroker.kisshome-defender/issues/16
 - [X] Show device names in day-volume drop-down menu
-- [ ] Add description about training to the admin settings GUI
+- [?] Add description about training to the admin settings GUI
 - [X] Polling of the model status for every device on the admin device list. For every device show the status of the model in percent?
-- [ ] Show hint in the admin settings GUI, that the docker saves the data in the `<IOBROKER-PATH>/iobroker-data/kisshome-defender` folder
+- [X] Show hint in the admin settings GUI, that the docker saves the data in the `<IOBROKER-PATH>/iobroker-data/kisshome-defender` folder
 - [X] Question: the given random function for analysis time returns array... (take the first element)
-- [ ] sudo docker run --rm -d --security-opt apparmor=unconfined -v /var/log/shared:/shared:Z -p 5000:5000 kisshome/ids:stable
+- [X] sudo docker run --rm -d --security-opt apparmor=unconfined -v /var/log/shared:/shared:Z -p 5000:5000 kisshome/ids:stable
 ## Detection list
-- [ ] Change the background color of the positive "info" to green in the table with all devices (Detections)
-- [ ] Change the icons of one Analysis from "info"/"warning"/"alert" to "ok"(✓)/"alert"(⚠)
-- [ ] Find the highest score in suricata list and compare it with ML score (take the highest) to show it in the table.
-- [ ] Combine description of alert from ML and all Suricata alerts into one description field.#
+- [X] Change the background color of the positive "info" to green in the table with all devices (Detections)
+- [X] Change the icons of one Analysis from "info"/"warning"/"alert" to "ok"(✓)/"alert"(⚠)
+- [X] Find the highest score in suricata list and compare it with ML score (take the highest) to show it in the table.
+- [X] Combine description of alert from ML and all Suricata alerts into one description field.#
 - [ ] The table must have always same widths of columns. Make ellipsis of the text and show tooltip with full text on hover for description.
-- [ ] Status tab and detection tab: "In the last 7 days anomalie activities detected: 100 (new 10)" and reset the new counter after the dialog opened
-- [ ] Show new detection on the top in the list
+- [?] Status tab and detection tab: "In the last 7 days anomalie activities detected: 100 (new 10)" and reset the new counter after the dialog opened
+- [X] Show new detection on the top in the list
 
 <!--
 	Placeholder for the next version (at the beginning of the line):

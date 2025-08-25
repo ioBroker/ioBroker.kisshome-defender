@@ -26,6 +26,7 @@
   "Low": "Faible",
   "MAC address": "Adresse Mac",
   "Medium": "Moyen",
+  "Path to store models and persistent data": "Chemin pour stocker les modèles et les données persistantes",
   "Recording": "Enregistrement",
   "Recording enabled": "Enregistrement activé",
   "Recording is not running": "L'enregistrement ne fonctionne pas",

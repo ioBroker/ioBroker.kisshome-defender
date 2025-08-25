@@ -129,6 +129,12 @@ export class KISSHomeResearchAdapter extends Adapter {
     async onMessage(msg: ioBroker.Message): Promise<void> {
         if (typeof msg === 'object' && msg.message) {
             switch (msg.command) {
+                case 'getDockerVolume':
+                    if (msg.callback) {
+                        this.sendTo(msg.from, msg.command, this.idsCommunication?.getDockerVolumePath(), msg.callback);
+                    }
+                    break;
+
                 case 'getDefaultGateway':
                     if (msg.callback) {
                         if (msg.message.value !== '0.0.0.0') {
@@ -1238,13 +1244,8 @@ export class KISSHomeResearchAdapter extends Adapter {
         return result;
     }
 
-    generateEvent = async (
-        type: 'Info' | 'Warning' | 'Alert',
-        id: string,
-        message: string,
-        subject: string,
-    ): Promise<void> => {
-        if (type !== 'Info') {
+    generateEvent = async (isAlert: boolean, scanUUID: string, message: string, subject: string): Promise<void> => {
+        if (isAlert) {
             // admin
             await this.registerNotification('kisshome-research', 'alert', message);
         }
@@ -1288,7 +1289,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                     message,
                     title: subject,
                     expire: 3600,
-                    priority: type === 'Alert' || type === 'Warning' ? 'normal' : 'high',
+                    priority: !isAlert ? 'normal' : 'high',
                     payload: {
                         // Todo: find project and view with kisshome widget
                         openUrl: 'https://iobroker.pro/vis-2/?main#kisshome',

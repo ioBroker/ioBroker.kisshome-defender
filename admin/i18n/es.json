@@ -26,6 +26,7 @@
   "Low": "Bajo",
   "MAC address": "Dirección MAC",
   "Medium": "Medio",
+  "Path to store models and persistent data": "Ruta para almacenar modelos y datos persistentes",
   "Recording": "Grabación",
   "Recording enabled": "Grabación habilitada",
   "Recording is not running": "La grabación no se está ejecutando",

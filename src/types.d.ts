@@ -56,7 +56,8 @@ type DetectionsForDevice = {
     suricata: Detection[];
     ml: Detection;
 
-    worstType: '' | 'Warning' | 'Alert'; // Worst type of detection for this device added by adapter
+    isAlert: boolean; // Worst type of detection for this device added by adapter
+    worstScore: number; // Worst score of detection for this device added by adapter
 };
 
 export interface DeviceStatistics {
@@ -93,6 +94,8 @@ type AnalysisResult = {
 type StoredAnalysisResult = {
     uuid: string;
     time: string;
+    isAlert: boolean; // If the analysis result is an alert
+    score: number; // Worst score of all detections in this result
 
     statistics: Statistics;
     detections: DetectionsForDevice[];

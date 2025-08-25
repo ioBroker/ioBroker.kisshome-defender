@@ -222,9 +222,13 @@
                 },
                 "docker.volume": {
                     "newLine": true,
-                    "type": "sendToText",
+                    "container": "text",
+                    "type": "textSendTo",
+                    "command": "getDockerVolume",
+                    "jsonData": "{}",
                     "label": "Path to store models and persistent data",
-                    "hidden": "!!data.docker?.selfHosted"
+                    "hidden": "!data.docker?.selfHosted",
+                    "default":  "<IOBROKER-PATH>/iobroker-data/kisshome-defender/volume"
                 },
                 "_restart": {
                     "newLine": true,

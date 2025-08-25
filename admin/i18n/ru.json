@@ -26,6 +26,7 @@
   "Low": "Низкий",
   "MAC address": "MAC-адрес",
   "Medium": "Средний",
+  "Path to store models and persistent data": "Путь к хранению моделей и постоянных данных",
   "Recording": "Запись",
   "Recording enabled": "Запись включена",
   "Recording is not running": "Запись не ведется",

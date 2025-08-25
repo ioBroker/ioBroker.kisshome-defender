@@ -26,6 +26,7 @@
   "Low": "低的",
   "MAC address": "MAC地址",
   "Medium": "中等的",
+  "Path to store models and persistent data": "存储模型和持久数据的路径",
   "Recording": "记录",
   "Recording enabled": "已启用录制功能",
   "Recording is not running": "录音未进行",

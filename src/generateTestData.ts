@@ -39,6 +39,9 @@ for (let i = -7; i <= 0; i++) {
         const oneResult: StoredAnalysisResult = {
             uuid: randomUUID(),
             time,
+            isAlert: false,
+            score: 0, // Worst score of all detections in this result
+
             statistics: {
                 suricataTotalRules: 0,
                 suricataAnalysisDurationMs: 0,
@@ -49,6 +52,8 @@ for (let i = -7; i <= 0; i++) {
             },
             detections: [],
         };
+        let theBiggestScore = 0;
+        let isAlert = false;
 
         for (let a = 0; a < MACs.length; a++) {
             const mac = MACs[a];
@@ -87,6 +92,7 @@ for (let i = -7; i <= 0; i++) {
 
             const score = Math.floor(Math.random() * 1000) / 10; // Random score between 0 and 100
             const scoreMl = Math.floor(Math.random() * 1000) / 10; // Random score between 0 and 100
+            const biggestScore = Math.max(score, scoreMl);
             // Generate for each MAC a detection
             const detection: DetectionsForDevice = {
                 mac,
@@ -106,10 +112,15 @@ for (let i = -7; i <= 0; i++) {
                     number_occurrences: scoreMl > 70 ? Math.floor(Math.random() * 3) + 1 : 0, // Random occurrences between 1 and 3
                     score: scoreMl, // Random score between 0 and 49
                 },
-                worstType: 'Alert', // Assuming the worst type is Alert for this example
+                worstScore: biggestScore,
+                isAlert: biggestScore > 10, // Assuming the worst type is Alert for this example
             };
             oneResult.detections.push(detection);
+            theBiggestScore = Math.max(theBiggestScore, biggestScore);
+            isAlert = isAlert || detection.isAlert;
         }
+        oneResult.isAlert = isAlert;
+        oneResult.score = theBiggestScore;
 
         result.results.push(oneResult);
     }
