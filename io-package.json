@@ -1,9 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "news": {
-
+      "0.1.1": {
+        "en": "Initial commit",
+        "de": "Ursprüngliche Verpflichtung",
+        "ru": "Первоначальное обязательство",
+        "pt": "Commit inicial",
+        "nl": "Eerste commit",
+        "fr": "Engagement initial",
+        "it": "Impegno iniziale",
+        "es": "Composición inicial",
+        "pl": "Początkowe zobowiązanie",
+        "uk": "Початкова комісія",
+        "zh-cn": "初步承诺"
+      }
     },
     "titleLang": {
       "en": "KISSHome defender",
