@@ -4,7 +4,7 @@ import { Button, CircularProgress, Link, Paper } from '@mui/material';
 import { Check, Close, Warning } from '@mui/icons-material';
 
 import { I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
-import type { DetectionsForDeviceWithUUID, ReportUxHandler } from '../types';
+import type { DetectionsForDeviceWithUUID, ReportUxHandler, StoredStatisticsResult } from '../types';
 import { bytes2string, findAdminLink } from './utils';
 
 interface StatusTabProps {
@@ -13,16 +13,16 @@ interface StatusTabProps {
     reportUxEvent: ReportUxHandler;
     alive: boolean;
     themeType: ThemeType;
-    detections: DetectionsForDeviceWithUUID[] | null;
-    lastSeenID: string; // Last seen ID for detections
+    lastSeenID: string; // Last seen ID for scan analysis
     onNavigateToDetections: () => void; // Optional callback for navigation
+    results: StoredStatisticsResult | null;
 }
 
 interface StatusTabState {
     recordingEnabled: boolean;
     recordingRunning: boolean;
     recordingCaptured: number;
-    idsStatus: 'Running' | 'Started' | 'Configuring' | 'Analyzing' | 'Exited' | 'No connection' | 'Unknown';
+    idsStatus: 'Running' | 'Started' | 'Configuring' | 'Analyzing' | 'Error' | 'No connection' | 'Unknown';
     adminLink: string;
 }
 
@@ -42,7 +42,12 @@ const styles: Record<'title' | 'row' | 'result', React.CSSProperties> = {
     },
 };
 
-export function StatusIcon(props: { ok: boolean; warning?: boolean; size?: number }): React.JSX.Element {
+export function StatusIcon(props: {
+    ok: boolean;
+    warning?: boolean;
+    size?: number;
+    style?: React.CSSProperties;
+}): React.JSX.Element {
     return (
         <span
             style={{
@@ -53,6 +58,7 @@ export function StatusIcon(props: { ok: boolean; warning?: boolean; size?: numbe
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
+                ...props.style,
             }}
         >
             {props.ok ? (
@@ -133,7 +139,7 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                         | 'Started'
                         | 'Configuring'
                         | 'Analyzing'
-                        | 'Exited'
+                        | 'Error'
                         | 'No connection'
                         | 'Unknown') || 'Unknown',
             });
@@ -165,7 +171,7 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
     };
 
     getStatusColor(): 'green' | 'red' | 'orange' {
-        if (this.state.idsStatus === 'Exited') {
+        if (this.state.idsStatus === 'Error') {
             return 'red';
         }
         if (this.state.idsStatus === 'No connection' || this.state.idsStatus === 'Unknown') {
@@ -175,35 +181,37 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
     }
 
     render(): React.JSX.Element {
-        let unseenAlertsCount = 0;
-        let unseenWarningsCount = 0;
-        const detectionsTest: React.JSX.Element[] = [];
+        const results = this.props.results?.results || [];
+        const onlyWarningsAndAlerts = results.filter(
+            item =>
+                // If any detection has a worstType of Alert or Warning
+                item.isAlert,
+        );
 
-        if (this.props.detections?.length && this.props.detections[0].uuid !== this.props.lastSeenID) {
-            for (let i = 0; i < this.props.detections.length; i++) {
-                if (this.props.detections[i].uuid !== this.props.lastSeenID) {
-                    if (this.props.detections[i].worstType === 'Alert') {
-                        unseenAlertsCount++;
-                    } else if (this.props.detections[i].worstType === 'Warning') {
-                        unseenWarningsCount++;
-                    }
-                } else {
-                    break; // We found the last seen ID, so we can stop counting
+        // Calculate detections after last seen ID
+        let unseenWarningsCount = 0;
+        if (this.props.lastSeenID) {
+            let found = false;
+            for (let i = 0; i < onlyWarningsAndAlerts.length; i++) {
+                if (found) {
+                    unseenWarningsCount++;
+                }
+                if (onlyWarningsAndAlerts[i].uuid === this.props.lastSeenID) {
+                    found = true;
                 }
             }
-            if (unseenWarningsCount || unseenAlertsCount) {
-                detectionsTest.push(
-                    <span key="warning">
-                        {I18n.t('kisshome-defender_Unusual activities detected')}:{' '}
-                        {unseenWarningsCount + unseenAlertsCount}
-                    </span>,
-                );
+            if (!found) {
+                // If lastSeenID is not found, count all warnings and alerts
+                unseenWarningsCount = onlyWarningsAndAlerts.length;
             }
+        } else {
+            unseenWarningsCount = onlyWarningsAndAlerts.length;
         }
+
         let problem = '';
         if (!this.props.alive) {
             problem = I18n.t('kisshome-defender_Instance is not running');
-        } else if (this.state.idsStatus === 'Exited') {
+        } else if (this.state.idsStatus === 'Error') {
             problem = I18n.t('kisshome-defender_Detection engine exited');
         } else if (!this.state.recordingRunning) {
             problem = I18n.t('kisshome-defender_Recording is not running. Please check the log for more details');
@@ -350,19 +358,20 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                 <Paper
                     style={{
                         height: 80,
-                        padding: 10,
+                        padding: '10px 40px 10px 10px',
                         border: `2px solid ${this.props.themeType === 'dark' ? 'white' : 'black'}`,
                         borderRadius: 0,
                         backgroundColor: this.props.themeType === 'dark' ? undefined : '#E6E6E6',
                         boxShadow: 'none',
-                        cursor: this.props.detections?.length ? 'pointer' : 'default',
+                        cursor: this.props.results?.results.length ? 'pointer' : 'default',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
+                        justifyContent: 'space-between',
+                        gap: 10,
                         fontSize: '1.3rem',
                     }}
                     onClick={() => {
-                        if (this.props.detections?.length) {
+                        if (this.props.results?.results.length) {
                             this.props.reportUxEvent({
                                 id: 'kisshome-defender-status-detections',
                                 event: 'click',
@@ -372,35 +381,16 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                         }
                     }}
                 >
-                    {unseenAlertsCount || unseenWarningsCount ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <div style={{ display: 'inline-block' }}>
-                                {I18n.t('kisshome-defender_Actual information')}:
-                            </div>
-                            {detectionsTest ? (
-                                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                                    <StatusIcon
-                                        ok={false}
-                                        warning
-                                        size={42}
-                                    />
-                                    {detectionsTest}
-                                </div>
-                            ) : (
-                                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                                    <StatusIcon
-                                        ok
-                                        size={42}
-                                    />
-                                    {I18n.t('kisshome-defender_Everything OK')}
-                                </div>
-                            )}
-                        </div>
-                    ) : this.props.detections?.length ? (
-                        <div>{I18n.t('kisshome-defender_No unseen detections')}</div>
-                    ) : (
-                        <div>{I18n.t('kisshome-defender_No detections')}</div>
-                    )}
+                    <div />
+                    {unseenWarningsCount
+                        ? `${I18n.t('kisshome-defender_New problem detected')}: ${unseenWarningsCount}`
+                        : I18n.t('kisshome-defender_Everything OK')}
+                    <StatusIcon
+                        style={{ marginLeft: 10 }}
+                        ok={!unseenWarningsCount}
+                        warning
+                        size={52}
+                    />
                 </Paper>
             </div>
         );

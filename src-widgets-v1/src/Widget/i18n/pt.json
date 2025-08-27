@@ -36,6 +36,7 @@
   "During the inspection on %s at %s, %s anomalies were detected that could indicate a potential security risk.": "Durante a inspeção em %s às %s, foram detectadas %s anomalias que poderiam indicar um potencial risco de segurança.",
   "During the inspection on %s at %s, an anomaly was detected that could indicate a potential security risk.": "Durante a inspeção em %s às %s, foi detectada uma anomalia que poderia indicar um potencial risco de segurança.",
   "Enable the instance in the admin": "Habilitar a instância no administrador",
+  "Error": "Erro",
   "Everything OK": "Tudo bem",
   "Everything is OK!": "Está tudo bem!",
   "Execute control now": "Execute o controle agora",

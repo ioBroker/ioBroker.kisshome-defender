@@ -54,7 +54,7 @@ export class IDSCommunication {
     private lastStatus: {
         Result: 'Success' | 'Error';
         Message?: {
-            Status: 'Started' | 'Configuring' | 'Running' | 'Analyzing' | 'Exited' | 'No connection';
+            Status: 'Started' | 'Configuring' | 'Running' | 'Analyzing' | 'Error' | 'No connection';
             Error?: string;
             Version?: string;
         };
@@ -67,7 +67,7 @@ export class IDSCommunication {
     private configSent = false;
     private readonly workingFolder: string;
     private readonly statisticsDir: string;
-    private currentStatus: 'Running' | 'Started' | 'Configuring' | 'Analyzing' | 'Exited' | 'No connection' | '' = '';
+    private currentStatus: 'Running' | 'Started' | 'Configuring' | 'Analyzing' | 'Error' | 'No connection' | '' = '';
     private currentVersion: string = '';
     private uploadStatus: {
         status: 'idle' | 'waitingOnResponse' | 'sendingFile';
@@ -474,8 +474,8 @@ export class IDSCommunication {
             }
 
             // Restart the IDS if it exited
-            if (this.dockerManager && this.lastStatus?.Message?.Status === 'Exited') {
-                this.adapter.log.warn('IDS exited, restarting...');
+            if (this.dockerManager && this.lastStatus?.Message?.Status === 'Error') {
+                this.adapter.log.warn('IDS in the error state, restarting...');
                 await this.dockerManager.restart();
             }
 

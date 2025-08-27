@@ -69,9 +69,9 @@ This was required to make it possible to uninstall and install the adapter again
 - [X] Change the icons of one Analysis from "info"/"warning"/"alert" to "ok"(✓)/"alert"(⚠)
 - [X] Find the highest score in suricata list and compare it with ML score (take the highest) to show it in the table.
 - [X] Combine description of alert from ML and all Suricata alerts into one description field.#
-- [ ] The table must have always same widths of columns. Make ellipsis of the text and show tooltip with full text on hover for description.
-- [?] Status tab and detection tab: "In the last 7 days anomalie activities detected: 100 (new 10)" and reset the new counter after the dialog opened
+- [X] The table must have always same widths of columns. Make ellipsis of the text and show tooltip with full text on hover for description.
 - [X] Show new detection on the top in the list
+- [?] Status tab and detection tab: "In the last 7 days anomalie activities detected: 100 (new 10)" and reset the new counter after the dialog opened
 
 <!--
 	Placeholder for the next version (at the beginning of the line):

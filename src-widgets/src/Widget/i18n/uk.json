@@ -36,6 +36,7 @@
   "During the inspection on %s at %s, %s anomalies were detected that could indicate a potential security risk.": "Під час перевірки %s за адресою %s було виявлено %s аномалій, які можуть свідчити про потенційну загрозу безпеці.",
   "During the inspection on %s at %s, an anomaly was detected that could indicate a potential security risk.": "Під час перевірки %s за адресою %s було виявлено аномалію, яка може свідчити про потенційну загрозу безпеці.",
   "Enable the instance in the admin": "Увімкніть екземпляр в адміністративній панелі",
+  "Error": "Помилка",
   "Everything OK": "Все гаразд",
   "Everything is OK!": "Все гаразд!",
   "Execute control now": "Виконайте контроль зараз",

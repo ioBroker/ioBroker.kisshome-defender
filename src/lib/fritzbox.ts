@@ -1,5 +1,6 @@
 import axios from 'axios';
 import crypto from 'node:crypto';
+import { I18n } from '@iobroker/adapter-core'; // Get common adapter utils
 
 const KNOWN_INTERFACES: Record<string, boolean> = {
     ':acc0': true, //	27,2 MB
@@ -138,8 +139,9 @@ export async function getFritzBoxToken(
                     const sessionInfo = response2.data.match(/<SID>(.*?)<\/SID>/);
                     if (sessionInfo) {
                         if (sessionInfo[1] === '0000000000000000') {
-                            log(`Invalid Fritz!Box password for user ${(login || 'dslf-config').trim()}`);
-                            log(`Ungueltiges Fitz!Box Passwort fuer den Nutzer ${(login || 'dslf-config').trim()}`);
+                            log(
+                                `${I18n.translate('Invalid Fritz!Box password for user')}: ${(login || 'dslf-config').trim()}`,
+                            );
                         }
                         return sessionInfo[1] !== '0000000000000000' ? sessionInfo[1] : null;
                     }
@@ -147,9 +149,7 @@ export async function getFritzBoxToken(
             }
         }
     } catch (e) {
-        console.error(e);
-        log(`Error while getting token: ${e.message}`);
-        log(`Fehler beim Erhalten eines Token: ${e.message}`);
+        log(`${I18n.translate('Error while getting token')}: ${e.message}`);
         return null;
     }
 

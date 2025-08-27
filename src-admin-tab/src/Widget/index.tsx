@@ -20,7 +20,13 @@ import StatusTab, { StatusIcon } from './components/StatusTab';
 import StatisticsTab from './components/StatisticsTab';
 import DetectionsTab from './components/DetectionsTab';
 import SettingsTab from './components/SettingsTab';
-import { ReportUxEventType, ReportUxHandler, StoredAnalysisResult, StoredStatisticsResult, UXEvent } from './types';
+import type {
+    ReportUxEventType,
+    ReportUxHandler,
+    StoredAnalysisResult,
+    StoredStatisticsResult,
+    UXEvent,
+} from './types';
 import Questionnaire, { type QuestionnaireJson } from './components/Questionnaire';
 
 function isMobile(): boolean {
@@ -58,12 +64,12 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
     private uxEvents: UXEvent[] | null = null;
     private uxEventsTimeout: ReturnType<typeof setTimeout> | null = null;
     private isMobile = isMobile();
-    private ignoreNewAlerts: Date | null = window.localStorage.getItem('ignoreNewAlerts')
-        ? new Date(window.localStorage.getItem('ignoreNewAlerts')!)
-        : null;
+    private ignoreNewAlerts: Date | null = null;
 
     constructor(props: KisshomeDefenderProps) {
         super(props);
+        const ignoreText: string | null = window.localStorage.getItem('ignoreNewAlerts');
+        this.ignoreNewAlerts = ignoreText ? new Date(ignoreText) : null;
         this.state = {
             alive: false,
             tab: (window.localStorage.getItem('kisshome-defender-tab') as KisshomeDefenderState['tab']) || 'status',
@@ -224,9 +230,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
                             break;
                         }
                     }
-                    const lastResult = typedResult.results[typedResult.results.length - 1];
-                    if (lastResult.uuid && lastResult.uuid !== this.state.lastSeenID) {
-                    }
+
                     this.setState(newState as KisshomeDefenderState);
                 }
             }
@@ -315,7 +319,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
 
         const onClose = (): void => {
             void this.props.socket.setState(
-                `kisshome-defender.${this.props.instance || '0'}.info.detections.lastSeen`,
+                `kisshome-defender.${this.props.instance || '0'}.info.analysis.lastSeen`,
                 this.state.showNewAlert.uuid,
                 true,
             );

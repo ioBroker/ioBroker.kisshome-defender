@@ -4,7 +4,7 @@ import { Button, CircularProgress, Link, Paper } from '@mui/material';
 import { Check, Close, Warning } from '@mui/icons-material';
 
 import { I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
-import type { DetectionsForDeviceWithUUID, ReportUxHandler, StoredStatisticsResult } from '../types';
+import type { ReportUxHandler, StoredStatisticsResult } from '../types';
 import { bytes2string, findAdminLink } from './utils';
 
 interface StatusTabProps {
@@ -22,7 +22,7 @@ interface StatusTabState {
     recordingEnabled: boolean;
     recordingRunning: boolean;
     recordingCaptured: number;
-    idsStatus: 'Running' | 'Started' | 'Configuring' | 'Analyzing' | 'Exited' | 'No connection' | 'Unknown';
+    idsStatus: 'Running' | 'Started' | 'Configuring' | 'Analyzing' | 'Error' | 'No connection' | 'Unknown';
     adminLink: string;
 }
 
@@ -62,11 +62,11 @@ export function StatusIcon(props: {
             }}
         >
             {props.ok ? (
-                <Check style={{ color: 'white', width: props.size, height: props.size, fill: 'currentColor' }} />
+                <Check style={{ color: 'white', width: props.size || 30, height: props.size || 30, fill: 'currentColor' }} />
             ) : props.warning ? (
-                <Warning style={{ color: 'red', width: props.size, height: props.size, fill: 'currentColor' }} />
+                <Warning style={{ color: 'red', width: props.size || 30, height: props.size || 30, fill: 'currentColor' }} />
             ) : (
-                <Close style={{ color: 'white', width: props.size, height: props.size, fill: 'currentColor' }} />
+                <Close style={{ color: 'white', width: props.size || 30, height: props.size || 30, fill: 'currentColor' }} />
             )}
         </span>
     );
@@ -139,7 +139,7 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                         | 'Started'
                         | 'Configuring'
                         | 'Analyzing'
-                        | 'Exited'
+                        | 'Error'
                         | 'No connection'
                         | 'Unknown') || 'Unknown',
             });
@@ -171,7 +171,7 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
     };
 
     getStatusColor(): 'green' | 'red' | 'orange' {
-        if (this.state.idsStatus === 'Exited') {
+        if (this.state.idsStatus === 'Error' || (this.state.idsStatus as string) === 'Exited') {
             return 'red';
         }
         if (this.state.idsStatus === 'No connection' || this.state.idsStatus === 'Unknown') {
@@ -211,7 +211,7 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
         let problem = '';
         if (!this.props.alive) {
             problem = I18n.t('kisshome-defender_Instance is not running');
-        } else if (this.state.idsStatus === 'Exited') {
+        } else if (this.state.idsStatus === 'Error') {
             problem = I18n.t('kisshome-defender_Detection engine exited');
         } else if (!this.state.recordingRunning) {
             problem = I18n.t('kisshome-defender_Recording is not running. Please check the log for more details');
