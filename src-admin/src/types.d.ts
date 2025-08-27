@@ -6,15 +6,21 @@ export type Device = {
     desc: string;
     uuid: string;
 };
-
+export interface IDSStatusMessage {
+    status: 'Started' | 'Configuring' | 'Running' | 'Analyzing' | 'Error' | 'No connection' | 'Exited';
+    error?: string;
+    version?: string;
+    training?: string;
+    trainingJson?: { [mac: MACAddress]: { progress: number; description: string } };
+}
 export interface IDSStatus {
-    Result: 'Success' | 'Error';
-    Message?: {
-        Status: 'Started' | 'Configuring' | 'Running' | 'Analyzing' | 'Error' | 'No connection' | 'Exited';
-        Error?: string;
-        Version?: string;
+    result: 'Success' | 'Error';
+    message?: IDSStatusMessage;
+    configuration?: {
+        callback_url: string;
+        allow_training: boolean;
+        meta_json: string;
     };
-    Model_status?: { [mac: MACAddress]: { Training_progress: number; description?: string } };
 }
 
 export interface DefenderAdapterConfig {
@@ -123,7 +129,7 @@ export interface StoredStatisticsResult {
 export interface DetectionsForDeviceWithUUID extends DetectionsForDevice {
     scanUUID: string; // UUID of the scan that created this detection
     uuid: string; // Own UUID for the detection
-    time: string;
+    time: string; // time of first occurrence or nothing
 }
 
 export type UXEventType = 'click' | 'down' | 'up' | 'show' | 'hide' | 'change' | 'create';

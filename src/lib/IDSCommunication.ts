@@ -15,6 +15,7 @@ import type {
     DetectionsForDeviceWithUUID,
     DeviceStatistics,
     IDSStatus,
+    IDSStatusMessage,
     MACAddress,
     StoredStatisticsResult,
 } from '../types';
@@ -437,8 +438,8 @@ export class IDSCommunication {
         }
     }
 
-    public getModelStatus(): IDSStatus['Model_status'] {
-        return this.lastStatus?.Model_status || {};
+    public getModelStatus(): IDSStatusMessage['trainingJson'] {
+        return this.lastStatus?.message?.trainingJson || {};
     }
 
     static normalizeMacAddress(mac: string | undefined): MACAddress {
@@ -456,7 +457,7 @@ export class IDSCommunication {
     private async _getStatus(): Promise<void> {
         try {
             const response = await axios.get(`${this.idsUrl}/status`, { timeout: 3000 });
-            if (this.currentStatus !== response.data.Message?.Status) {
+            if (this.currentStatus !== (response.data as IDSStatus).message?.status) {
                 this.adapter.log.debug(`Status: ${response.status} ${JSON.stringify(response.data)}`);
             }
             // {
@@ -466,33 +467,36 @@ export class IDSCommunication {
             //   }
             // }
             this.lastStatus = response.data;
-            if (!this.configSent && this.lastStatus?.Message?.Status === 'Started') {
+            if (!this.configSent && this.lastStatus?.message?.status === 'Started') {
                 await this._sendConfig();
                 this.configSent = true;
             }
-            if (this.configSent && this.lastStatus?.Message?.Status !== 'Started') {
+            if (this.configSent && this.lastStatus?.message?.status !== 'Started') {
                 this.configSent = false;
             }
 
             // Restart the IDS if it exited
             if (
                 this.dockerManager &&
-                (this.lastStatus?.Message?.Status === 'Error' || this.lastStatus?.Message?.Status === 'Exited')
+                (this.lastStatus?.message?.status === 'Error' || this.lastStatus?.message?.status === 'Exited')
             ) {
                 this.adapter.log.warn('IDS in the error state, restarting...');
                 await this.dockerManager.restart();
             }
+            if (this.lastStatus?.message?.training) {
+                this.lastStatus.message.trainingJson = JSON.parse(this.lastStatus.message.training);
+            }
 
-            if (this.lastStatus?.Model_status) {
+            if (this.lastStatus?.message?.trainingJson) {
                 // Normalize all MACs
                 const normalizedModelStatus: {
-                    [mac: MACAddress]: { Training_progress: number; description?: string };
+                    [mac: MACAddress]: { progress: number; description: string };
                 } = {};
-                for (const mac in this.lastStatus.Model_status) {
+                for (const mac in this.lastStatus.message.trainingJson) {
                     const normalizedMac = IDSCommunication.normalizeMacAddress(mac); // Normalize MAC address
-                    normalizedModelStatus[normalizedMac] = this.lastStatus.Model_status[mac];
+                    normalizedModelStatus[normalizedMac] = this.lastStatus.message.trainingJson[mac];
                 }
-                this.lastStatus.Model_status = normalizedModelStatus;
+                this.lastStatus.message.trainingJson = normalizedModelStatus;
             }
 
             this.triggerUpdate();
@@ -511,23 +515,23 @@ export class IDSCommunication {
             }
 
             this.lastStatus = {
-                Result: 'Error',
-                Message: {
-                    Status: 'No connection',
-                    Error: error.response?.data || 'No response data',
+                result: 'Error',
+                message: {
+                    status: 'No connection',
+                    error: error.response?.data || 'No response data',
                 },
             };
         }
-        if (this.currentStatus !== (this.lastStatus?.Message?.Status || 'No connection')) {
+        if (this.currentStatus !== (this.lastStatus?.message?.status || 'No connection')) {
             this.configSent = false;
-            this.currentStatus = this.lastStatus?.Message?.Status || 'No connection';
+            this.currentStatus = this.lastStatus?.message?.status || 'No connection';
             // Update variables
-            void this.adapter.setState('info.ids.status', this.lastStatus?.Message?.Status || 'No connection', true);
+            void this.adapter.setState('info.ids.status', this.lastStatus?.message?.status || 'No connection', true);
         }
-        if (this.currentVersion !== (this.lastStatus?.Message?.Version || '--')) {
-            this.currentVersion = this.lastStatus?.Message?.Version || '--';
+        if (this.currentVersion !== (this.lastStatus?.message?.version || '--')) {
+            this.currentVersion = this.lastStatus?.message?.version || '--';
             // Update version
-            void this.adapter.setState('info.ids.version', this.lastStatus?.Message?.Version || '--', true);
+            void this.adapter.setState('info.ids.version', this.lastStatus?.message?.version || '--', true);
         }
     }
 

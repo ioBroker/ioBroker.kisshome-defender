@@ -23,7 +23,7 @@ import { Add, Delete } from '@mui/icons-material';
 // valid
 import { I18n, type LegacyConnection, Message } from '@iobroker/adapter-react-v5';
 import { ConfigGeneric, type ConfigGenericProps, type ConfigGenericState } from '@iobroker/json-config';
-import type { IDSStatus, MACAddress } from './types';
+import type { IDSStatusMessage, MACAddress } from './types';
 
 export type Device = {
     enabled: boolean;
@@ -258,7 +258,7 @@ interface ConfigCustomInstancesSelectorState extends ConfigGenericState {
     IP2MAC: Record<string, string>;
     MAC2VENDOR: Record<string, string>;
     runningRequest?: boolean;
-    modelStatus: IDSStatus['Model_status'];
+    modelStatus: IDSStatusMessage['trainingJson'];
 }
 
 export default class ConfigCustomInstancesSelector extends ConfigGeneric<
@@ -346,7 +346,7 @@ export default class ConfigCustomInstancesSelector extends ConfigGeneric<
                 .then(result => {
                     if (result.modelStatus) {
                         this.setState({
-                            modelStatus: result.modelStatus as IDSStatus['Model_status'],
+                            modelStatus: result.modelStatus as IDSStatusMessage['trainingJson'],
                         });
                     }
                 });
@@ -795,7 +795,7 @@ export default class ConfigCustomInstancesSelector extends ConfigGeneric<
         const status = this.state.modelStatus[mac];
         return (
             <span title={JSON.stringify(status)}>
-                {status.Training_progress}%{status.description ? ` [${status.description}]` : ''}
+                {status.progress}%{status.description ? ` [${status.description}]` : ''}
             </span>
         );
     }
