@@ -1,1 +1,0 @@
-import{X as n,a as o}from"./createTheme-CNa02CSM.js";import{C as s}from"./ConfigCustomKissHomeDefenderSet__loadShare__react__loadShare__-DCHqfbay.js";function r(e){return Object.keys(e).length===0}function a(e=null){const t=s.useContext(n);return!t||r(t)?e:t}const m=o();function h(e=m){return a(e)}export{a,h as u};

@@ -71,8 +71,10 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
 
     constructor(props: KisshomeDefenderProps) {
         super(props);
+
         const ignoreText: string | null = window.localStorage.getItem('ignoreNewAlerts');
         this.ignoreNewAlerts = ignoreText ? new Date(ignoreText) : null;
+
         this.state = {
             alive: false,
             tab: (window.localStorage.getItem('kisshome-defender-tab') as KisshomeDefenderState['tab']) || 'status',
@@ -89,6 +91,9 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
     }
 
     async componentDidMount(): Promise<void> {
+        const instance = this.props.instance || '0';
+        const socket = this.props.socket;
+
         // Any initialization logic can be added here
         this.reportUxEvent({
             id: 'kisshome-defender-widget',
@@ -97,35 +102,33 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
             data: window.navigator.userAgent,
         });
 
-        const idLastSeen = `kisshome-defender.${this.props.instance || 0}.info.analysis.lastSeen`;
-        const stateLastSeen = await this.props.socket.getState(idLastSeen);
+        const idLastSeen = `kisshome-defender.${instance}.info.analysis.lastSeen`;
+        const stateLastSeen = await socket.getState(idLastSeen);
         this.onStateLastSeen(idLastSeen, stateLastSeen);
-        await this.props.socket.subscribeState(idLastSeen, this.onStateLastSeen);
+        await socket.subscribeState(idLastSeen, this.onStateLastSeen);
 
-        const idLastShownAlert = `kisshome-defender.${this.props.instance || 0}.info.analysis.lastShownAlert`;
-        const stateLastShownAlert = await this.props.socket.getState(idLastShownAlert);
+        const idLastShownAlert = `kisshome-defender.${instance}.info.analysis.lastShownAlert`;
+        const stateLastShownAlert = await socket.getState(idLastShownAlert);
         this.onStateLastShownAlertSeen(idLastShownAlert, stateLastShownAlert);
-        await this.props.socket.subscribeState(idLastShownAlert, this.onStateLastShownAlertSeen);
+        await socket.subscribeState(idLastShownAlert, this.onStateLastShownAlertSeen);
 
-        const idQuestionnaire = `kisshome-defender.${this.props.instance || 0}.info.cloudSync.questionnaire`;
-        const stateQuestionnaire = await this.props.socket.getState(idQuestionnaire);
+        const idQuestionnaire = `kisshome-defender.${instance}.info.cloudSync.questionnaire`;
+        const stateQuestionnaire = await socket.getState(idQuestionnaire);
         this.onStateQuestionnaire(idQuestionnaire, stateQuestionnaire);
-        await this.props.socket.subscribeState(idQuestionnaire, this.onStateQuestionnaire);
+        await socket.subscribeState(idQuestionnaire, this.onStateQuestionnaire);
 
-        const aliveId = `system.adapter.kisshome-defender.${this.props.instance || 0}.alive`;
-        const state = await this.props.socket.getState(aliveId);
+        const aliveId = `system.adapter.kisshome-defender.${instance}.alive`;
+        const state = await socket.getState(aliveId);
         this.onStateAlive(aliveId, state, true);
-        await this.props.socket.subscribeState(aliveId, this.onStateAlive);
+        await socket.subscribeState(aliveId, this.onStateAlive);
 
-        const groupState = await this.props.socket.getState(
-            `kisshome-defender.${this.props.instance || 0}.info.ids.group`,
-        );
+        const groupState = await socket.getState(`kisshome-defender.${instance}.info.ids.group`);
         this.setState({ group: (groupState?.val as 'A' | 'B') === 'B' ? 'B' : 'A' });
 
-        const idLastCreated = `kisshome-defender.${this.props.instance || 0}.info.analysis.lastCreated`;
-        const stateLastCreated = await this.props.socket.getState(idLastCreated);
+        const idLastCreated = `kisshome-defender.${instance}.info.analysis.lastCreated`;
+        const stateLastCreated = await socket.getState(idLastCreated);
         this.onStateLastCreated(idLastCreated, stateLastCreated);
-        await this.props.socket.subscribeState(idLastCreated, this.onStateLastCreated);
+        await socket.subscribeState(idLastCreated, this.onStateLastCreated);
     }
 
     componentWillUnmount(): void {
@@ -135,6 +138,8 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
             event: 'hide',
             ts: Date.now(),
         });
+        const instance = this.props.instance || '0';
+        const socket = this.props.socket;
 
         // Send UX events if any
         if (this.uxEventsTimeout) {
@@ -142,28 +147,20 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
             this.uxEventsTimeout = null;
             const uxEvents = this.uxEvents;
             this.uxEvents = null;
-            void this.props.socket.sendTo(`kisshome-defender.${this.props.instance || 0}`, 'reportUxEvents', uxEvents);
+            void socket.sendTo(`kisshome-defender.${instance}`, 'reportUxEvents', uxEvents);
         }
-        this.props.socket.unsubscribeState(
-            `kisshome-defender.${this.props.instance || 0}.info.analysis.lastCreated`,
-            this.onStateLastCreated,
-        );
-        this.props.socket.unsubscribeState(
-            `kisshome-defender.${this.props.instance || 0}.info.analysis.lastSeen`,
-            this.onStateLastSeen,
-        );
-        this.props.socket.unsubscribeState(
-            `kisshome-defender.${this.props.instance || 0}.info.analysis.lastShownAlert`,
+
+        socket.unsubscribeState(`kisshome-defender.${instance}.info.analysis.lastCreated`, this.onStateLastCreated);
+        socket.unsubscribeState(`kisshome-defender.${instance}.info.analysis.lastSeen`, this.onStateLastSeen);
+        socket.unsubscribeState(
+            `kisshome-defender.${instance}.info.analysis.lastShownAlert`,
             this.onStateLastShownAlertSeen,
         );
-        this.props.socket.unsubscribeState(
-            `kisshome-defender.${this.props.instance || 0}.info.cloudSync.questionnaire`,
+        socket.unsubscribeState(
+            `kisshome-defender.${instance}.info.cloudSync.questionnaire`,
             this.onStateQuestionnaire,
         );
-        this.props.socket.unsubscribeState(
-            `system.adapter.kisshome-defender.${this.props.instance || 0}.alive`,
-            this.onStateAlive,
-        );
+        socket.unsubscribeState(`system.adapter.kisshome-defender.${instance}.alive`, this.onStateAlive);
     }
 
     onStateAlive = (id: string, state: ioBroker.State | null | undefined, doUpdateData?: boolean): void => {
@@ -219,8 +216,11 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
     };
 
     async requestData(): Promise<void> {
+        const instance = this.props.instance || '0';
+        const socket = this.props.socket;
+
         if (this.state.alive) {
-            const result = await this.props.socket.sendTo(`kisshome-defender.${this.props.instance}`, 'getData', {
+            const result = await socket.sendTo(`kisshome-defender.${instance}`, 'getData', {
                 type: 'allStatistics',
             });
             if (result) {
@@ -244,8 +244,8 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
                                     // If we are not ignoring new alerts, show it
                                     newState.showNewAlert = typedResult.results[i];
                                 }
-                                void this.props.socket.setState(
-                                    `kisshome-defender.${this.props.instance || 0}.info.analysis.lastShownAlert`,
+                                void socket.setState(
+                                    `kisshome-defender.${instance}.info.analysis.lastShownAlert`,
                                     typedResult.results[i].uuid,
                                     true,
                                 );

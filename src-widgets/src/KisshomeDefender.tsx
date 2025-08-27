@@ -51,6 +51,7 @@ interface KisshomeDefenderState extends VisRxWidgetState {
     showNewAlert: StoredAnalysisResult | null; // ID of the new alert to show
     ignoreForNext10Minutes: boolean;
     showDetectionWithUUID: string;
+    resultsDialogOpened: boolean; // If set, ignore new alerts until this date
 }
 
 const styles: Record<string, React.CSSProperties> = {
@@ -67,6 +68,8 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
     private uxEventsTimeout: ReturnType<typeof setTimeout> | null = null;
     private isMobile = isMobile();
     private ignoreNewAlerts: Date | null = null;
+    private lastCreated = '';
+    private lastShownAlertDialog = '';
 
     constructor(props: VisRxWidgetProps) {
         super(props);
@@ -86,6 +89,7 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
             showNewAlert: null,
             ignoreForNext10Minutes: false,
             showDetectionWithUUID: '',
+            resultsDialogOpened: false,
         };
     }
 
@@ -129,6 +133,9 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
 
     async componentDidMount(): Promise<void> {
         super.componentDidMount();
+        const instance = this.state.rxData.instance || '0';
+        const socket = this.props.context.socket;
+
         // Any initialization logic can be added here
         this.reportUxEvent({
             id: 'kisshome-defender-widget',
@@ -137,30 +144,33 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
             data: window.navigator.userAgent,
         });
 
-        const idLastSeen = `kisshome-defender.${this.state.rxData.instance || 0}.info.analysis.lastSeen`;
-        const stateLastSeen = await this.props.context.socket.getState(idLastSeen);
+        const idLastSeen = `kisshome-defender.${instance}.info.analysis.lastSeen`;
+        const stateLastSeen = await socket.getState(idLastSeen);
         this.onStateLastSeen(idLastSeen, stateLastSeen);
-        await this.props.context.socket.subscribeState(idLastSeen, this.onStateLastSeen);
+        await socket.subscribeState(idLastSeen, this.onStateLastSeen);
 
-        const idQuestionnaire = `kisshome-defender.${this.state.rxData.instance || 0}.info.cloudSync.questionnaire`;
-        const stateQuestionnaire = await this.props.context.socket.getState(idQuestionnaire);
+        const idLastShownAlert = `kisshome-defender.${instance}.info.analysis.lastShownAlert`;
+        const stateLastShownAlert = await socket.getState(idLastShownAlert);
+        this.onStateLastShownAlertSeen(idLastShownAlert, stateLastShownAlert);
+        await socket.subscribeState(idLastShownAlert, this.onStateLastShownAlertSeen);
+
+        const idQuestionnaire = `kisshome-defender.${instance}.info.cloudSync.questionnaire`;
+        const stateQuestionnaire = await socket.getState(idQuestionnaire);
         this.onStateQuestionnaire(idQuestionnaire, stateQuestionnaire);
-        await this.props.context.socket.subscribeState(idQuestionnaire, this.onStateQuestionnaire);
+        await socket.subscribeState(idQuestionnaire, this.onStateQuestionnaire);
 
-        const aliveId = `system.adapter.kisshome-defender.${this.state.rxData.instance || 0}.alive`;
-        const state = await this.props.context.socket.getState(aliveId);
-        this.onStateAlive(aliveId, state);
-        await this.props.context.socket.subscribeState(aliveId, this.onStateAlive);
+        const aliveId = `system.adapter.kisshome-defender.${instance}.alive`;
+        const state = await socket.getState(aliveId);
+        this.onStateAlive(aliveId, state, true);
+        await socket.subscribeState(aliveId, this.onStateAlive);
 
-        const groupState = await this.props.context.socket.getState(
-            `kisshome-defender.${this.state.rxData.instance || 0}.info.ids.group`,
-        );
+        const groupState = await socket.getState(`kisshome-defender.${instance}.info.ids.group`);
         this.setState({ group: (groupState?.val as 'A' | 'B') === 'B' ? 'B' : 'A' });
 
-        const idLastCreated = `kisshome-defender.${this.state.rxData.instance || 0}.info.analysis.lastCreated`;
-        const stateLastCreated = await this.props.context.socket.getState(idLastCreated);
+        const idLastCreated = `kisshome-defender.${instance}.info.analysis.lastCreated`;
+        const stateLastCreated = await socket.getState(idLastCreated);
         this.onStateLastCreated(idLastCreated, stateLastCreated);
-        await this.props.context.socket.subscribeState(idLastCreated, this.onStateLastCreated);
+        await socket.subscribeState(idLastCreated, this.onStateLastCreated);
     }
 
     componentWillUnmount(): void {
@@ -170,6 +180,8 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
             event: 'hide',
             ts: Date.now(),
         });
+        const instance = this.state.rxData.instance || '0';
+        const socket = this.props.context.socket;
 
         // Send UX events if any
         if (this.uxEventsTimeout) {
@@ -177,34 +189,26 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
             this.uxEventsTimeout = null;
             const uxEvents = this.uxEvents;
             this.uxEvents = null;
-            void this.props.context.socket.sendTo(
-                `kisshome-defender.${this.state.rxData.instance || 0}`,
-                'reportUxEvents',
-                uxEvents,
-            );
+            void socket.sendTo(`kisshome-defender.${instance}`, 'reportUxEvents', uxEvents);
         }
-        this.props.context.socket.unsubscribeState(
-            `kisshome-defender.${this.state.rxData.instance || 0}.info.analysis.lastCreated`,
-            this.onStateLastCreated,
+
+        socket.unsubscribeState(`kisshome-defender.${instance}.info.analysis.lastCreated`, this.onStateLastCreated);
+        socket.unsubscribeState(`kisshome-defender.${instance}.info.analysis.lastSeen`, this.onStateLastSeen);
+        socket.unsubscribeState(
+            `kisshome-defender.${instance}.info.analysis.lastShownAlert`,
+            this.onStateLastShownAlertSeen,
         );
-        this.props.context.socket.unsubscribeState(
-            `kisshome-defender.${this.state.rxData.instance || 0}.info.analysis.lastSeen`,
-            this.onStateLastSeen,
-        );
-        this.props.context.socket.unsubscribeState(
-            `kisshome-defender.${this.state.rxData.instance || 0}.info.cloudSync.questionnaire`,
+        socket.unsubscribeState(
+            `kisshome-defender.${instance}.info.cloudSync.questionnaire`,
             this.onStateQuestionnaire,
         );
-        this.props.context.socket.unsubscribeState(
-            `system.adapter.kisshome-defender.${this.state.rxData.instance || 0}.alive`,
-            this.onStateAlive,
-        );
+        socket.unsubscribeState(`system.adapter.kisshome-defender.${instance}.alive`, this.onStateAlive);
     }
 
-    onStateAlive = (id: string, state: ioBroker.State | null | undefined): void => {
+    onStateAlive = (id: string, state: ioBroker.State | null | undefined, doUpdateData?: boolean): void => {
         if (id === `system.adapter.kisshome-defender.${this.state.rxData.instance || 0}.alive`) {
             if (!!state?.val !== this.state.alive) {
-                this.setState({ alive: !!state?.val });
+                this.setState({ alive: !!state?.val }, () => !doUpdateData && this.requestData());
             }
         }
     };
@@ -223,31 +227,44 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
     };
 
     onStateLastSeen = (id: string, state: ioBroker.State | null | undefined): void => {
-        if (id === `kisshome-defender.${this.state.rxData.instance || 0}.info.detections.lastSeen`) {
+        if (id === `kisshome-defender.${this.state.rxData.instance || 0}.info.analysis.lastSeen`) {
             if ((state?.val || '') !== this.state.lastSeenID) {
-                this.setState({ lastSeenID: (state?.val as string) || '' });
+                this.lastShownAlertDialog ||= state?.val as string;
+                this.setState({ lastSeenID: (state?.val as string) || '' }, () => {
+                    if (this.state.showNewAlert && this.state.showNewAlert.uuid === this.state.lastSeenID) {
+                        // If the shown alert is the last seen, hide it
+                        this.setState({ showNewAlert: null });
+                    }
+                });
+            }
+        }
+    };
+
+    onStateLastShownAlertSeen = (id: string, state: ioBroker.State | null | undefined): void => {
+        if (id === `kisshome-defender.${this.state.rxData.instance || 0}.info.analysis.lastShownAlert`) {
+            if ((state?.val || '') !== this.lastShownAlertDialog) {
+                this.lastShownAlertDialog = (state?.val as string) || this.state.lastSeenID;
             }
         }
     };
 
     onStateLastCreated = (id: string, state: ioBroker.State | null | undefined): void => {
         if (id === `kisshome-defender.${this.state.rxData.instance || 0}.info.analysis.lastCreated`) {
-            if (state?.val) {
-                // Read results anew
+            if (state?.val !== this.lastCreated) {
+                this.lastCreated = state?.val as string;
                 void this.requestData();
             }
         }
     };
 
     async requestData(): Promise<void> {
+        const instance = this.state.rxData.instance || '0';
+        const socket = this.props.context.socket;
+
         if (this.state.alive) {
-            const result = await this.props.context.socket.sendTo(
-                `kisshome-defender.${this.state.rxData.instance}`,
-                'getData',
-                {
-                    type: 'allStatistics',
-                },
-            );
+            const result = await socket.sendTo(`kisshome-defender.${instance}`, 'getData', {
+                type: 'allStatistics',
+            });
             if (result) {
                 const typedResult = result as StoredStatisticsResult;
                 const newState: Partial<KisshomeDefenderState> = {
@@ -257,22 +274,23 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
                 if (typedResult.results && typedResult.results.length) {
                     // Find the last alert in the results
                     for (let i = typedResult.results.length - 1; i >= 0; i--) {
+                        // Get the latest alert
                         if (typedResult.results[i].isAlert) {
-                            if (typedResult.results[i].uuid !== this.state.lastSeenID) {
+                            // If it is not the last seen, show it
+                            if (typedResult.results[i].uuid !== this.lastShownAlertDialog) {
+                                this.lastShownAlertDialog = typedResult.results[i].uuid;
                                 if (
-                                    (this.ignoreNewAlerts && this.ignoreNewAlerts > new Date()) ||
-                                    this.state.tab === 'detections'
+                                    (!this.ignoreNewAlerts || this.ignoreNewAlerts <= new Date()) &&
+                                    !this.state.resultsDialogOpened
                                 ) {
-                                    // Ignore new alerts if ignoreNewAlerts is set, or we are already in the detections tab
-                                    void this.props.context.socket.setState(
-                                        `kisshome-defender.${this.state.rxData.instance || 0}.info.analysis.lastSeen`,
-                                        typedResult.results[i].uuid,
-                                        true,
-                                    );
-                                } else {
                                     // If we are not ignoring new alerts, show it
                                     newState.showNewAlert = typedResult.results[i];
                                 }
+                                void socket.setState(
+                                    `kisshome-defender.${instance}.info.analysis.lastShownAlert`,
+                                    typedResult.results[i].uuid,
+                                    true,
+                                );
                             }
                             break;
                         }
@@ -370,11 +388,6 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
 
         const onClose = (): void => {
             if (this.state.showNewAlert) {
-                void this.props.context.socket.setState(
-                    `kisshome-defender.${this.state.rxData.instance || '0'}.info.analysis.lastSeen`,
-                    this.state.showNewAlert.uuid,
-                    true,
-                );
                 this.reportUxEvent({
                     id: 'kisshome-defender-alert',
                     event: 'hide',
@@ -494,17 +507,22 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
                     variant="dense"
                     style={{ width: 'calc(100% - 48px)', display: 'flex', backgroundColor: '#333E50', color: 'white' }}
                 >
-                    <span>KISSHOME</span>
+                    <span style={{ textTransform: 'uppercase' }}>KISSHome</span>
                     <img
                         src={logo}
                         style={{ height: 32, marginRight: 8, marginLeft: 16 }}
                         alt="KISShome Defender"
                     />
                     <Tabs
+                        className="Mui-horizontal-tabs"
                         style={{ flexGrow: 1 }}
                         value={this.state.tab || 'status'}
                         onChange={(_event, value: string) => {
-                            this.setState({ tab: value as KisshomeDefenderState['tab'] });
+                            this.setState({
+                                tab: value as KisshomeDefenderState['tab'],
+                                showDetectionWithUUID: '',
+                                resultsDialogOpened: false,
+                            });
                             window.localStorage.setItem('kisshome-defender-tab', value);
                             this.reportUxEvent({
                                 id: 'kisshome-defender-tabs',
@@ -575,9 +593,9 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
                     {this.state.tab === 'statistics' ? (
                         <StatisticsTab
                             alive={this.state.alive}
+                            socket={this.props.context.socket}
                             reportUxEvent={this.reportUxEvent}
                             instance={this.state.rxData.instance || '0'}
-                            socket={this.props.context.socket}
                             themeType={this.props.context.themeType}
                             lang={this.props.context.lang}
                         />
@@ -587,19 +605,20 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
                             alive={this.state.alive}
                             results={this.state.results}
                             socket={this.props.context.socket}
-                            reportUxEvent={this.reportUxEvent}
                             lastSeenID={this.state.lastSeenID}
+                            reportUxEvent={this.reportUxEvent}
                             instance={this.state.rxData.instance || '0'}
                             themeType={this.props.context.themeType}
                             group={this.state.group}
                             showDetectionWithUUID={this.state.showDetectionWithUUID}
+                            onResultsDialogOpen={opened => this.setState({ resultsDialogOpened: opened })}
                         />
                     ) : null}
                     {this.state.tab === 'settings' ? (
                         <SettingsTab
                             reportUxEvent={this.reportUxEvent}
-                            instance={this.state.rxData.instance || '0'}
                             socket={this.props.context.socket}
+                            instance={this.state.rxData.instance || '0'}
                             themeType={this.props.context.themeType}
                         />
                     ) : null}

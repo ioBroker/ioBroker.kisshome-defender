@@ -62,6 +62,7 @@ interface DetectionsTabProps {
     group: 'A' | 'B';
     showDetectionWithUUID: string;
     results: StoredStatisticsResult | null;
+    onResultsDialogOpen: (opened: boolean) => void;
 }
 
 interface DetectionsTabState {
@@ -120,6 +121,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
 
         if (this.state.showDetectionWithUUID) {
             this.setState({ openedItem: this.state.showDetectionWithUUID, detailed: true }, () => {
+                this.props.onResultsDialogOpen(true);
                 this.props.reportUxEvent({
                     id: 'kisshome-defender-detection',
                     event: 'show',
@@ -488,6 +490,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 }}
                 expanded={this.state.openedItem === item.uuid}
             >
+                <div style={{ display: 'none' }}>{item.uuid}</div>
                 <AccordionSummary expandIcon={<ExpandMore />}>
                     <StatusIcon
                         ok={!item.isAlert}
@@ -535,7 +538,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 );
             }
 
-            this.setState({ detailed: false });
+            this.setState({ detailed: false }, () => this.props.onResultsDialogOpen(false));
         };
 
         return (
@@ -687,7 +690,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                                 ts: Date.now(),
                                 isTouchEvent: e instanceof TouchEvent,
                             });
-                            this.setState({ detailed: true });
+                            this.setState({ detailed: true }, () => this.props.onResultsDialogOpen(true));
                         }}
                     >
                         {I18n.t('kisshome-defender_Show results')}
