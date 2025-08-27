@@ -14,6 +14,7 @@ import type {
     DetectionsForDevice,
     DetectionsForDeviceWithUUID,
     DeviceStatistics,
+    IDSStatus,
     MACAddress,
     StoredStatisticsResult,
 } from '../types';
@@ -51,15 +52,7 @@ export class IDSCommunication {
     private readonly ownPort = 18001; // Default port for IDS communication and it can be changed if needed
     private readonly config: DefenderAdapterConfig;
     private readonly metaData: { [mac: MACAddress]: { ip: string; desc: string } };
-    private lastStatus: {
-        Result: 'Success' | 'Error';
-        Message?: {
-            Status: 'Started' | 'Configuring' | 'Running' | 'Analyzing' | 'Error' | 'No connection' | 'Exited';
-            Error?: string;
-            Version?: string;
-        };
-        Model_status?: { [mac: MACAddress]: number };
-    } | null = null;
+    private lastStatus: IDSStatus | null = null;
     private webServer: http.Server | null = null;
     private ownIp: string | null = null;
     private statusInterval: NodeJS.Timeout | null = null;
@@ -444,7 +437,7 @@ export class IDSCommunication {
         }
     }
 
-    public getModelStatus(): { [mac: string]: number } {
+    public getModelStatus(): IDSStatus['Model_status'] {
         return this.lastStatus?.Model_status || {};
     }
 
@@ -492,7 +485,9 @@ export class IDSCommunication {
 
             if (this.lastStatus?.Model_status) {
                 // Normalize all MACs
-                const normalizedModelStatus: { [mac: MACAddress]: number } = {};
+                const normalizedModelStatus: {
+                    [mac: MACAddress]: { Training_progress: number; description?: string };
+                } = {};
                 for (const mac in this.lastStatus.Model_status) {
                     const normalizedMac = IDSCommunication.normalizeMacAddress(mac); // Normalize MAC address
                     normalizedModelStatus[normalizedMac] = this.lastStatus.Model_status[mac];
@@ -721,7 +716,6 @@ export class IDSCommunication {
                 Math.random() > 0.95 ? Math.floor(Math.random() * 1000) / 10 : Math.floor(Math.random() * 100) / 10; // Random score between 0 and 100
             const scoreMl =
                 Math.random() > 0.95 ? Math.floor(Math.random() * 1000) / 10 : Math.floor(Math.random() * 100) / 10; // Random score between 0 and 100
-            const biggestScore = Math.max(score, scoreMl);
 
             // Generate for each MAC a detection
             const detection: DetectionsForDevice = {
@@ -742,9 +736,7 @@ export class IDSCommunication {
                     number_occurrences: scoreMl > 10 ? Math.floor(Math.random() * 3) + 1 : 0, // Random occurrences between 1 and 3
                     score: 0,
                 },
-                worstScore: biggestScore,
-                isAlert: biggestScore > 10, // Assuming the worst type is Alert for this example
-            };
+            } as DetectionsForDevice;
             result.detections.push(detection);
         }
 
@@ -805,16 +797,22 @@ export class IDSCommunication {
                 const detection: DetectionsForDeviceWithUUID = newDetections[i] as DetectionsForDeviceWithUUID;
 
                 // Find the earliest occurrence time
-                let _isAlert: boolean = detection.ml?.type === 'Warning' || detection.ml?.type === 'Alert';
+                let _isAlert = detection.ml?.type === 'Warning' || detection.ml?.type === 'Alert';
 
-                if (detection.ml && new Date(CHANGE_TIME).getTime() > Date.now()) {
+                if (detection.ml) {
+                    // ml has no score, we generate one based on the type
                     detection.ml.score ||=
                         detection.ml.type === 'Warning' || detection.ml.type === 'Alert'
-                            ? Math.floor(Math.random() * 90 * 100) / 100 + 10
-                            : Math.floor(Math.random() * 10 * 100) / 100;
+                            ? Math.floor(Math.random() * 90 * 100) / 100 + 10 // 10-100
+                            : Math.floor(Math.random() * 9.99 * 100) / 100; // 0-10
                 }
 
-                let score = _isAlert ? detection.ml.score : 0;
+                const detectionsBiggestScore = Math.max(
+                    _isAlert ? detection.ml?.score || 0 : 0,
+                    ...(detection.suricata?.map(s => (s.type === 'Alert' || s.type === 'Warning' ? s.score : 0)) || [
+                        0,
+                    ]),
+                );
 
                 let earliestOccurrence: number | null =
                     detection.ml?.first_occurrence && (detection.ml.type === 'Alert' || detection.ml.type === 'Warning')
@@ -823,10 +821,7 @@ export class IDSCommunication {
 
                 detection.suricata?.forEach(suricata => {
                     if (suricata.first_occurrence && (suricata.type === 'Alert' || suricata.type === 'Warning')) {
-                        _isAlert ||= suricata.type === 'Alert' || suricata.type === 'Warning';
-                        if (suricata.score > score) {
-                            score = suricata.score; // Use the highest score from Suricata
-                        }
+                        _isAlert = true;
 
                         const occurrenceTime = new Date(suricata.first_occurrence).getTime();
                         if (!earliestOccurrence || occurrenceTime < earliestOccurrence) {
@@ -836,20 +831,23 @@ export class IDSCommunication {
                 });
 
                 detection.isAlert = _isAlert; // Store the worst type found
-                detection.worstScore = biggestScore; // Store the highest score found
+                detection.worstScore = detectionsBiggestScore; // Store the highest score found
 
-                if (earliestOccurrence) {
+                // If we have no bad event or the current one is worse, replace it
+                isAlert ||= _isAlert;
+
+                if (biggestScore < detectionsBiggestScore) {
+                    biggestScore = detectionsBiggestScore; // Keep the highest score
+                }
+
+                detection.scanUUID = resultUUID; // Get the parent UUID if available
+                detection.uuid = randomUUID(); // Generate a unique ID for the detection
+
+                if (earliestOccurrence && _isAlert) {
                     detection.time = new Date(earliestOccurrence).toISOString(); // Ensure time is in ISO format
-                    detection.scanUUID = resultUUID; // Get the parent UUID if available
-                    detection.uuid = randomUUID(); // Generate a unique ID for the detection
                     sendEvent++;
-
-                    // If we have no bad event or the current one is worse, replace it
-                    isAlert ||= _isAlert;
-
-                    if (biggestScore < score) {
-                        biggestScore = score; // Keep the highest score
-                    }
+                } else {
+                    detection.time = ''; // No alert, so no time
                 }
             }
 
@@ -897,6 +895,9 @@ export class IDSCommunication {
                     this.adapter.log.error(`Error generating event: ${error.message}`);
                 });
             }
+            console.log(
+                `!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CREATED ALERT: ${resultUUID} Score: ${biggestScore} Events: ${sendEvent}`,
+            );
             await this.adapter.setStateAsync('info.analysis.lastCreated', resultUUID, true);
         }
 

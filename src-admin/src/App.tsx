@@ -44,7 +44,7 @@ interface AppState extends GenericAppState {
     originalData: Record<string, any>;
 }
 
-class App extends GenericApp<GenericAppProps, AppState> {
+export default class App extends GenericApp<GenericAppProps, AppState> {
     constructor(props: GenericAppProps) {
         const extendedProps = { ...props };
         super(props, extendedProps);
@@ -127,5 +127,3 @@ class App extends GenericApp<GenericAppProps, AppState> {
         );
     }
 }
-
-export default App;

@@ -295,6 +295,31 @@
             "native": {}
         },
         {
+            "_id": "info.analysis.lastShownAlert",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Last shown alert ID",
+                    "de": "Zuletzt angezeigte Alarm-ID",
+                    "ru": "Последний показанный ID оповещения",
+                    "pt": "Último ID de alerta exibido",
+                    "nl": "Laatst weergegeven waarschuwing-ID",
+                    "fr": "Dernier ID d'alerte affiché",
+                    "it": "Ultimo ID di avviso mostrato",
+                    "es": "Último ID de alerta mostrado",
+                    "pl": "Ostatnio wyświetlany identyfikator alertu",
+                    "uk": "Останній показаний ID оповіщення",
+                    "zh-cn": "最后显示的警报ID"
+                },
+                "type": "string",
+                "role": "state",
+                "read": true,
+                "write": false,
+                "def": ""
+            },
+            "native": {}
+        },
+        {
             "_id": "info.analysis.running",
             "type": "state",
             "common": {

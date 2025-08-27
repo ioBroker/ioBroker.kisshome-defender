@@ -672,7 +672,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                 },
                 formatter: (_params: any): string => {
                     const params = _params as BarSeriesTooltipParams[];
-                    let content = `${params[0].axisValueLabel}A<br/>`;
+                    let content = `${params[0].axisValueLabel}<br/>`;
                     params.forEach(item => {
                         content += `${item.marker + item.seriesName}: ${bytes2string(item.data, maxY)}<br/>`;
                     });

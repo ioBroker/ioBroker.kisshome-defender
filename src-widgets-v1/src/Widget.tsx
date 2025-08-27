@@ -151,7 +151,7 @@ export interface IWidgetWebComponentProps {
     protocol?: 'http:' | 'https:';
     host?: string;
     language?: ioBroker.Languages;
-    instance?: ioBroker.Languages;
+    instance?: string;
     theme?: 'light' | 'dark';
     editMode?: boolean | 'true' | 'false';
 }

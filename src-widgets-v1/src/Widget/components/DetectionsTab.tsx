@@ -24,7 +24,13 @@ import {
 import { I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
 import { Close, ExpandMore } from '@mui/icons-material';
 
-import type { DeviceStatistics, ReportUxHandler, StoredAnalysisResult, StoredStatisticsResult } from '../types';
+import type {
+    DeviceStatistics,
+    MACAddress,
+    ReportUxHandler,
+    StoredAnalysisResult,
+    StoredStatisticsResult,
+} from '../types';
 
 import { bytes2string } from './utils';
 import { StatusIcon } from './StatusTab';
@@ -303,7 +309,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         );
         // Create for every device the combined status
         const devices: {
-            [mac: string]: {
+            [mac: MACAddress]: {
                 type: '' | 'Warning' | 'Alert';
                 description: string[];
                 score: number;
@@ -313,7 +319,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         } = {};
 
         item.detections?.forEach(detection => {
-            const mac = detection.mac.toLowerCase();
+            const mac: MACAddress = detection.mac.toLowerCase();
             const desc = this.props.results?.names?.[mac];
             if (detection.ml || detection.suricata.length) {
                 devices[mac] ||= { score: 0, type: '', description: [], name: desc ? desc.desc || desc.ip || '' : '' };
@@ -340,7 +346,16 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
             devices[mac].statistics = item.statistics.devices.find(device => device.mac.toLowerCase() === mac);
         });
 
-        const macs = Object.keys(devices).sort();
+        const macs: MACAddress[] = Object.keys(devices).sort((a: string, b) => {
+            // first by score, then by name, then by mac
+            if (devices[a].score !== devices[b].score) {
+                return devices[b].score - devices[a].score;
+            }
+            if (devices[a].name !== devices[b].name) {
+                return (devices[a].name || '').localeCompare(devices[b].name || '');
+            }
+            return a.localeCompare(b);
+        });
 
         return (
             <AccordionDetails>
@@ -375,63 +390,65 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                         <TableCell>{I18n.t('kisshome-defender_Status')}</TableCell>
                     </TableHead>
                     <TableBody>
-                        {macs.map(mac => (
-                            <TableRow key={mac}>
-                                <TableCell>
-                                    {devices[mac].name ? (
-                                        <div>
-                                            <div style={{ fontWeight: 'bold' }}>{devices[mac].name}</div>
-                                            <div
-                                                style={{
-                                                    fontSize: 'smaller',
-                                                    opacity: 0.8,
-                                                    fontStyle: 'italic',
-                                                }}
-                                            >
-                                                {mac}
+                        {macs.map(
+                            (mac: MACAddress): React.JSX.Element => (
+                                <TableRow key={mac}>
+                                    <TableCell>
+                                        {devices[mac].name ? (
+                                            <div>
+                                                <div style={{ fontWeight: 'bold' }}>{devices[mac].name}</div>
+                                                <div
+                                                    style={{
+                                                        fontSize: 'smaller',
+                                                        opacity: 0.8,
+                                                        fontStyle: 'italic',
+                                                    }}
+                                                >
+                                                    {mac}
+                                                </div>
                                             </div>
-                                        </div>
-                                    ) : (
-                                        <div style={{ fontWeight: 'bold' }}>{mac}</div>
-                                    )}
-                                </TableCell>
-                                <TableCell style={{ textAlign: 'center' }}>
-                                    {devices[mac].statistics?.data_volume
-                                        ? devices[mac].statistics.data_volume.packet_count
-                                        : '--'}
-                                </TableCell>
-                                <TableCell
-                                    style={{
-                                        backgroundColor: devices[mac].type ? 'red' : 'green',
-                                        color: 'white',
-                                    }}
-                                >
-                                    {this.props.group === 'A'
-                                        ? !devices[mac].type
-                                            ? I18n.t('kisshome-defender_No anomaly')
-                                            : I18n.t('kisshome-defender_Anomaly')
-                                        : `${devices[mac].score}/100`}
-                                </TableCell>
-                                <TableCell
-                                    style={{
-                                        color: devices[mac].type ? 'red' : undefined,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'flex-start',
-                                        gap: 10,
-                                        minHeight: 50,
-                                    }}
-                                >
-                                    <StatusIcon
-                                        ok={!devices[mac].type}
-                                        warning
-                                    />{' '}
-                                    {devices[mac].description.length
-                                        ? devices[mac].description.join(', ')
-                                        : I18n.t('kisshome-defender_Ok')}
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                                        ) : (
+                                            <div style={{ fontWeight: 'bold' }}>{mac}</div>
+                                        )}
+                                    </TableCell>
+                                    <TableCell style={{ textAlign: 'center' }}>
+                                        {devices[mac].statistics?.data_volume
+                                            ? devices[mac].statistics.data_volume.packet_count
+                                            : '--'}
+                                    </TableCell>
+                                    <TableCell
+                                        style={{
+                                            backgroundColor: devices[mac].type ? 'red' : 'green',
+                                            color: 'white',
+                                        }}
+                                    >
+                                        {this.props.group === 'A'
+                                            ? !devices[mac].type
+                                                ? I18n.t('kisshome-defender_No anomaly')
+                                                : I18n.t('kisshome-defender_Anomaly')
+                                            : `${devices[mac].score}/100`}
+                                    </TableCell>
+                                    <TableCell
+                                        style={{
+                                            color: devices[mac].type ? 'red' : undefined,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'flex-start',
+                                            gap: 10,
+                                            minHeight: 50,
+                                        }}
+                                    >
+                                        <StatusIcon
+                                            ok={!devices[mac].type}
+                                            warning
+                                        />{' '}
+                                        {devices[mac].description.length
+                                            ? devices[mac].description.join(', ')
+                                            : I18n.t('kisshome-defender_Ok')}
+                                    </TableCell>
+                                </TableRow>
+                            ),
+                        )}
                     </TableBody>
                 </Table>
             </AccordionDetails>

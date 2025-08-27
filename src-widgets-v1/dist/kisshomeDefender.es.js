@@ -73819,7 +73819,7 @@ yyyy`);
           },
           formatter: (c) => {
             const d = c;
-            let u = `${d[0].axisValueLabel}A<br/>`;
+            let u = `${d[0].axisValueLabel}<br/>`;
             return d.forEach((f) => {
               u += `${f.marker + f.seriesName}: ${Qa(f.data, a)}<br/>`;
             }), u;
@@ -74652,7 +74652,7 @@ yyyy`);
           o[l].score = Math.max(o[l].score, d.score), o[l].type = d.type === "Alert" || d.type === "Warning" ? "Alert" : o[l].type, (d.description && d.type === "Alert" || d.type === "Warning") && o[l].description.push(d.description);
         })) : o[l] ||= { score: 0, type: "", description: [], name: c && (c.desc || c.ip) || "" }, o[l].statistics = e.statistics.devices.find((d) => d.mac.toLowerCase() === l);
       });
-      const i = Object.keys(o).sort();
+      const i = Object.keys(o).sort((s, l) => o[s].score !== o[l].score ? o[l].score - o[s].score : o[s].name !== o[l].name ? (o[s].name || "").localeCompare(o[l].name || "") : s.localeCompare(l));
       return /* @__PURE__ */ I.jsxs(YQ, { children: [
         /* @__PURE__ */ I.jsxs(
           "div",
@@ -74690,57 +74690,59 @@ yyyy`);
             ] }) }),
             /* @__PURE__ */ I.jsx(rl, { children: U.t("kisshome-defender_Status") })
           ] }),
-          /* @__PURE__ */ I.jsx(Mie, { children: i.map((s) => /* @__PURE__ */ I.jsxs(Xie, { children: [
-            /* @__PURE__ */ I.jsx(rl, { children: o[s].name ? /* @__PURE__ */ I.jsxs("div", { children: [
-              /* @__PURE__ */ I.jsx("div", { style: { fontWeight: "bold" }, children: o[s].name }),
+          /* @__PURE__ */ I.jsx(Mie, { children: i.map(
+            (s) => /* @__PURE__ */ I.jsxs(Xie, { children: [
+              /* @__PURE__ */ I.jsx(rl, { children: o[s].name ? /* @__PURE__ */ I.jsxs("div", { children: [
+                /* @__PURE__ */ I.jsx("div", { style: { fontWeight: "bold" }, children: o[s].name }),
+                /* @__PURE__ */ I.jsx(
+                  "div",
+                  {
+                    style: {
+                      fontSize: "smaller",
+                      opacity: 0.8,
+                      fontStyle: "italic"
+                    },
+                    children: s
+                  }
+                )
+              ] }) : /* @__PURE__ */ I.jsx("div", { style: { fontWeight: "bold" }, children: s }) }),
+              /* @__PURE__ */ I.jsx(rl, { style: { textAlign: "center" }, children: o[s].statistics?.data_volume ? o[s].statistics.data_volume.packet_count : "--" }),
               /* @__PURE__ */ I.jsx(
-                "div",
+                rl,
                 {
                   style: {
-                    fontSize: "smaller",
-                    opacity: 0.8,
-                    fontStyle: "italic"
+                    backgroundColor: o[s].type ? "red" : "green",
+                    color: "white"
                   },
-                  children: s
+                  children: this.props.group === "A" ? o[s].type ? U.t("kisshome-defender_Anomaly") : U.t("kisshome-defender_No anomaly") : `${o[s].score}/100`
+                }
+              ),
+              /* @__PURE__ */ I.jsxs(
+                rl,
+                {
+                  style: {
+                    color: o[s].type ? "red" : void 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "flex-start",
+                    gap: 10,
+                    minHeight: 50
+                  },
+                  children: [
+                    /* @__PURE__ */ I.jsx(
+                      Ti,
+                      {
+                        ok: !o[s].type,
+                        warning: !0
+                      }
+                    ),
+                    " ",
+                    o[s].description.length ? o[s].description.join(", ") : U.t("kisshome-defender_Ok")
+                  ]
                 }
               )
-            ] }) : /* @__PURE__ */ I.jsx("div", { style: { fontWeight: "bold" }, children: s }) }),
-            /* @__PURE__ */ I.jsx(rl, { style: { textAlign: "center" }, children: o[s].statistics?.data_volume ? o[s].statistics.data_volume.packet_count : "--" }),
-            /* @__PURE__ */ I.jsx(
-              rl,
-              {
-                style: {
-                  backgroundColor: o[s].type ? "red" : "green",
-                  color: "white"
-                },
-                children: this.props.group === "A" ? o[s].type ? U.t("kisshome-defender_Anomaly") : U.t("kisshome-defender_No anomaly") : `${o[s].score}/100`
-              }
-            ),
-            /* @__PURE__ */ I.jsxs(
-              rl,
-              {
-                style: {
-                  color: o[s].type ? "red" : void 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "flex-start",
-                  gap: 10,
-                  minHeight: 50
-                },
-                children: [
-                  /* @__PURE__ */ I.jsx(
-                    Ti,
-                    {
-                      ok: !o[s].type,
-                      warning: !0
-                    }
-                  ),
-                  " ",
-                  o[s].description.length ? o[s].description.join(", ") : U.t("kisshome-defender_Ok")
-                ]
-              }
-            )
-          ] }, s)) })
+            ] }, s)
+          ) })
         ] })
       ] });
     }
@@ -84515,7 +84517,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     "Manage monitored devices": "Manage monitored devices",
     Medium: R6t,
     "New detections": "New detections",
-    "New problem detected": "New problem detected",
+    "New problem detected": "Unusual activities detected",
     "Next control": "Next control",
     "No anomaly": "No anomaly",
     "No connection": "No connection",
@@ -84624,7 +84626,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     "Manage monitored devices": "Überwachte Geräte verwalten",
     Medium: fxt,
     "New detections": "Neue Entdeckungen",
-    "New problem detected": "Neues Problem erkannt",
+    "New problem detected": "Ungewöhnliche Aktivität(en) erkannt",
     "Next control": "Nächstes Kontrolle",
     "No anomaly": "Keine Anomalie",
     "No connection": "Keine Verbindung",
@@ -84733,7 +84735,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     "Manage monitored devices": "Управление контролируемыми устройствами",
     Medium: Vxt,
     "New detections": "Новые обнаружения",
-    "New problem detected": "Обнаружена новая проблема",
+    "New problem detected": "Обнаружена необычная активность",
     "Next control": "Следующая проверка",
     "No anomaly": "Нет аномалии",
     "No connection": "Нет связи",
@@ -84842,7 +84844,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     "Manage monitored devices": "Gerenciar dispositivos monitorados",
     Medium: kSt,
     "New detections": "Novas detecções",
-    "New problem detected": "Novo problema detectado",
+    "New problem detected": "Atividades incomuns detectadas",
     "Next control": "Próximo controle",
     "No anomaly": "Nenhuma anomalia",
     "No connection": "Sem conexão",
@@ -84951,7 +84953,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     "Manage monitored devices": "Beheer bewaakte apparaten",
     Medium: a8t,
     "New detections": "Nieuwe detecties",
-    "New problem detected": "Nieuw probleem gedetecteerd",
+    "New problem detected": "Ongebruikelijke activiteiten gedetecteerd",
     "Next control": "Volgende controle",
     "No anomaly": "Geen anomalie",
     "No connection": "Geen verbinding",
@@ -85060,7 +85062,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     "Manage monitored devices": "Gérer les appareils surveillés",
     Medium: L8t,
     "New detections": "Nouvelles détections",
-    "New problem detected": "Nouveau problème détecté",
+    "New problem detected": "Activités inhabituelles détectées",
     "Next control": "Contrôle suivant",
     "No anomaly": "Aucune anomalie",
     "No connection": "Aucune connexion",
@@ -85169,7 +85171,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     "Manage monitored devices": "Gestire i dispositivi monitorati",
     Medium: v9t,
     "New detections": "Nuove rilevazioni",
-    "New problem detected": "Nuovo problema rilevato",
+    "New problem detected": "Rilevate attività insolite",
     "Next control": "Controllo successivo",
     "No anomaly": "Nessuna anomalia",
     "No connection": "Nessuna connessione",
@@ -85278,7 +85280,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     "Manage monitored devices": "Administrar dispositivos monitoreados",
     Medium: Y9t,
     "New detections": "Nuevas detecciones",
-    "New problem detected": "Nuevo problema detectado",
+    "New problem detected": "Se detectaron actividades inusuales",
     "Next control": "Siguiente control",
     "No anomaly": "No hay ninguna anomalía",
     "No connection": "Sin conexión",
@@ -85387,7 +85389,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     "Manage monitored devices": "Zarządzaj monitorowanymi urządzeniami",
     Medium: D7t,
     "New detections": "Nowe wykrycia",
-    "New problem detected": "Wykryto nowy problem",
+    "New problem detected": "Wykryto nietypowe działania",
     "Next control": "Następna kontrola",
     "No anomaly": "Brak anomalii",
     "No connection": "Brak połączenia",
@@ -85496,7 +85498,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     "Manage monitored devices": "Керування пристроями, що контролюються",
     Medium: sCt,
     "New detections": "Нові виявлення",
-    "New problem detected": "Виявлено нову проблему",
+    "New problem detected": "Виявлено незвичайну активність",
     "Next control": "Наступний контроль",
     "No anomaly": "Без аномалії",
     "No connection": "Немає з'єднання",
@@ -85605,7 +85607,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     "Manage monitored devices": "管理受监控的设备",
     Medium: jCt,
     "New detections": "新发现",
-    "New problem detected": "发现新问题",
+    "New problem detected": "检测到异常活动",
     "Next control": "下一个控件",
     "No anomaly": "无异常",
     "No connection": "无连接",

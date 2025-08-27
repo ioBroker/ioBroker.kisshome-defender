@@ -14,6 +14,7 @@
             const instance = document.createElement('kisshome-defender');
             instance.setAttribute('instance', data.instance || '0');
             instance.setAttribute('editMode', vis.editMode ? 'true' : 'false');
+            instance.setAttribute('language', vis.language);
 
             // Append the instance to the widget container
             document.getElementById(wid).appendChild(instance);

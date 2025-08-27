@@ -52,6 +52,7 @@ interface KisshomeDefenderState {
     showNewAlert: StoredAnalysisResult | null; // ID of the new alert to show
     ignoreForNext10Minutes: boolean;
     showDetectionWithUUID: string;
+    resultsDialogOpened: boolean; // If set, ignore new alerts until this date
 }
 
 const styles: Record<string, React.CSSProperties> = {
@@ -65,6 +66,8 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
     private uxEventsTimeout: ReturnType<typeof setTimeout> | null = null;
     private isMobile = isMobile();
     private ignoreNewAlerts: Date | null = null;
+    private lastCreated = '';
+    private lastShownAlertDialog = '';
 
     constructor(props: KisshomeDefenderProps) {
         super(props);
@@ -81,6 +84,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
             showNewAlert: null,
             ignoreForNext10Minutes: false,
             showDetectionWithUUID: '',
+            resultsDialogOpened: false,
         };
     }
 
@@ -98,6 +102,11 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
         this.onStateLastSeen(idLastSeen, stateLastSeen);
         await this.props.socket.subscribeState(idLastSeen, this.onStateLastSeen);
 
+        const idLastShownAlert = `kisshome-defender.${this.props.instance || 0}.info.analysis.lastShownAlert`;
+        const stateLastShownAlert = await this.props.socket.getState(idLastShownAlert);
+        this.onStateLastShownAlertSeen(idLastShownAlert, stateLastShownAlert);
+        await this.props.socket.subscribeState(idLastShownAlert, this.onStateLastShownAlertSeen);
+
         const idQuestionnaire = `kisshome-defender.${this.props.instance || 0}.info.cloudSync.questionnaire`;
         const stateQuestionnaire = await this.props.socket.getState(idQuestionnaire);
         this.onStateQuestionnaire(idQuestionnaire, stateQuestionnaire);
@@ -105,7 +114,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
 
         const aliveId = `system.adapter.kisshome-defender.${this.props.instance || 0}.alive`;
         const state = await this.props.socket.getState(aliveId);
-        this.onStateAlive(aliveId, state);
+        this.onStateAlive(aliveId, state, true);
         await this.props.socket.subscribeState(aliveId, this.onStateAlive);
 
         const groupState = await this.props.socket.getState(
@@ -144,6 +153,10 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
             this.onStateLastSeen,
         );
         this.props.socket.unsubscribeState(
+            `kisshome-defender.${this.props.instance || 0}.info.analysis.lastShownAlert`,
+            this.onStateLastShownAlertSeen,
+        );
+        this.props.socket.unsubscribeState(
             `kisshome-defender.${this.props.instance || 0}.info.cloudSync.questionnaire`,
             this.onStateQuestionnaire,
         );
@@ -153,10 +166,10 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
         );
     }
 
-    onStateAlive = (id: string, state: ioBroker.State | null | undefined): void => {
+    onStateAlive = (id: string, state: ioBroker.State | null | undefined, doUpdateData?: boolean): void => {
         if (id === `system.adapter.kisshome-defender.${this.props.instance || 0}.alive`) {
             if (!!state?.val !== this.state.alive) {
-                this.setState({ alive: !!state?.val }, () => this.requestData());
+                this.setState({ alive: !!state?.val }, () => !doUpdateData && this.requestData());
             }
         }
     };
@@ -177,6 +190,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
     onStateLastSeen = (id: string, state: ioBroker.State | null | undefined): void => {
         if (id === `kisshome-defender.${this.props.instance || 0}.info.analysis.lastSeen`) {
             if ((state?.val || '') !== this.state.lastSeenID) {
+                this.lastShownAlertDialog ||= state?.val as string;
                 this.setState({ lastSeenID: (state?.val as string) || '' }, () => {
                     if (this.state.showNewAlert && this.state.showNewAlert.uuid === this.state.lastSeenID) {
                         // If the shown alert is the last seen, hide it
@@ -187,10 +201,18 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
         }
     };
 
+    onStateLastShownAlertSeen = (id: string, state: ioBroker.State | null | undefined): void => {
+        if (id === `kisshome-defender.${this.props.instance || 0}.info.analysis.lastShownAlert`) {
+            if ((state?.val || '') !== this.lastShownAlertDialog) {
+                this.lastShownAlertDialog = (state?.val as string) || this.state.lastSeenID;
+            }
+        }
+    };
+
     onStateLastCreated = (id: string, state: ioBroker.State | null | undefined): void => {
         if (id === `kisshome-defender.${this.props.instance || 0}.info.analysis.lastCreated`) {
-            if (state?.val) {
-                // Read results anew
+            if (state?.val !== this.lastCreated) {
+                this.lastCreated = state?.val as string;
                 void this.requestData();
             }
         }
@@ -210,22 +232,23 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
                 if (typedResult.results && typedResult.results.length) {
                     // Find the last alert in the results
                     for (let i = typedResult.results.length - 1; i >= 0; i--) {
+                        // Get the latest alert
                         if (typedResult.results[i].isAlert) {
-                            if (typedResult.results[i].uuid !== this.state.lastSeenID) {
+                            // If it is not the last seen, show it
+                            if (typedResult.results[i].uuid !== this.lastShownAlertDialog) {
+                                this.lastShownAlertDialog = typedResult.results[i].uuid;
                                 if (
-                                    (this.ignoreNewAlerts && this.ignoreNewAlerts > new Date()) ||
-                                    this.state.tab === 'detections'
+                                    (!this.ignoreNewAlerts || this.ignoreNewAlerts <= new Date()) &&
+                                    !this.state.resultsDialogOpened
                                 ) {
-                                    // Ignore new alerts if ignoreNewAlerts is set, or we are already in the detections tab
-                                    void this.props.socket.setState(
-                                        `kisshome-defender.${this.props.instance || 0}.info.analysis.lastSeen`,
-                                        typedResult.results[i].uuid,
-                                        true,
-                                    );
-                                } else {
                                     // If we are not ignoring new alerts, show it
                                     newState.showNewAlert = typedResult.results[i];
                                 }
+                                void this.props.socket.setState(
+                                    `kisshome-defender.${this.props.instance || 0}.info.analysis.lastShownAlert`,
+                                    typedResult.results[i].uuid,
+                                    true,
+                                );
                             }
                             break;
                         }
@@ -319,11 +342,6 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
 
         const onClose = (): void => {
             if (this.state.showNewAlert) {
-                void this.props.socket.setState(
-                    `kisshome-defender.${this.props.instance || '0'}.info.analysis.lastSeen`,
-                    this.state.showNewAlert.uuid,
-                    true,
-                );
                 this.reportUxEvent({
                     id: 'kisshome-defender-alert',
                     event: 'hide',
@@ -455,6 +473,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
                             this.setState({
                                 tab: value as KisshomeDefenderState['tab'],
                                 showDetectionWithUUID: '',
+                                resultsDialogOpened: false,
                             });
                             window.localStorage.setItem('kisshome-defender-tab', value);
                             this.reportUxEvent({
@@ -544,6 +563,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
                             themeType={this.props.themeType}
                             group={this.state.group}
                             showDetectionWithUUID={this.state.showDetectionWithUUID}
+                            onResultsDialogOpen={opened => this.setState({ resultsDialogOpened: opened })}
                         />
                     ) : null}
                     {this.state.tab === 'settings' ? (

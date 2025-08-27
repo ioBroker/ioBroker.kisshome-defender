@@ -158,6 +158,31 @@ export default class App extends Component<AppProps, AppState> {
         });
     }
 
+    componentDidMount(): void {
+        window.addEventListener('message', this.onReceiveMessage, false);
+    }
+
+    componentWillUnmount(): void {
+        window.removeEventListener('message', this.onReceiveMessage, false);
+    }
+
+    // Detect theme updates
+    private onReceiveMessage = (message: { data: string } | null): void => {
+        if (message?.data) {
+            if (message.data === 'updateTheme') {
+                const newThemeName = Utils.getThemeName();
+                Utils.setThemeName(Utils.getThemeName());
+
+                const newTheme = App.createTheme(newThemeName);
+
+                this.setState({
+                    theme: newTheme,
+                    themeType: App.getThemeType(newTheme),
+                });
+            }
+        }
+    };
+
     static createTheme(name?: ThemeName): IobTheme {
         return Theme(Utils.getThemeName(name));
     }

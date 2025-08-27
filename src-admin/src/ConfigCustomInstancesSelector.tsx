@@ -23,6 +23,7 @@ import { Add, Delete } from '@mui/icons-material';
 // valid
 import { I18n, type LegacyConnection, Message } from '@iobroker/adapter-react-v5';
 import { ConfigGeneric, type ConfigGenericProps, type ConfigGenericState } from '@iobroker/json-config';
+import type { IDSStatus, MACAddress } from './types';
 
 export type Device = {
     enabled: boolean;
@@ -257,10 +258,13 @@ interface ConfigCustomInstancesSelectorState extends ConfigGenericState {
     IP2MAC: Record<string, string>;
     MAC2VENDOR: Record<string, string>;
     runningRequest?: boolean;
-    modelStatus: { [mac: string]: number };
+    modelStatus: IDSStatus['Model_status'];
 }
 
-class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, ConfigCustomInstancesSelectorState> {
+export default class ConfigCustomInstancesSelector extends ConfigGeneric<
+    ConfigGenericProps,
+    ConfigCustomInstancesSelectorState
+> {
     private resolveDone = false;
 
     private validateTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -342,7 +346,7 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
                 .then(result => {
                     if (result.modelStatus) {
                         this.setState({
-                            modelStatus: result.modelStatus as { [mac: string]: number },
+                            modelStatus: result.modelStatus as IDSStatus['Model_status'],
                         });
                     }
                 });
@@ -784,6 +788,18 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
         }
     }
 
+    renderModelStatus(mac?: MACAddress): React.JSX.Element | null {
+        if (!mac || !this.state.modelStatus?.[mac]) {
+            return <span>--</span>;
+        }
+        const status = this.state.modelStatus[mac];
+        return (
+            <span title={JSON.stringify(status)}>
+                {status.Training_progress}%{status.description ? ` [${status.description}]` : ''}
+            </span>
+        );
+    }
+
     renderItem(): React.JSX.Element {
         const devices: Device[] = ConfigGeneric.getValue(this.props.data, 'devices') || [];
         const fritzBox: string = ConfigGeneric.getValue(this.props.data, 'fritzbox');
@@ -945,11 +961,7 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
                                     {this.state.MAC2VENDOR?.[normalizeMacAddress(row.mac)] || ''}
                                 </TableCell>
                                 <TableCell style={styles.td}>{row.desc}</TableCell>
-                                <TableCell style={styles.td}>
-                                    {row.mac && this.state.modelStatus?.[row.mac]
-                                        ? this.state.modelStatus[row.mac]
-                                        : '--'}
-                                </TableCell>
+                                <TableCell style={styles.td}>{this.renderModelStatus(row.mac)}</TableCell>
                                 <TableCell style={styles.td} />
                             </TableRow>
                         ))}
@@ -1124,11 +1136,7 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
                                             variant="standard"
                                         />
                                     </TableCell>
-                                    <TableCell style={styles.td}>
-                                        {row.mac && this.state.modelStatus?.[normalizedMac]
-                                            ? this.state.modelStatus[normalizedMac]
-                                            : '--'}
-                                    </TableCell>
+                                    <TableCell style={styles.td}>{this.renderModelStatus(normalizedMac)}</TableCell>
                                     <TableCell style={styles.td}>
                                         <IconButton
                                             disabled={this.state.runningRequest}
@@ -1156,5 +1164,3 @@ class ConfigCustomInstancesSelector extends ConfigGeneric<ConfigGenericProps, Co
         );
     }
 }
-
-export default ConfigCustomInstancesSelector;

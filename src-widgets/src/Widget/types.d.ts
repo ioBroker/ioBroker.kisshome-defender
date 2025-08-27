@@ -7,6 +7,16 @@ export type Device = {
     uuid: string;
 };
 
+export interface IDSStatus {
+    Result: 'Success' | 'Error';
+    Message?: {
+        Status: 'Started' | 'Configuring' | 'Running' | 'Analyzing' | 'Error' | 'No connection' | 'Exited';
+        Error?: string;
+        Version?: string;
+    };
+    Model_status?: { [mac: MACAddress]: { Training_progress: number; description?: string } };
+}
+
 export interface DefenderAdapterConfig {
     /** Registered email address */
     email: string;

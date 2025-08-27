@@ -70,9 +70,15 @@ This was required to make it possible to uninstall and install the adapter again
 - [X] Find the highest score in suricata list and compare it with ML score (take the highest) to show it in the table.
 - [X] Combine description of alert from ML and all Suricata alerts into one description field.#
 - [X] The table must have always same widths of columns. Make ellipsis of the text and show tooltip with full text on hover for description.
-- [X] Show new detection on the top in the list
+- [X] Show new detection on the top of the list
 - [?] Status tab and detection tab: "In the last 7 days anomalie activities detected: 100 (new 10)" and reset the new counter after the dialog opened
-- [ ] Delete all results??
+- [X] Sort detections by higher score and by zero by name or mac address (if no name)
+- [X] vis-1 widget is in english
+- [X] Detect theme change
+- [ ] New detections in admin do not work
+- [ ] clear the last seen after the dialog with detections is opened
+- [?] Training status: percent and potential error
+- 
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
