@@ -85,7 +85,7 @@ This was required to make it possible to uninstall and install the adapter again
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 0.1.0 (2025-08-27)
 
 -   (@GermanBluefox) Initial commit
 
