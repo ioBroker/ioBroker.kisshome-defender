@@ -318,17 +318,19 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
         }
 
         const onClose = (): void => {
-            void this.props.socket.setState(
-                `kisshome-defender.${this.props.instance || '0'}.info.analysis.lastSeen`,
-                this.state.showNewAlert.uuid,
-                true,
-            );
-            this.reportUxEvent({
-                id: 'kisshome-defender-alert',
-                event: 'hide',
-                ts: Date.now(),
-                data: this.state.showNewAlert.uuid,
-            });
+            if (this.state.showNewAlert) {
+                void this.props.socket.setState(
+                    `kisshome-defender.${this.props.instance || '0'}.info.analysis.lastSeen`,
+                    this.state.showNewAlert.uuid,
+                    true,
+                );
+                this.reportUxEvent({
+                    id: 'kisshome-defender-alert',
+                    event: 'hide',
+                    ts: Date.now(),
+                    data: this.state.showNewAlert.uuid,
+                });
+            }
 
             if (this.state.ignoreForNext10Minutes) {
                 // Set ignoreNewAlerts to 10 minutes in the future

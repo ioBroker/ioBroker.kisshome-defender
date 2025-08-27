@@ -1,1 +1,0 @@
-import{C as o}from"./ConfigCustomKissHomeDefenderSet__loadShare__react__loadShare__-BA4Y7bHp.js";import{X as n}from"./createTheme-K_KDLT66.js";function r(e){return Object.keys(e).length===0}function u(e=null){const t=o.useContext(n);return!t||r(t)?e:t}export{u};

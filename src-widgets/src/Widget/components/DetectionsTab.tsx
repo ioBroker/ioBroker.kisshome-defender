@@ -22,15 +22,9 @@ import {
     Typography,
 } from '@mui/material';
 import { I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
-import { Close, ExpandMore, ErrorOutline as Warning, Warning as Alarm, Info } from '@mui/icons-material';
+import { Close, ExpandMore } from '@mui/icons-material';
 
-import type {
-    DetectionsForDevice,
-    DeviceStatistics,
-    ReportUxHandler,
-    StoredAnalysisResult,
-    StoredStatisticsResult,
-} from '../types';
+import type { DeviceStatistics, ReportUxHandler, StoredAnalysisResult, StoredStatisticsResult } from '../types';
 
 import { bytes2string } from './utils';
 import { StatusIcon } from './StatusTab';
@@ -270,9 +264,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                         >
                             {I18n.t('kisshome-defender_Execute control now')}
                         </Button>
-                        <div style={{ flexGrow: 1 }}>
-                            {this.state.detectionRunning ? <LinearProgress /> : null}
-                        </div>
+                        <div style={{ flexGrow: 1 }}>{this.state.detectionRunning ? <LinearProgress /> : null}</div>
                     </div>
                 ) : null}
             </div>
@@ -519,7 +511,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
             // Set all known detections as known
             const firstAlert = results?.find(item => item.isAlert);
             if (firstAlert) {
-                this.props.socket.setState(
+                void this.props.socket.setState(
                     `kisshome-defender.${this.props.instance || 0}.info.analysis.lastSeen`,
                     firstAlert.uuid,
                     true,

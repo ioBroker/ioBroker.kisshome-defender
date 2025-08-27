@@ -1,4 +1,4 @@
-import{C as i}from"./ConfigCustomKissHomeDefenderSet__loadShare__react__loadShare__-BA4Y7bHp.js";var p={exports:{}},_={};/**
+import{k as i}from"./kisshome_mf_2_defender__loadShare__react__loadShare__-CURAGHAL.js";var p={exports:{}},_={};/**
  * @license React
  * react-jsx-runtime.production.min.js
  *

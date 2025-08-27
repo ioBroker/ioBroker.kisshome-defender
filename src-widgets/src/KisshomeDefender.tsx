@@ -1,6 +1,17 @@
 import React from 'react';
 
-import { Card, Tab, Tabs, Toolbar } from '@mui/material';
+import {
+    Button,
+    Card,
+    Checkbox,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    FormControlLabel,
+    Tab,
+    Tabs,
+    Toolbar,
+} from '@mui/material';
 
 import type { RxRenderWidgetProps, RxWidgetInfo, VisRxWidgetState, VisRxWidgetProps } from '@iobroker/types-vis-2';
 import type VisRxWidget from '@iobroker/types-vis-2/visRxWidget';
@@ -8,11 +19,17 @@ import type VisRxWidget from '@iobroker/types-vis-2/visRxWidget';
 import logo from './Widget/assets/kisshome-defender.svg';
 import { I18n } from '@iobroker/adapter-react-v5';
 
-import StatusTab from './Widget/components/StatusTab';
+import StatusTab, { StatusIcon } from './Widget/components/StatusTab';
 import StatisticsTab from './Widget/components/StatisticsTab';
 import DetectionsTab from './Widget/components/DetectionsTab';
 import SettingsTab from './Widget/components/SettingsTab';
-import type { DetectionWithUUID, ReportUxEventType, ReportUxHandler, UXEvent } from './Widget/types';
+import type {
+    ReportUxEventType,
+    ReportUxHandler,
+    StoredAnalysisResult,
+    StoredStatisticsResult,
+    UXEvent,
+} from './Widget/types';
 import Questionnaire, { type QuestionnaireJson } from './Widget/components/Questionnaire';
 
 function isMobile(): boolean {
@@ -25,12 +42,15 @@ interface KisshomeDefenderRxData {
 
 interface KisshomeDefenderState extends VisRxWidgetState {
     tab: 'status' | 'statistics' | 'detections' | 'settings';
-    detections: DetectionWithUUID[] | null;
+    results: StoredStatisticsResult | null;
     lastSeenID: string; // Last seen ID for detections
     questionnaire: QuestionnaireJson | null; // Questionnaire data
     showQuestionnaire: QuestionnaireJson | null; // Currently shown questionnaire
     alive: boolean;
     group: 'A' | 'B';
+    showNewAlert: StoredAnalysisResult | null; // ID of the new alert to show
+    ignoreForNext10Minutes: boolean;
+    showDetectionWithUUID: string;
 }
 
 const styles: Record<string, React.CSSProperties> = {
@@ -46,17 +66,26 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
     private uxEvents: UXEvent[] | null = null;
     private uxEventsTimeout: ReturnType<typeof setTimeout> | null = null;
     private isMobile = isMobile();
+    private ignoreNewAlerts: Date | null = null;
 
     constructor(props: VisRxWidgetProps) {
         super(props);
+
+        const ignoreText: string | null = window.localStorage.getItem('ignoreNewAlerts');
+        this.ignoreNewAlerts = ignoreText ? new Date(ignoreText) : null;
+
         this.state = {
             ...this.state,
             alive: false,
             tab: (window.localStorage.getItem('kisshome-defender-tab') as KisshomeDefenderState['tab']) || 'status',
-            detections: null,
+            results: null,
             lastSeenID: '',
             questionnaire: null,
             showQuestionnaire: null,
+            group: 'A', // Default group
+            showNewAlert: null,
+            ignoreForNext10Minutes: false,
+            showDetectionWithUUID: '',
         };
     }
 
@@ -108,12 +137,7 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
             data: window.navigator.userAgent,
         });
 
-        const idDetections = `kisshome-defender.${this.state.rxData.instance || 0}.info.detections.json`;
-        const stateDetections = await this.props.context.socket.getState(idDetections);
-        this.onStateDetections(idDetections, stateDetections);
-        await this.props.context.socket.subscribeState(idDetections, this.onStateDetections);
-
-        const idLastSeen = `kisshome-defender.${this.state.rxData.instance || 0}.info.detections.lastSeen`;
+        const idLastSeen = `kisshome-defender.${this.state.rxData.instance || 0}.info.analysis.lastSeen`;
         const stateLastSeen = await this.props.context.socket.getState(idLastSeen);
         this.onStateLastSeen(idLastSeen, stateLastSeen);
         await this.props.context.socket.subscribeState(idLastSeen, this.onStateLastSeen);
@@ -132,10 +156,14 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
             `kisshome-defender.${this.state.rxData.instance || 0}.info.ids.group`,
         );
         this.setState({ group: (groupState?.val as 'A' | 'B') === 'B' ? 'B' : 'A' });
+
+        const idLastCreated = `kisshome-defender.${this.state.rxData.instance || 0}.info.analysis.lastCreated`;
+        const stateLastCreated = await this.props.context.socket.getState(idLastCreated);
+        this.onStateLastCreated(idLastCreated, stateLastCreated);
+        await this.props.context.socket.subscribeState(idLastCreated, this.onStateLastCreated);
     }
 
     componentWillUnmount(): void {
-        super.componentWillUnmount();
         // Any cleanup logic can be added here
         this.reportUxEvent({
             id: 'kisshome-defender-widget',
@@ -155,13 +183,12 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
                 uxEvents,
             );
         }
-
         this.props.context.socket.unsubscribeState(
-            `kisshome-defender.${this.state.rxData.instance || 0}.info.detections.json`,
-            this.onStateDetections,
+            `kisshome-defender.${this.state.rxData.instance || 0}.info.analysis.lastCreated`,
+            this.onStateLastCreated,
         );
         this.props.context.socket.unsubscribeState(
-            `kisshome-defender.${this.state.rxData.instance || 0}.info.detections.lastSeen`,
+            `kisshome-defender.${this.state.rxData.instance || 0}.info.analysis.lastSeen`,
             this.onStateLastSeen,
         );
         this.props.context.socket.unsubscribeState(
@@ -195,12 +222,6 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
         }
     };
 
-    onStateDetections = (id: string, state: ioBroker.State | null | undefined): void => {
-        if (id === `kisshome-defender.${this.state.rxData.instance || 0}.info.detections.json`) {
-            this.setState({ detections: state?.val ? JSON.parse(state.val as string) : [] });
-        }
-    };
-
     onStateLastSeen = (id: string, state: ioBroker.State | null | undefined): void => {
         if (id === `kisshome-defender.${this.state.rxData.instance || 0}.info.detections.lastSeen`) {
             if ((state?.val || '') !== this.state.lastSeenID) {
@@ -208,6 +229,60 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
             }
         }
     };
+
+    onStateLastCreated = (id: string, state: ioBroker.State | null | undefined): void => {
+        if (id === `kisshome-defender.${this.state.rxData.instance || 0}.info.analysis.lastCreated`) {
+            if (state?.val) {
+                // Read results anew
+                void this.requestData();
+            }
+        }
+    };
+
+    async requestData(): Promise<void> {
+        if (this.state.alive) {
+            const result = await this.props.context.socket.sendTo(
+                `kisshome-defender.${this.state.rxData.instance}`,
+                'getData',
+                {
+                    type: 'allStatistics',
+                },
+            );
+            if (result) {
+                const typedResult = result as StoredStatisticsResult;
+                const newState: Partial<KisshomeDefenderState> = {
+                    results: typedResult,
+                };
+                // Find out if there is a new alert
+                if (typedResult.results && typedResult.results.length) {
+                    // Find the last alert in the results
+                    for (let i = typedResult.results.length - 1; i >= 0; i--) {
+                        if (typedResult.results[i].isAlert) {
+                            if (typedResult.results[i].uuid !== this.state.lastSeenID) {
+                                if (
+                                    (this.ignoreNewAlerts && this.ignoreNewAlerts > new Date()) ||
+                                    this.state.tab === 'detections'
+                                ) {
+                                    // Ignore new alerts if ignoreNewAlerts is set, or we are already in the detections tab
+                                    void this.props.context.socket.setState(
+                                        `kisshome-defender.${this.state.rxData.instance || 0}.info.analysis.lastSeen`,
+                                        typedResult.results[i].uuid,
+                                        true,
+                                    );
+                                } else {
+                                    // If we are not ignoring new alerts, show it
+                                    newState.showNewAlert = typedResult.results[i];
+                                }
+                            }
+                            break;
+                        }
+                    }
+
+                    this.setState(newState as any);
+                }
+            }
+        }
+    }
 
     reportUxEvent: ReportUxHandler = (event: {
         id: string;
@@ -246,7 +321,8 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
                 onClose={() => {
                     if (
                         this.state.questionnaire &&
-                        this.state.showQuestionnaire!.id !== this.state.questionnaire.id &&
+                        (!this.state.showQuestionnaire ||
+                            this.state.showQuestionnaire.id !== this.state.questionnaire.id) &&
                         this.state.questionnaire.done === undefined
                     ) {
                         // Show next queued questionnaire
@@ -257,6 +333,147 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
                 }}
                 reportUxEvent={this.reportUxEvent}
             />
+        );
+    }
+
+    renderAlarm(): React.JSX.Element | null {
+        if (this.props.editMode) {
+            return null;
+        }
+
+        if (!this.state.showNewAlert) {
+            return null;
+        }
+        // Find the detection with the ID of showNewAlert
+        let anomaliesCount = 0;
+        for (const detection of this.state.showNewAlert.detections) {
+            if (detection.isAlert) {
+                anomaliesCount++;
+            }
+        }
+
+        let text: string;
+        if (anomaliesCount === 1) {
+            text = I18n.t(
+                'kisshome-defender_During the inspection on %s at %s, an anomaly was detected that could indicate a potential security risk.',
+                new Date(this.state.showNewAlert.time).toLocaleDateString(),
+                new Date(this.state.showNewAlert.time).toLocaleTimeString(),
+            );
+        } else {
+            text = I18n.t(
+                'kisshome-defender_During the inspection on %s at %s, %s anomalies were detected that could indicate a potential security risk.',
+                new Date(this.state.showNewAlert.time).toLocaleDateString(),
+                new Date(this.state.showNewAlert.time).toLocaleTimeString(),
+                anomaliesCount,
+            );
+        }
+
+        const onClose = (): void => {
+            if (this.state.showNewAlert) {
+                void this.props.context.socket.setState(
+                    `kisshome-defender.${this.state.rxData.instance || '0'}.info.analysis.lastSeen`,
+                    this.state.showNewAlert.uuid,
+                    true,
+                );
+                this.reportUxEvent({
+                    id: 'kisshome-defender-alert',
+                    event: 'hide',
+                    ts: Date.now(),
+                    data: this.state.showNewAlert.uuid,
+                });
+            }
+
+            if (this.state.ignoreForNext10Minutes) {
+                // Set ignoreNewAlerts to 10 minutes in the future
+                this.ignoreNewAlerts = new Date(Date.now() + 10 * 60 * 1000);
+                window.localStorage.setItem('ignoreNewAlerts', this.ignoreNewAlerts.toISOString());
+            } else {
+                this.ignoreNewAlerts = null;
+                window.localStorage.removeItem('ignoreNewAlerts');
+            }
+            this.setState({ showNewAlert: null, ignoreForNext10Minutes: false });
+        };
+
+        return (
+            <Dialog
+                open={!0}
+                onClose={onClose}
+                maxWidth="md"
+                fullWidth
+            >
+                <DialogContent
+                    style={{
+                        display: 'flex',
+                        padding: 24,
+                        alignItems: 'center',
+                    }}
+                >
+                    <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 40 }}>
+                        <div
+                            style={{
+                                fontSize: '1.2rem',
+                                fontWeight: 'bold',
+                            }}
+                        >
+                            {text}
+                        </div>
+                        <div
+                            style={{
+                                cursor: 'pointer',
+                            }}
+                            onClick={() => {
+                                const showDetectionWithUUID = this.state.showNewAlert?.uuid || '';
+                                onClose();
+                                this.setState({ tab: 'detections', showDetectionWithUUID: showDetectionWithUUID });
+                                window.localStorage.setItem('kisshome-defender-tab', 'detections');
+                                this.reportUxEvent({
+                                    id: 'kisshome-defender-tabs',
+                                    event: 'change',
+                                    ts: Date.now(),
+                                    data: 'detections',
+                                });
+                            }}
+                        >
+                            {I18n.t('kisshome-defender_Click here to get more information')}
+                        </div>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={!!this.state.ignoreForNext10Minutes}
+                                    onChange={(_event, checked) => {
+                                        this.setState({ ignoreForNext10Minutes: checked });
+                                        this.reportUxEvent({
+                                            id: 'kisshome-defender-ignore-alert',
+                                            event: 'change',
+                                            ts: Date.now(),
+                                            data: checked ? 'true' : 'false',
+                                        });
+                                    }}
+                                    color="primary"
+                                    style={{ marginLeft: 8 }}
+                                />
+                            }
+                            label={I18n.t('kisshome-defender_Do not show this alert again for 10 minutes')}
+                        />
+                    </div>
+                    <div>
+                        <StatusIcon
+                            ok={false}
+                            warning
+                            size={80}
+                        />
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={onClose}
+                    >
+                        {I18n.t('kisshome-defender_Ok')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         );
     }
 
@@ -272,6 +489,7 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
                 }}
             >
                 {this.renderQuestionnaire()}
+                {this.renderAlarm()}
                 <Toolbar
                     variant="dense"
                     style={{ width: 'calc(100% - 48px)', display: 'flex', backgroundColor: '#333E50', color: 'white' }}
@@ -339,9 +557,9 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
                             alive={this.state.alive}
                             reportUxEvent={this.reportUxEvent}
                             instance={this.state.rxData.instance || '0'}
-                            detections={this.state.detections}
-                            lastSeenID={this.state.lastSeenID}
                             socket={this.props.context.socket}
+                            results={this.state.results}
+                            lastSeenID={this.state.lastSeenID}
                             onNavigateToDetections={() => {
                                 this.setState({ tab: 'detections' });
                                 window.localStorage.setItem('kisshome-defender-tab', 'detections');
@@ -367,12 +585,14 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
                     {this.state.tab === 'detections' ? (
                         <DetectionsTab
                             alive={this.state.alive}
-                            detections={this.state.detections}
-                            lastSeenID={this.state.lastSeenID}
-                            reportUxEvent={this.reportUxEvent}
-                            instance={this.state.rxData.instance || '0'}
+                            results={this.state.results}
                             socket={this.props.context.socket}
+                            reportUxEvent={this.reportUxEvent}
+                            lastSeenID={this.state.lastSeenID}
+                            instance={this.state.rxData.instance || '0'}
                             themeType={this.props.context.themeType}
+                            group={this.state.group}
+                            showDetectionWithUUID={this.state.showDetectionWithUUID}
                         />
                     ) : null}
                     {this.state.tab === 'settings' ? (

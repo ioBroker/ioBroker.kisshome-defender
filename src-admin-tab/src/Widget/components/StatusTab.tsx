@@ -62,11 +62,17 @@ export function StatusIcon(props: {
             }}
         >
             {props.ok ? (
-                <Check style={{ color: 'white', width: props.size || 30, height: props.size || 30, fill: 'currentColor' }} />
+                <Check
+                    style={{ color: 'white', width: props.size || 30, height: props.size || 30, fill: 'currentColor' }}
+                />
             ) : props.warning ? (
-                <Warning style={{ color: 'red', width: props.size || 30, height: props.size || 30, fill: 'currentColor' }} />
+                <Warning
+                    style={{ color: 'red', width: props.size || 30, height: props.size || 30, fill: 'currentColor' }}
+                />
             ) : (
-                <Close style={{ color: 'white', width: props.size || 30, height: props.size || 30, fill: 'currentColor' }} />
+                <Close
+                    style={{ color: 'white', width: props.size || 30, height: props.size || 30, fill: 'currentColor' }}
+                />
             )}
         </span>
     );
