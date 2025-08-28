@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "news": {
+      "0.1.2": {
+        "en": "Removed test cases",
+        "de": "Entfernte Testfälle",
+        "ru": "Удаленные тестовые случаи",
+        "pt": "Casos de teste removidos",
+        "nl": "Verwijderde testcases",
+        "fr": "Cas d ' essai retirés",
+        "it": "Casi di prova rimossi",
+        "es": "Casos de prueba eliminados",
+        "pl": "Usunięte przypadki badań",
+        "uk": "Видалити тестові випадки",
+        "zh-cn": "已删除测试案例"
+      },
       "0.1.1": {
         "en": "Initial commit",
         "de": "Ursprüngliche Verpflichtung",
