@@ -617,8 +617,6 @@ export class IDSCommunication {
         writeFileSync(join(this.statisticsDir, fileName), JSON.stringify(data));
 
         this.deleteOldStatisticsFiles();
-
-        void this.adapter.setState('info.detections.lastAnalysis', resultUUID, true);
     }
 
     activateSimulation(enabled: boolean, onStart?: boolean): void {

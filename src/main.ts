@@ -1271,13 +1271,13 @@ export class KISSHomeResearchAdapter extends Adapter {
         // iobroker.iot
         // find iobroker.iot instance
         const instances = await this.getObjectViewAsync('system', 'instance', {
-            startkey: 'iot.',
-            endkey: 'iot.\u9999',
+            startkey: 'system.adapter.iot.',
+            endkey: 'system.adapter.iot.\u9999',
         });
 
         // Find alive iobroker.iot instance
         for (const instance of instances?.rows || []) {
-            const aliveState = await this.getStateAsync(`${instance.id}.alive`);
+            const aliveState = await this.getForeignStateAsync(`${instance.value._id}.alive`);
             if (aliveState?.val) {
                 this.iotInstance = instance.id.replace('system.adapter.', '');
                 break;
@@ -1285,7 +1285,7 @@ export class KISSHomeResearchAdapter extends Adapter {
         }
 
         if (this.iotInstance) {
-            void this.setState(
+            void this.setForeignStateAsync(
                 `${this.iotInstance}.app.message`,
                 JSON.stringify({
                     message,
