@@ -484,7 +484,7 @@ export class IDSCommunication {
                 await this.dockerManager.restart();
             }
             if (this.lastStatus?.message?.training) {
-                this.lastStatus.message.trainingJson = JSON.parse(this.lastStatus.message.training);
+                this.lastStatus.message.trainingJson = JSON.parse(this.lastStatus.message.training.replace(/'/g, '"'));
             }
 
             if (this.lastStatus?.message?.trainingJson) {
