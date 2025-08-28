@@ -945,7 +945,9 @@ export class IDSCommunication {
     }
 
     async start(): Promise<void> {
-        this.adapter.log.info(`${I18n.translate('Starting IDS communication with URL')}: ${this.idsUrl}`);
+        this.adapter.log.info(
+            `${I18n.translate('Starting IDS communication with URL')}: ${this.idsUrl || `http://${await this.dockerManager!.getIpOfContainer()}:5000`}`,
+        );
         try {
             await this.manageIdsContainer();
             await this.startWebServer();

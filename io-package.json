@@ -68,7 +68,7 @@
       "kisshome-defender"
     ],
     "stopTimeout": 5000,
-    "enabled": true,
+    "enabled": false,
     "compact": true,
     "singletonHost": true,
     "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.kisshome-defender/main/admin/kisshome-defender.png",

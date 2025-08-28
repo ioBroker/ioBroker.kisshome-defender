@@ -806,17 +806,19 @@ export class KISSHomeResearchAdapter extends Adapter {
                 // Start communication with IDS
                 await this.idsCommunication.start();
                 this.idsCommunication.activateSimulation(!!simulationActivated?.val, true);
-            } else {
-                // TODO: Delete it later as the test is not needed
-                await this.idsCommunication.start();
-                this.idsCommunication.activateSimulation(!!simulationActivated?.val, true);
             }
-        } else {
-            // TODO: Delete it later as the test is not needed
-            await this.idsCommunication.start();
-            this.idsCommunication.activateSimulation(!!simulationActivated?.val, true);
-            this.log.warn(I18n.translate('Recording is not enabled. Do nothing.'));
+            // } else {
+            //     // TODO: Delete it later as the test is not needed
+            //     await this.idsCommunication.start();
+            //     this.idsCommunication.activateSimulation(!!simulationActivated?.val, true);
+            // }
         }
+        // else {
+        //     // TODO: Delete it later as the test is not needed
+        //     await this.idsCommunication.start();
+        //     this.idsCommunication.activateSimulation(!!simulationActivated?.val, true);
+        //     this.log.warn(I18n.translate('Recording is not enabled. Do nothing.'));
+        // }
     }
 
     readQuestionnaire(): void {
