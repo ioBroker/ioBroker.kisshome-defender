@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "news": {
+      "0.1.5": {
+        "en": "Fixing the detections in GUI",
+        "de": "Festlegen der Erkennungen in GUI",
+        "ru": "Исправление обнаружений в GUI",
+        "pt": "Corrigindo as deteções na GUI",
+        "nl": "Repareren van de detecties in GUI",
+        "fr": "Correction des détections dans GUI",
+        "it": "Fissare le rilevazioni in GUI",
+        "es": "Fijar las detecciones en GUI",
+        "pl": "Ustalanie wykrywania w GUI",
+        "uk": "Виправлення виявлення в GUI",
+        "zh-cn": "修复图形界面中的检测"
+      },
       "0.1.4": {
         "en": "Corrected message sending",
         "de": "Korrigierte Nachricht senden",
