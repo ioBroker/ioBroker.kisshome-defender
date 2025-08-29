@@ -673,8 +673,8 @@ export class IDSCommunication {
             },
             statistics: {
                 suricataTotalRules: 0,
-                suricataAnalysisDurationMs: 0,
-                analysisDurationMs: 0,
+                suricataAnalysisDurationMs: Math.round(Math.random() * 3000),
+                analysisDurationMs: Math.round(Math.random() * 6000),
                 totalBytes: 0,
                 packets: 0,
                 devices: [],

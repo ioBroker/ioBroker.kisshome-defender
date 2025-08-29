@@ -34,7 +34,7 @@ import type {
 
 import { bytes2string } from './utils';
 import { StatusIcon } from './StatusTab';
-// const CHANGE_TIME = '2025-10-16T00:00:00Z'; // Calculation time
+const CHANGE_TIME = '2025-10-16T00:00:00Z'; // Calculation time
 
 const styles: Record<string, React.CSSProperties> = {
     title: {
@@ -140,6 +140,39 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         }
     }
 
+    componentDidUpdate(prevProps: DetectionsTabProps): void {
+        if (this.props.showDetectionWithUUID !== prevProps.showDetectionWithUUID) {
+            if (this.props.showDetectionWithUUID && !this.state.detailed) {
+                this.setState(
+                    {
+                        showDetectionWithUUID: this.props.showDetectionWithUUID,
+                        openedItem: this.props.showDetectionWithUUID,
+                        detailed: true,
+                    },
+                    () => {
+                        this.props.onResultsDialogOpen(true);
+                        this.props.reportUxEvent({
+                            id: 'kisshome-defender-detection',
+                            event: 'show',
+                            ts: Date.now(),
+                            data: this.state.showDetectionWithUUID,
+                        });
+
+                        this.showTimeout = setTimeout(() => {
+                            // Scroll to Element with ID
+                            const element = document.getElementById(this.state.showDetectionWithUUID);
+                            element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            this.showTimeout = null;
+                            this.setState({ showDetectionWithUUID: '' });
+                        }, 300);
+                    },
+                );
+            } else {
+                this.setState({ showDetectionWithUUID: this.props.showDetectionWithUUID });
+            }
+        }
+    }
+
     onRecordingRunningChanged = (_id: string, state: ioBroker.State | null | undefined): void => {
         if (!!state?.val !== this.state.recordingRunning) {
             this.setState({
@@ -198,12 +231,6 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
             `kisshome-defender.${this.props.instance}.info.analysis.running`,
             this.onRecordingCapturedChanged,
         );
-    }
-
-    setStateAsync(state: Partial<DetectionsTabState>): Promise<void> {
-        return new Promise(resolve => {
-            this.setState(state as unknown as DetectionsTabState, resolve);
-        });
     }
 
     renderLastDetection(): React.JSX.Element {
@@ -279,8 +306,20 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         );
     }
 
+    static secondsToHms(d: number): string {
+        d = Number(d);
+        const h = Math.floor(d / 3600);
+        const m = Math.floor((d % 3600) / 60);
+        const s = Math.floor((d % 3600) % 60);
+
+        const hDisplay = h > 0 ? `${h}:` : '';
+        const mDisplay = `${h ? m.toString().padStart(2, '0') : m}:`;
+        const sDisplay = s.toString().padStart(2, '0');
+        return hDisplay + mDisplay + sDisplay;
+    }
+
     renderOneDetectionDetails(item: StoredAnalysisResult): React.JSX.Element {
-        let text: string;
+        let text: string | React.JSX.Element[];
         let title: string;
         if (!item.isAlert) {
             text = I18n.t(
@@ -288,6 +327,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 new Date(item.time).toLocaleDateString(),
                 new Date(item.time).toLocaleTimeString(),
             );
+
             title = I18n.t('kisshome-defender_Everything is OK!');
         } else {
             title = I18n.t('kisshome-defender_Unusual activity detected!');
@@ -296,6 +336,69 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 new Date(item.time).toLocaleDateString(),
                 new Date(item.time).toLocaleTimeString(),
             );
+        }
+        const rnd = Math.random() * 1000;
+
+        if (rnd || new Date(item.time).getTime() > new Date(CHANGE_TIME).getTime()) {
+            const seconds = Math.round(item.statistics.analysisDurationMs / 1000);
+            text += ' ';
+            text += I18n.t('kisshome-defender_The control time was %s minutes.', DetectionsTab.secondsToHms(seconds));
+            // Add scan details for today
+            // Scan-Details (heute): {Hier die echten Kontrollzeiten zur Berechnung verwenden}
+            // - Durchschnittliche Kontrollzeit: 1:20 Minuten
+            // - Minimale Kontrollzeit: 1:10 Minuten
+            // - Maximale Kontrollzeit: 5:39 Minuten
+            // - Dauer der Kontrollen: 42:20 Minuten
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const todaysDetections = this.props.results?.results.filter(
+                d => new Date(d.time).getTime() >= today.getTime(),
+            );
+            if (todaysDetections?.length) {
+                const durations = todaysDetections.map(d => d.statistics.analysisDurationMs / 1000);
+                const totalDuration = durations.reduce((a, b) => a + b, 0);
+                const avgDuration = totalDuration / durations.length;
+                const minDuration = Math.min(...durations);
+                const maxDuration = Math.max(...durations);
+                text = [
+                    <div key="main">{text}</div>,
+                    <br key="br" />,
+                    <div
+                        key="details"
+                        style={{ fontWeight: 'bold' }}
+                    >
+                        {I18n.t('kisshome-defender_Scan details (today)')}:
+                    </div>,
+                    <div key="details_avg">
+                        <span style={{ fontWeight: 'bold' }}>
+                            - {I18n.t('kisshome-defender_Average control time')}:
+                        </span>{' '}
+                        <span>{DetectionsTab.secondsToHms(avgDuration)}</span>
+                        <span> {I18n.t('kisshome-defender_minutes')}</span>
+                    </div>,
+                    <div key="details_min">
+                        <span style={{ fontWeight: 'bold' }}>
+                            - {I18n.t('kisshome-defender_Minimal control time')}:
+                        </span>{' '}
+                        <span>{DetectionsTab.secondsToHms(minDuration)}</span>
+                        <span> {I18n.t('kisshome-defender_minutes')}</span>
+                    </div>,
+                    <div key="details_max">
+                        <span style={{ fontWeight: 'bold' }}>
+                            - {I18n.t('kisshome-defender_Maximal control time')}:
+                        </span>{' '}
+                        <span>{DetectionsTab.secondsToHms(maxDuration)}</span>
+                        <span> {I18n.t('kisshome-defender_minutes')}</span>
+                    </div>,
+                    <div key="details_total">
+                        <span style={{ fontWeight: 'bold' }}>
+                            - {I18n.t('kisshome-defender_Duration of controls')}:
+                        </span>{' '}
+                        <span>{DetectionsTab.secondsToHms(totalDuration)}</span>
+                        <span> {I18n.t('kisshome-defender_minutes')}</span>
+                    </div>,
+                ];
+            }
         }
 
         const scoreTooltip = (
@@ -349,12 +452,33 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         });
 
         const macs: MACAddress[] = Object.keys(devices).sort((a: string, b) => {
-            // first by score, then by name, then by mac
-            if (devices[a].score !== devices[b].score) {
-                return devices[b].score - devices[a].score;
+            let scoreA = devices[a].score || 0;
+            let scoreB = devices[b].score || 0;
+            if (this.props.group === 'A') {
+                // In group A, only separate between no anomaly (0) and anomaly (1)
+                scoreA = scoreA >= 10 ? 1 : 0;
+                scoreB = scoreB >= 10 ? 1 : 0;
             }
-            if (devices[a].name !== devices[b].name) {
+
+            // first by score, then by name, then by mac
+            if (scoreA && scoreB && scoreA !== scoreB) {
+                return scoreB - scoreA;
+            }
+            if (scoreA && !scoreB) {
+                return -1;
+            }
+            if (!scoreA && scoreB) {
+                return 1;
+            }
+
+            if (devices[a].name && devices[b].name && devices[a].name !== devices[b].name) {
                 return (devices[a].name || '').localeCompare(devices[b].name || '');
+            }
+            if (devices[a].name && !devices[b].name) {
+                return -1;
+            }
+            if (!devices[a].name && devices[b].name) {
+                return 1;
             }
             return a.localeCompare(b);
         });
@@ -381,7 +505,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 </div>
                 <div style={{ fontSize: '1.5rem', fontStyle: 'italic' }}>{text}</div>
                 <Table size="small">
-                    <TableHead>
+                    <TableHead style={{ backgroundColor: this.props.themeType === 'dark' ? '#505050' : '#d3d3d3' }}>
                         <TableCell style={{ width: 250 }}>{I18n.t('kisshome-defender_Device')}</TableCell>
                         <TableCell style={{ width: 120 }}>{I18n.t('kisshome-defender_Number of packets')}</TableCell>
                         <Tooltip title={scoreTooltip}>
@@ -490,7 +614,6 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 }}
                 expanded={this.state.openedItem === item.uuid}
             >
-                <div style={{ display: 'none' }}>{item.uuid}</div>
                 <AccordionSummary expandIcon={<ExpandMore />}>
                     <StatusIcon
                         ok={!item.isAlert}
@@ -500,6 +623,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                     <Typography component="span">
                         {I18n.t('kisshome-defender_Test result at %s', new Date(item.time).toLocaleString())}
                     </Typography>
+                    <div style={{ display: 'none' }}>{item.uuid}</div>
                 </AccordionSummary>
                 {this.state.openedItem === item.uuid ? this.renderOneDetectionDetails(item) : null}
             </Accordion>
