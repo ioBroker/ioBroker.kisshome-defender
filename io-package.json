@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "news": {
+      "0.1.6": {
+        "en": "Do not show scores for later time",
+        "de": "Ergebnisse für spätere Zeit nicht anzeigen",
+        "ru": "Не показывайте результаты для более позднего времени",
+        "pt": "Não mostrar as pontuações para mais tarde",
+        "nl": "Geen scores tonen voor later",
+        "fr": "Ne montrez pas les scores pour plus tard",
+        "it": "Non mostrare punteggi per il tempo successivo",
+        "es": "No mostrar partituras para el tiempo posterior",
+        "pl": "Nie pokazuj wyników na później",
+        "uk": "Не показувати бали пізніше",
+        "zh-cn": "以后不显示分数"
+      },
       "0.1.5": {
         "en": "Fixing the detections in GUI",
         "de": "Festlegen der Erkennungen in GUI",
