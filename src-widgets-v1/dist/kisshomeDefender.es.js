@@ -74642,6 +74642,7 @@ yyyy`);
     }
     renderOneDetectionDetails(e) {
       let r, n;
+      const a = new Date(e.time).getTime() > new Date(E9e).getTime();
       if (e.isAlert ? (n = W.t("kisshome-defender_Unusual activity detected!"), r = W.t(
         "kisshome-defender_Your smart devices were checked on %s at %s. Unusual activity was detected on at least one device.",
         new Date(e.time).toLocaleDateString(),
@@ -74650,7 +74651,7 @@ yyyy`);
         "kisshome-defender_Your smart devices were checked on %s at %s. No unusual activities were detected.",
         new Date(e.time).toLocaleDateString(),
         new Date(e.time).toLocaleTimeString()
-      ), n = W.t("kisshome-defender_Everything is OK!")), Math.random() * 1e3 || new Date(e.time).getTime() > new Date(E9e).getTime()) {
+      ), n = W.t("kisshome-defender_Everything is OK!")), a) {
         const l = Math.round(e.statistics.analysisDurationMs / 1e3);
         r += " ", r += W.t("kisshome-defender_The control time was %s minutes.", Qc.secondsToHms(l));
         const c = /* @__PURE__ */ new Date();
@@ -74751,7 +74752,7 @@ yyyy`);
       });
       const s = Object.keys(i).sort((l, c) => {
         let d = i[l].score || 0, u = i[c].score || 0;
-        return this.props.group === "A" && (d = d >= 10 ? 1 : 0, u = u >= 10 ? 1 : 0), d && u && d !== u ? u - d : d && !u ? -1 : !d && u ? 1 : i[l].name && i[c].name && i[l].name !== i[c].name ? (i[l].name || "").localeCompare(i[c].name || "") : i[l].name && !i[c].name ? -1 : !i[l].name && i[c].name ? 1 : l.localeCompare(c);
+        return (this.props.group === "A" || a) && (d = d >= 10 ? 1 : 0, u = u >= 10 ? 1 : 0), d && u && d !== u ? u - d : d && !u ? -1 : !d && u ? 1 : i[l].name && i[c].name && i[l].name !== i[c].name ? (i[l].name || "").localeCompare(i[c].name || "") : i[l].name && !i[c].name ? -1 : !i[l].name && i[c].name ? 1 : l.localeCompare(c);
       });
       return /* @__PURE__ */ R.jsxs(KQ, { children: [
         /* @__PURE__ */ R.jsxs(
@@ -74814,7 +74815,7 @@ yyyy`);
                     backgroundColor: i[l].type ? "red" : "green",
                     color: "white"
                   },
-                  children: this.props.group === "A" ? i[l].type ? W.t("kisshome-defender_Anomaly") : W.t("kisshome-defender_No anomaly") : `${i[l].score}/100`
+                  children: this.props.group === "A" || a ? i[l].type ? W.t("kisshome-defender_Anomaly") : W.t("kisshome-defender_No anomaly") : `${i[l].score}/100`
                 }
               ),
               /* @__PURE__ */ R.jsxs(
