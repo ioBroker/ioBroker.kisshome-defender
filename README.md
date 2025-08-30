@@ -51,6 +51,10 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+
+-   (@GermanBluefox) Do not show scores for later time
+
 ### 0.1.5 (2025-08-29)
 
 -   (@GermanBluefox) Fixing the detections in GUI

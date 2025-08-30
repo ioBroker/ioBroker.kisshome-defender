@@ -321,6 +321,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
     renderOneDetectionDetails(item: StoredAnalysisResult): React.JSX.Element {
         let text: string | React.JSX.Element[];
         let title: string;
+        const secondPart = new Date(item.time).getTime() > new Date(CHANGE_TIME).getTime();
         if (!item.isAlert) {
             text = I18n.t(
                 'kisshome-defender_Your smart devices were checked on %s at %s. No unusual activities were detected.',
@@ -337,9 +338,8 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 new Date(item.time).toLocaleTimeString(),
             );
         }
-        const rnd = Math.random() * 1000;
 
-        if (rnd || new Date(item.time).getTime() > new Date(CHANGE_TIME).getTime()) {
+        if (secondPart) {
             const seconds = Math.round(item.statistics.analysisDurationMs / 1000);
             text += ' ';
             text += I18n.t('kisshome-defender_The control time was %s minutes.', DetectionsTab.secondsToHms(seconds));
@@ -454,7 +454,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         const macs: MACAddress[] = Object.keys(devices).sort((a: string, b) => {
             let scoreA = devices[a].score || 0;
             let scoreB = devices[b].score || 0;
-            if (this.props.group === 'A') {
+            if (this.props.group === 'A' || secondPart) {
                 // In group A, only separate between no anomaly (0) and anomaly (1)
                 scoreA = scoreA >= 10 ? 1 : 0;
                 scoreB = scoreB >= 10 ? 1 : 0;
@@ -548,7 +548,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                                             color: 'white',
                                         }}
                                     >
-                                        {this.props.group === 'A'
+                                        {this.props.group === 'A' || secondPart
                                             ? !devices[mac].type
                                                 ? I18n.t('kisshome-defender_No anomaly')
                                                 : I18n.t('kisshome-defender_Anomaly')
