@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "0.1.8",
+    "version": "0.1.9",
     "news": {
+      "0.1.9": {
+        "en": "Look for vis-(2) project with kisshome widget",
+        "de": "Suche nach vis-(2) Projekt mit kisshome Widget",
+        "ru": "Ищите проект vis-(2) с виджетом kisshome",
+        "pt": "Procure por projeto vis-(2) com widget kisshome",
+        "nl": "Zoek vis-(2) project met kisshome widget",
+        "fr": "Rechercher le projet vis-(2) avec widget baiserhome",
+        "it": "Cercare vis-(2) progetto con widget kisshome",
+        "es": "Busque el proyecto vis-(2) con beshome widget",
+        "pl": "Szukaj vis- (2) projektu z kisshome widget",
+        "uk": "Шукайте проект vis-(2) з kisshome віджет",
+        "zh-cn": "寻找带有 kisshome 部件的 相对 (2) 工程"
+      },
       "0.1.8": {
         "en": "Fixed GUI issues\nSend results to cloud sync folder",
         "de": "Behobene GUI Probleme\nErgebnisse in Cloud-Sync-Ordner senden",
@@ -69,19 +82,6 @@
         "zh-cn": "已更正信件发送"
       },
       "0.1.3": {
-        "en": "Removed test cases",
-        "de": "Entfernte Testfälle",
-        "ru": "Удаленные тестовые случаи",
-        "pt": "Casos de teste removidos",
-        "nl": "Verwijderde testcases",
-        "fr": "Cas d ' essai retirés",
-        "it": "Casi di prova rimossi",
-        "es": "Casos de prueba eliminados",
-        "pl": "Usunięte przypadki badań",
-        "uk": "Видалити тестові випадки",
-        "zh-cn": "已删除测试案例"
-      },
-      "0.1.2": {
         "en": "Removed test cases",
         "de": "Entfernte Testfälle",
         "ru": "Удаленные тестовые случаи",
