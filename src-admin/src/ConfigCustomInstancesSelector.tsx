@@ -258,7 +258,7 @@ interface ConfigCustomInstancesSelectorState extends ConfigGenericState {
     IP2MAC: Record<string, string>;
     MAC2VENDOR: Record<string, string>;
     runningRequest?: boolean;
-    modelStatus: IDSStatusMessage['trainingJson'];
+    modelStatus: IDSStatusMessage['training'];
 }
 
 export default class ConfigCustomInstancesSelector extends ConfigGeneric<
@@ -346,7 +346,7 @@ export default class ConfigCustomInstancesSelector extends ConfigGeneric<
                 .then(result => {
                     if (result.modelStatus) {
                         this.setState({
-                            modelStatus: result.modelStatus as IDSStatusMessage['trainingJson'],
+                            modelStatus: result.modelStatus as IDSStatusMessage['training'],
                         });
                     }
                 });

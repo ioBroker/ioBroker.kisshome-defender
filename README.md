@@ -55,10 +55,10 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
-### 0.1.7 (2025-09-03)
+### **WORK IN PROGRESS**
 
--   (@GermanBluefox) Fixing GUI errors
--   (@GermanBluefox) Send IDS result to cloud
+-   (@GermanBluefox) Fixed GUI issues
+-   (@GermanBluefox) Send results to cloud sync folder
 
 ### 0.1.6 (2025-08-30)
 

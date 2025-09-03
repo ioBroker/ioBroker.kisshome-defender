@@ -127,7 +127,7 @@ export class KISSHomeResearchAdapter extends Adapter {
     }
 
     async onMessage(msg: ioBroker.Message): Promise<void> {
-        if (typeof msg === 'object' && msg.message) {
+        if (typeof msg === 'object') {
             switch (msg.command) {
                 case 'getDockerVolume':
                     if (msg.callback) {
@@ -136,7 +136,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                     break;
 
                 case 'getDefaultGateway':
-                    if (msg.callback) {
+                    if (msg.callback && msg.message) {
                         if (msg.message.value !== '0.0.0.0') {
                             this.sendTo(msg.from, msg.command, msg.message.value, msg.callback);
                         } else {
@@ -226,7 +226,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                                     msg.message?.login,
                                     msg.message?.password,
                                     msg.message?.login === this.config.login &&
-                                        msg.message.password === this.config.password
+                                        msg.message?.password === this.config.password
                                         ? this.sid
                                         : undefined,
                                 );
@@ -252,7 +252,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                 }
 
                 case 'getMacForIps':
-                    if (msg.callback) {
+                    if (msg.callback && msg.message) {
                         try {
                             const devices: Device[] = msg.message as Device[];
                             const result = await this.getMacForIps(devices);
@@ -271,7 +271,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                 }
 
                 case 'getData': {
-                    if (msg.callback) {
+                    if (msg.callback && msg.message) {
                         const requestType: DataRequestType = msg.message.type || 'allStatistics';
                         if (requestType === 'dataVolumePerDay') {
                             this.sendTo(msg.from, msg.command, this.statistics?.getDataVolumePerDay(), msg.callback);
@@ -1170,7 +1170,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                             if (
                                 this.context.full.totalBytes > SAVE_DATA_IF_BIGGER ||
                                 // save every 20 minutes
-                                Date.now() - this.context.lastSaved >= SAVE_DATA_EVERY_MS
+                                Date.now() - this.context.lastSaved >= this.config.saveThresholdSeconds * 1000
                             ) {
                                 this.savePacketsToFile();
 
@@ -1178,8 +1178,8 @@ export class KISSHomeResearchAdapter extends Adapter {
                                     this.log.error(`[RSYNC] ${I18n.translate('Cannot synchronize')}: ${e}`);
                                 });
                             }
-                            if (this.nextSave !== this.context.lastSaved + SAVE_DATA_EVERY_MS) {
-                                this.nextSave = this.context.lastSaved + SAVE_DATA_EVERY_MS;
+                            if (this.nextSave !== this.context.lastSaved + this.config.saveThresholdSeconds * 1000) {
+                                this.nextSave = this.context.lastSaved + this.config.saveThresholdSeconds * 1000;
                                 void this.setState(
                                     'info.recording.nextWrite',
                                     new Date(this.nextSave).toISOString(),
@@ -1189,8 +1189,8 @@ export class KISSHomeResearchAdapter extends Adapter {
                         }, 10000);
                     }
 
-                    await this.setState('info.recording.capturedFull', this.context.full.totalPackets, true);
-                    await this.setState('info.recording.capturedFiltered', this.context.filtered.totalPackets, true);
+                    await this.setState('info.recording.capturedFull', this.context.full.totalBytes, true);
+                    await this.setState('info.recording.capturedFiltered', this.context.filtered.totalBytes, true);
                 },
                 (text: string, level: 'info' | 'warn' | 'error' | 'debug' = 'info') => {
                     this.log[level](`[PCAP] ${text}`);

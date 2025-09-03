@@ -10,8 +10,7 @@ export interface IDSStatusMessage {
     status: 'Started' | 'Configuring' | 'Running' | 'Analyzing' | 'Error' | 'No connection' | 'Exited';
     error?: string;
     version?: string;
-    training?: string;
-    trainingJson?: { [mac: MACAddress]: { progress: number; description: string } };
+    training?: { [mac: MACAddress]: { progress: number; description: string } };
 }
 export interface IDSStatus {
     result: 'Success' | 'Error';

@@ -209,7 +209,7 @@ export default class CloudSync {
 
                 if (responseCheck.status === 200 && responseCheck.data === md5) {
                     // file already uploaded, do not upload it again
-                    if (name.endsWith('.pcap') || name.includes('ux_events')) {
+                    if (!name.endsWith('_meta.json')) {
                         this.justSending = '';
                         unlinkSync(fileName);
                     }
@@ -231,7 +231,7 @@ export default class CloudSync {
                 `https://${PCAP_HOST}/api/v2/upload/${encodeURIComponent(this.config.email)}/${encodeURIComponent(name)}?&uuid=${encodeURIComponent(this.uuid)}`,
             );
             if (response.status === 200 && response.data === md5) {
-                if (name.endsWith('.pcap')) {
+                if (!name.endsWith('_meta.json')) {
                     unlinkSync(fileName);
                 }
                 this.adapter.log.debug(
@@ -408,16 +408,18 @@ export default class CloudSync {
 
         // send files to the cloud
 
-        // first send meta files
-        let sent = false;
+        // first send json files and meta file
+        let sentMeta = false;
         for (let i = 0; i < allFiles.length; i++) {
             const file = allFiles[i];
             if (file.endsWith('.json')) {
                 await this.sendOneFileToCloud(`${this.workingDir}/${file}`);
-                sent = true;
+                if (file.endsWith('_meta.json')) {
+                    sentMeta = true;
+                }
             }
         }
-        if (!sent) {
+        if (!sentMeta) {
             // create meta file anew and send it to the cloud
             const fileName = this.saveMetaFile();
             if (fileName) {
