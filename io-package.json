@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "news": {
+      "0.1.7": {
+        "en": "Fixing GUI errors\nSend IDS result to cloud",
+        "de": "GUI-Fehler beheben\nIDS-Ergebnis nach Cloud senden",
+        "ru": "Исправление ошибок GUI\nОтправить результат IDS в облако",
+        "pt": "Corrigindo erros da GUI\nEnviar o resultado IDS para a nuvem",
+        "nl": "GUI-fouten herstellen\nIDS-resultaat naar cloud sturen",
+        "fr": "Correction des erreurs d'interface graphique\nEnvoyer le résultat d'IDS au cloud",
+        "it": "Correggere errori GUI\nInvia il risultato IDS al cloud",
+        "es": "Corrección de errores GUI\nEnviar Resultado IDS a la nube",
+        "pl": "Ustawienie błędów GUI\nWyślij wynik IDS do chmury",
+        "uk": "Виправлення помилок GUI\nНадіслати IDS результат хмари",
+        "zh-cn": "修复图形用户界面错误\n将IDS结果发送到云中"
+      },
       "0.1.6": {
         "en": "Do not show scores for later time",
         "de": "Ergebnisse für spätere Zeit nicht anzeigen",
