@@ -37,7 +37,7 @@
     "@iobroker/eslint-config": "^2.1.0",
     "@iobroker/types": "^7.0.7",
     "@iobroker/legacy-testing": "^2.0.2",
-    "@iobroker/testing": "^5.1.0",
+    "@iobroker/testing": "^5.1.1",
     "@module-federation/vite": "^1.7.1",
     "@types/node": "^24.3.0",
     "@vitejs/plugin-react": "^5.0.1",
