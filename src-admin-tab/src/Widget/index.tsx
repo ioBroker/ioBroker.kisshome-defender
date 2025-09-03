@@ -309,6 +309,10 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
     }
 
     renderAlarm(): React.JSX.Element | null {
+        if (this.state.showQuestionnaire && !this.props.editMode && this.state.alive) {
+            // It is questionnaire opened, do not show alarm
+            return null;
+        }
         if (this.props.editMode) {
             return null;
         }

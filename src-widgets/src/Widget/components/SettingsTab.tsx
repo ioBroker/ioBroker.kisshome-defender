@@ -14,11 +14,9 @@ interface SettingsTabProps {
 
 interface SettingsTabState {
     initialConfig: {
-        anomalySensitivity: 'low' | 'medium' | 'high';
         saveThresholdSeconds: number;
     } | null;
     newConfig: {
-        anomalySensitivity: 'low' | 'medium' | 'high' | null;
         saveThresholdSeconds: number | null;
     } | null;
     adminLink: string;
@@ -47,12 +45,12 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
             this.setState({
                 enabled: !!state?.val,
                 initialConfig: {
-                    anomalySensitivity: (obj.native.anomalySensitivity as 'low' | 'medium' | 'high') || 'medium',
-                    saveThresholdSeconds: obj.native.saveThresholdSeconds || 60,
+                    // anomalySensitivity: (obj.native.anomalySensitivity as 'low' | 'medium' | 'high') || 'medium',
+                    saveThresholdSeconds: obj.native.saveThresholdSeconds || 3600,
                 },
                 newConfig: {
-                    anomalySensitivity: (obj.native.anomalySensitivity as 'low' | 'medium' | 'high') || 'medium',
-                    saveThresholdSeconds: obj.native.saveThresholdSeconds || 60,
+                    // anomalySensitivity: (obj.native.anomalySensitivity as 'low' | 'medium' | 'high') || 'medium',
+                    saveThresholdSeconds: obj.native.saveThresholdSeconds || 3600,
                 },
                 adminLink: await findAdminLink(this.props.socket, this.props.instance),
             });
@@ -96,17 +94,15 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
             // If really changed
             if (
                 !this.state.initialConfig ||
-                this.state.initialConfig.saveThresholdSeconds !== (obj.native.saveThresholdSeconds || 'medium') ||
-                this.state.initialConfig.anomalySensitivity !== (obj.native.anomalySensitivity || 60)
+                this.state.initialConfig.saveThresholdSeconds !==
+                    (parseInt(obj.native.saveThresholdSeconds, 10) || 3600)
             ) {
                 this.setState({
                     initialConfig: {
-                        anomalySensitivity: (obj.native.anomalySensitivity as 'low' | 'medium' | 'high') || 'medium',
-                        saveThresholdSeconds: obj.native.saveThresholdSeconds || 60,
+                        saveThresholdSeconds: obj.native.saveThresholdSeconds || 3600,
                     },
                     newConfig: {
-                        anomalySensitivity: (obj.native.anomalySensitivity as 'low' | 'medium' | 'high') || 'medium',
-                        saveThresholdSeconds: obj.native.saveThresholdSeconds || 60,
+                        saveThresholdSeconds: obj.native.saveThresholdSeconds || 3600,
                     },
                 });
             }
@@ -119,8 +115,7 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
         }
 
         const settingsChanged =
-            this.state.newConfig.saveThresholdSeconds !== this.state.initialConfig.saveThresholdSeconds ||
-            this.state.newConfig.anomalySensitivity !== this.state.initialConfig.anomalySensitivity;
+            this.state.newConfig.saveThresholdSeconds !== this.state.initialConfig.saveThresholdSeconds;
 
         return (
             <Paper
@@ -239,51 +234,23 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                                 label: I18n.t('kisshome-defender_one hour'),
                             },
                         ]}
-                        value={this.state.newConfig.saveThresholdSeconds || 60}
+                        value={Math.round(this.state.newConfig.saveThresholdSeconds || 3600) / 60}
                         onChange={(event, value) => {
                             this.props.reportUxEvent({
                                 id: 'kisshome-defender-settings-save-threshold',
                                 event: 'change',
                                 ts: Date.now(),
+                                data: (value as number).toString(),
                                 isTouchEvent: event instanceof TouchEvent,
                             });
                             this.setState({
                                 newConfig: {
-                                    anomalySensitivity: this.state.newConfig?.anomalySensitivity || 'medium',
-                                    saveThresholdSeconds: value as number,
+                                    saveThresholdSeconds: (value as number) * 60,
                                 },
                             });
                         }}
                     />
                 </div>
-                {/*<div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 16 }}>
-                    <div style={{ fontWeight: 'bold', minWidth: 280 }}>
-                        {I18n.t('kisshome-defender_Anomaly sensitivity')}
-                    </div>
-                    <Select
-                        style={{ minWidth: 180 }}
-                        variant="standard"
-                        value={this.state.newConfig.anomalySensitivity || 'medium'}
-                        onChange={event => {
-                            this.props.reportUxEvent({
-                                id: 'kisshome-defender-settings-anomaly-sensitivity',
-                                event: 'change',
-                                ts: Date.now(),
-                                isTouchEvent: event instanceof TouchEvent,
-                            });
-                            this.setState({
-                                newConfig: {
-                                    anomalySensitivity: event.target.value as 'low' | 'medium' | 'high',
-                                    saveThresholdSeconds: this.state.newConfig!.saveThresholdSeconds,
-                                },
-                            });
-                        }}
-                    >
-                        <MenuItem value="low">{I18n.t('kisshome-defender_Low')}</MenuItem>
-                        <MenuItem value="medium">{I18n.t('kisshome-defender_Medium')}</MenuItem>
-                        <MenuItem value="high">{I18n.t('kisshome-defender_High')}</MenuItem>
-                    </Select>
-                </div>*/}
                 <div style={{ width: '100%', opacity: settingsChanged ? 1 : 0 }}>
                     <Button
                         variant="contained"
@@ -318,15 +285,12 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                             this.setState(
                                 {
                                     initialConfig: {
-                                        anomalySensitivity: this.state.newConfig?.anomalySensitivity || 'medium',
-                                        saveThresholdSeconds: this.state.newConfig?.saveThresholdSeconds || 60,
+                                        saveThresholdSeconds: this.state.newConfig?.saveThresholdSeconds || 3600,
                                     },
                                 },
                                 () => {
-                                    configObj.native.anomalySensitivity =
-                                        this.state.newConfig?.anomalySensitivity || 'medium';
                                     configObj.native.saveThresholdSeconds =
-                                        this.state.newConfig?.saveThresholdSeconds || 60;
+                                        this.state.newConfig?.saveThresholdSeconds || 3600;
                                     void this.props.socket.setObject(
                                         `system.adapter.kisshome-defender.${this.props.instance}`,
                                         configObj,

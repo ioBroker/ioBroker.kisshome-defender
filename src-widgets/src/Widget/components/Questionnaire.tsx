@@ -165,7 +165,7 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         });
     }
 
-    renderText(item: QuestionnaireItem): React.JSX.Element {
+    renderText(item: QuestionnaireItem, index: number): React.JSX.Element {
         const content = this.markDown.render(item.text || '');
 
         if (!item.label) {
@@ -192,7 +192,7 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
 
         return (
             <div
-                key={item.id}
+                key={`${index}_${item.id}`}
                 style={{
                     ...styles.divItem,
                     ...this.state.json.divStyle,
@@ -220,10 +220,10 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         );
     }
 
-    renderSelect(item: QuestionnaireItem): React.JSX.Element {
+    renderSelect(item: QuestionnaireItem, index: number): React.JSX.Element {
         return (
             <div
-                key={item.id}
+                key={`${index}_${item.id}`}
                 style={{
                     ...styles.divItem,
                     ...this.state.json.divStyle,
@@ -277,10 +277,10 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         );
     }
 
-    renderInput(item: QuestionnaireItem): React.JSX.Element {
+    renderInput(item: QuestionnaireItem, index: number): React.JSX.Element {
         return (
             <div
-                key={item.id}
+                key={`${index}_${item.id}`}
                 style={{
                     ...styles.divItem,
                     ...this.state.json.divStyle,
@@ -317,14 +317,14 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         );
     }
 
-    renderRadio(item: QuestionnaireItem): React.JSX.Element | null {
+    renderRadio(item: QuestionnaireItem, index: number): React.JSX.Element | null {
         const value = this.state.answers[item.id]?.value || '';
         if (!item.options) {
             return null;
         }
         return (
             <div
-                key={item.id}
+                key={`${index}_${item.id}`}
                 style={{
                     ...styles.divItem,
                     justifyContent: item.options.length > 5 ? 'space-between' : undefined,
@@ -398,11 +398,11 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         );
     }
 
-    renderYesNo(item: QuestionnaireItem): React.JSX.Element {
+    renderYesNo(item: QuestionnaireItem, index: number): React.JSX.Element {
         const value: boolean = this.state.answers[item.id]?.value as boolean;
         return (
             <div
-                key={item.id}
+                key={`${index}_${item.id}`}
                 style={{
                     ...styles.divItem,
                     ...this.state.json.divStyle,
@@ -477,11 +477,11 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         );
     }
 
-    renderCheckbox(item: QuestionnaireItem): React.JSX.Element {
+    renderCheckbox(item: QuestionnaireItem, index: number): React.JSX.Element {
         const value = this.state.answers[item.id]?.value || false;
         return (
             <div
-                key={item.id}
+                key={`${index}_${item.id}`}
                 style={{
                     ...styles.divItem,
                     ...this.state.json.divStyle,
@@ -521,22 +521,22 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         );
     }
 
-    renderItem(item: QuestionnaireItem): React.JSX.Element | null {
+    renderItem(item: QuestionnaireItem, index: number): React.JSX.Element | null {
         switch (item.type) {
             case 'text':
-                return this.renderText(item);
+                return this.renderText(item, index);
             case 'select':
-                return this.renderSelect(item);
+                return this.renderSelect(item, index);
             case 'input':
-                return this.renderInput(item);
+                return this.renderInput(item, index);
             case 'radio':
-                return this.renderRadio(item);
+                return this.renderRadio(item, index);
             case 'yesNo':
-                return this.renderYesNo(item);
+                return this.renderYesNo(item, index);
             case 'checkbox':
-                return this.renderCheckbox(item);
+                return this.renderCheckbox(item, index);
             default:
-                return <div key={item.id}>Unknown item type: {item.type}</div>;
+                return <div key={`${index}_${item.id}`}>Unknown item type: {item.type}</div>;
         }
     }
 
@@ -608,7 +608,7 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                         gap: 10,
                     }}
                 >
-                    {this.state.email ? this.state.json.items?.map(item => this.renderItem(item)) : '...'}
+                    {this.state.email ? this.state.json.items?.map((item, i) => this.renderItem(item, i)) : '...'}
                 </DialogContent>
                 <DialogActions>
                     {this.state.json.required === false ? (

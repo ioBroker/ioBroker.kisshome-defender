@@ -22,7 +22,7 @@ import type {
 import { DockerManager } from './DockerManager';
 import { fileNameToDate } from './utils';
 
-const MAX_FILES_ON_DISK = 3; // Maximum number of files to keep on disk
+const MAX_FILES_ON_DISK = 6; // Maximum number of files to keep on disk
 const DOCKER_CONTAINER_NAME = 'iobroker-defender-ids';
 const CHANGE_TIME = '2025-10-16T00:00:00Z'; // Calculation time
 
@@ -60,6 +60,7 @@ export class IDSCommunication {
     private dockerManager: DockerManager | null = null;
     private configSent = false;
     private readonly workingFolder: string;
+    private readonly workingCloudDir: string;
     private readonly statisticsDir: string;
     private currentStatus:
         | 'Running'
@@ -94,12 +95,14 @@ export class IDSCommunication {
             workingFolder: string;
             generateEvent: (isAlert: boolean, id: string, message: string, title: string) => Promise<void>;
             group: 'A' | 'B';
+            workingCloudDir: string;
         },
     ) {
         this.adapter = adapter;
         this.config = config;
         this.metaData = metaData;
         this.workingFolder = options.workingFolder;
+        this.workingCloudDir = options.workingCloudDir;
         this.generateEvent = options.generateEvent;
         this.group = options.group;
         this.idsUrl = (this.config.docker?.selfHosted ? '' : this.config.docker?.url) || '';
@@ -113,7 +116,7 @@ export class IDSCommunication {
                 // Create the directory if it does not exist
                 mkdirSync(this.statisticsDir, { recursive: true });
             } catch (error) {
-                this.adapter.log.error(`Error creating statistics directory: ${error.message}`);
+                this.adapter.log.error(`[IDS] Error creating statistics directory: ${error.message}`);
             }
         }
         if (this.config.docker.selfHosted && !existsSync(`${this.statisticsDir}/volume`)) {
@@ -121,7 +124,7 @@ export class IDSCommunication {
                 // Create the volume directory if it does not exist
                 mkdirSync(`${this.statisticsDir}/volume`, { recursive: true });
             } catch (error) {
-                this.adapter.log.error(`Error creating statistics volume directory: ${error.message}`);
+                this.adapter.log.error(`[IDS] Error creating statistics volume directory: ${error.message}`);
             }
         }
 
@@ -211,7 +214,7 @@ export class IDSCommunication {
      */
     private async getOwnIpAddress(): Promise<string> {
         if (!this.idsUrl && !this.config.docker?.selfHosted) {
-            this.adapter.log.warn('No IDS URL configured, using localhost as fallback');
+            this.adapter.log.warn('[IDS] No IDS URL configured, using localhost as fallback');
             throw new Error('No IDS URL configured');
         } else if (!this.idsUrl) {
             this.idsUrl = `http://${await this.dockerManager!.getIpOfContainer()}:5000`;
@@ -230,7 +233,7 @@ export class IDSCommunication {
             // Find int the own interfaces the one with the IP in the same subnet
             const ipv4 = IDSCommunication.findSuitableIpv4Address(parsed.hostname);
             if (!ipv4) {
-                this.adapter.log.warn(`No suitable IPv4 address found for ${parsed.hostname}`);
+                this.adapter.log.warn(`[IDS] No suitable IPv4 address found for ${parsed.hostname}`);
                 return '127.0.0.1'; // Fallback to localhost
             }
             return ipv4;
@@ -239,18 +242,18 @@ export class IDSCommunication {
             // If IPv6, we assume the first address is the one to use
             const ipv6 = IDSCommunication.findSuitableIpv6Address(parsed.hostname);
             if (!ipv6) {
-                this.adapter.log.warn(`No suitable IPv6 address found for ${parsed.hostname}`);
+                this.adapter.log.warn(`[IDS] No suitable IPv6 address found for ${parsed.hostname}`);
                 return '::1'; // Fallback to localhost
             }
             return ipv6;
         }
 
         // resolve the hostname to an IP address
-        this.adapter.log.warn(`Hostname is not an IP address: ${parsed.hostname}`);
+        this.adapter.log.warn(`[IDS] Hostname is not an IP address: ${parsed.hostname}`);
         try {
             const ips = await dns.promises.lookup(parsed.hostname, { family: 4, all: true });
             if (ips.length === 0) {
-                this.adapter.log.warn(`No IPv4 addresses found for ${parsed.hostname}`);
+                this.adapter.log.warn(`[IDS] No IPv4 addresses found for ${parsed.hostname}`);
             } else {
                 for (const ip of ips) {
                     if (ip.family === 4) {
@@ -268,7 +271,7 @@ export class IDSCommunication {
         try {
             const ips = await dns.promises.lookup(parsed.hostname, { family: 6, all: true });
             if (ips.length === 0) {
-                this.adapter.log.warn(`No IPv6 addresses found for ${parsed.hostname}`);
+                this.adapter.log.warn(`[IDS] No IPv6 addresses found for ${parsed.hostname}`);
                 return '127.0.0.1';
             }
             for (const ip of ips) {
@@ -281,9 +284,9 @@ export class IDSCommunication {
             }
         } catch (error) {
             // ignore
-            this.adapter.log.warn(`Error resolving hostname ${parsed.hostname}: ${error.message}`);
+            this.adapter.log.warn(`[IDS] Error resolving hostname ${parsed.hostname}: ${error.message}`);
         }
-        this.adapter.log.warn(`No addresses found for ${parsed.hostname}`);
+        this.adapter.log.warn(`[IDS] No addresses found for ${parsed.hostname}`);
         return '127.0.0.1';
     }
 
@@ -423,23 +426,23 @@ export class IDSCommunication {
                 },
             });
             this.adapter.log.info(
-                `${I18n.translate('Config successful')}: ${response.status} ${JSON.stringify(response.data)}`,
+                `[IDS] ${I18n.translate('Config successful')}: ${response.status} ${JSON.stringify(response.data)}`,
             );
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                this.adapter.log.error(`Error uploading config: ${error.message}`);
+                this.adapter.log.error(`[IDS] Error uploading config: ${error.message}`);
                 if (error.response) {
-                    this.adapter.log.error(`Response data: ${JSON.stringify(error.response.data)}`);
-                    this.adapter.log.error(`Response status: ${error.response.status}`);
+                    this.adapter.log.error(`[IDS] Response data: ${JSON.stringify(error.response.data)}`);
+                    this.adapter.log.error(`[IDS] Response status: ${error.response.status}`);
                 }
             } else {
-                this.adapter.log.error(`An unexpected error occurred: ${error}`);
+                this.adapter.log.error(`[IDS] An unexpected error occurred: ${error}`);
             }
         }
     }
 
-    public getModelStatus(): IDSStatusMessage['trainingJson'] {
-        return this.lastStatus?.message?.trainingJson || {};
+    public getModelStatus(): IDSStatusMessage['training'] {
+        return this.lastStatus?.message?.training || {};
     }
 
     static normalizeMacAddress(mac: string | undefined): MACAddress {
@@ -458,7 +461,7 @@ export class IDSCommunication {
         try {
             const response = await axios.get(`${this.idsUrl}/status`, { timeout: 3000 });
             if (this.currentStatus !== (response.data as IDSStatus).message?.status) {
-                this.adapter.log.debug(`Status: ${response.status} ${JSON.stringify(response.data)}`);
+                this.adapter.log.debug(`[IDS] Status: ${response.status} ${JSON.stringify(response.data)}`);
             }
             // {
             //   "Result": "Success",
@@ -480,23 +483,20 @@ export class IDSCommunication {
                 this.dockerManager &&
                 (this.lastStatus?.message?.status === 'Error' || this.lastStatus?.message?.status === 'Exited')
             ) {
-                this.adapter.log.warn('IDS in the error state, restarting...');
+                this.adapter.log.warn('[IDS] IDS in the error state, restarting...');
                 await this.dockerManager.restart();
             }
-            if (this.lastStatus?.message?.training) {
-                this.lastStatus.message.trainingJson = JSON.parse(this.lastStatus.message.training.replace(/'/g, '"'));
-            }
 
-            if (this.lastStatus?.message?.trainingJson) {
+            if (this.lastStatus?.message?.training) {
                 // Normalize all MACs
                 const normalizedModelStatus: {
                     [mac: MACAddress]: { progress: number; description: string };
                 } = {};
-                for (const mac in this.lastStatus.message.trainingJson) {
+                for (const mac in this.lastStatus.message.training) {
                     const normalizedMac = IDSCommunication.normalizeMacAddress(mac); // Normalize MAC address
-                    normalizedModelStatus[normalizedMac] = this.lastStatus.message.trainingJson[mac];
+                    normalizedModelStatus[normalizedMac] = this.lastStatus.message.training[mac];
                 }
-                this.lastStatus.message.trainingJson = normalizedModelStatus;
+                this.lastStatus.message.training = normalizedModelStatus;
             }
 
             this.triggerUpdate();
@@ -504,13 +504,13 @@ export class IDSCommunication {
             // Ignore the very first time when the IDS image is not ready yet
             if (this.currentStatus !== 'No connection' && this.currentStatus) {
                 if (axios.isAxiosError(error)) {
-                    this.adapter.log.error(`Error getting status: ${error.message}`);
+                    this.adapter.log.error(`[IDS] Error getting status: ${error.message}`);
                     if (error.response) {
-                        this.adapter.log.error(`Response data: ${JSON.stringify(error.response.data)}`);
-                        this.adapter.log.error(`Response status: ${error.response.status}`);
+                        this.adapter.log.error(`[IDS] Response data: ${JSON.stringify(error.response.data)}`);
+                        this.adapter.log.error(`[IDS] Response status: ${error.response.status}`);
                     }
                 } else {
-                    this.adapter.log.error(`An unexpected error occurred: ${error}`);
+                    this.adapter.log.error(`[IDS] An unexpected error occurred: ${error}`);
                 }
             }
 
@@ -561,9 +561,9 @@ export class IDSCommunication {
                 // Delete the file if it is older than 7 days
                 try {
                     unlinkSync(join(this.statisticsDir, file));
-                    this.adapter.log.debug(`Deleted old statistics file: ${file}`);
+                    this.adapter.log.debug(`[IDS] Deleted old statistics file: ${file}`);
                 } catch (error) {
-                    this.adapter.log.error(`Error deleting old statistics file ${file}: ${error.message}`);
+                    this.adapter.log.error(`[IDS] Error deleting old statistics file ${file}: ${error.message}`);
                 }
             }
         }
@@ -578,7 +578,7 @@ export class IDSCommunication {
             try {
                 data = JSON.parse(readFileSync(join(this.statisticsDir, fileName), 'utf-8'));
             } catch (e) {
-                this.adapter.log.error(`Error reading statistics file ${fileName}: ${e.message}`);
+                this.adapter.log.error(`[IDS] Error reading statistics file ${fileName}: ${e.message}`);
             }
         }
 
@@ -757,27 +757,35 @@ export class IDSCommunication {
             (!this.uploadStatus.fileName && analysisResult.file?.includes('test'))
         ) {
             this.adapter.log.debug(
-                `Received response for file ${analysisResult.file}: ${JSON.stringify(analysisResult)}`,
+                `[IDS] Received response for file ${analysisResult.file}: ${JSON.stringify(analysisResult)}`,
             );
             if (analysisResult.result.status === 'success') {
-                this.adapter.log.debug(`File ${analysisResult.file} processed successfully`);
+                this.adapter.log.debug(`[IDS] File ${analysisResult.file} processed successfully`);
             } else {
-                this.adapter.log.error(`Error processing file ${analysisResult.file}: ${analysisResult.result.error}`);
+                this.adapter.log.error(
+                    `[IDS] Error processing file ${analysisResult.file}: ${analysisResult.result.error}`,
+                );
             }
             this.uploadStatus.fileName = undefined;
             this.uploadStatus.status = 'idle';
             void this.adapter.setState('info.analysis.running', false, true);
         } else {
             // Unexpected file name in response, but we delete the file anyway
-            this.adapter.log.warn(`Unexpected response from IDS for file ${analysisResult.file}`);
+            this.adapter.log.warn(`[IDS] Unexpected response from IDS for file ${analysisResult.file}`);
             if (this.uploadStatus.status === 'waitingOnResponse') {
                 this.adapter.log.warn(
-                    `Upload status was 'waitingOnResponse', but received unexpected file name: ${analysisResult.file}`,
+                    `[IDS] Upload status was 'waitingOnResponse', but received unexpected file name: ${analysisResult.file}`,
                 );
                 this.uploadStatus.status = 'idle';
                 void this.adapter.setState('info.analysis.running', false, true);
             }
         }
+        // Save the answer in ids cloud sync directory
+        writeFileSync(
+            `${this.workingCloudDir}/${analysisResult.file.replace(/.pcap$/i, '.json')}`,
+            JSON.stringify(analysisResult),
+        );
+
         const resultUUID = randomUUID();
         let isAlert = false;
         let biggestScore = 0;
@@ -894,7 +902,7 @@ export class IDSCommunication {
 
                 // save it in the state
                 void this.generateEvent(isAlert, resultUUID, text, title).catch(error => {
-                    this.adapter.log.error(`Error generating event: ${error.message}`);
+                    this.adapter.log.error(`[IDS] Error generating event: ${error.message}`);
                 });
             }
             console.log(
@@ -908,11 +916,11 @@ export class IDSCommunication {
         }
 
         if (analysisResult.file && existsSync(`${this.workingFolder}/${analysisResult.file}`)) {
-            this.adapter.log.info(`Deleting file ${analysisResult.file} from working folder`);
+            this.adapter.log.info(`[IDS] Deleting file ${analysisResult.file} from working folder`);
             try {
                 unlinkSync(`${this.workingFolder}/${analysisResult.file}`);
             } catch (error) {
-                this.adapter.log.error(`Error deleting file ${analysisResult.file}: ${error.message}`);
+                this.adapter.log.error(`[IDS] Error deleting file ${analysisResult.file}: ${error.message}`);
             }
         }
 
@@ -924,7 +932,7 @@ export class IDSCommunication {
 
     async manageIdsContainer(): Promise<void> {
         if (this.config.docker?.selfHosted) {
-            this.adapter.log.info(I18n.translate('Managing IDS container'));
+            this.adapter.log.info(`[IDS] ${I18n.translate('Managing IDS container')}`);
             this.dockerManager ||= new DockerManager(this.adapter, {
                 image: 'kisshome/ids:stable',
                 name: DOCKER_CONTAINER_NAME,
@@ -944,14 +952,14 @@ export class IDSCommunication {
 
     async start(): Promise<void> {
         this.adapter.log.info(
-            `${I18n.translate('Starting IDS communication with URL')}: ${this.idsUrl || `http://${await this.dockerManager?.getIpOfContainer()}:5000`}`,
+            `[IDS] ${I18n.translate('Starting IDS communication with URL')}: ${this.idsUrl || `http://${await this.dockerManager?.getIpOfContainer()}:5000`}`,
         );
         try {
             await this.manageIdsContainer();
             await this.startWebServer();
             await this._getStatus();
         } catch (error) {
-            this.adapter.log.error(`Error during IDSCommunication start: ${error.message}`);
+            this.adapter.log.error(`[IDS] Error during IDSCommunication start: ${error.message}`);
             return;
         }
 
@@ -961,7 +969,7 @@ export class IDSCommunication {
 
         this.statusInterval = setInterval(() => {
             this._getStatus().catch(error => {
-                this.adapter.log.error(`Error getting status: ${error.message}`);
+                this.adapter.log.error(`[IDS] Error getting status: ${error.message}`);
             });
         }, 10_000); // Check status every 10 seconds
     }
@@ -976,7 +984,7 @@ export class IDSCommunication {
                 body += chunk.toString(); // Convert Buffer to string
             });
             req.on('end', async (): Promise<void> => {
-                this.adapter.log.debug(`Received POST data: ${body}`);
+                this.adapter.log.debug(`[IDS] Received POST data: ${body}`);
                 // try to parse the body as JSON
                 try {
                     const jsonData: AnalysisResult = JSON.parse(body);
@@ -984,7 +992,7 @@ export class IDSCommunication {
                     // Handle the parsed data
                     const error = await this.onData(jsonData);
                     if (error) {
-                        this.adapter.log.error(`Error processing data: ${error}`);
+                        this.adapter.log.error(`[IDS] Error processing data: ${error}`);
                         res.writeHead(500, { 'Content-Type': 'application/json' });
                         res.end(JSON.stringify({ Error: error }));
                         return;
@@ -993,7 +1001,7 @@ export class IDSCommunication {
                     res.writeHead(200, { 'Content-Type': 'application/json' });
                     res.end(JSON.stringify({ Result: 'Success' }));
                 } catch (e) {
-                    this.adapter.log.error(`Error parsing JSON data: ${e.message}`);
+                    this.adapter.log.error(`[IDS] Error parsing JSON data: ${e.message}`);
                     res.writeHead(422, { 'Content-Type': 'application/json' });
                     res.end(JSON.stringify({ Error: e }));
                     return;
@@ -1002,7 +1010,7 @@ export class IDSCommunication {
         });
 
         this.webServer.listen(this.ownPort, this.ownIp, () => {
-            this.adapter.log.info(`Web server started on http://${this.ownIp}:${this.ownPort}`);
+            this.adapter.log.info(`[IDS] Web server started on http://${this.ownIp}:${this.ownPort}`);
         });
     }
 
@@ -1021,7 +1029,7 @@ export class IDSCommunication {
 
         if (this.webServer) {
             this.webServer.close(() => {
-                this.adapter.log.info('Web server closed');
+                this.adapter.log.info('[IDS] Web server closed');
             });
             this.webServer = null;
         }
@@ -1037,7 +1045,7 @@ export class IDSCommunication {
 
     sendFile(fileName: string): void {
         if (this.uploadStatus.status !== 'idle') {
-            this.adapter.log.warn(`Upload is already in progress: ${this.uploadStatus.status}`);
+            this.adapter.log.warn(`[IDS] Upload is already in progress: ${this.uploadStatus.status}`);
             return;
         }
 
@@ -1055,7 +1063,7 @@ export class IDSCommunication {
             contentType: 'application/octet-stream',
         });
 
-        this.adapter.log.debug(`Send file ${fileName} to ${this.idsUrl}/pcap?pcap_name=${fileName}`);
+        this.adapter.log.debug(`[IDS] Send file ${fileName} to ${this.idsUrl}/pcap?pcap_name=${fileName}`);
 
         axios
             .post(`${this.idsUrl}/pcap?pcap_name=${fileName}`, formData, {
@@ -1065,15 +1073,15 @@ export class IDSCommunication {
             })
             .then(response => {
                 if (this.uploadStatus.status === 'sendingFile' && this.uploadStatus.fileName === fileName) {
-                    this.adapter.log.debug(`File ${fileName} uploaded successfully: ${response.status}`);
+                    this.adapter.log.debug(`[IDS] File ${fileName} uploaded successfully: ${response.status}`);
                     this.uploadStatus.status = 'waitingOnResponse';
                 } else {
                     // Unexpected state. Ignore the response
-                    this.adapter.log.warn('Unexpected upload status or file name mismatch. Ignoring response.');
+                    this.adapter.log.warn('[IDS] Unexpected upload status or file name mismatch. Ignoring response.');
                 }
             })
             .catch(error => {
-                this.adapter.log.error(`Error uploading file ${fileName}: ${error.message}`);
+                this.adapter.log.error(`[IDS] Error uploading file ${fileName}: ${error.message}`);
                 this.uploadStatus = { status: 'idle' };
                 void this.adapter.setState('info.analysis.running', false, true);
             });
@@ -1084,7 +1092,7 @@ export class IDSCommunication {
      */
     triggerUpdate(): void {
         if (!this.webServer) {
-            this.adapter.log.warn('Web server is not running, cannot trigger update');
+            this.adapter.log.warn('[IDS] Web server is not running, cannot trigger update');
             return;
         }
 
@@ -1099,7 +1107,7 @@ export class IDSCommunication {
                 try {
                     unlinkSync(`${this.workingFolder}/${files[i]}`);
                 } catch (error) {
-                    this.adapter.log.error(`Error deleting file ${files[i]}: ${error.message}`);
+                    this.adapter.log.error(`[IDS] Error deleting file ${files[i]}: ${error.message}`);
                 }
                 files.splice(i, 1);
             }

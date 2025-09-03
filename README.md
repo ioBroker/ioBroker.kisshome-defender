@@ -45,12 +45,21 @@ Add the following line:
 iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 ```
 
+## ToDo
+- Do not show alert if questionnaire is opened
+- Save the results to cloud sync folder with "_results" postfix
+
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+
+-   (@GermanBluefox) Fixing GUI errors
+-   (@GermanBluefox) Send IDS result to cloud
+
 ### 0.1.6 (2025-08-30)
 
 -   (@GermanBluefox) Do not show scores for later time

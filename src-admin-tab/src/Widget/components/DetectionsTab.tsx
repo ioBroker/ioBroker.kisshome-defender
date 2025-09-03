@@ -234,8 +234,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
     }
 
     renderLastDetection(): React.JSX.Element {
-        const item = this.props.results?.results?.[0];
-        if (!item) {
+        if (!this.props.results?.results?.length) {
             return (
                 <div className="last-detection">
                     <h3>{I18n.t('kisshome-defender_Last result')}</h3>
@@ -243,6 +242,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 </div>
             );
         }
+        const item = this.props.results.results[this.props.results.results.length - 1];
 
         const seconds = Math.floor((this.state.recordingNextWrite - Date.now()) / 1000);
         const nextControlText = I18n.t(

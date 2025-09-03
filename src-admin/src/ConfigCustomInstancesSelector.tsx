@@ -342,7 +342,7 @@ export default class ConfigCustomInstancesSelector extends ConfigGeneric<
     getModelStatus(): void {
         if (this.state.alive) {
             void this.props.oContext.socket
-                .sendTo(`kisshome-defender.${this.props.oContext.instance}`, 'getModelStatus', null)
+                .sendTo(`kisshome-defender.${this.props.oContext.instance}`, 'getModelStatus', {})
                 .then(result => {
                     if (result.modelStatus) {
                         this.setState({

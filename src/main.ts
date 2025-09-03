@@ -470,10 +470,10 @@ export class KISSHomeResearchAdapter extends Adapter {
                     if (msg.message && typeof msg.message === 'object' && this.config.email) {
                         try {
                             const response = await axios.post(
-                                `https://${PCAP_HOST}/api/v2/questionnaire?email=${encodeURIComponent(this.config.email)}`,
+                                `https://${PCAP_HOST}/api/v2/questionnaire?email=${encodeURIComponent(this.config.email)}&uuid=${encodeURIComponent(this.uuid)}`,
                                 msg.message,
                             );
-                            if (response.status === 200) {
+                            if (response.status === 200 || response.status === 201) {
                                 if (msg.callback) {
                                     this.sendTo(msg.from, msg.command, { result: 'ok' }, msg.callback);
                                 }
@@ -790,6 +790,7 @@ export class KISSHomeResearchAdapter extends Adapter {
             workingFolder: this.workingIdsDir,
             generateEvent: this.generateEvent,
             group: this.group,
+            workingCloudDir: this.workingCloudDir,
         });
 
         if (this.recordingEnabled) {
@@ -1136,14 +1137,10 @@ export class KISSHomeResearchAdapter extends Adapter {
                     }
 
                     if (this.context.filtered.packets?.length) {
-                        await this.setState(
-                            'info.recording.capturedFiltered',
-                            this.context.filtered.totalPackets,
-                            true,
-                        );
+                        await this.setState('info.recording.capturedFiltered', this.context.filtered.totalBytes, true);
                     }
                     if (this.context.full.packets?.length) {
-                        await this.setState('info.recording.capturedFull', this.context.full.totalPackets, true);
+                        await this.setState('info.recording.capturedFull', this.context.full.totalBytes, true);
                     }
                     if (error) {
                         if (!this.context.terminate || !error.toString().includes('aborted')) {

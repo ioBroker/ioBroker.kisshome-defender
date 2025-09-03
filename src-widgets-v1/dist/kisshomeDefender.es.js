@@ -74566,13 +74566,12 @@ yyyy`);
       );
     }
     renderLastDetection() {
-      const e = this.props.results?.results?.[0];
-      if (!e)
+      if (!this.props.results?.results?.length)
         return /* @__PURE__ */ R.jsxs("div", { className: "last-detection", children: [
           /* @__PURE__ */ R.jsx("h3", { children: W.t("kisshome-defender_Last result") }),
           /* @__PURE__ */ R.jsx("div", { children: W.t("kisshome-defender_No results yet exist") })
         ] });
-      const r = Math.floor((this.state.recordingNextWrite - Date.now()) / 1e3), n = W.t(
+      const e = this.props.results.results[this.props.results.results.length - 1], r = Math.floor((this.state.recordingNextWrite - Date.now()) / 1e3), n = W.t(
         "kisshome-defender_In %s minutes or when the maximal file size is reached",
         r > 120 ? Math.round(r / 60) : (Math.round(r / 6) / 10).toString().replace(".", ",")
       ), a = W.t(
@@ -75085,12 +75084,12 @@ yyyy`);
       e?.native ? this.setState({
         enabled: !!r?.val,
         initialConfig: {
-          anomalySensitivity: e.native.anomalySensitivity || "medium",
-          saveThresholdSeconds: e.native.saveThresholdSeconds || 60
+          // anomalySensitivity: (obj.native.anomalySensitivity as 'low' | 'medium' | 'high') || 'medium',
+          saveThresholdSeconds: e.native.saveThresholdSeconds || 3600
         },
         newConfig: {
-          anomalySensitivity: e.native.anomalySensitivity || "medium",
-          saveThresholdSeconds: e.native.saveThresholdSeconds || 60
+          // anomalySensitivity: (obj.native.anomalySensitivity as 'low' | 'medium' | 'high') || 'medium',
+          saveThresholdSeconds: e.native.saveThresholdSeconds || 3600
         },
         adminLink: await FW(this.props.socket, this.props.instance)
       }) : console.error("Failed to load adapter configuration"), await this.props.socket.subscribeObject(
@@ -75114,21 +75113,19 @@ yyyy`);
       e === `kisshome-defender.${this.props.instance}.info.recording.enabled` && !!r?.val !== this.state.enabled && this.setState({ enabled: !!r?.val });
     };
     onSettingsChanged = (e, r) => {
-      e === `system.adapter.kisshome-defender.${this.props.instance}` && r?.native && (!this.state.initialConfig || this.state.initialConfig.saveThresholdSeconds !== (r.native.saveThresholdSeconds || "medium") || this.state.initialConfig.anomalySensitivity !== (r.native.anomalySensitivity || 60)) && this.setState({
+      e === `system.adapter.kisshome-defender.${this.props.instance}` && r?.native && (!this.state.initialConfig || this.state.initialConfig.saveThresholdSeconds !== (parseInt(r.native.saveThresholdSeconds, 10) || 3600)) && this.setState({
         initialConfig: {
-          anomalySensitivity: r.native.anomalySensitivity || "medium",
-          saveThresholdSeconds: r.native.saveThresholdSeconds || 60
+          saveThresholdSeconds: r.native.saveThresholdSeconds || 3600
         },
         newConfig: {
-          anomalySensitivity: r.native.anomalySensitivity || "medium",
-          saveThresholdSeconds: r.native.saveThresholdSeconds || 60
+          saveThresholdSeconds: r.native.saveThresholdSeconds || 3600
         }
       });
     };
     render() {
       if (!this.state.initialConfig || !this.state.newConfig)
         return /* @__PURE__ */ R.jsx(V_, {});
-      const e = this.state.newConfig.saveThresholdSeconds !== this.state.initialConfig.saveThresholdSeconds || this.state.newConfig.anomalySensitivity !== this.state.initialConfig.anomalySensitivity;
+      const e = this.state.newConfig.saveThresholdSeconds !== this.state.initialConfig.saveThresholdSeconds;
       return /* @__PURE__ */ R.jsxs(
         Ra,
         {
@@ -75246,17 +75243,17 @@ yyyy`);
                           label: W.t("kisshome-defender_one hour")
                         }
                       ],
-                      value: this.state.newConfig.saveThresholdSeconds || 60,
+                      value: Math.round(this.state.newConfig.saveThresholdSeconds || 3600) / 60,
                       onChange: (r, n) => {
                         this.props.reportUxEvent({
                           id: "kisshome-defender-settings-save-threshold",
                           event: "change",
                           ts: Date.now(),
+                          data: n.toString(),
                           isTouchEvent: r instanceof TouchEvent
                         }), this.setState({
                           newConfig: {
-                            anomalySensitivity: this.state.newConfig?.anomalySensitivity || "medium",
-                            saveThresholdSeconds: n
+                            saveThresholdSeconds: n * 60
                           }
                         });
                       }
@@ -75300,12 +75297,11 @@ yyyy`);
                   this.setState(
                     {
                       initialConfig: {
-                        anomalySensitivity: this.state.newConfig?.anomalySensitivity || "medium",
-                        saveThresholdSeconds: this.state.newConfig?.saveThresholdSeconds || 60
+                        saveThresholdSeconds: this.state.newConfig?.saveThresholdSeconds || 3600
                       }
                     },
                     () => {
-                      n.native.anomalySensitivity = this.state.newConfig?.anomalySensitivity || "medium", n.native.saveThresholdSeconds = this.state.newConfig?.saveThresholdSeconds || 60, this.props.socket.setObject(
+                      n.native.saveThresholdSeconds = this.state.newConfig?.saveThresholdSeconds || 3600, this.props.socket.setObject(
                         `system.adapter.kisshome-defender.${this.props.instance}`,
                         n
                       );
@@ -78473,8 +78469,8 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
         ts: Date.now()
       });
     }
-    renderText(e) {
-      const r = this.markDown.render(e.text || "");
+    renderText(e, r) {
+      const n = this.markDown.render(e.text || "");
       return e.label ? /* @__PURE__ */ R.jsxs(
         "div",
         {
@@ -78499,12 +78495,12 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
               "span",
               {
                 style: { ...Ut.divControl, ...this.state.json.itemStyle, ...e.style },
-                dangerouslySetInnerHTML: { __html: r }
+                dangerouslySetInnerHTML: { __html: n }
               }
             )
           ]
         },
-        e.id
+        `${r}_${e.id}`
       ) : /* @__PURE__ */ R.jsx(
         "div",
         {
@@ -78517,14 +78513,14 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
             "span",
             {
               style: { width: "100%", ...this.state.json.itemStyle, ...e.style },
-              dangerouslySetInnerHTML: { __html: r }
+              dangerouslySetInnerHTML: { __html: n }
             }
           )
         },
         e.id
       );
     }
-    renderSelect(e) {
+    renderSelect(e, r) {
       return /* @__PURE__ */ R.jsxs(
         "div",
         {
@@ -78552,38 +78548,38 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
                 id: e.id,
                 style: { minWidth: 150, ...Ut.divControl, ...this.state.json.itemStyle, ...e.style },
                 value: this.state.answers[e.id]?.value || "",
-                onChange: (r) => {
-                  const n = r.target.value;
+                onChange: (n) => {
+                  const a = n.target.value;
                   this.props.reportUxEvent({
                     id: e.id,
                     event: "change",
-                    isTouchEvent: r instanceof TouchEvent,
+                    isTouchEvent: n instanceof TouchEvent,
                     ts: Date.now(),
-                    data: n.toString()
-                  }), this.setState((a) => ({
+                    data: a.toString()
+                  }), this.setState((o) => ({
                     answers: {
-                      ...a.answers,
-                      [e.id]: { ts: (/* @__PURE__ */ new Date()).toISOString(), value: n }
+                      ...o.answers,
+                      [e.id]: { ts: (/* @__PURE__ */ new Date()).toISOString(), value: a }
                     }
                   }));
                 },
-                children: e.options?.map((r) => /* @__PURE__ */ R.jsx(
+                children: e.options?.map((n) => /* @__PURE__ */ R.jsx(
                   Ar,
                   {
-                    value: r.value,
-                    style: r.style,
-                    children: r.label
+                    value: n.value,
+                    style: n.style,
+                    children: n.label
                   },
-                  r.value
+                  n.value
                 ))
               }
             )
           ]
         },
-        e.id
+        `${r}_${e.id}`
       );
     }
-    renderInput(e) {
+    renderInput(e, r) {
       return /* @__PURE__ */ R.jsxs(
         "div",
         {
@@ -78611,12 +78607,12 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
                 variant: "standard",
                 fullWidth: !0,
                 value: this.state.answers[e.id]?.value || "",
-                onChange: (r) => {
-                  const n = r.target.value;
-                  this.setState((a) => ({
+                onChange: (n) => {
+                  const a = n.target.value;
+                  this.setState((o) => ({
                     answers: {
-                      ...a.answers,
-                      [e.id]: { ts: (/* @__PURE__ */ new Date()).toISOString(), value: n }
+                      ...o.answers,
+                      [e.id]: { ts: (/* @__PURE__ */ new Date()).toISOString(), value: a }
                     }
                   }));
                 }
@@ -78624,11 +78620,11 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
             )
           ]
         },
-        e.id
+        `${r}_${e.id}`
       );
     }
-    renderRadio(e) {
-      const r = this.state.answers[e.id]?.value || "";
+    renderRadio(e, r) {
+      const n = this.state.answers[e.id]?.value || "";
       return e.options ? /* @__PURE__ */ R.jsxs(
         "div",
         {
@@ -78655,30 +78651,30 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
               {
                 row: !0,
                 style: { ...Ut.divControl, ...this.state.json.itemStyle, ...e.style },
-                children: e.options?.map((n) => e.options ? /* @__PURE__ */ R.jsx(
+                children: e.options?.map((a) => e.options ? /* @__PURE__ */ R.jsx(
                   xt,
                   {
                     control: /* @__PURE__ */ R.jsx(
                       tr,
                       {
-                        checked: r === n.value,
-                        onClick: (a) => {
+                        checked: n === a.value,
+                        onClick: (o) => {
                           this.props.reportUxEvent({
                             id: e.id,
                             event: "change",
-                            isTouchEvent: a instanceof TouchEvent,
+                            isTouchEvent: o instanceof TouchEvent,
                             ts: Date.now(),
-                            data: r.toString()
-                          }), this.setState((o) => ({
+                            data: n.toString()
+                          }), this.setState((i) => ({
                             answers: {
-                              ...o.answers,
-                              [e.id]: { ts: (/* @__PURE__ */ new Date()).toISOString(), value: n.value }
+                              ...i.answers,
+                              [e.id]: { ts: (/* @__PURE__ */ new Date()).toISOString(), value: a.value }
                             }
                           }));
                         }
                       }
                     ),
-                    label: n.label,
+                    label: a.label,
                     labelPlacement: e.variant || "bottom",
                     sx: {
                       "& .MuiFormControlLabel-label": !e.variant || e.variant === "bottom" ? {
@@ -78692,17 +78688,17 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
                       }
                     }
                   },
-                  n.value.toString()
+                  a.value.toString()
                 ) : null)
               }
             )
           ]
         },
-        e.id
+        `${r}_${e.id}`
       ) : null;
     }
-    renderYesNo(e) {
-      const r = this.state.answers[e.id]?.value;
+    renderYesNo(e, r) {
+      const n = this.state.answers[e.id]?.value;
       return /* @__PURE__ */ R.jsxs(
         "div",
         {
@@ -78736,17 +78732,17 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
                       control: /* @__PURE__ */ R.jsx(
                         tr,
                         {
-                          checked: r === !1,
-                          onClick: (n) => {
+                          checked: n === !1,
+                          onClick: (a) => {
                             this.props.reportUxEvent({
                               id: e.id,
                               event: "change",
-                              isTouchEvent: n instanceof TouchEvent,
+                              isTouchEvent: a instanceof TouchEvent,
                               ts: Date.now(),
                               data: "no"
-                            }), this.setState((a) => ({
+                            }), this.setState((o) => ({
                               answers: {
-                                ...a.answers,
+                                ...o.answers,
                                 [e.id]: { ts: (/* @__PURE__ */ new Date()).toISOString(), value: !1 }
                               }
                             }));
@@ -78763,17 +78759,17 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
                       control: /* @__PURE__ */ R.jsx(
                         tr,
                         {
-                          checked: r === !0,
-                          onClick: (n) => {
+                          checked: n === !0,
+                          onClick: (a) => {
                             this.props.reportUxEvent({
                               id: e.id,
                               event: "change",
-                              isTouchEvent: n instanceof TouchEvent,
+                              isTouchEvent: a instanceof TouchEvent,
                               ts: Date.now(),
                               data: "yes"
-                            }), this.setState((a) => ({
+                            }), this.setState((o) => ({
                               answers: {
-                                ...a.answers,
+                                ...o.answers,
                                 [e.id]: { ts: (/* @__PURE__ */ new Date()).toISOString(), value: !0 }
                               }
                             }));
@@ -78788,11 +78784,11 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
             )
           ]
         },
-        e.id
+        `${r}_${e.id}`
       );
     }
-    renderCheckbox(e) {
-      const r = this.state.answers[e.id]?.value || !1;
+    renderCheckbox(e, r) {
+      const n = this.state.answers[e.id]?.value || !1;
       return /* @__PURE__ */ R.jsxs(
         "div",
         {
@@ -78816,18 +78812,18 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
             /* @__PURE__ */ R.jsx(
               Hr,
               {
-                checked: !!r,
-                onChange: (n) => {
+                checked: !!n,
+                onChange: (a) => {
                   this.props.reportUxEvent({
                     id: e.id,
                     event: "change",
-                    isTouchEvent: n instanceof TouchEvent,
+                    isTouchEvent: a instanceof TouchEvent,
                     ts: Date.now(),
-                    data: n.target.checked ? "true" : "false"
-                  }), this.setState((a) => ({
+                    data: a.target.checked ? "true" : "false"
+                  }), this.setState((o) => ({
                     answers: {
-                      ...a.answers,
-                      [e.id]: { ts: (/* @__PURE__ */ new Date()).toISOString(), value: n.target.checked }
+                      ...o.answers,
+                      [e.id]: { ts: (/* @__PURE__ */ new Date()).toISOString(), value: a.target.checked }
                     }
                   }));
                 }
@@ -78835,28 +78831,28 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
             )
           ]
         },
-        e.id
+        `${r}_${e.id}`
       );
     }
-    renderItem(e) {
+    renderItem(e, r) {
       switch (e.type) {
         case "text":
-          return this.renderText(e);
+          return this.renderText(e, r);
         case "select":
-          return this.renderSelect(e);
+          return this.renderSelect(e, r);
         case "input":
-          return this.renderInput(e);
+          return this.renderInput(e, r);
         case "radio":
-          return this.renderRadio(e);
+          return this.renderRadio(e, r);
         case "yesNo":
-          return this.renderYesNo(e);
+          return this.renderYesNo(e, r);
         case "checkbox":
-          return this.renderCheckbox(e);
+          return this.renderCheckbox(e, r);
         default:
           return /* @__PURE__ */ R.jsxs("div", { children: [
             "Unknown item type: ",
             e.type
-          ] }, e.id);
+          ] }, `${r}_${e.id}`);
       }
     }
     async sendAnswers() {
@@ -78915,7 +78911,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
                   flexDirection: "column",
                   gap: 10
                 },
-                children: this.state.email ? this.state.json.items?.map((r) => this.renderItem(r)) : "..."
+                children: this.state.email ? this.state.json.items?.map((r, n) => this.renderItem(r, n)) : "..."
               }
             ),
             /* @__PURE__ */ R.jsxs(So, { children: [
@@ -79106,7 +79102,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
       );
     }
     renderAlarm() {
-      if (this.props.editMode || !this.state.showNewAlert)
+      if (this.state.showQuestionnaire && !this.props.editMode && this.state.alive || this.props.editMode || !this.state.showNewAlert)
         return null;
       let e = 0;
       for (const a of this.state.showNewAlert.detections)
