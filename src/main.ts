@@ -58,6 +58,8 @@ export class KISSHomeResearchAdapter extends Adapter {
 
     private group: 'A' | 'B' = 'A';
 
+    private visProject: { project: string; view: string } | null = null;
+
     private context: Context = {
         terminate: false,
         controller: null,
@@ -1042,6 +1044,84 @@ export class KISSHomeResearchAdapter extends Adapter {
         this.context.lastSaved = Date.now();
     }
 
+    async findVisProject(): Promise<{ project: string; view: string }> {
+        if (this.visProject) {
+            return this.visProject;
+        }
+
+        try {
+            const projects = await this.readDirAsync('vis-2.0', '');
+            for (const file of projects) {
+                if (file.isDir) {
+                    try {
+                        // read views
+                        const views = await this.readFileAsync('vis-2.0', `${file.file}/vis-views.json`);
+                        if (views?.file) {
+                            const viewsObj: any = JSON.parse(views.file.toString());
+                            for (const view in viewsObj) {
+                                if (view !== '___settings') {
+                                    // Scan widgets
+                                    const widgets = viewsObj[view].widgets;
+                                    for (const widget in widgets) {
+                                        if (widget.startsWith('w')) {
+                                            const widgetObj: any = widgets[widget];
+                                            if (widgetObj?.tpl === 'tplKisshomeDefender') {
+                                                this.visProject = { project: file.file, view };
+                                                return this.visProject;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        this.log.warn(`Cannot read vis project ${file.file}: ${e}`);
+                    }
+                }
+            }
+        } catch {
+            // ignore
+        }
+
+        // try vis 1.x
+
+        try {
+            const projects = await this.readDirAsync('vis.0', '');
+            for (const file of projects) {
+                if (file.isDir) {
+                    // read views
+                    try {
+                        const views = await this.readFileAsync('vis.0', `${file.file}/vis-views.json`);
+                        if (views?.file) {
+                            const viewsObj: any = JSON.parse(views.file.toString());
+                            for (const view in viewsObj) {
+                                if (view !== '___settings') {
+                                    // Scan widgets
+                                    const widgets = viewsObj[view].widgets;
+                                    for (const widget in widgets) {
+                                        if (widget.startsWith('w')) {
+                                            const widgetObj: any = widgets[widget];
+                                            if (widgetObj?.tpl === 'tplKisshomeDefender') {
+                                                this.visProject = { project: file.file, view };
+                                                return this.visProject;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        this.log.warn(`Cannot read vis project ${file.file}: ${e}`);
+                    }
+                }
+            }
+        } catch {
+            // ignore
+        }
+
+        return { project: '', view: '' };
+    }
+
     async startRecording(): Promise<void> {
         if (!this.uniqueMacs.length) {
             this.log.error(
@@ -1282,6 +1362,8 @@ export class KISSHomeResearchAdapter extends Adapter {
         }
 
         if (this.iotInstance) {
+            const data = await this.findVisProject();
+
             void this.setForeignStateAsync(
                 `${this.iotInstance}.app.message`,
                 JSON.stringify({
@@ -1290,8 +1372,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                     expire: 3600,
                     priority: !isAlert ? 'normal' : 'high',
                     payload: {
-                        // Todo: find project and view with kisshome widget
-                        openUrl: 'https://iobroker.pro/vis-2/?main#kisshome',
+                        openUrl: `https://iobroker.pro/vis-2/?${data.project || 'main'}#${data.view || 'kisshome'}`,
                     },
                 }),
             );

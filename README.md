@@ -55,6 +55,10 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+
+-   (@GermanBluefox) Look for vis-(2) project with kisshome widget
+
 ### 0.1.8 (2025-09-03)
 
 -   (@GermanBluefox) Fixed GUI issues
