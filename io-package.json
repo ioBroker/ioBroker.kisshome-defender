@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "news": {
+      "0.1.8": {
+        "en": "Fixed GUI issues\nSend results to cloud sync folder",
+        "de": "Behobene GUI Probleme\nErgebnisse in Cloud-Sync-Ordner senden",
+        "ru": "Фиксированные проблемы GUI\nОтправить результаты в папку облачной синхронизации",
+        "pt": "Problemas GUI corrigidos\nEnviar resultados para a pasta de sincronização na nuvem",
+        "nl": "Vaste GUI-problemen\nResultaten naar cloud synchroniseren",
+        "fr": "Problèmes d'interface graphique corrigés\nEnvoyer les résultats dans le dossier de synchronisation du cloud",
+        "it": "Problemi di GUI fissi\nInvia risultati alla cartella di sincronizzazione cloud",
+        "es": "Cuestiones de interfaz gráfica fija\nEnviar resultados a la carpeta de sincronización de nubes",
+        "pl": "Naprawiono problemy z GUI\nWyślij wyniki do folderu synchronizacji w chmurze",
+        "uk": "Виправлено проблеми GUI\nНадіслати результати в папку хмарних синхронізацій",
+        "zh-cn": "固定的图形用户界面问题\n将结果发送到云同步文件夹"
+      },
       "0.1.7": {
         "en": "Fixing GUI errors\nSend IDS result to cloud",
         "de": "GUI-Fehler beheben\nIDS-Ergebnis nach Cloud senden",
@@ -80,19 +93,6 @@
         "pl": "Usunięte przypadki badań",
         "uk": "Видалити тестові випадки",
         "zh-cn": "已删除测试案例"
-      },
-      "0.1.1": {
-        "en": "Initial commit",
-        "de": "Ursprüngliche Verpflichtung",
-        "ru": "Первоначальное обязательство",
-        "pt": "Commit inicial",
-        "nl": "Eerste commit",
-        "fr": "Engagement initial",
-        "it": "Impegno iniziale",
-        "es": "Composición inicial",
-        "pl": "Początkowe zobowiązanie",
-        "uk": "Початкова комісія",
-        "zh-cn": "初步承诺"
       }
     },
     "titleLang": {
