@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "0.1.9",
+    "version": "0.2.0",
     "news": {
+      "0.2.0": {
+        "en": "Added direct link to the alarm in the widget",
+        "de": "Direkter Link zum Alarm im Widget hinzugefügt",
+        "ru": "Добавлена прямая ссылка на сигнализацию в виджете",
+        "pt": "Adicionada ligação directa ao alarme no elemento",
+        "nl": "Directe verwijzing naar het alarm in het widget toegevoegd",
+        "fr": "Ajout du lien direct vers l'alarme dans le widget",
+        "it": "Aggiunto link diretto all'allarme nel widget",
+        "es": "Añadido enlace directo a la alarma en el widget",
+        "pl": "Dodano bezpośredni link do alarmu w widgecie",
+        "uk": "Додано прямий посилання на тривогу в віджеті",
+        "zh-cn": "添加直接链接到部件中的提醒"
+      },
       "0.1.9": {
         "en": "Look for vis-(2) project with kisshome widget",
         "de": "Suche nach vis-(2) Projekt mit kisshome Widget",
@@ -80,19 +93,6 @@
         "pl": "Poprawiona wiadomość wysyłana",
         "uk": "Правильне відправлення повідомлень",
         "zh-cn": "已更正信件发送"
-      },
-      "0.1.3": {
-        "en": "Removed test cases",
-        "de": "Entfernte Testfälle",
-        "ru": "Удаленные тестовые случаи",
-        "pt": "Casos de teste removidos",
-        "nl": "Verwijderde testcases",
-        "fr": "Cas d ' essai retirés",
-        "it": "Casi di prova rimossi",
-        "es": "Casos de prueba eliminados",
-        "pl": "Usunięte przypadki badań",
-        "uk": "Видалити тестові випадки",
-        "zh-cn": "已删除测试案例"
       }
     },
     "titleLang": {

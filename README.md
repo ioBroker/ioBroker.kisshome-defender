@@ -55,7 +55,7 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 0.2.0 (2025-09-04)
 
 -   (@GermanBluefox) Added direct link to the alarm in the widget
 
