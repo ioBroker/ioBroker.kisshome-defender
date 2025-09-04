@@ -211,6 +211,8 @@ export default class App extends Component<AppProps, AppState> {
                         themeType={this.state.themeType}
                         editMode={false}
                         lang={this.socket.systemLang}
+                        view="admin"
+                        id="w00000"
                     />
                 </ThemeProvider>
             </StyledEngineProvider>

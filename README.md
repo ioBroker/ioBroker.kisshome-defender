@@ -55,6 +55,10 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+
+-   (@GermanBluefox) Added direct link to the alarm in the widget
+
 ### 0.1.9 (2025-09-03)
 
 -   (@GermanBluefox) Look for vis-(2) project with kisshome widget

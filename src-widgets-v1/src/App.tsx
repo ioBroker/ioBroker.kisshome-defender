@@ -6,6 +6,8 @@ export default function App(): React.JSX.Element {
         <WidgetWebComponent
             language="de"
             theme="light"
+            id="w00000"
+            view="kisshome"
         />
     );
 }

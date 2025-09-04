@@ -58,7 +58,7 @@ export class KISSHomeResearchAdapter extends Adapter {
 
     private group: 'A' | 'B' = 'A';
 
-    private visProject: { project: string; view: string } | null = null;
+    private visProject: { project: string; view: string; widget: string } | null = null;
 
     private context: Context = {
         terminate: false,
@@ -1044,7 +1044,7 @@ export class KISSHomeResearchAdapter extends Adapter {
         this.context.lastSaved = Date.now();
     }
 
-    async findVisProject(): Promise<{ project: string; view: string }> {
+    async findVisProject(): Promise<{ project: string; view: string; widget: string }> {
         if (this.visProject) {
             return this.visProject;
         }
@@ -1066,7 +1066,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                                         if (widget.startsWith('w')) {
                                             const widgetObj: any = widgets[widget];
                                             if (widgetObj?.tpl === 'tplKisshomeDefender') {
-                                                this.visProject = { project: file.file, view };
+                                                this.visProject = { project: file.file, view, widget };
                                                 return this.visProject;
                                             }
                                         }
@@ -1102,7 +1102,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                                         if (widget.startsWith('w')) {
                                             const widgetObj: any = widgets[widget];
                                             if (widgetObj?.tpl === 'tplKisshomeDefender') {
-                                                this.visProject = { project: file.file, view };
+                                                this.visProject = { project: file.file, view, widget };
                                                 return this.visProject;
                                             }
                                         }
@@ -1119,7 +1119,7 @@ export class KISSHomeResearchAdapter extends Adapter {
             // ignore
         }
 
-        return { project: '', view: '' };
+        return { project: '', view: '', widget: '' };
     }
 
     async startRecording(): Promise<void> {
@@ -1372,7 +1372,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                     expire: 3600,
                     priority: !isAlert ? 'normal' : 'high',
                     payload: {
-                        openUrl: `https://iobroker.pro/vis-2/?${data.project || 'main'}#${data.view || 'kisshome'}`,
+                        openUrl: `https://iobroker.pro/vis-2/?${data.project || 'main'}#${data.view || 'kisshome'}/${data.widget}/${scanUUID}`,
                     },
                 }),
             );

@@ -78812,9 +78812,12 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     constructor(e) {
       super(e);
       const r = window.localStorage.getItem("ignoreNewAlerts");
-      this.ignoreNewAlerts = r ? new Date(r) : null, this.state = {
+      this.ignoreNewAlerts = r ? new Date(r) : null;
+      const n = this.getPath();
+      let a = "", o = window.localStorage.getItem("kisshome-defender-tab") || "status";
+      n && (o = n.tab, a = n.alarm || ""), this.state = {
         alive: !1,
-        tab: window.localStorage.getItem("kisshome-defender-tab") || "status",
+        tab: o,
         results: null,
         lastSeenID: "",
         questionnaire: null,
@@ -78823,7 +78826,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
         // Default group
         showNewAlert: null,
         ignoreForNext10Minutes: !1,
-        showDetectionWithUUID: "",
+        showDetectionWithUUID: a,
         resultsDialogOpened: !1
       };
     }
@@ -78846,10 +78849,10 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
       const u = await r.getState(`kisshome-defender.${e}.info.ids.group`);
       this.setState({ group: u?.val === "B" ? "B" : "A" });
       const f = `kisshome-defender.${e}.info.analysis.lastCreated`, h = await r.getState(f);
-      this.onStateLastCreated(f, h), await r.subscribeState(f, this.onStateLastCreated);
+      this.onStateLastCreated(f, h), await r.subscribeState(f, this.onStateLastCreated), window.addEventListener("hashchange", this.onHashChange, !1);
     }
     componentWillUnmount() {
-      this.reportUxEvent({
+      window.removeEventListener("hashchange", this.onHashChange, !1), this.reportUxEvent({
         id: "kisshome-defender-widget",
         event: "hide",
         ts: Date.now()
@@ -78868,6 +78871,18 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
         this.onStateQuestionnaire
       ), r.unsubscribeState(`system.adapter.kisshome-defender.${e}.alive`, this.onStateAlive);
     }
+    navigate(e, r) {
+      let n = `#${this.props.view}/${this.props.id}/${e}`;
+      r && (n += `/${r}`), window.localStorage.setItem("kisshome-defender-tab", e), window.location.hash = n;
+    }
+    onHashChange = () => {
+      const e = this.getPath();
+      e && (e.tab !== this.state.tab ? this.setState({
+        tab: e.tab,
+        showDetectionWithUUID: e.alarm || "",
+        resultsDialogOpened: !1
+      }) : e.tab === "detections" && e.alarm !== this.state.showDetectionWithUUID && this.setState({ showDetectionWithUUID: e.alarm || "" }));
+    };
     onStateAlive = (e, r, n) => {
       e === `system.adapter.kisshome-defender.${this.props.instance || 0}.alive` && !!r?.val !== this.state.alive && this.setState({ alive: !!r?.val }, () => !n && this.requestData());
     };
@@ -78935,6 +78950,10 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
         }
       );
     }
+    getPath() {
+      const [e, r, n, a] = (window.location.hash || "").replace(/^#/, "").split("/");
+      return e === this.props.view && r === this.props.id ? { tab: n || "", alarm: a || "" } : null;
+    }
     renderAlarm() {
       if (this.state.showQuestionnaire && !this.props.editMode && this.state.alive || this.props.editMode || !this.state.showNewAlert)
         return null;
@@ -78996,7 +79015,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
                         },
                         onClick: () => {
                           const a = this.state.showNewAlert?.uuid || "";
-                          n(), this.setState({ tab: "detections", showDetectionWithUUID: a }), window.localStorage.setItem("kisshome-defender-tab", "detections"), this.reportUxEvent({
+                          n(), this.navigate("detections", a), this.reportUxEvent({
                             id: "kisshome-defender-tabs",
                             event: "change",
                             ts: Date.now(),
@@ -79087,11 +79106,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
                       style: { flexGrow: 1 },
                       value: this.state.tab || "status",
                       onChange: (e, r) => {
-                        this.setState({
-                          tab: r,
-                          showDetectionWithUUID: "",
-                          resultsDialogOpened: !1
-                        }), window.localStorage.setItem("kisshome-defender-tab", r), this.reportUxEvent({
+                        this.navigate(r, ""), this.reportUxEvent({
                           id: "kisshome-defender-tabs",
                           event: "change",
                           ts: Date.now(),
@@ -79163,7 +79178,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
                   results: this.state.results,
                   lastSeenID: this.state.lastSeenID,
                   onNavigateToDetections: () => {
-                    this.setState({ tab: "detections" }), window.localStorage.setItem("kisshome-defender-tab", "detections"), this.reportUxEvent({
+                    this.navigate("detections"), this.reportUxEvent({
                       id: "kisshome-defender-tabs",
                       event: "change",
                       ts: Date.now(),
@@ -85784,7 +85799,9 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
           socket: this.state.socket,
           instance: this.props.instance || "0",
           lang: this.props.language || "de",
-          editMode: !0
+          editMode: !0,
+          view: this.props.view || "kisshome",
+          id: this.props.wid || "wKISS"
         }
       ) }) }) : /* @__PURE__ */ R.jsx("div", { children: "..." });
     }

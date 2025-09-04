@@ -39,6 +39,8 @@ interface KisshomeDefenderProps {
     editMode: boolean;
     themeType: ThemeType;
     lang: ioBroker.Languages;
+    view: string;
+    id: string;
 }
 
 interface KisshomeDefenderState {
@@ -74,10 +76,17 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
 
         const ignoreText: string | null = window.localStorage.getItem('ignoreNewAlerts');
         this.ignoreNewAlerts = ignoreText ? new Date(ignoreText) : null;
+        const position = this.getPath();
+        let showDetectionWithUUID = '';
+        let tab = (window.localStorage.getItem('kisshome-defender-tab') as KisshomeDefenderState['tab']) || 'status';
+        if (position) {
+            tab = position.tab as KisshomeDefenderState['tab'];
+            showDetectionWithUUID = position.alarm || '';
+        }
 
         this.state = {
             alive: false,
-            tab: (window.localStorage.getItem('kisshome-defender-tab') as KisshomeDefenderState['tab']) || 'status',
+            tab,
             results: null,
             lastSeenID: '',
             questionnaire: null,
@@ -85,7 +94,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
             group: 'A', // Default group
             showNewAlert: null,
             ignoreForNext10Minutes: false,
-            showDetectionWithUUID: '',
+            showDetectionWithUUID,
             resultsDialogOpened: false,
         };
     }
@@ -129,9 +138,12 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
         const stateLastCreated = await socket.getState(idLastCreated);
         this.onStateLastCreated(idLastCreated, stateLastCreated);
         await socket.subscribeState(idLastCreated, this.onStateLastCreated);
+
+        window.addEventListener('hashchange', this.onHashChange, false);
     }
 
     componentWillUnmount(): void {
+        window.removeEventListener('hashchange', this.onHashChange, false);
         // Any cleanup logic can be added here
         this.reportUxEvent({
             id: 'kisshome-defender-widget',
@@ -162,6 +174,30 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
         );
         socket.unsubscribeState(`system.adapter.kisshome-defender.${instance}.alive`, this.onStateAlive);
     }
+
+    navigate(tab: KisshomeDefenderState['tab'], alarm?: string): void {
+        let hash = `#${this.props.view}/${this.props.id}/${tab}`;
+        if (alarm) {
+            hash += `/${alarm}`;
+        }
+        window.localStorage.setItem('kisshome-defender-tab', tab);
+        window.location.hash = hash;
+    }
+
+    onHashChange = (): void => {
+        const position = this.getPath();
+        if (position) {
+            if (position.tab !== this.state.tab) {
+                this.setState({
+                    tab: position.tab as KisshomeDefenderState['tab'],
+                    showDetectionWithUUID: position.alarm || '',
+                    resultsDialogOpened: false,
+                });
+            } else if (position.tab === 'detections' && position.alarm !== this.state.showDetectionWithUUID) {
+                this.setState({ showDetectionWithUUID: position.alarm || '' });
+            }
+        }
+    };
 
     onStateAlive = (id: string, state: ioBroker.State | null | undefined, doUpdateData?: boolean): void => {
         if (id === `system.adapter.kisshome-defender.${this.props.instance || 0}.alive`) {
@@ -308,6 +344,15 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
         );
     }
 
+    getPath(): { tab: string; alarm?: string } | null {
+        // #view/widget/tab/alarm
+        const [view, widget, tab, alarm] = (window.location.hash || '').replace(/^#/, '').split('/');
+        if (view === this.props.view && widget === this.props.id) {
+            return { tab: tab || '', alarm: alarm || '' };
+        }
+        return null;
+    }
+
     renderAlarm(): React.JSX.Element | null {
         if (this.state.showQuestionnaire && !this.props.editMode && this.state.alive) {
             // It is questionnaire opened, do not show alarm
@@ -395,8 +440,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
                             onClick={() => {
                                 const showDetectionWithUUID = this.state.showNewAlert?.uuid || '';
                                 onClose();
-                                this.setState({ tab: 'detections', showDetectionWithUUID: showDetectionWithUUID });
-                                window.localStorage.setItem('kisshome-defender-tab', 'detections');
+                                this.navigate('detections', showDetectionWithUUID);
                                 this.reportUxEvent({
                                     id: 'kisshome-defender-tabs',
                                     event: 'change',
@@ -474,12 +518,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
                         style={{ flexGrow: 1 }}
                         value={this.state.tab || 'status'}
                         onChange={(_event, value: string) => {
-                            this.setState({
-                                tab: value as KisshomeDefenderState['tab'],
-                                showDetectionWithUUID: '',
-                                resultsDialogOpened: false,
-                            });
-                            window.localStorage.setItem('kisshome-defender-tab', value);
+                            this.navigate(value as KisshomeDefenderState['tab'], '');
                             this.reportUxEvent({
                                 id: 'kisshome-defender-tabs',
                                 event: 'change',
@@ -535,8 +574,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
                             results={this.state.results}
                             lastSeenID={this.state.lastSeenID}
                             onNavigateToDetections={() => {
-                                this.setState({ tab: 'detections' });
-                                window.localStorage.setItem('kisshome-defender-tab', 'detections');
+                                this.navigate('detections');
                                 this.reportUxEvent({
                                     id: 'kisshome-defender-tabs',
                                     event: 'change',

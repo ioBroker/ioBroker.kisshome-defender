@@ -154,6 +154,8 @@ export interface IWidgetWebComponentProps {
     instance?: string;
     theme?: 'light' | 'dark';
     editMode?: boolean | 'true' | 'false';
+    wid: string;
+    view: string;
 }
 
 interface WidgetWebComponentState {
@@ -230,6 +232,8 @@ export class WidgetWebComponent extends Component<IWidgetWebComponentProps, Widg
                         instance={this.props.instance || '0'}
                         lang={this.props.language || 'de'}
                         editMode
+                        view={this.props.view || 'kisshome'}
+                        id={this.props.wid || 'wKISS'}
                     />
                 </ThemeProvider>
             </StyledEngineProvider>
