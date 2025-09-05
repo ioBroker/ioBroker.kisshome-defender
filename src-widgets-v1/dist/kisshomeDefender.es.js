@@ -73586,11 +73586,10 @@ yyyy`);
         e[c] ??= !0;
       }), Object.keys(e).forEach((c) => {
         r.includes(c) || delete e[c];
-      }), !r.length)
-        return null;
-      JSON.stringify(e) !== JSON.stringify(this.state.legendMacs) && setTimeout(() => {
+      }), JSON.stringify(e) !== JSON.stringify(this.state.legendMacs) && setTimeout(() => {
         this.setState({ legendMacs: e });
-      }, 100);
+      }, 100), !r.length)
+        return null;
       const n = [];
       let a = 0;
       const o = [], i = [], s = [];
@@ -73773,7 +73772,9 @@ yyyy`);
         e[u] ??= !0;
       }), Object.keys(e).forEach((u) => {
         r.includes(u) || delete e[u];
-      });
+      }), JSON.stringify(e) !== JSON.stringify(this.state.legendMacs) && setTimeout(() => {
+        this.setState({ legendMacs: e });
+      }, 100);
       const n = this.echartsReact?.getEchartsInstance().getOption()?.color, a = [];
       let o = 0, i = 0;
       if (r.forEach((u) => {
@@ -73977,7 +73978,7 @@ yyyy`);
                   /* @__PURE__ */ R.jsx(
                     Nx,
                     {
-                      primary: this.state.dataVolumePerDevice.data?.[i]?.info?.desc || this.state.dataVolumePerDevice.data?.[i]?.info?.ip || i
+                      primary: e?.[i]?.info?.desc || e?.[i]?.info?.ip || i
                     }
                   )
                 ]
@@ -74028,7 +74029,9 @@ yyyy`);
         e[u] ??= !0;
       }), Object.keys(e).forEach((u) => {
         r.includes(u) || delete e[u];
-      });
+      }), JSON.stringify(e) !== JSON.stringify(this.state.legendMacs) && setTimeout(() => {
+        this.setState({ legendMacs: e });
+      }, 100);
       const n = this.echartsReact?.getEchartsInstance().getOption()?.color, a = [];
       let o = 0, i = 0;
       if (r.forEach((u) => {

@@ -567,15 +567,15 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
             }
         });
 
-        if (!allMacs.length) {
-            return null;
-        }
-
         if (JSON.stringify(selectedMacs) !== JSON.stringify(this.state.legendMacs)) {
             // If all selected MACs are the same as in state, do not update state
             setTimeout(() => {
                 this.setState({ legendMacs: selectedMacs });
             }, 100);
+        }
+
+        if (!allMacs.length) {
+            return null;
         }
 
         const series: BarSeriesOption[] = [];
@@ -850,6 +850,13 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                 delete selectedMacs[mac];
             }
         });
+
+        if (JSON.stringify(selectedMacs) !== JSON.stringify(this.state.legendMacs)) {
+            // If all selected MACs are the same as in state, do not update state
+            setTimeout(() => {
+                this.setState({ legendMacs: selectedMacs });
+            }, 100);
+        }
 
         const colors = this.echartsReact?.getEchartsInstance().getOption()?.color as ZRColor[] | undefined;
         const series: LineSeriesOption[] = [];
@@ -1126,8 +1133,8 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                             <Checkbox checked={this.state.legendMacs[mac]} />
                             <ListItemText
                                 primary={
-                                    this.state.dataVolumePerDevice.data?.[mac]?.info?.desc ||
-                                    this.state.dataVolumePerDevice.data?.[mac]?.info?.ip ||
+                                    data?.[mac]?.info?.desc ||
+                                    data?.[mac]?.info?.ip ||
                                     mac
                                 }
                             />
@@ -1190,6 +1197,13 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                 delete selectedMacs[mac];
             }
         });
+
+        if (JSON.stringify(selectedMacs) !== JSON.stringify(this.state.legendMacs)) {
+            // If all selected MACs are the same as in state, do not update state
+            setTimeout(() => {
+                this.setState({ legendMacs: selectedMacs });
+            }, 100);
+        }
 
         const colors = this.echartsReact?.getEchartsInstance().getOption()?.color as ZRColor[] | undefined;
         const series: LineSeriesOption[] = [];
