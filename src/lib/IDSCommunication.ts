@@ -20,7 +20,7 @@ import type {
     StoredStatisticsResult,
 } from '../types';
 import { DockerManager } from './DockerManager';
-import { fileNameToDate } from './utils';
+import { fileNameToDate, normalizeMacAddress } from './utils';
 
 const MAX_FILES_ON_DISK = 6; // Maximum number of files to keep on disk
 const DOCKER_CONTAINER_NAME = 'iobroker-defender-ids';
@@ -445,18 +445,6 @@ export class IDSCommunication {
         return this.lastStatus?.message?.training || {};
     }
 
-    static normalizeMacAddress(mac: string | undefined): MACAddress {
-        if (!mac) {
-            return '';
-        }
-        mac = mac
-            .toUpperCase()
-            .trim()
-            .replace(/[\s:-]/g, '');
-        // convert to 00:11:22:33:44:55
-        return mac.replace(/(..)(..)(..)(..)(..)(..)/, '$1:$2:$3:$4:$5:$6');
-    }
-
     private async _getStatus(): Promise<void> {
         try {
             const response = await axios.get(`${this.idsUrl}/status`, { timeout: 3000 });
@@ -493,7 +481,7 @@ export class IDSCommunication {
                     [mac: MACAddress]: { progress: number; description: string };
                 } = {};
                 for (const mac in this.lastStatus.message.training) {
-                    const normalizedMac = IDSCommunication.normalizeMacAddress(mac); // Normalize MAC address
+                    const normalizedMac = normalizeMacAddress(mac); // Normalize MAC address
                     normalizedModelStatus[normalizedMac] = this.lastStatus.message.training[mac];
                 }
                 this.lastStatus.message.training = normalizedModelStatus;

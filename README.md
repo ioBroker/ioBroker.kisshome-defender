@@ -55,6 +55,10 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+
+-   (@GermanBluefox) Showed names of the devices in the chart legend
+
 ### 0.2.0 (2025-09-04)
 
 -   (@GermanBluefox) Added direct link to the alarm in the widget

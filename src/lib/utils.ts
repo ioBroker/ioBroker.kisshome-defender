@@ -4,7 +4,8 @@ import { toMAC } from '@network-utils/arp-lookup';
 import { toVendor } from '@network-utils/vendor-lookup';
 import { Socket } from 'node:net';
 
-import type { Device, MACAddress } from '../types';
+import type { Device, IDSStatus, MACAddress } from '../types';
+import axios from 'axios';
 
 // This function is used trigger the OS to resolve IP to MAC address
 async function httpPing(ip: string): Promise<boolean> {
@@ -118,4 +119,16 @@ export function fileNameToDate(fileName: string): Date {
     const datePart = fileName.split('_')[0]; // Get the date part
     const [year, month, day] = datePart.split('-').map(Number);
     return new Date(year, month - 1, day); // Month is 0-based in JavaScript
+}
+
+export function normalizeMacAddress(mac: string | undefined): MACAddress {
+    if (!mac) {
+        return '';
+    }
+    mac = mac
+        .toUpperCase()
+        .trim()
+        .replace(/[\s:-]/g, '');
+    // convert to 00:11:22:33:44:55
+    return mac.replace(/(..)(..)(..)(..)(..)(..)/, '$1:$2:$3:$4:$5:$6');
 }

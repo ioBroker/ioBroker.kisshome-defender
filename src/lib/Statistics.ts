@@ -14,7 +14,7 @@ import type {
 } from '../types';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { fileNameToDate } from './utils';
+import { fileNameToDate, normalizeMacAddress } from './utils';
 import { getAbsoluteDefaultDataDir } from '@iobroker/adapter-core';
 
 export default class Statistics {
@@ -37,7 +37,8 @@ export default class Statistics {
         // Create a map for MAC addresses to IP and description
         this.IPs.forEach(ip => {
             if (ip.mac) {
-                this.MAC2DESC[ip.mac] = { ip: ip.ip, desc: ip.desc };
+                const mac = normalizeMacAddress(ip.mac);
+                this.MAC2DESC[mac] = { ip: ip.ip, desc: ip.desc };
             }
         });
     }
@@ -108,8 +109,9 @@ export default class Statistics {
         for (const result of results) {
             const ts = new Date(result.time).getTime(); // Get date in YYYY-MM-DD format
             result.statistics.devices.forEach(device => {
-                macs[device.mac] ||= { series: [], info: this.MAC2DESC[device.mac] };
-                macs[device.mac].series.push([ts, device.data_volume.data_volume_bytes]);
+                const mac = normalizeMacAddress(device.mac);
+                macs[mac] ||= { series: [], info: this.MAC2DESC[mac] };
+                macs[mac].series.push([ts, device.data_volume.data_volume_bytes]);
             });
         }
         return macs;
@@ -125,8 +127,9 @@ export default class Statistics {
             nextDayTime.setHours(0, 0, 0, 0); // Set time
             const ts = nextDayTime.getTime();
             result.statistics.devices.forEach(device => {
-                macs[device.mac] ||= { series: [], info: this.MAC2DESC[device.mac] };
-                const series = macs[device.mac].series;
+                const mac = normalizeMacAddress(device.mac);
+                macs[mac] ||= { series: [], info: this.MAC2DESC[mac] };
+                const series = macs[mac].series;
                 // Summarize all data for the same day
                 if (series.length > 0 && series[series.length - 1][0] === ts) {
                     series[series.length - 1][1] += device.data_volume.data_volume_bytes;
@@ -149,9 +152,10 @@ export default class Statistics {
                 const ips = Object.keys(device.external_ips);
                 ips.forEach(ip => {
                     const country = device.external_ips[ip].country;
-                    macs[device.mac] ||= { countries: {}, info: this.MAC2DESC[device.mac] };
-                    macs[device.mac].countries[country] ||= 0;
-                    macs[device.mac].countries[country] += device.external_ips[ip].data_volume_bytes;
+                    const mac = normalizeMacAddress(device.mac);
+                    macs[mac] ||= { countries: {}, info: this.MAC2DESC[mac] };
+                    macs[mac].countries[country] ||= 0;
+                    macs[mac].countries[country] += device.external_ips[ip].data_volume_bytes;
                 });
             });
         }
@@ -168,13 +172,14 @@ export default class Statistics {
         const devices: { [mac: string]: { volume: number; countries: string[] } } = {};
         for (const result of results) {
             result.statistics.devices.forEach(device => {
-                devices[device.mac] ||= { volume: 0, countries: [] };
-                devices[device.mac].volume += device.data_volume.data_volume_bytes;
+                const mac = normalizeMacAddress(device.mac);
+                devices[mac] ||= { volume: 0, countries: [] };
+                devices[mac].volume += device.data_volume.data_volume_bytes;
                 const ips = Object.keys(device.external_ips);
                 ips.forEach(ip => {
                     const country = device.external_ips[ip].country;
-                    if (!devices[device.mac].countries.includes(country)) {
-                        devices[device.mac].countries.push(country);
+                    if (!devices[mac].countries.includes(country)) {
+                        devices[mac].countries.push(country);
                     }
                 });
             });
@@ -185,11 +190,15 @@ export default class Statistics {
         // Find device with most countries
         const macs = Object.keys(devices);
         for (const mac of macs) {
-            if (!deviceMostCountries || devices[mac].countries.length > devices[deviceMostCountries].countries.length) {
-                deviceMostCountries = mac;
+            const nMac = normalizeMacAddress(mac);
+            if (
+                !deviceMostCountries ||
+                devices[nMac].countries.length > devices[deviceMostCountries].countries.length
+            ) {
+                deviceMostCountries = nMac;
             }
-            if (!dataVolumePerDevice || devices[mac].volume > devices[deviceMostCountries].volume) {
-                dataVolumePerDevice = mac;
+            if (!dataVolumePerDevice || devices[nMac].volume > devices[deviceMostCountries].volume) {
+                dataVolumePerDevice = nMac;
             }
         }
 
@@ -214,9 +223,10 @@ export default class Statistics {
         for (const result of results) {
             const dayTime: 0 | 1 | 2 | 3 = Math.floor(new Date(result.time).getHours() / 6) as 0 | 1 | 2 | 3; // 0-3
             result.statistics.devices.forEach(device => {
-                macs[device.mac] ||= { dayTime: {}, info: this.MAC2DESC[device.mac] };
-                macs[device.mac].dayTime[dayTime] ||= 0;
-                macs[device.mac].dayTime[dayTime]! += device.data_volume.data_volume_bytes;
+                const mac = normalizeMacAddress(device.mac);
+                macs[mac] ||= { dayTime: {}, info: this.MAC2DESC[mac] };
+                macs[mac].dayTime[dayTime] ||= 0;
+                macs[mac].dayTime[dayTime] += device.data_volume.data_volume_bytes;
             });
         }
 
