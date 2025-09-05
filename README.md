@@ -55,7 +55,7 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 0.2.1 (2025-09-05)
 
 -   (@GermanBluefox) Showed names of the devices in the chart legend
 

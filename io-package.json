@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "news": {
+      "0.2.1": {
+        "en": "Showed names of the devices in the chart legend",
+        "de": "Gezeigte Namen der Geräte in der Chart-Legende",
+        "ru": "Показаны имена устройств в чарте легенды",
+        "pt": "Mostrar os nomes dos dispositivos na legenda do gráfico",
+        "nl": "Toon namen van de apparaten in de kaartlegende",
+        "fr": "Afficher les noms des appareils dans la légende du graphique",
+        "it": "Mostrati nomi dei dispositivi nella leggenda del grafico",
+        "es": "Nombres mostrados de los dispositivos en la leyenda del gráfico",
+        "pl": "Pokazane nazwy urządzeń w legendzie mapy",
+        "uk": "Показати імена пристроїв в легенді діаграм",
+        "zh-cn": "图表图例中显示设备名称"
+      },
       "0.2.0": {
         "en": "Added direct link to the alarm in the widget",
         "de": "Direkter Link zum Alarm im Widget hinzugefügt",
@@ -80,19 +93,6 @@
         "pl": "Ustalanie wykrywania w GUI",
         "uk": "Виправлення виявлення в GUI",
         "zh-cn": "修复图形界面中的检测"
-      },
-      "0.1.4": {
-        "en": "Corrected message sending",
-        "de": "Korrigierte Nachricht senden",
-        "ru": "Исправленная отправка сообщения",
-        "pt": "Envio de mensagens corrigidas",
-        "nl": "Gecorrigeerd bericht",
-        "fr": "Envoi de message corrigé",
-        "it": "Messaggio corretto invio",
-        "es": "Mensaje corregido",
-        "pl": "Poprawiona wiadomość wysyłana",
-        "uk": "Правильне відправлення повідомлень",
-        "zh-cn": "已更正信件发送"
       }
     },
     "titleLang": {
