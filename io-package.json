@@ -816,6 +816,7 @@
                     "uk": "Назва групи",
                     "zh-cn": "组名"
                 },
+                "expert": true,
                 "states": { "A":  "A", "B": "B" },
                 "type": "string",
                 "role": "state",
@@ -842,6 +843,7 @@
                     "uk": "Системна змінна",
                     "zh-cn": "系统变量"
                 },
+                "expert": true,
                 "type": "boolean",
                 "role": "state",
                 "read": true,
