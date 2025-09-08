@@ -1,856 +1,867 @@
 {
-  "common": {
-    "name": "kisshome-defender",
-    "version": "0.2.1",
-    "news": {
-      "0.2.1": {
-        "en": "Showed names of the devices in the chart legend",
-        "de": "Gezeigte Namen der Geräte in der Chart-Legende",
-        "ru": "Показаны имена устройств в чарте легенды",
-        "pt": "Mostrar os nomes dos dispositivos na legenda do gráfico",
-        "nl": "Toon namen van de apparaten in de kaartlegende",
-        "fr": "Afficher les noms des appareils dans la légende du graphique",
-        "it": "Mostrati nomi dei dispositivi nella leggenda del grafico",
-        "es": "Nombres mostrados de los dispositivos en la leyenda del gráfico",
-        "pl": "Pokazane nazwy urządzeń w legendzie mapy",
-        "uk": "Показати імена пристроїв в легенді діаграм",
-        "zh-cn": "图表图例中显示设备名称"
-      },
-      "0.2.0": {
-        "en": "Added direct link to the alarm in the widget",
-        "de": "Direkter Link zum Alarm im Widget hinzugefügt",
-        "ru": "Добавлена прямая ссылка на сигнализацию в виджете",
-        "pt": "Adicionada ligação directa ao alarme no elemento",
-        "nl": "Directe verwijzing naar het alarm in het widget toegevoegd",
-        "fr": "Ajout du lien direct vers l'alarme dans le widget",
-        "it": "Aggiunto link diretto all'allarme nel widget",
-        "es": "Añadido enlace directo a la alarma en el widget",
-        "pl": "Dodano bezpośredni link do alarmu w widgecie",
-        "uk": "Додано прямий посилання на тривогу в віджеті",
-        "zh-cn": "添加直接链接到部件中的提醒"
-      },
-      "0.1.9": {
-        "en": "Look for vis-(2) project with kisshome widget",
-        "de": "Suche nach vis-(2) Projekt mit kisshome Widget",
-        "ru": "Ищите проект vis-(2) с виджетом kisshome",
-        "pt": "Procure por projeto vis-(2) com widget kisshome",
-        "nl": "Zoek vis-(2) project met kisshome widget",
-        "fr": "Rechercher le projet vis-(2) avec widget baiserhome",
-        "it": "Cercare vis-(2) progetto con widget kisshome",
-        "es": "Busque el proyecto vis-(2) con beshome widget",
-        "pl": "Szukaj vis- (2) projektu z kisshome widget",
-        "uk": "Шукайте проект vis-(2) з kisshome віджет",
-        "zh-cn": "寻找带有 kisshome 部件的 相对 (2) 工程"
-      },
-      "0.1.8": {
-        "en": "Fixed GUI issues\nSend results to cloud sync folder",
-        "de": "Behobene GUI Probleme\nErgebnisse in Cloud-Sync-Ordner senden",
-        "ru": "Фиксированные проблемы GUI\nОтправить результаты в папку облачной синхронизации",
-        "pt": "Problemas GUI corrigidos\nEnviar resultados para a pasta de sincronização na nuvem",
-        "nl": "Vaste GUI-problemen\nResultaten naar cloud synchroniseren",
-        "fr": "Problèmes d'interface graphique corrigés\nEnvoyer les résultats dans le dossier de synchronisation du cloud",
-        "it": "Problemi di GUI fissi\nInvia risultati alla cartella di sincronizzazione cloud",
-        "es": "Cuestiones de interfaz gráfica fija\nEnviar resultados a la carpeta de sincronización de nubes",
-        "pl": "Naprawiono problemy z GUI\nWyślij wyniki do folderu synchronizacji w chmurze",
-        "uk": "Виправлено проблеми GUI\nНадіслати результати в папку хмарних синхронізацій",
-        "zh-cn": "固定的图形用户界面问题\n将结果发送到云同步文件夹"
-      },
-      "0.1.7": {
-        "en": "Fixing GUI errors\nSend IDS result to cloud",
-        "de": "GUI-Fehler beheben\nIDS-Ergebnis nach Cloud senden",
-        "ru": "Исправление ошибок GUI\nОтправить результат IDS в облако",
-        "pt": "Corrigindo erros da GUI\nEnviar o resultado IDS para a nuvem",
-        "nl": "GUI-fouten herstellen\nIDS-resultaat naar cloud sturen",
-        "fr": "Correction des erreurs d'interface graphique\nEnvoyer le résultat d'IDS au cloud",
-        "it": "Correggere errori GUI\nInvia il risultato IDS al cloud",
-        "es": "Corrección de errores GUI\nEnviar Resultado IDS a la nube",
-        "pl": "Ustawienie błędów GUI\nWyślij wynik IDS do chmury",
-        "uk": "Виправлення помилок GUI\nНадіслати IDS результат хмари",
-        "zh-cn": "修复图形用户界面错误\n将IDS结果发送到云中"
-      },
-      "0.1.6": {
-        "en": "Do not show scores for later time",
-        "de": "Ergebnisse für spätere Zeit nicht anzeigen",
-        "ru": "Не показывайте результаты для более позднего времени",
-        "pt": "Não mostrar as pontuações para mais tarde",
-        "nl": "Geen scores tonen voor later",
-        "fr": "Ne montrez pas les scores pour plus tard",
-        "it": "Non mostrare punteggi per il tempo successivo",
-        "es": "No mostrar partituras para el tiempo posterior",
-        "pl": "Nie pokazuj wyników na później",
-        "uk": "Не показувати бали пізніше",
-        "zh-cn": "以后不显示分数"
-      },
-      "0.1.5": {
-        "en": "Fixing the detections in GUI",
-        "de": "Festlegen der Erkennungen in GUI",
-        "ru": "Исправление обнаружений в GUI",
-        "pt": "Corrigindo as deteções na GUI",
-        "nl": "Repareren van de detecties in GUI",
-        "fr": "Correction des détections dans GUI",
-        "it": "Fissare le rilevazioni in GUI",
-        "es": "Fijar las detecciones en GUI",
-        "pl": "Ustalanie wykrywania w GUI",
-        "uk": "Виправлення виявлення в GUI",
-        "zh-cn": "修复图形界面中的检测"
-      }
-    },
-    "titleLang": {
-      "en": "KISSHome defender",
-      "de": "KISSHome-Forschung",
-      "ru": "Исследование KISSHome",
-      "pt": "Pesquisa KISSHome",
-      "nl": "KISSHome-onderzoek",
-      "fr": "Recherche KISSHome",
-      "it": "Ricerca KISSHome",
-      "es": "Investigación de KISSHome",
-      "pl": "Badania KISSHome",
-      "uk": "Дослідження KISSHome",
-      "zh-cn": "KISSHome研究"
-    },
-    "desc": {
-      "en": "Collection of information for KISSHome defender",
-      "de": "Sammlung von Informationen für KISSHome-Forschung",
-      "ru": "Сбор информации для исследования KISSHome",
-      "pt": "Coleção de informações para pesquisa KISSHome",
-      "nl": "Verzameling informatie voor KISSHome-onderzoek",
-      "fr": "Collection d'informations pour la recherche KISSHome",
-      "it": "Raccolta di informazioni per la ricerca KISSHome",
-      "es": "Colección de información para la investigación de KISSHome",
-      "pl": "Zbiór informacji do badań KISSHome",
-      "uk": "Збір інформації для дослідження KISSHome",
-      "zh-cn": "KISSHome研究信息收集"
-    },
-    "authors": [
-      "Denis Haev <dogafox@gmail.com>"
-    ],
-    "platform": "Javascript/Node.js",
-    "mode": "daemon",
-    "nogit": true,
-    "loglevel": "info",
-    "readme": "https://github.com/ioBroker/ioBroker.kisshome-defender/blob/master/README.md",
-    "icon": "kisshome-defender.png",
-    "connectionType": "local",
-    "dataSource": "push",
-    "adminUI": {
-      "config": "json",
-      "tab": "materialize"
-    },
-    "adminTab": {
-      "singleton": false,
-      "name": "KISSHome"
-    },
-    "os": "linux",
-    "tier": 3,
-    "keywords": [
-      "kisshome-defender"
-    ],
-    "stopTimeout": 5000,
-    "enabled": false,
-    "compact": true,
-    "singletonHost": true,
-    "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.kisshome-defender/main/admin/kisshome-defender.png",
-    "type": "utility",
-    "messagebox": true,
-    "plugins": {
-      "sentry": {
-        "dsn": "https://10a9528535e3bbbf99f4282a20ff43d1@sentry.iobroker.net/248"
-      }
-    },
-    "licenseInformation": {
-      "type": "free",
-      "license": "MIT"
-    },
-    "globalDependencies": [
-      {
-        "admin": ">=7.0.25"
-      }
-    ],
-    "osDependencies": {
-      "linux": [
-        "docker-ce"
-      ]
-    },
-    "ifInstalledDependencies": {
-      "vis-2": ">=2.12.8"
-    },
-    "restartAdapters": [
-      "vis-2"
-    ],
-    "visWidgets": {
-      "kisshome-defender": {
-        "i18n": "component",
+    "common": {
         "name": "kisshome-defender",
-        "bundlerType": "module",
-        "url": "kisshome-defender/customWidgets.js",
-        "components": [
-          "KisshomeDefender"
-        ]
-      }
-    }
-  },
-  "protectedNative": [
-    "password",
-    "login"
-  ],
-  "encryptedNative": [
-    "password"
-  ],
-  "native": {
-    "fritzbox": "0.0.0.0",
-    "iface": "1-lan",
-    "login": "",
-    "password": "",
-    "tempDir": "",
-    "devices": [],
-    "allowTraining": true,
-    "anomalySensitivity": "medium",
-    "saveThresholdSeconds": 900,
-    "docker": {
-      "selfHosted": true,
-      "url": ""
-    }
-  },
-  "notifications": [
-    {
-      "scope": "kisshome-defender",
-      "name": {
-        "en": "KISSHome-Defender",
-        "de": "KISSHome-Defender",
-        "ru": "KISSHome-Defender",
-        "pt": "KISSHome-Defender",
-        "nl": "KISSHome-Defender",
-        "fr": "KISSHome-Defender",
-        "it": "KISSHome-Defender",
-        "es": "KISSHome-Defender",
-        "pl": "KISSHome-Defender",
-        "uk": "KISSHome-Defender",
-        "zh-cn": "KISSHome-Defender"
-      },
-      "description": {
-        "en": "Problem with KISSHome-Defender instance",
-        "de": "Problem mit KISSHome-Defender-Instanz",
-        "ru": "Проблема с экземпляром KISSHome-Defender",
-        "pt": "Problema com a instância KISSHome-Defender",
-        "nl": "Probleem met KISSHome-Defender-instantie",
-        "fr": "Problème avec l'instance KISSHome-Defender",
-        "it": "Problema con l'istanza KISSHome-Defender",
-        "es": "Problema con la instancia KISSHome-Defender",
-        "pl": "Problem z instancją KISSHome-Defender",
-        "uk": "Проблема з екземпляром KISSHome-Defender",
-        "zh-cn": "KISSHome-Defender 实例存在问题"
-      },
-      "categories": [
+        "version": "0.2.1",
+        "news": {
+            "0.2.1": {
+                "en": "Showed names of the devices in the chart legend",
+                "de": "Gezeigte Namen der Geräte in der Chart-Legende",
+                "ru": "Показаны имена устройств в чарте легенды",
+                "pt": "Mostrar os nomes dos dispositivos na legenda do gráfico",
+                "nl": "Toon namen van de apparaten in de kaartlegende",
+                "fr": "Afficher les noms des appareils dans la légende du graphique",
+                "it": "Mostrati nomi dei dispositivi nella leggenda del grafico",
+                "es": "Nombres mostrados de los dispositivos en la leyenda del gráfico",
+                "pl": "Pokazane nazwy urządzeń w legendzie mapy",
+                "uk": "Показати імена пристроїв в легенді діаграм",
+                "zh-cn": "图表图例中显示设备名称"
+            },
+            "0.2.0": {
+                "en": "Added direct link to the alarm in the widget",
+                "de": "Direkter Link zum Alarm im Widget hinzugefügt",
+                "ru": "Добавлена прямая ссылка на сигнализацию в виджете",
+                "pt": "Adicionada ligação directa ao alarme no elemento",
+                "nl": "Directe verwijzing naar het alarm in het widget toegevoegd",
+                "fr": "Ajout du lien direct vers l'alarme dans le widget",
+                "it": "Aggiunto link diretto all'allarme nel widget",
+                "es": "Añadido enlace directo a la alarma en el widget",
+                "pl": "Dodano bezpośredni link do alarmu w widgecie",
+                "uk": "Додано прямий посилання на тривогу в віджеті",
+                "zh-cn": "添加直接链接到部件中的提醒"
+            },
+            "0.1.9": {
+                "en": "Look for vis-(2) project with kisshome widget",
+                "de": "Suche nach vis-(2) Projekt mit kisshome Widget",
+                "ru": "Ищите проект vis-(2) с виджетом kisshome",
+                "pt": "Procure por projeto vis-(2) com widget kisshome",
+                "nl": "Zoek vis-(2) project met kisshome widget",
+                "fr": "Rechercher le projet vis-(2) avec widget baiserhome",
+                "it": "Cercare vis-(2) progetto con widget kisshome",
+                "es": "Busque el proyecto vis-(2) con beshome widget",
+                "pl": "Szukaj vis- (2) projektu z kisshome widget",
+                "uk": "Шукайте проект vis-(2) з kisshome віджет",
+                "zh-cn": "寻找带有 kisshome 部件的 相对 (2) 工程"
+            },
+            "0.1.8": {
+                "en": "Fixed GUI issues\nSend results to cloud sync folder",
+                "de": "Behobene GUI Probleme\nErgebnisse in Cloud-Sync-Ordner senden",
+                "ru": "Фиксированные проблемы GUI\nОтправить результаты в папку облачной синхронизации",
+                "pt": "Problemas GUI corrigidos\nEnviar resultados para a pasta de sincronização na nuvem",
+                "nl": "Vaste GUI-problemen\nResultaten naar cloud synchroniseren",
+                "fr": "Problèmes d'interface graphique corrigés\nEnvoyer les résultats dans le dossier de synchronisation du cloud",
+                "it": "Problemi di GUI fissi\nInvia risultati alla cartella di sincronizzazione cloud",
+                "es": "Cuestiones de interfaz gráfica fija\nEnviar resultados a la carpeta de sincronización de nubes",
+                "pl": "Naprawiono problemy z GUI\nWyślij wyniki do folderu synchronizacji w chmurze",
+                "uk": "Виправлено проблеми GUI\nНадіслати результати в папку хмарних синхронізацій",
+                "zh-cn": "固定的图形用户界面问题\n将结果发送到云同步文件夹"
+            },
+            "0.1.7": {
+                "en": "Fixing GUI errors\nSend IDS result to cloud",
+                "de": "GUI-Fehler beheben\nIDS-Ergebnis nach Cloud senden",
+                "ru": "Исправление ошибок GUI\nОтправить результат IDS в облако",
+                "pt": "Corrigindo erros da GUI\nEnviar o resultado IDS para a nuvem",
+                "nl": "GUI-fouten herstellen\nIDS-resultaat naar cloud sturen",
+                "fr": "Correction des erreurs d'interface graphique\nEnvoyer le résultat d'IDS au cloud",
+                "it": "Correggere errori GUI\nInvia il risultato IDS al cloud",
+                "es": "Corrección de errores GUI\nEnviar Resultado IDS a la nube",
+                "pl": "Ustawienie błędów GUI\nWyślij wynik IDS do chmury",
+                "uk": "Виправлення помилок GUI\nНадіслати IDS результат хмари",
+                "zh-cn": "修复图形用户界面错误\n将IDS结果发送到云中"
+            },
+            "0.1.6": {
+                "en": "Do not show scores for later time",
+                "de": "Ergebnisse für spätere Zeit nicht anzeigen",
+                "ru": "Не показывайте результаты для более позднего времени",
+                "pt": "Não mostrar as pontuações para mais tarde",
+                "nl": "Geen scores tonen voor later",
+                "fr": "Ne montrez pas les scores pour plus tard",
+                "it": "Non mostrare punteggi per il tempo successivo",
+                "es": "No mostrar partituras para el tiempo posterior",
+                "pl": "Nie pokazuj wyników na później",
+                "uk": "Не показувати бали пізніше",
+                "zh-cn": "以后不显示分数"
+            },
+            "0.1.5": {
+                "en": "Fixing the detections in GUI",
+                "de": "Festlegen der Erkennungen in GUI",
+                "ru": "Исправление обнаружений в GUI",
+                "pt": "Corrigindo as deteções na GUI",
+                "nl": "Repareren van de detecties in GUI",
+                "fr": "Correction des détections dans GUI",
+                "it": "Fissare le rilevazioni in GUI",
+                "es": "Fijar las detecciones en GUI",
+                "pl": "Ustalanie wykrywania w GUI",
+                "uk": "Виправлення виявлення в GUI",
+                "zh-cn": "修复图形界面中的检测"
+            }
+        },
+        "titleLang": {
+            "en": "KISSHome defender",
+            "de": "KISSHome-Forschung",
+            "ru": "Исследование KISSHome",
+            "pt": "Pesquisa KISSHome",
+            "nl": "KISSHome-onderzoek",
+            "fr": "Recherche KISSHome",
+            "it": "Ricerca KISSHome",
+            "es": "Investigación de KISSHome",
+            "pl": "Badania KISSHome",
+            "uk": "Дослідження KISSHome",
+            "zh-cn": "KISSHome研究"
+        },
+        "desc": {
+            "en": "Collection of information for KISSHome defender",
+            "de": "Sammlung von Informationen für KISSHome-Forschung",
+            "ru": "Сбор информации для исследования KISSHome",
+            "pt": "Coleção de informações para pesquisa KISSHome",
+            "nl": "Verzameling informatie voor KISSHome-onderzoek",
+            "fr": "Collection d'informations pour la recherche KISSHome",
+            "it": "Raccolta di informazioni per la ricerca KISSHome",
+            "es": "Colección de información para la investigación de KISSHome",
+            "pl": "Zbiór informacji do badań KISSHome",
+            "uk": "Збір інформації для дослідження KISSHome",
+            "zh-cn": "KISSHome研究信息收集"
+        },
+        "authors": ["Denis Haev <dogafox@gmail.com>"],
+        "platform": "Javascript/Node.js",
+        "mode": "daemon",
+        "nogit": true,
+        "loglevel": "info",
+        "readme": "https://github.com/ioBroker/ioBroker.kisshome-defender/blob/master/README.md",
+        "icon": "kisshome-defender.png",
+        "connectionType": "local",
+        "dataSource": "push",
+        "adminUI": {
+            "config": "json",
+            "tab": "materialize"
+        },
+        "adminTab": {
+            "singleton": false,
+            "name": "KISSHome"
+        },
+        "os": "linux",
+        "tier": 3,
+        "keywords": ["kisshome-defender"],
+        "stopTimeout": 5000,
+        "enabled": false,
+        "compact": true,
+        "singletonHost": true,
+        "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.kisshome-defender/main/admin/kisshome-defender.png",
+        "type": "utility",
+        "messagebox": true,
+        "plugins": {
+            "sentry": {
+                "dsn": "https://10a9528535e3bbbf99f4282a20ff43d1@sentry.iobroker.net/248"
+            }
+        },
+        "licenseInformation": {
+            "type": "free",
+            "license": "MIT"
+        },
+        "globalDependencies": [
+            {
+                "admin": ">=7.0.25"
+            }
+        ],
+        "osDependencies": {
+            "linux": ["docker-ce"]
+        },
+        "ifInstalledDependencies": {
+            "vis-2": ">=2.12.8"
+        },
+        "restartAdapters": ["vis-2"],
+        "visWidgets": {
+            "kisshome-defender": {
+                "i18n": "component",
+                "name": "kisshome-defender",
+                "bundlerType": "module",
+                "url": "kisshome-defender/customWidgets.js",
+                "components": ["KisshomeDefender"]
+            }
+        }
+    },
+    "protectedNative": ["password", "login"],
+    "encryptedNative": ["password"],
+    "native": {
+        "fritzbox": "0.0.0.0",
+        "iface": "1-lan",
+        "login": "",
+        "password": "",
+        "tempDir": "",
+        "devices": [],
+        "allowTraining": true,
+        "anomalySensitivity": "medium",
+        "saveThresholdSeconds": 900,
+        "docker": {
+            "selfHosted": true,
+            "url": ""
+        }
+    },
+    "notifications": [
         {
-          "category": "uuid",
-          "name": {
-            "en": "Problem with KISSHome-Defender instance",
-            "de": "Problem mit KISSHome-Defender-Instanz",
-            "ru": "Проблема с экземпляром KISSHome-Defender",
-            "pt": "Problema com a instância KISSHome-Defender",
-            "nl": "Probleem met KISSHome-Defender-instantie",
-            "fr": "Problème avec l'instance KISSHome-Defender",
-            "it": "Problema con l'istanza KISSHome-Defender",
-            "es": "Problema con la instancia KISSHome-Defender",
-            "pl": "Problem z instancją KISSHome-Defender",
-            "uk": "Проблема з екземпляром KISSHome-Defender",
-            "zh-cn": "KISSHome-Defender 实例存在问题"
-          },
-          "severity": "notify",
-          "description": {
-            "en": "The communication was rejected because the previous sessions used another UUID. It can happens, if you starts an adapter on the new system, but with the same email address. To make the acceptance of the new UUID possible, please contact us under kisshome@internet-sicherheit.de and provide the reason why the UUID was changed.",
-            "de": "Die Kommunikation wurde abgelehnt, da die vorherigen Sitzungen eine andere UUID verwendet haben. Dies kann passieren, wenn Sie einen Adapter auf dem neuen System starten, aber mit derselben E-Mail-Adresse. Um die Annahme der neuen UUID zu ermöglichen, kontaktieren Sie uns bitte unter kisshome@internet-sicherheit.de und geben Sie den Grund an, warum die UUID geändert wurde.",
-            "ru": "Связь была отклонена, потому что предыдущие сеансы использовали другой UUID. Это может произойти, если вы запускаете адаптер на новой системе, но с тем же адресом электронной почты. Чтобы сделать возможным принятие нового UUID, пожалуйста, свяжитесь с нами по адресу kisshome@internet-sicherheit.de и укажите причину, по которой UUID был изменен.",
-            "pt": "A comunicação foi rejeitada porque as sessões anteriores usaram outro UUID. Isso pode acontecer se você iniciar um adaptador em um novo sistema, mas com o mesmo endereço de e-mail. Para tornar possível a aceitação do novo UUID, entre em contato conosco em kisshome@internet-sicherheit.de e forneça o motivo pelo qual o UUID foi alterado.",
-            "nl": "De communicatie werd afgewezen omdat de vorige sessies een andere UUID gebruikten. Dit kan gebeuren als u een adapter op het nieuwe systeem start, maar met hetzelfde e-mailadres. Om de acceptatie van de nieuwe UUID mogelijk te maken, neem contact met ons op via kisshome@internet-sicherheit.de en geef de reden op waarom de UUID is gewijzigd.",
-            "fr": "La communication a été rejetée car les sessions précédentes utilisaient un UUID différent. Cela peut se produire si vous démarrez un adaptateur sur le nouveau système, mais avec la même adresse e-mail. Pour rendre possible l'acceptation du nouvel UUID, veuillez nous contacter à kisshome@internet-sicherheit.de et fournir la raison pour laquelle l'UUID a été modifié.",
-            "it": "La comunicazione è stata rifiutata perché le sessioni precedenti utilizzavano un UUID diverso. Può succedere se si avvia un adattatore su un nuovo sistema, ma con lo stesso indirizzo e-mail. Per rendere possibile l'accettazione del nuovo UUID, contattaci all'indirizzo kisshome@internet-sicherheit.de e fornisci il motivo per cui l'UUID è stato modificato.",
-            "es": "La comunicación fue rechazada porque las sesiones anteriores usaron otro UUID. Puede suceder si inicia un adaptador en el nuevo sistema, pero con la misma dirección de correo electrónico. Para hacer posible la aceptación del nuevo UUID, contáctenos en kisshome@internet-sicherheit.de y proporcione el motivo por el cual se cambió el UUID.",
-            "pl": "Komunikacja została odrzucona, ponieważ poprzednie sesje używały innego UUID. Może się to zdarzyć, jeśli uruchomisz adapter na nowym systemie, ale z tym samym adresem e-mail. Aby umożliwić akceptację nowego UUID, skontaktuj się z nami pod adresem kisshome@internet-sicherheit.de i podaj powód, dla którego UUID został zmieniony.",
-            "uk": "Зв'язок було відхилено, оскільки попередні сеанси використовували інший UUID. Це може статися, якщо ви запускаєте адаптер на новій системі, але з тією ж адресою електронної пошти. Щоб зробити можливим прийняття нового UUID, будь ласка, зв'яжіться з нами за адресою kisshome@internet-sicherheit.de та надайте причину, чому UUID було змінено.",
-            "zh-cn": "通信被拒绝，因为之前的会话使用了另一个UUID。如果您在新系统上启动适配器，但使用相同的电子邮件地址，就会发生这种情况。要使接受新UUID成为可能，请通过 kisshome@internet-sicherheit.de 与我们联系，并提供更改UUID的原因。"
-          },
-          "regex": [],
-          "limit": 1
+            "scope": "kisshome-defender",
+            "name": {
+                "en": "KISSHome-Defender",
+                "de": "KISSHome-Defender",
+                "ru": "KISSHome-Defender",
+                "pt": "KISSHome-Defender",
+                "nl": "KISSHome-Defender",
+                "fr": "KISSHome-Defender",
+                "it": "KISSHome-Defender",
+                "es": "KISSHome-Defender",
+                "pl": "KISSHome-Defender",
+                "uk": "KISSHome-Defender",
+                "zh-cn": "KISSHome-Defender"
+            },
+            "description": {
+                "en": "Problem with KISSHome-Defender instance",
+                "de": "Problem mit KISSHome-Defender-Instanz",
+                "ru": "Проблема с экземпляром KISSHome-Defender",
+                "pt": "Problema com a instância KISSHome-Defender",
+                "nl": "Probleem met KISSHome-Defender-instantie",
+                "fr": "Problème avec l'instance KISSHome-Defender",
+                "it": "Problema con l'istanza KISSHome-Defender",
+                "es": "Problema con la instancia KISSHome-Defender",
+                "pl": "Problem z instancją KISSHome-Defender",
+                "uk": "Проблема з екземпляром KISSHome-Defender",
+                "zh-cn": "KISSHome-Defender 实例存在问题"
+            },
+            "categories": [
+                {
+                    "category": "uuid",
+                    "name": {
+                        "en": "Problem with KISSHome-Defender instance",
+                        "de": "Problem mit KISSHome-Defender-Instanz",
+                        "ru": "Проблема с экземпляром KISSHome-Defender",
+                        "pt": "Problema com a instância KISSHome-Defender",
+                        "nl": "Probleem met KISSHome-Defender-instantie",
+                        "fr": "Problème avec l'instance KISSHome-Defender",
+                        "it": "Problema con l'istanza KISSHome-Defender",
+                        "es": "Problema con la instancia KISSHome-Defender",
+                        "pl": "Problem z instancją KISSHome-Defender",
+                        "uk": "Проблема з екземпляром KISSHome-Defender",
+                        "zh-cn": "KISSHome-Defender 实例存在问题"
+                    },
+                    "severity": "notify",
+                    "description": {
+                        "en": "The communication was rejected because the previous sessions used another UUID. It can happens, if you starts an adapter on the new system, but with the same email address. To make the acceptance of the new UUID possible, please contact us under kisshome@internet-sicherheit.de and provide the reason why the UUID was changed.",
+                        "de": "Die Kommunikation wurde abgelehnt, da die vorherigen Sitzungen eine andere UUID verwendet haben. Dies kann passieren, wenn Sie einen Adapter auf dem neuen System starten, aber mit derselben E-Mail-Adresse. Um die Annahme der neuen UUID zu ermöglichen, kontaktieren Sie uns bitte unter kisshome@internet-sicherheit.de und geben Sie den Grund an, warum die UUID geändert wurde.",
+                        "ru": "Связь была отклонена, потому что предыдущие сеансы использовали другой UUID. Это может произойти, если вы запускаете адаптер на новой системе, но с тем же адресом электронной почты. Чтобы сделать возможным принятие нового UUID, пожалуйста, свяжитесь с нами по адресу kisshome@internet-sicherheit.de и укажите причину, по которой UUID был изменен.",
+                        "pt": "A comunicação foi rejeitada porque as sessões anteriores usaram outro UUID. Isso pode acontecer se você iniciar um adaptador em um novo sistema, mas com o mesmo endereço de e-mail. Para tornar possível a aceitação do novo UUID, entre em contato conosco em kisshome@internet-sicherheit.de e forneça o motivo pelo qual o UUID foi alterado.",
+                        "nl": "De communicatie werd afgewezen omdat de vorige sessies een andere UUID gebruikten. Dit kan gebeuren als u een adapter op het nieuwe systeem start, maar met hetzelfde e-mailadres. Om de acceptatie van de nieuwe UUID mogelijk te maken, neem contact met ons op via kisshome@internet-sicherheit.de en geef de reden op waarom de UUID is gewijzigd.",
+                        "fr": "La communication a été rejetée car les sessions précédentes utilisaient un UUID différent. Cela peut se produire si vous démarrez un adaptateur sur le nouveau système, mais avec la même adresse e-mail. Pour rendre possible l'acceptation du nouvel UUID, veuillez nous contacter à kisshome@internet-sicherheit.de et fournir la raison pour laquelle l'UUID a été modifié.",
+                        "it": "La comunicazione è stata rifiutata perché le sessioni precedenti utilizzavano un UUID diverso. Può succedere se si avvia un adattatore su un nuovo sistema, ma con lo stesso indirizzo e-mail. Per rendere possibile l'accettazione del nuovo UUID, contattaci all'indirizzo kisshome@internet-sicherheit.de e fornisci il motivo per cui l'UUID è stato modificato.",
+                        "es": "La comunicación fue rechazada porque las sesiones anteriores usaron otro UUID. Puede suceder si inicia un adaptador en el nuevo sistema, pero con la misma dirección de correo electrónico. Para hacer posible la aceptación del nuevo UUID, contáctenos en kisshome@internet-sicherheit.de y proporcione el motivo por el cual se cambió el UUID.",
+                        "pl": "Komunikacja została odrzucona, ponieważ poprzednie sesje używały innego UUID. Może się to zdarzyć, jeśli uruchomisz adapter na nowym systemie, ale z tym samym adresem e-mail. Aby umożliwić akceptację nowego UUID, skontaktuj się z nami pod adresem kisshome@internet-sicherheit.de i podaj powód, dla którego UUID został zmieniony.",
+                        "uk": "Зв'язок було відхилено, оскільки попередні сеанси використовували інший UUID. Це може статися, якщо ви запускаєте адаптер на новій системі, але з тією ж адресою електронної пошти. Щоб зробити можливим прийняття нового UUID, будь ласка, зв'яжіться з нами за адресою kisshome@internet-sicherheit.de та надайте причину, чому UUID було змінено.",
+                        "zh-cn": "通信被拒绝，因为之前的会话使用了另一个UUID。如果您在新系统上启动适配器，但使用相同的电子邮件地址，就会发生这种情况。要使接受新UUID成为可能，请通过 kisshome@internet-sicherheit.de 与我们联系，并提供更改UUID的原因。"
+                    },
+                    "regex": [],
+                    "limit": 1
+                },
+                {
+                    "category": "alert",
+                    "name": {
+                        "en": "Event from KISSHome-Defender",
+                        "de": "Ereignis bei KISSHome-Defender",
+                        "ru": "Событие KISSHome-Defender",
+                        "pt": "Evento do KISSHome-Defender",
+                        "nl": "Gebeurtenis van KISSHome-Defender",
+                        "fr": "Événement de KISSHome-Defender",
+                        "it": "Evento di KISSHome-Defender",
+                        "es": "Evento de KISSHome-Defender",
+                        "pl": "Zdarzenie KISSHome-Defender",
+                        "uk": "Подія KISSHome-Defender",
+                        "zh-cn": "KISSHome-Defender事件"
+                    },
+                    "severity": "alert",
+                    "description": {
+                        "en": "Check the KISSHome-Defender instance for more information.",
+                        "de": "Überprüfen Sie die KISSHome-Defender-Instanz für weitere Informationen.",
+                        "ru": "Проверьте экземпляр KISSHome-Defender для получения дополнительной информации.",
+                        "pt": "Verifique a instância KISSHome-Defender para obter mais informações.",
+                        "nl": "Controleer de KISSHome-Defender-instantie voor meer informatie.",
+                        "fr": "Vérifiez l'instance KISSHome-Defender pour plus d'informations.",
+                        "it": "Controlla l'istanza KISSHome-Defender per ulteriori informazioni.",
+                        "es": "Verifique la instancia KISSHome-Defender para obtener más información.",
+                        "pl": "Sprawdź instancję KISSHome-Defender, aby uzyskać więcej informacji.",
+                        "uk": "Перевірте екземпляр KISSHome-Defender для отримання додаткової інформації.",
+                        "zh-cn": "检查KISSHome-Defender实例以获取更多信息。"
+                    },
+                    "regex": [],
+                    "limit": 1
+                }
+            ]
+        }
+    ],
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "device",
+            "common": {
+                "name": {
+                    "en": "Information",
+                    "de": "Informationen",
+                    "ru": "Информация",
+                    "pt": "Informação",
+                    "nl": "Informatie",
+                    "fr": "Information",
+                    "it": "Informazioni",
+                    "es": "Información",
+                    "pl": "Informacja",
+                    "uk": "Інформація",
+                    "zh-cn": "信息"
+                }
+            },
+            "native": {}
         },
         {
-          "category": "alert",
-          "name": {
-            "en": "Event from KISSHome-Defender",
-            "de": "Ereignis bei KISSHome-Defender",
-            "ru": "Событие KISSHome-Defender",
-            "pt": "Evento do KISSHome-Defender",
-            "nl": "Gebeurtenis van KISSHome-Defender",
-            "fr": "Événement de KISSHome-Defender",
-            "it": "Evento di KISSHome-Defender",
-            "es": "Evento de KISSHome-Defender",
-            "pl": "Zdarzenie KISSHome-Defender",
-            "uk": "Подія KISSHome-Defender",
-            "zh-cn": "KISSHome-Defender事件"
-          },
-          "severity": "alert",
-          "description": {
-            "en": "Check the KISSHome-Defender instance for more information.",
-            "de": "Überprüfen Sie die KISSHome-Defender-Instanz für weitere Informationen.",
-            "ru": "Проверьте экземпляр KISSHome-Defender для получения дополнительной информации.",
-            "pt": "Verifique a instância KISSHome-Defender para obter mais informações.",
-            "nl": "Controleer de KISSHome-Defender-instantie voor meer informatie.",
-            "fr": "Vérifiez l'instance KISSHome-Defender pour plus d'informations.",
-            "it": "Controlla l'istanza KISSHome-Defender per ulteriori informazioni.",
-            "es": "Verifique la instancia KISSHome-Defender para obtener más información.",
-            "pl": "Sprawdź instancję KISSHome-Defender, aby uzyskać więcej informacji.",
-            "uk": "Перевірте екземпляр KISSHome-Defender для отримання додаткової інформації.",
-            "zh-cn": "检查KISSHome-Defender实例以获取更多信息。"
-          },
-          "regex": [],
-          "limit": 1
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Connected to FritzBox",
+                    "de": "Verbindung mit FritzBox",
+                    "ru": "Подключен к FritzBox",
+                    "pt": "Conectado ao FritzBox",
+                    "nl": "Verbinding met FritzBoxr",
+                    "fr": "Connecté au FritzBox",
+                    "it": "Collegato al FritzBox",
+                    "es": "Conectado al FritzBox",
+                    "pl": "Łączy się z FritzBox",
+                    "uk": "Підключення до FritzBox",
+                    "zh-cn": "Connected with FritzBox"
+                },
+                "type": "boolean",
+                "role": "indicator.connected",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.analysis",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Detections",
+                    "de": "Erkennungen",
+                    "ru": "Обнаружения",
+                    "pt": "Detecções",
+                    "nl": "Detecties",
+                    "fr": "Détections",
+                    "it": "Rilevamenti",
+                    "es": "Detecciones",
+                    "pl": "Wykrycia",
+                    "uk": "Виявлення",
+                    "zh-cn": "检测"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.analysis.lastSeen",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Last seen detection ID",
+                    "de": "Zuletzt gesehene Erkennungs-ID",
+                    "ru": "Последний обнаруженный ID",
+                    "pt": "Último ID de detecção visto",
+                    "nl": "Laatst gezien detectie-ID",
+                    "fr": "Dernier ID de détection vu",
+                    "it": "Ultimo ID di rilevamento visto",
+                    "es": "Último ID de detección visto",
+                    "pl": "Ostatnio wid, ziany identyfikator wykrycia",
+                    "uk": "Останній ID виявлення",
+                    "zh-cn": "最后看到的检测ID"
+                },
+                "type": "string",
+                "role": "state",
+                "read": true,
+                "write": false,
+                "def": ""
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.analysis.lastShownAlert",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Last shown alert ID",
+                    "de": "Zuletzt angezeigte Alarm-ID",
+                    "ru": "Последний показанный ID оповещения",
+                    "pt": "Último ID de alerta exibido",
+                    "nl": "Laatst weergegeven waarschuwing-ID",
+                    "fr": "Dernier ID d'alerte affiché",
+                    "it": "Ultimo ID di avviso mostrato",
+                    "es": "Último ID de alerta mostrado",
+                    "pl": "Ostatnio wyświetlany identyfikator alertu",
+                    "uk": "Останній показаний ID оповіщення",
+                    "zh-cn": "最后显示的警报ID"
+                },
+                "type": "string",
+                "role": "state",
+                "read": true,
+                "write": false,
+                "def": ""
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.analysis.running",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Is detection is running",
+                    "de": "Wird die Erkennung durchgeführt",
+                    "ru": "Идет обнаружение",
+                    "pt": "A detecção está em execução",
+                    "nl": "Wordt detectie uitgevoerd",
+                    "fr": "La détection est en cours",
+                    "it": "Il rilevamento è in corso",
+                    "es": "La detección está en curso",
+                    "pl": "Wykrywanie jest w toku",
+                    "uk": "Виявлення виконується",
+                    "zh-cn": "检测正在进行中"
+                },
+                "type": "boolean",
+                "role": "state",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.analysis.lastCreated",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Time of last analysis",
+                    "de": "Zeit der letzten Analyse",
+                    "ru": "Время последнего анализа",
+                    "pt": "Hora da última análise",
+                    "nl": "Tijd van laatste analyse",
+                    "fr": "Heure de la dernière analyse",
+                    "it": "Ora dell'ultima analisi",
+                    "es": "Hora del último análisis",
+                    "pl": "Czas ostatniej analizy",
+                    "uk": "Час останнього аналізу",
+                    "zh-cn": "上次分析的时间"
+                },
+                "type": "string",
+                "role": "state",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.recording",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Recoding on Fritz!Box",
+                    "de": "Aufnahme auf Fritz!Box",
+                    "ru": "Запись на Fritz!Box",
+                    "pt": "Recoding no Fritz!Box",
+                    "nl": "Opname op Fritz!Box",
+                    "fr": "Enregistrement sur Fritz!Box",
+                    "it": "Registrazione su Fritz!Box",
+                    "es": "Grabación en Fritz!Box",
+                    "pl": "Nagrywanie na Fritz!Box",
+                    "uk": "Запис на Fritz!Box",
+                    "zh-cn": "Fritz!Box上的录制"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.recording.capturedFiltered",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "How many filtered packets in bytes captured after last start",
+                    "de": "Wie viele gefilterte Pakete in Bytes nach dem letzten Start erfasst wurden",
+                    "ru": "Сколько отфильтрованных пакетов в байтах было захвачено после последнего запуска",
+                    "pt": "Quantos pacotes filtrados em bytes foram capturados após a última inicialização",
+                    "nl": "Hoeveel gefilterde pakketten in bytes zijn er vastgelegd na, de laatste start",
+                    "fr": "Combien de paquets filtrés en octets ont été capturés après le dernier démarrage",
+                    "it": "Quanti pacchetti filtrati in byte sono stati catturati, dopo l'ultimo avvio",
+                    "es": "Cuántos paquetes filtrados en bytes se capturaron después del último inicio",
+                    "pl": "Ile przefiltrowanych pakietów w bajtach zosta, ło przechwyconych po ostatnim uruchomieniu",
+                    "uk": "Скільки відфільтрованих пакетів у байтах було захоплено після останнього запуску",
+                    "zh-cn": "上次启动后捕获了多少过滤后的数据包"
+                },
+                "type": "number",
+                "role": "state",
+                "unit": "bytes",
+                "read": true,
+                "write": false,
+                "def": 0
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.recording.capturedFull",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "How many filtered packets in bytes captured after last start",
+                    "de": "Wie viele gefilterte Pakete in Bytes nach dem letzten Start erfasst wurden",
+                    "ru": "Сколько отфильтрованных пакетов в байтах было захвачено после последнего запуска",
+                    "pt": "Quantos pacotes filtrados em bytes foram capturados após a última inicialização",
+                    "nl": "Hoeveel gefilterde pakketten in bytes zijn er vastgelegd na, de laatste start",
+                    "fr": "Combien de paquets filtrés en octets ont été capturés après le dernier démarrage",
+                    "it": "Quanti pacchetti filtrati in byte sono stati catturati, dopo l'ultimo avvio",
+                    "es": "Cuántos paquetes filtrados en bytes se capturaron después del último inicio",
+                    "pl": "Ile przefiltrowanych pakietów w bajtach zosta, ło przechwyconych po ostatnim uruchomieniu",
+                    "uk": "Скільки відфільтрованих пакетів у байтах було захоплено після останнього запуску",
+                    "zh-cn": "上次启动后捕获了多少过滤后的数据包"
+                },
+                "type": "number",
+                "role": "state",
+                "unit": "bytes",
+                "read": true,
+                "write": false,
+                "def": 0
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.recording.enabled",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Is recording is running",
+                    "de": "Wird aufgezeichnet",
+                    "ru": "Идет запись",
+                    "pt": "A gravação está em execução",
+                    "nl": "Wordt opgenomen",
+                    "fr": "L'enregistrement est en cours",
+                    "it": "La registrazione è in corso",
+                    "es": "La grabación está en curso",
+                    "pl": "Nagrywanie jest w toku",
+                    "uk": "Запис виконується",
+                    "zh-cn": "录制正在进行中"
+                },
+                "type": "boolean",
+                "role": "state",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.recording.running",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Is recording is running",
+                    "de": "Wird aufgezeichnet",
+                    "ru": "Идет запись",
+                    "pt": "A gravação está em execução",
+                    "nl": "Wordt opgenomen",
+                    "fr": "L'enregistrement est en cours",
+                    "it": "La registrazione è in corso",
+                    "es": "La grabación está en curso",
+                    "pl": "Nagrywanie jest w toku",
+                    "uk": "Запис виконується",
+                    "zh-cn": "录制正在进行中"
+                },
+                "type": "boolean",
+                "role": "state",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.recording.triggerWrite",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Triggers the creation of PCAP file",
+                    "de": "Startet die Erstellung der PCAP-Datei",
+                    "ru": "Запускает создание файла PCAP",
+                    "pt": "Dispara a criação do arquivo PCAP",
+                    "nl": "Start de creatie van het PCAP-bestand",
+                    "fr": "Déclenche la création du fichier PCAP",
+                    "it": "Avvia la creazione del file PCAP",
+                    "es": "Desencadena la creación del archivo PCAP",
+                    "pl": "Uruchamia tworzenie pliku PCAP",
+                    "uk": "Запускає створення файлу PCAP",
+                    "zh-cn": "触发PCAP文件的创建"
+                },
+                "type": "boolean",
+                "role": "state",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.recording.nextWrite",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Next PCAP file creation",
+                    "de": "Nächste PCAP-Dateierstellung",
+                    "ru": "Следующее создание файла PCAP",
+                    "pt": "Próxima criação de arquivo PCAP",
+                    "nl": "Volgende PCAP-bestandscreatie",
+                    "fr": "Prochaine création de fichier PCAP",
+                    "it": "Prossima creazione del file PCAP",
+                    "es": "Próxima creación de archivo PCAP",
+                    "pl": "Następne tworzenie pliku PCAP",
+                    "uk": "Наступне створення файлу PCAP",
+                    "zh-cn": "下一个PCAP文件创建"
+                },
+                "type": "string",
+                "role": "date",
+                "read": true,
+                "write": true
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.cloudSync",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Synchronization with KISSHome",
+                    "de": "Synchronisation mit KISSHome",
+                    "ru": "Синхронизация с KISSHome",
+                    "pt": "Sincronização com KISSHome",
+                    "nl": "Synchronisatie met KISSHome",
+                    "fr": "Synchronisation avec KISSHome",
+                    "it": "Sincronizzazione con KISSHome",
+                    "es": "Sincronización con KISSHome",
+                    "pl": "Synchronizacja z KISSHome",
+                    "uk": "Синхронізація з KISSHome",
+                    "zh-cn": "与KISSHome同步"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.cloudSync.running",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "RSync is running",
+                    "de": "RSync läuft",
+                    "ru": "RSync работает",
+                    "pt": "RSync está em execução",
+                    "nl": "RSync is aan het lopen",
+                    "fr": "RSync est en cours d'exécution",
+                    "it": "RSync è in esecuzione",
+                    "es": "RSync está corriendo",
+                    "pl": "RSync działa",
+                    "uk": "RSync працює",
+                    "zh-cn": "RSync正在运行"
+                },
+                "type": "boolean",
+                "role": "state",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.cloudSync.questionnaire",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Questionary for KISSHome",
+                    "de": "RSync läuft",
+                    "ru": "RSync работает",
+                    "pt": "RSync está em execução",
+                    "nl": "RSync is aan het lopen",
+                    "fr": "RSync est en cours d'exécution",
+                    "it": "RSync è in esecuzione",
+                    "es": "RSync está corriendo",
+                    "pl": "RSync działa",
+                    "uk": "RSync працює",
+                    "zh-cn": "RSync正在运行"
+                },
+                "type": "json",
+                "role": "state",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.ids",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Information about KISSHome IDS container",
+                    "de": "Informationen zum KISSHome IDS Container",
+                    "ru": "Информация о контейнере KISSHome IDS",
+                    "pt": "Informações sobre o contêiner KISSHome IDS",
+                    "nl": "Informatie over de KISSHome IDS-container",
+                    "fr": "Informations sur le conteneur KISSHome IDS",
+                    "it": "Informazioni sul contenitore KISSHome IDS",
+                    "es": "Información sobre el contenedor KISSHome IDS",
+                    "pl": "Informacje o kontenerze KISSHome IDS",
+                    "uk": "Інформація про контейнер KISSHome IDS",
+                    "zh-cn": "关于KISSHome IDS容器的信息"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.ids.status",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Status of KISSHome IDS container",
+                    "de": "Status des KISSHome IDS Containers",
+                    "ru": "Статус контейнера KISSHome IDS",
+                    "pt": "Status do contêiner KISSHome IDS",
+                    "nl": "Status van de KISSHome IDS-container",
+                    "fr": "Statut du conteneur KISSHome IDS",
+                    "it": "Stato del contenitore KISSHome IDS",
+                    "es": "Estado del contenedor KISSHome IDS",
+                    "pl": "Status kontenera KISSHome IDS",
+                    "uk": "Статус контейнера KISSHome IDS",
+                    "zh-cn": "KISSHome IDS容器的状态"
+                },
+                "type": "string",
+                "states": {
+                    "Started": "Started",
+                    "Running": "Running",
+                    "Configuring": "Configuring",
+                    "Analyzing": "Analyzing",
+                    "Exited": "Exited",
+                    "No connection": "No connection"
+                },
+                "role": "state",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.ids.version",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Version of KISSHome IDS container",
+                    "de": "Version des KISSHome IDS Containers",
+                    "ru": "Версия контейнера KISSHome IDS",
+                    "pt": "Versão do contêiner KISSHome IDS",
+                    "nl": "Versie van de KISSHome IDS-container",
+                    "fr": "Version du conteneur KISSHome IDS",
+                    "it": "Versione del contenitore KISSHome IDS",
+                    "es": "Versión del contenedor KISSHome IDS",
+                    "pl": "Wersja kontenera KISSHome IDS",
+                    "uk": "Версія контейнера KISSHome IDS",
+                    "zh-cn": "KISSHome IDS容器的版本"
+                },
+                "type": "string",
+                "role": "state",
+                "read": true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.ids.restart",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Restart KISSHome IDS container",
+                    "de": "KISSHome IDS Container neu starten",
+                    "ru": "Перезапустить контейнер KISSHome IDS",
+                    "pt": "Reiniciar o contêiner KISSHome IDS",
+                    "nl": "KISSHome IDS-container opnieuw opstarten",
+                    "fr": "Redémarrer le conteneur KISSHome IDS",
+                    "it": "Riavviare il contenitore KISSHome IDS",
+                    "es": "Reiniciar el contenedor KISSHome IDS",
+                    "pl": "Uruchom ponownie kontener KISSHome IDS",
+                    "uk": "Перезапустити контейнер KISSHome IDS",
+                    "zh-cn": "重新启动KISSHome IDS容器"
+                },
+                "type": "boolean",
+                "role": "button",
+                "read": false,
+                "write": true
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.ids.group",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "Group name",
+                    "de": "Gruppenname",
+                    "ru": "Имя группы",
+                    "pt": "Nome do grupo",
+                    "nl": "Groepsnaam",
+                    "fr": "Nom du groupe",
+                    "it": "Nome del gruppo",
+                    "es": "Nombre del grupo",
+                    "pl": "Nazwa grupy",
+                    "uk": "Назва групи",
+                    "zh-cn": "组名"
+                },
+                "states": { "A":  "A", "B": "B" },
+                "type": "string",
+                "role": "state",
+                "read": true,
+                "write": false,
+                "def": "A"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.ids.period",
+            "type": "state",
+            "common": {
+                "name": {
+                    "en": "System variable",
+                    "de": "Systemvariable",
+                    "ru": "Системная переменная",
+                    "pt": "Variável do sistema",
+                    "nl": "Systeemvariabele",
+                    "fr": "Variable système",
+                    "it": "Variabile di sistema",
+                    "es": "Variable del sistema",
+                    "pl": "Zmienna systemowa",
+                    "uk": "Системна змінна",
+                    "zh-cn": "系统变量"
+                },
+                "type": "boolean",
+                "role": "state",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.ids.simulate",
+            "type": "state",
+            "common": {
+                "expert": true,
+                "type": "boolean",
+                "role": "switch",
+                "read": true,
+                "write": true,
+                "def": false
+            },
+            "native": {}
         }
-      ]
-    }
-  ],
-  "objects": [],
-  "instanceObjects": [
-    {
-      "_id": "info",
-      "type": "device",
-      "common": {
-        "name": {
-          "en": "Information",
-          "de": "Informationen",
-          "ru": "Информация",
-          "pt": "Informação",
-          "nl": "Informatie",
-          "fr": "Information",
-          "it": "Informazioni",
-          "es": "Información",
-          "pl": "Informacja",
-          "uk": "Інформація",
-          "zh-cn": "信息"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.connection",
-      "type": "state",
-      "common": {
-        "name": {
-          "en": "Connected to FritzBox",
-          "de": "Verbindung mit FritzBox",
-          "ru": "Подключен к FritzBox",
-          "pt": "Conectado ao FritzBox",
-          "nl": "Verbinding met FritzBoxr",
-          "fr": "Connecté au FritzBox",
-          "it": "Collegato al FritzBox",
-          "es": "Conectado al FritzBox",
-          "pl": "Łączy się z FritzBox",
-          "uk": "Підключення до FritzBox",
-          "zh-cn": "Connected with FritzBox"
-        },
-        "type": "boolean",
-        "role": "indicator.connected",
-        "read": true,
-        "write": false,
-        "def": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.analysis",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Detections",
-          "de": "Erkennungen",
-          "ru": "Обнаружения",
-          "pt": "Detecções",
-          "nl": "Detecties",
-          "fr": "Détections",
-          "it": "Rilevamenti",
-          "es": "Detecciones",
-          "pl": "Wykrycia",
-          "uk": "Виявлення",
-          "zh-cn": "检测"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.analysis.lastSeen",
-      "type": "state",
-      "common": {
-        "name": {
-          "en": "Last seen detection ID",
-          "de": "Zuletzt gesehene Erkennungs-ID",
-          "ru": "Последний обнаруженный ID",
-          "pt": "Último ID de detecção visto",
-          "nl": "Laatst gezien detectie-ID",
-          "fr": "Dernier ID de détection vu",
-          "it": "Ultimo ID di rilevamento visto",
-          "es": "Último ID de detección visto",
-          "pl": "Ostatnio wid, ziany identyfikator wykrycia",
-          "uk": "Останній ID виявлення",
-          "zh-cn": "最后看到的检测ID"
-        },
-        "type": "string",
-        "role": "state",
-        "read": true,
-        "write": false,
-        "def": ""
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.analysis.lastShownAlert",
-      "type": "state",
-      "common": {
-        "name": {
-          "en": "Last shown alert ID",
-          "de": "Zuletzt angezeigte Alarm-ID",
-          "ru": "Последний показанный ID оповещения",
-          "pt": "Último ID de alerta exibido",
-          "nl": "Laatst weergegeven waarschuwing-ID",
-          "fr": "Dernier ID d'alerte affiché",
-          "it": "Ultimo ID di avviso mostrato",
-          "es": "Último ID de alerta mostrado",
-          "pl": "Ostatnio wyświetlany identyfikator alertu",
-          "uk": "Останній показаний ID оповіщення",
-          "zh-cn": "最后显示的警报ID"
-        },
-        "type": "string",
-        "role": "state",
-        "read": true,
-        "write": false,
-        "def": ""
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.analysis.running",
-      "type": "state",
-      "common": {
-        "name": {
-          "en": "Is detection is running",
-          "de": "Wird die Erkennung durchgeführt",
-          "ru": "Идет обнаружение",
-          "pt": "A detecção está em execução",
-          "nl": "Wordt detectie uitgevoerd",
-          "fr": "La détection est en cours",
-          "it": "Il rilevamento è in corso",
-          "es": "La detección está en curso",
-          "pl": "Wykrywanie jest w toku",
-          "uk": "Виявлення виконується",
-          "zh-cn": "检测正在进行中"
-        },
-        "type": "boolean",
-        "role": "state",
-        "read": true,
-        "write": false,
-        "def": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.analysis.lastCreated",
-      "type": "state",
-      "common": {
-        "name": {
-          "en": "Time of last analysis",
-          "de": "Zeit der letzten Analyse",
-          "ru": "Время последнего анализа",
-          "pt": "Hora da última análise",
-          "nl": "Tijd van laatste analyse",
-          "fr": "Heure de la dernière analyse",
-          "it": "Ora dell'ultima analisi",
-          "es": "Hora del último análisis",
-          "pl": "Czas ostatniej analizy",
-          "uk": "Час останнього аналізу",
-          "zh-cn": "上次分析的时间"
-        },
-        "type": "string",
-        "role": "state",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.recording",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Recoding on Fritz!Box",
-          "de": "Aufnahme auf Fritz!Box",
-          "ru": "Запись на Fritz!Box",
-          "pt": "Recoding no Fritz!Box",
-          "nl": "Opname op Fritz!Box",
-          "fr": "Enregistrement sur Fritz!Box",
-          "it": "Registrazione su Fritz!Box",
-          "es": "Grabación en Fritz!Box",
-          "pl": "Nagrywanie na Fritz!Box",
-          "uk": "Запис на Fritz!Box",
-          "zh-cn": "Fritz!Box上的录制"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.recording.capturedFiltered",
-      "type": "state",
-      "common": {
-        "name": {
-          "en": "How many filtered packets in bytes captured after last start",
-          "de": "Wie viele gefilterte Pakete in Bytes nach dem letzten Start erfasst wurden",
-          "ru": "Сколько отфильтрованных пакетов в байтах было захвачено после последнего запуска",
-          "pt": "Quantos pacotes filtrados em bytes foram capturados após a última inicialização",
-          "nl": "Hoeveel gefilterde pakketten in bytes zijn er vastgelegd na, de laatste start",
-          "fr": "Combien de paquets filtrés en octets ont été capturés après le dernier démarrage",
-          "it": "Quanti pacchetti filtrati in byte sono stati catturati, dopo l'ultimo avvio",
-          "es": "Cuántos paquetes filtrados en bytes se capturaron después del último inicio",
-          "pl": "Ile przefiltrowanych pakietów w bajtach zosta, ło przechwyconych po ostatnim uruchomieniu",
-          "uk": "Скільки відфільтрованих пакетів у байтах було захоплено після останнього запуску",
-          "zh-cn": "上次启动后捕获了多少过滤后的数据包"
-        },
-        "type": "number",
-        "role": "state",
-        "unit": "bytes",
-        "read": true,
-        "write": false,
-        "def": 0
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.recording.capturedFull",
-      "type": "state",
-      "common": {
-        "name": {
-          "en": "How many filtered packets in bytes captured after last start",
-          "de": "Wie viele gefilterte Pakete in Bytes nach dem letzten Start erfasst wurden",
-          "ru": "Сколько отфильтрованных пакетов в байтах было захвачено после последнего запуска",
-          "pt": "Quantos pacotes filtrados em bytes foram capturados após a última inicialização",
-          "nl": "Hoeveel gefilterde pakketten in bytes zijn er vastgelegd na, de laatste start",
-          "fr": "Combien de paquets filtrés en octets ont été capturés après le dernier démarrage",
-          "it": "Quanti pacchetti filtrati in byte sono stati catturati, dopo l'ultimo avvio",
-          "es": "Cuántos paquetes filtrados en bytes se capturaron después del último inicio",
-          "pl": "Ile przefiltrowanych pakietów w bajtach zosta, ło przechwyconych po ostatnim uruchomieniu",
-          "uk": "Скільки відфільтрованих пакетів у байтах було захоплено після останнього запуску",
-          "zh-cn": "上次启动后捕获了多少过滤后的数据包"
-        },
-        "type": "number",
-        "role": "state",
-        "unit": "bytes",
-        "read": true,
-        "write": false,
-        "def": 0
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.recording.enabled",
-      "type": "state",
-      "common": {
-        "name": {
-          "en": "Is recording is running",
-          "de": "Wird aufgezeichnet",
-          "ru": "Идет запись",
-          "pt": "A gravação está em execução",
-          "nl": "Wordt opgenomen",
-          "fr": "L'enregistrement est en cours",
-          "it": "La registrazione è in corso",
-          "es": "La grabación está en curso",
-          "pl": "Nagrywanie jest w toku",
-          "uk": "Запис виконується",
-          "zh-cn": "录制正在进行中"
-        },
-        "type": "boolean",
-        "role": "state",
-        "read": true,
-        "write": true,
-        "def": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.recording.running",
-      "type": "state",
-      "common": {
-        "name": {
-          "en": "Is recording is running",
-          "de": "Wird aufgezeichnet",
-          "ru": "Идет запись",
-          "pt": "A gravação está em execução",
-          "nl": "Wordt opgenomen",
-          "fr": "L'enregistrement est en cours",
-          "it": "La registrazione è in corso",
-          "es": "La grabación está en curso",
-          "pl": "Nagrywanie jest w toku",
-          "uk": "Запис виконується",
-          "zh-cn": "录制正在进行中"
-        },
-        "type": "boolean",
-        "role": "state",
-        "read": true,
-        "write": true,
-        "def": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.recording.triggerWrite",
-      "type": "state",
-      "common": {
-        "name": {
-          "en": "Triggers the creation of PCAP file",
-          "de": "Startet die Erstellung der PCAP-Datei",
-          "ru": "Запускает создание файла PCAP",
-          "pt": "Dispara a criação do arquivo PCAP",
-          "nl": "Start de creatie van het PCAP-bestand",
-          "fr": "Déclenche la création du fichier PCAP",
-          "it": "Avvia la creazione del file PCAP",
-          "es": "Desencadena la creación del archivo PCAP",
-          "pl": "Uruchamia tworzenie pliku PCAP",
-          "uk": "Запускає створення файлу PCAP",
-          "zh-cn": "触发PCAP文件的创建"
-        },
-        "type": "boolean",
-        "role": "state",
-        "read": true,
-        "write": true,
-        "def": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.recording.nextWrite",
-      "type": "state",
-      "common": {
-        "name": {
-          "en": "Next PCAP file creation",
-          "de": "Nächste PCAP-Dateierstellung",
-          "ru": "Следующее создание файла PCAP",
-          "pt": "Próxima criação de arquivo PCAP",
-          "nl": "Volgende PCAP-bestandscreatie",
-          "fr": "Prochaine création de fichier PCAP",
-          "it": "Prossima creazione del file PCAP",
-          "es": "Próxima creación de archivo PCAP",
-          "pl": "Następne tworzenie pliku PCAP",
-          "uk": "Наступне створення файлу PCAP",
-          "zh-cn": "下一个PCAP文件创建"
-        },
-        "type": "string",
-        "role": "date",
-        "read": true,
-        "write": true
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.cloudSync",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Synchronization with KISSHome",
-          "de": "Synchronisation mit KISSHome",
-          "ru": "Синхронизация с KISSHome",
-          "pt": "Sincronização com KISSHome",
-          "nl": "Synchronisatie met KISSHome",
-          "fr": "Synchronisation avec KISSHome",
-          "it": "Sincronizzazione con KISSHome",
-          "es": "Sincronización con KISSHome",
-          "pl": "Synchronizacja z KISSHome",
-          "uk": "Синхронізація з KISSHome",
-          "zh-cn": "与KISSHome同步"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.cloudSync.running",
-      "type": "state",
-      "common": {
-        "name": {
-          "en": "RSync is running",
-          "de": "RSync läuft",
-          "ru": "RSync работает",
-          "pt": "RSync está em execução",
-          "nl": "RSync is aan het lopen",
-          "fr": "RSync est en cours d'exécution",
-          "it": "RSync è in esecuzione",
-          "es": "RSync está corriendo",
-          "pl": "RSync działa",
-          "uk": "RSync працює",
-          "zh-cn": "RSync正在运行"
-        },
-        "type": "boolean",
-        "role": "state",
-        "read": true,
-        "write": false,
-        "def": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.cloudSync.questionnaire",
-      "type": "state",
-      "common": {
-        "name": {
-          "en": "Questionary for KISSHome",
-          "de": "RSync läuft",
-          "ru": "RSync работает",
-          "pt": "RSync está em execução",
-          "nl": "RSync is aan het lopen",
-          "fr": "RSync est en cours d'exécution",
-          "it": "RSync è in esecuzione",
-          "es": "RSync está corriendo",
-          "pl": "RSync działa",
-          "uk": "RSync працює",
-          "zh-cn": "RSync正在运行"
-        },
-        "type": "json",
-        "role": "state",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.ids",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Information about KISSHome IDS container",
-          "de": "Informationen zum KISSHome IDS Container",
-          "ru": "Информация о контейнере KISSHome IDS",
-          "pt": "Informações sobre o contêiner KISSHome IDS",
-          "nl": "Informatie over de KISSHome IDS-container",
-          "fr": "Informations sur le conteneur KISSHome IDS",
-          "it": "Informazioni sul contenitore KISSHome IDS",
-          "es": "Información sobre el contenedor KISSHome IDS",
-          "pl": "Informacje o kontenerze KISSHome IDS",
-          "uk": "Інформація про контейнер KISSHome IDS",
-          "zh-cn": "关于KISSHome IDS容器的信息"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.ids.status",
-      "type": "state",
-      "common": {
-        "name": {
-          "en": "Status of KISSHome IDS container",
-          "de": "Status des KISSHome IDS Containers",
-          "ru": "Статус контейнера KISSHome IDS",
-          "pt": "Status do contêiner KISSHome IDS",
-          "nl": "Status van de KISSHome IDS-container",
-          "fr": "Statut du conteneur KISSHome IDS",
-          "it": "Stato del contenitore KISSHome IDS",
-          "es": "Estado del contenedor KISSHome IDS",
-          "pl": "Status kontenera KISSHome IDS",
-          "uk": "Статус контейнера KISSHome IDS",
-          "zh-cn": "KISSHome IDS容器的状态"
-        },
-        "type": "string",
-        "states": {
-          "Started": "Started",
-          "Running": "Running",
-          "Configuring": "Configuring",
-          "Analyzing": "Analyzing",
-          "Exited": "Exited",
-          "No connection": "No connection"
-        },
-        "role": "state",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.ids.version",
-      "type": "state",
-      "common": {
-        "name": {
-          "en": "Version of KISSHome IDS container",
-          "de": "Version des KISSHome IDS Containers",
-          "ru": "Версия контейнера KISSHome IDS",
-          "pt": "Versão do contêiner KISSHome IDS",
-          "nl": "Versie van de KISSHome IDS-container",
-          "fr": "Version du conteneur KISSHome IDS",
-          "it": "Versione del contenitore KISSHome IDS",
-          "es": "Versión del contenedor KISSHome IDS",
-          "pl": "Wersja kontenera KISSHome IDS",
-          "uk": "Версія контейнера KISSHome IDS",
-          "zh-cn": "KISSHome IDS容器的版本"
-        },
-        "type": "string",
-        "role": "state",
-        "read": true,
-        "write": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.ids.restart",
-      "type": "state",
-      "common": {
-        "name": {
-          "en": "Restart KISSHome IDS container",
-          "de": "KISSHome IDS Container neu starten",
-          "ru": "Перезапустить контейнер KISSHome IDS",
-          "pt": "Reiniciar o contêiner KISSHome IDS",
-          "nl": "KISSHome IDS-container opnieuw opstarten",
-          "fr": "Redémarrer le conteneur KISSHome IDS",
-          "it": "Riavviare il contenitore KISSHome IDS",
-          "es": "Reiniciar el contenedor KISSHome IDS",
-          "pl": "Uruchom ponownie kontener KISSHome IDS",
-          "uk": "Перезапустити контейнер KISSHome IDS",
-          "zh-cn": "重新启动KISSHome IDS容器"
-        },
-        "type": "boolean",
-        "role": "button",
-        "read": false,
-        "write": true
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.ids.group",
-      "type": "state",
-      "common": {
-        "name": {
-          "en": "Group name",
-          "de": "Gruppenname",
-          "ru": "Имя группы",
-          "pt": "Nome do grupo",
-          "nl": "Groepsnaam",
-          "fr": "Nom du groupe",
-          "it": "Nome del gruppo",
-          "es": "Nombre del grupo",
-          "pl": "Nazwa grupy",
-          "uk": "Назва групи",
-          "zh-cn": "组名"
-        },
-        "type": "string",
-        "role": "state",
-        "read": true,
-        "write": false,
-        "def": "A"
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.ids.simulate",
-      "type": "state",
-      "common": {
-        "expert": true,
-        "type": "boolean",
-        "role": "switch",
-        "read": true,
-        "write": true,
-        "def": false
-      },
-      "native": {}
-    }
-  ]
+    ]
 }

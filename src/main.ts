@@ -2,6 +2,8 @@ import { Adapter, type AdapterOptions, I18n } from '@iobroker/adapter-core';
 import { join } from 'node:path';
 import { readFileSync, existsSync, mkdirSync, openSync, writeSync, closeSync, readdirSync, unlinkSync } from 'node:fs';
 import axios from 'axios';
+import { randomUUID, createHash } from 'node:crypto';
+import schedule, { type Job } from 'node-schedule';
 
 import {
     getDefaultGateway,
@@ -30,36 +32,33 @@ import type {
     UXEvent,
 } from './types';
 import CloudSync, { PCAP_HOST } from './lib/CloudSync';
-import { IDSCommunication } from './lib/IDSCommunication';
+import { IDSCommunication, CHANGE_TIME } from './lib/IDSCommunication';
 import Statistics from './lib/Statistics';
-import { createHash } from 'node:crypto';
 
 // save files every 60 minutes
 const SAVE_DATA_EVERY_MS = 3_600_000;
 // save files if bigger than 50 Mb
 const SAVE_DATA_IF_BIGGER = 50 * 1024 * 1024;
 
+function secondsToMs(seconds: number): string {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+
+    const sDisplay = s.toString().padStart(2, '0');
+    return `${m}:${sDisplay} ${I18n.translate('minutes')}`;
+}
+
 export class KISSHomeResearchAdapter extends Adapter {
     declare config: DefenderAdapterConfig;
-
     protected tempDir: string = '';
-
     private uniqueMacs: MACAddress[] = [];
-
     private sid: string = '';
-
-    private emailText: string = '';
-
+    private emailAlarmText: string = '';
     private sidCreated = 0;
-
     private startTimeout: ioBroker.Timeout | undefined;
-
     private nextSave = 0;
-
     private group: 'A' | 'B' = 'A';
-
     private visProject: { project: string; view: string; widget: string } | null = null;
-
     private context: Context = {
         terminate: false,
         controller: null,
@@ -82,35 +81,23 @@ export class KISSHomeResearchAdapter extends Adapter {
         started: 0,
         lastSaved: 0,
     };
-
     private readonly versionPack: string;
-
     private recordingRunning: boolean = false;
-
     private workingCloudDir: string = '';
     private workingIdsDir: string = '';
-
     private lastDebug: number = 0;
-
     private monitorInterval: ioBroker.Interval | undefined;
-
     private uuid: string = '';
-
     private iotInstance: string = '';
-
     private recordingEnabled: boolean = false;
-
     private static macCache: { [ip: string]: { mac: MACAddress; vendor?: string } } = {};
-
     private IPs: Device[] = [];
-
     private cloudSync: CloudSync | null = null;
-
     private idsCommunication: IDSCommunication | null = null;
-
     private statistics: Statistics | null = null;
-
     private questionnaireTimer: ioBroker.Timeout | null | undefined = null;
+    private dailyReportSchedule: Job | null = null;
+    private secondPartSchedule: Job | null = null;
 
     public constructor(options: Partial<AdapterOptions> = {}) {
         super({
@@ -563,9 +550,9 @@ export class KISSHomeResearchAdapter extends Adapter {
     }
 
     generateEmail(message: string, title: string): string {
-        this.emailText ||= readFileSync(`${__dirname}/emails/alert.html`, 'utf8');
+        this.emailAlarmText ||= readFileSync(`${__dirname}/emails/alert.html`, 'utf8');
 
-        return this.emailText.replace('{{title}}', title).replace('{{message}}', message);
+        return this.emailAlarmText.replace('{{title}}', title).replace('{{message}}', message);
     }
 
     async onReady(): Promise<void> {
@@ -581,6 +568,13 @@ export class KISSHomeResearchAdapter extends Adapter {
         } else {
             this.log.error('Cannot read UUID');
             return;
+        }
+
+        const statePeriod = await this.getStateAsync('info.ids.period');
+        if (new Date(CHANGE_TIME).getTime() <= Date.now() && !statePeriod?.val) {
+            await this.setStateAsync('info.ids.period', true, true);
+        } else if (new Date(CHANGE_TIME).getTime() > Date.now() && (!statePeriod || statePeriod.val)) {
+            await this.setStateAsync('info.ids.period', false, true);
         }
 
         await I18n.init(__dirname, this);
@@ -822,6 +816,18 @@ export class KISSHomeResearchAdapter extends Adapter {
         //     this.idsCommunication.activateSimulation(!!simulationActivated?.val, true);
         //     this.log.warn(I18n.translate('Recording is not enabled. Do nothing.'));
         // }
+        // Start every day at 20:00 the status report
+        this.dailyReportSchedule = schedule.scheduleJob('0 0 20 * * *', () => {
+            this.generateStatusReport().catch(e => {
+                this.log.error(`Cannot send status report: ${e}`);
+            });
+        });
+        if (new Date(CHANGE_TIME).getTime() > Date.now()) {
+            this.secondPartSchedule = schedule.scheduleJob(new Date(CHANGE_TIME), () => {
+                void this.setStateAsync('info.ids.period', true, true);
+            });
+        }
+        this.subscribeStates('info.ids.period');
     }
 
     readQuestionnaire(): void {
@@ -871,7 +877,9 @@ export class KISSHomeResearchAdapter extends Adapter {
 
     onStateChange(id: string, state: ioBroker.State | null | undefined): void {
         if (state) {
-            if (id === `${this.namespace}.info.recording.enabled` && !state.ack) {
+            if (id === `${this.namespace}.info.ids.period` && !state.ack) {
+                void this.generateStatusReport(!!state?.val);
+            } else if (id === `${this.namespace}.info.recording.enabled` && !state.ack) {
                 if (state.val) {
                     // If recording is not running
                     if (!this.recordingEnabled) {
@@ -1323,6 +1331,129 @@ export class KISSHomeResearchAdapter extends Adapter {
         return result;
     }
 
+    async generateStatusReport(simulatePeriod?: boolean): Promise<void> {
+        // Collect statistics for today: average time, min, max, total
+        const report = this.statistics?.getReportForToday();
+        if (!report /* || report.maxScore > 10*/) {
+            return;
+        }
+
+        this.idsCommunication?.aggregateStatistics(
+            {
+                time: new Date().toISOString(),
+                statistics: {
+                    suricataTotalRules: 0,
+                    suricataAnalysisDurationMs: 0,
+                    analysisDurationMs: 0,
+                    totalBytes: 0,
+                    packets: 0,
+                    devices: [],
+                },
+                detections: [],
+                file: `today.pcap`,
+                result: { status: 'success' },
+            },
+            randomUUID(),
+            false,
+            report.maxScore,
+            report,
+        );
+
+        const subject = I18n.translate('Status Report');
+        const message: string[] = [];
+        if (
+            simulatePeriod === true ||
+            (simulatePeriod === undefined && new Date(CHANGE_TIME).getTime() <= Date.now())
+        ) {
+            // week 3+
+            message.push(I18n.translate("Attached you will find information about today's checks."));
+            message.push('');
+            message.push(
+                `- ${I18n.translate('Average check time')}: ${secondsToMs(Math.round(report.averageDuration / 1000))}`,
+            );
+            message.push(
+                `- ${I18n.translate('Minimum check time')}: ${secondsToMs(Math.round(report.minimalDuration / 1000))}`,
+            );
+            message.push(
+                `- ${I18n.translate('Maximum check time')}: ${secondsToMs(Math.round(report.maximalDuration / 1000))}`,
+            );
+            message.push(
+                `- ${I18n.translate('Duration of checks')}: ${secondsToMs(Math.round(report.totalDuration / 1000))}`,
+            );
+            message.push('');
+            message.push(
+                I18n.translate('No anomalies were detected during the checks. Therefore, everything is in order.'),
+            );
+        } else {
+            // week 1-2
+            if (this.group === 'A') {
+                message.push(
+                    I18n.translate('No anomalies were detected during the checks. Therefore, everything is in order.'),
+                );
+            } else {
+                message.push(
+                    I18n.translate(
+                        'During the checks, a maximum anomaly score of %s was detected. Therefore, everything is in order.',
+                        report.maxScore,
+                    ),
+                );
+            }
+        }
+
+        if (!this.config.emailDisabled) {
+            // email
+            try {
+                await axios.post(
+                    `https://${PCAP_HOST}/api/v2/sendEmail/${encodeURIComponent(this.config.email)}?uuid=${encodeURIComponent(this.uuid)}`,
+                    {
+                        subject,
+                        text: this.generateEmail(message.join('<br>\n'), subject),
+                    },
+                );
+            } catch (e) {
+                this.log.error(`${I18n.translate('Cannot send email')}: ${e}`);
+                return;
+            }
+        }
+        this.iotInstance = await this.getAliveIotInstance();
+
+        if (this.iotInstance) {
+            const data = await this.findVisProject();
+
+            void this.setForeignStateAsync(
+                `${this.iotInstance}.app.message`,
+                JSON.stringify({
+                    message,
+                    title: subject,
+                    expire: 3600,
+                    priority: 'normal',
+                    payload: {
+                        openUrl: `https://iobroker.pro/vis-2/?${data.project || 'main'}#${data.view || 'kisshome'}/${data.widget}`,
+                    },
+                }),
+            );
+        }
+    }
+
+    async getAliveIotInstance(): Promise<string> {
+        // iobroker.iot
+        // find iobroker.iot instance
+        const instances = await this.getObjectViewAsync('system', 'instance', {
+            startkey: 'system.adapter.iot.',
+            endkey: 'system.adapter.iot.\u9999',
+        });
+
+        // Find alive iobroker.iot instance
+        for (const instance of instances?.rows || []) {
+            const aliveState = await this.getForeignStateAsync(`${instance.value._id}.alive`);
+            if (aliveState?.val) {
+                return instance.id.replace('system.adapter.', '');
+            }
+        }
+
+        return '';
+    }
+
     generateEvent = async (isAlert: boolean, scanUUID: string, message: string, subject: string): Promise<void> => {
         if (isAlert) {
             // admin
@@ -1347,19 +1478,7 @@ export class KISSHomeResearchAdapter extends Adapter {
 
         // iobroker.iot
         // find iobroker.iot instance
-        const instances = await this.getObjectViewAsync('system', 'instance', {
-            startkey: 'system.adapter.iot.',
-            endkey: 'system.adapter.iot.\u9999',
-        });
-
-        // Find alive iobroker.iot instance
-        for (const instance of instances?.rows || []) {
-            const aliveState = await this.getForeignStateAsync(`${instance.value._id}.alive`);
-            if (aliveState?.val) {
-                this.iotInstance = instance.id.replace('system.adapter.', '');
-                break;
-            }
-        }
+        this.iotInstance = await this.getAliveIotInstance();
 
         if (this.iotInstance) {
             const data = await this.findVisProject();
@@ -1381,6 +1500,16 @@ export class KISSHomeResearchAdapter extends Adapter {
 
     async onUnload(callback: () => void): Promise<void> {
         this.context.terminate = true;
+
+        if (this.dailyReportSchedule) {
+            this.dailyReportSchedule.cancel();
+            this.dailyReportSchedule = null;
+        }
+
+        if (this.secondPartSchedule) {
+            this.secondPartSchedule.cancel();
+            this.secondPartSchedule = null;
+        }
 
         if (this.recordingRunning) {
             this.recordingRunning = false;

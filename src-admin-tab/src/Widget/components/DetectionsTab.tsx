@@ -22,7 +22,7 @@ import {
     Typography,
 } from '@mui/material';
 import { I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
-import { Close, ExpandMore } from '@mui/icons-material';
+import { Close, ExpandMore, Info } from '@mui/icons-material';
 
 import type {
     DeviceStatistics,
@@ -34,7 +34,6 @@ import type {
 
 import { bytes2string } from './utils';
 import { StatusIcon } from './StatusTab';
-const CHANGE_TIME = '2025-10-16T00:00:00Z'; // Calculation time
 
 const styles: Record<string, React.CSSProperties> = {
     title: {
@@ -63,6 +62,7 @@ interface DetectionsTabProps {
     showDetectionWithUUID: string;
     results: StoredStatisticsResult | null;
     onResultsDialogOpen: (opened: boolean) => void;
+    secondPeriod: boolean;
 }
 
 interface DetectionsTabState {
@@ -306,6 +306,14 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         );
     }
 
+    static secondsToMs(seconds: number): string {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+
+        const sDisplay = s.toString().padStart(2, '0');
+        return `${m}:${sDisplay} ${I18n.t('kisshome-defender_minutes')}`;
+    }
+
     static secondsToHms(d: number): string {
         d = Number(d);
         const h = Math.floor(d / 3600);
@@ -318,10 +326,94 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         return hDisplay + mDisplay + sDisplay;
     }
 
+    renderStatusReport(item: StoredAnalysisResult): React.JSX.Element {
+        if (!item.todayReport) {
+            return <div>{I18n.t('kisshome-defender_No status report available.')}</div>;
+        }
+        const text: React.JSX.Element[] = [];
+        const title = I18n.t('kisshome-defender_Status Report');
+        if (this.props.secondPeriod) {
+            // week 3+
+            text.push(
+                <div>
+                    {I18n.t(
+                        'kisshome-defender_Below you will find information about checks on %s.',
+                        new Date(item.time).toLocaleDateString(),
+                    )}
+                </div>,
+            );
+            text.push(
+                <div style={{ marginTop: 20 }}>
+                    - <span style={{ fontWeight: 'bold' }}>{I18n.t('kisshome-defender_Average check time')}:</span>{' '}
+                    {DetectionsTab.secondsToMs(Math.round(item.todayReport.averageDuration / 1000))}
+                </div>,
+            );
+            text.push(
+                <div>
+                    - <span style={{ fontWeight: 'bold' }}>{I18n.t('kisshome-defender_Minimum check time')}:</span>{' '}
+                    {DetectionsTab.secondsToMs(Math.round(item.todayReport.minimalDuration / 1000))}
+                </div>,
+            );
+            text.push(
+                <div>
+                    - <span style={{ fontWeight: 'bold' }}>{I18n.t('kisshome-defender_Maximum check time')}:</span>{' '}
+                    {DetectionsTab.secondsToMs(Math.round(item.todayReport.maximalDuration / 1000))}
+                </div>,
+            );
+            text.push(
+                <div>
+                    - <span style={{ fontWeight: 'bold' }}>{I18n.t('kisshome-defender_Duration of checks')}:</span>{' '}
+                    {DetectionsTab.secondsToMs(Math.round(item.todayReport.totalDuration / 1000))}
+                </div>,
+            );
+            text.push(
+                <div style={{ marginTop: 20 }}>
+                    {I18n.t(
+                        'kisshome-defender_No anomalies were detected during the checks. Therefore, everything is in order.',
+                    )}
+                </div>,
+            );
+        } else {
+            let content: string;
+            // week 1-2
+            if (this.props.group === 'A') {
+                content = I18n.t(
+                    'kisshome-defender_<strong>No anomalies</strong> were detected during the checks on %s. Therefore, everything is in order.',
+                    new Date(item.time).toLocaleDateString(),
+                );
+            } else {
+                content = I18n.t(
+                    'kisshome-defender_During the checks on %s, a <strong>maximum anomaly score of %s</strong> was detected. Therefore, everything is in order.',
+                    new Date(item.time).toLocaleDateString(),
+                    item.todayReport.maxScore,
+                );
+            }
+            text.push(<div dangerouslySetInnerHTML={{ __html: content }} />);
+        }
+        return (
+            <AccordionDetails>
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        fontWeight: 'bold',
+                        gap: 16,
+                        fontSize: '1.8rem',
+                        marginBottom: 16,
+                        justifyContent: 'flex-start',
+                    }}
+                >
+                    <Info style={{ height: 48, width: 48 }} />
+                    {title}
+                </div>
+                <div style={{ fontSize: '1.5rem' }}>{text}</div>
+            </AccordionDetails>
+        );
+    }
+
     renderOneDetectionDetails(item: StoredAnalysisResult): React.JSX.Element {
         let text: string | React.JSX.Element[];
         let title: string;
-        const secondPart = new Date(item.time).getTime() > new Date(CHANGE_TIME).getTime();
         if (!item.isAlert) {
             text = I18n.t(
                 'kisshome-defender_Your smart devices were checked on %s at %s. No unusual activities were detected.',
@@ -339,7 +431,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
             );
         }
 
-        if (secondPart) {
+        if (this.props.secondPeriod) {
             const seconds = Math.round(item.statistics.analysisDurationMs / 1000);
             text += ' ';
             text += I18n.t('kisshome-defender_The control time was %s minutes.', DetectionsTab.secondsToHms(seconds));
@@ -454,7 +546,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         const macs: MACAddress[] = Object.keys(devices).sort((a: string, b) => {
             let scoreA = devices[a].score || 0;
             let scoreB = devices[b].score || 0;
-            if (this.props.group === 'A' || secondPart) {
+            if (this.props.group === 'A' || this.props.secondPeriod) {
                 // In group A, only separate between no anomaly (0) and anomaly (1)
                 scoreA = scoreA >= 10 ? 1 : 0;
                 scoreB = scoreB >= 10 ? 1 : 0;
@@ -548,7 +640,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                                             color: 'white',
                                         }}
                                     >
-                                        {this.props.group === 'A' || secondPart
+                                        {this.props.group === 'A' || this.props.secondPeriod
                                             ? !devices[mac].type
                                                 ? I18n.t('kisshome-defender_No anomaly')
                                                 : I18n.t('kisshome-defender_Anomaly')
@@ -615,17 +707,27 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 expanded={this.state.openedItem === item.uuid}
             >
                 <AccordionSummary expandIcon={<ExpandMore />}>
-                    <StatusIcon
-                        ok={!item.isAlert}
-                        warning
-                        style={{ marginRight: 8 }}
-                    />
+                    {item.todayReport ? (
+                        <Info style={{ marginRight: 8 }} />
+                    ) : (
+                        <StatusIcon
+                            ok={!item.isAlert}
+                            warning
+                            style={{ marginRight: 8 }}
+                        />
+                    )}
                     <Typography component="span">
-                        {I18n.t('kisshome-defender_Test result at %s', new Date(item.time).toLocaleString())}
+                        {item.todayReport
+                            ? I18n.t('kisshome-defender_Status report at %s', new Date(item.time).toLocaleString())
+                            : I18n.t('kisshome-defender_Test result at %s', new Date(item.time).toLocaleString())}
                     </Typography>
                     <div style={{ display: 'none' }}>{item.uuid}</div>
                 </AccordionSummary>
-                {this.state.openedItem === item.uuid ? this.renderOneDetectionDetails(item) : null}
+                {this.state.openedItem === item.uuid
+                    ? item.todayReport
+                        ? this.renderStatusReport(item)
+                        : this.renderOneDetectionDetails(item)
+                    : null}
             </Accordion>
         );
     }

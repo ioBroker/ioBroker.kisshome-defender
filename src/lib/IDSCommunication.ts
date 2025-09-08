@@ -24,7 +24,7 @@ import { fileNameToDate, normalizeMacAddress } from './utils';
 
 const MAX_FILES_ON_DISK = 6; // Maximum number of files to keep on disk
 const DOCKER_CONTAINER_NAME = 'iobroker-defender-ids';
-const CHANGE_TIME = '2025-10-16T00:00:00Z'; // Calculation time
+export const CHANGE_TIME = '2025-10-16T00:00:00Z'; // Calculation time
 
 function betaRandom(a: number, b: number): number {
     // Verwende die Methode von Cheng (1978) für Beta(a, b) mit a, b > 0
@@ -557,7 +557,21 @@ export class IDSCommunication {
         }
     }
 
-    aggregateStatistics(result: AnalysisResult, resultUUID: string, isAlert: boolean, score: number): void {
+    aggregateStatistics(
+        result: AnalysisResult,
+        resultUUID: string,
+        isAlert: boolean,
+        score: number,
+        todayReport?: {
+            averageDuration: number;
+            minimalDuration: number;
+            maximalDuration: number;
+            totalDuration: number;
+            numberOfAnalyses: number;
+            numberOfProblems: number;
+            maxScore: number;
+        },
+    ): void {
         // Get file name for current time.
         const now = new Date();
         const fileName = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}_${Math.floor(now.getHours() / 6).toString()}.json`;
@@ -579,28 +593,45 @@ export class IDSCommunication {
         };
 
         // Aggregate the statistics
-        result.statistics.analysisDurationMs = Math.round(result.statistics.analysisDurationMs);
-        data.analysisDurationMs += result.statistics.analysisDurationMs;
-        data.totalBytes += result.statistics.totalBytes;
-        data.packets += result.statistics.packets;
-
-        result.statistics.devices.forEach((device: DeviceStatistics) => {
-            const ips = Object.keys(device.external_ips);
-            ips.forEach(ip => {
-                const country = device.external_ips[ip].country;
-                data.countries[country] ||= 0;
-                data.countries[country] += device.external_ips[ip].data_volume_bytes;
+        if (!todayReport) {
+            result.statistics.analysisDurationMs = Math.round(result.statistics.analysisDurationMs);
+            data.analysisDurationMs += result.statistics.analysisDurationMs;
+            data.totalBytes += result.statistics.totalBytes;
+            data.packets += result.statistics.packets;
+            result.statistics.devices.forEach((device: DeviceStatistics) => {
+                const ips = Object.keys(device.external_ips);
+                ips.forEach(ip => {
+                    const country = device.external_ips[ip].country;
+                    data.countries[country] ||= 0;
+                    data.countries[country] += device.external_ips[ip].data_volume_bytes;
+                });
             });
-        });
-
-        data.results.push({
-            uuid: resultUUID,
-            time: result.time,
-            statistics: result.statistics,
-            detections: result.detections,
-            isAlert,
-            score,
-        });
+            data.results.push({
+                uuid: resultUUID,
+                time: result.time,
+                statistics: result.statistics,
+                detections: result.detections,
+                isAlert,
+                score,
+            });
+        } else {
+            data.results.push({
+                uuid: resultUUID,
+                time: result.time,
+                statistics: {
+                    analysisDurationMs: 0,
+                    suricataAnalysisDurationMs: 0,
+                    suricataTotalRules: 0,
+                    totalBytes: 0,
+                    packets: 0,
+                    devices: [], // Do not store devices in today's report to save space
+                },
+                todayReport,
+                detections: [],
+                isAlert: false,
+                score: 0,
+            });
+        }
 
         writeFileSync(join(this.statisticsDir, fileName), JSON.stringify(data));
 
@@ -893,9 +924,6 @@ export class IDSCommunication {
                     this.adapter.log.error(`[IDS] Error generating event: ${error.message}`);
                 });
             }
-            console.log(
-                `!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CREATED ALERT: ${resultUUID} Score: ${biggestScore} Events: ${sendEvent}`,
-            );
             await this.adapter.setStateAsync('info.analysis.lastCreated', resultUUID, true);
         }
 

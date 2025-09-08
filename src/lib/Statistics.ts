@@ -46,13 +46,15 @@ export default class Statistics {
     /**
      * Fetches the data from the statistics files in the working directory.
      */
-    private getData(): StoredAnalysisResult[] {
+    private getData(onlyToday?: boolean): StoredAnalysisResult[] {
         const files = readdirSync(this.workingDir)
             .filter(file => file.endsWith('.json'))
             .sort();
 
         const lastWeek = new Date();
-        lastWeek.setDate(lastWeek.getDate() - 7);
+        if (!onlyToday) {
+            lastWeek.setDate(lastWeek.getDate() - 7);
+        }
         lastWeek.setHours(0);
         lastWeek.setMinutes(0);
         lastWeek.setSeconds(0);
@@ -214,6 +216,57 @@ export default class Statistics {
                   dataVolumePerDevice
                 : dataVolumePerDevice,
         };
+    }
+
+    public getReportForToday(): {
+        averageDuration: number;
+        minimalDuration: number;
+        maximalDuration: number;
+        totalDuration: number;
+        numberOfAnalyses: number;
+        numberOfProblems: number;
+        maxScore: number;
+    } {
+        const results = this.getData(true);
+        const resultToday: {
+            averageDuration: number;
+            minimalDuration: number;
+            maximalDuration: number;
+            totalDuration: number;
+            numberOfAnalyses: number;
+            numberOfProblems: number;
+            maxScore: number;
+        } = {
+            averageDuration: 0,
+            minimalDuration: Number.MAX_SAFE_INTEGER,
+            maximalDuration: 0,
+            totalDuration: 0,
+            numberOfAnalyses: 0,
+            numberOfProblems: 0,
+            maxScore: 0,
+        };
+        for (const result of results) {
+            resultToday.numberOfAnalyses++;
+            resultToday.totalDuration += result.statistics.analysisDurationMs;
+            if (result.statistics.analysisDurationMs < resultToday.minimalDuration) {
+                resultToday.minimalDuration = result.statistics.analysisDurationMs;
+            }
+            if (result.statistics.analysisDurationMs > resultToday.maximalDuration) {
+                resultToday.maximalDuration = result.statistics.analysisDurationMs;
+            }
+            if (result.isAlert) {
+                resultToday.numberOfProblems++;
+            }
+            if (result.score > resultToday.maxScore) {
+                resultToday.maxScore = result.score;
+            }
+        }
+        if (resultToday.numberOfAnalyses > 0) {
+            resultToday.averageDuration = Math.round(resultToday.totalDuration / resultToday.numberOfAnalyses);
+        } else {
+            resultToday.minimalDuration = 0;
+        }
+        return resultToday;
     }
 
     public getDataVolumePerDaytime(): DataVolumePerDaytimeResult {

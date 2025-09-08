@@ -48,6 +48,7 @@ interface KisshomeDefenderState extends VisRxWidgetState {
     showQuestionnaire: QuestionnaireJson | null; // Currently shown questionnaire
     alive: boolean;
     group: 'A' | 'B';
+    secondPeriod: boolean; // 1-2 week or 3-4 week period
     showNewAlert: StoredAnalysisResult | null; // ID of the new alert to show
     ignoreForNext10Minutes: boolean;
     showDetectionWithUUID: string;
@@ -97,6 +98,7 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
             ignoreForNext10Minutes: false,
             showDetectionWithUUID,
             resultsDialogOpened: false,
+            secondPeriod: false,
         };
     }
 
@@ -172,7 +174,11 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
         await socket.subscribeState(aliveId, this.onStateAlive);
 
         const groupState = await socket.getState(`kisshome-defender.${instance}.info.ids.group`);
-        this.setState({ group: (groupState?.val as 'A' | 'B') === 'B' ? 'B' : 'A' });
+        const secondPeriodState = await socket.getState(`kisshome-defender.${instance}.info.ids.period`);
+        this.setState({
+            group: (groupState?.val as 'A' | 'B') === 'B' ? 'B' : 'A',
+            secondPeriod: !!secondPeriodState?.val,
+        });
 
         const idLastCreated = `kisshome-defender.${instance}.info.analysis.lastCreated`;
         const stateLastCreated = await socket.getState(idLastCreated);
@@ -652,6 +658,7 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
                             group={this.state.group}
                             showDetectionWithUUID={this.state.showDetectionWithUUID}
                             onResultsDialogOpen={opened => this.setState({ resultsDialogOpened: opened })}
+                            secondPeriod={this.state.secondPeriod}
                         />
                     ) : null}
                     {this.state.tab === 'settings' ? (

@@ -111,6 +111,16 @@ type StoredAnalysisResult = {
     time: string;
     isAlert: boolean; // If the analysis result is an alert
     score: number; // Worst score of all detections in this result
+    // If the analysis result is part of today's report
+    todayReport?: {
+        averageDuration: number;
+        minimalDuration: number;
+        maximalDuration: number;
+        totalDuration: number;
+        numberOfAnalyses: number;
+        numberOfProblems: number;
+        maxScore: number;
+    };
 
     statistics: Statistics;
     detections: DetectionsForDevice[];
