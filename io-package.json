@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "kisshome-defender",
-        "version": "0.2.1",
+        "version": "0.3.0",
         "news": {
+            "0.3.0": {
+                "en": "Implemented the daily status report",
+                "de": "Implementierung des täglichen Statusberichts",
+                "ru": "Реализован ежедневный отчет о состоянии",
+                "pt": "Implementou o relatório de status diário",
+                "nl": "Het dagelijkse statusrapport is geïmplementeerd",
+                "fr": "Mise en œuvre du rapport d'état quotidien",
+                "it": "Implementato il report giornaliero sullo stato",
+                "es": "Se implementó el informe de estado diario",
+                "pl": "Wprowadzono dzienny raport o stanie",
+                "uk": "Впроваджено щоденний звіт про стан справ",
+                "zh-cn": "实施每日状态报告"
+            },
             "0.2.1": {
                 "en": "Showed names of the devices in the chart legend",
                 "de": "Gezeigte Namen der Geräte in der Chart-Legende",
