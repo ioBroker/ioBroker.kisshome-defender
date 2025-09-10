@@ -80,7 +80,7 @@ export class IDSCommunication {
     };
     private readonly group: 'A' | 'B'; // Group A or B
     private lastCheckedDate = '';
-    private readonly generateEvent: (isAlert: boolean, id: string, message: string, title: string) => Promise<void>;
+    private readonly generateEvent: (uuid: string, message: string, title: string) => Promise<void>;
 
     private simulation = false;
     private simulateInterval: NodeJS.Timeout | null = null;
@@ -93,7 +93,7 @@ export class IDSCommunication {
         metaData: { [mac: MACAddress]: { ip: string; desc: string } },
         options: {
             workingFolder: string;
-            generateEvent: (isAlert: boolean, id: string, message: string, title: string) => Promise<void>;
+            generateEvent: (uuid: string, message: string, title: string) => Promise<void>;
             group: 'A' | 'B';
             workingCloudDir: string;
         },
@@ -682,6 +682,27 @@ export class IDSCommunication {
             'CC:DD:EE:FF:00:11',
             '22:33:44:55:66:77',
             '88:99:AA:BB:CC:DD',
+            '88:99:AA:BB:CC:D1',
+            '88:99:AA:BB:CC:D2',
+            '88:99:AA:BB:CC:D3',
+            '88:99:AA:BB:CC:D4',
+            '88:99:AA:BB:CC:D5',
+            '88:99:AA:BB:CC:D6',
+            '88:99:AA:BB:CC:D7',
+            '88:99:AA:BB:CC:D8',
+            '88:99:AA:BB:CC:D9',
+            '88:99:AA:BB:CC:DA',
+            '88:99:AA:BB:CC:DB',
+            '88:99:AA:BB:CC:DC',
+            '88:99:AA:BB:CC:DE',
+            '88:99:AA:BB:CC:DF',
+            '88:99:AA:BB:CC:20',
+            '88:99:AA:BB:CC:21',
+            '88:99:AA:BB:CC:22',
+            '88:99:AA:BB:CC:23',
+            '88:99:AA:BB:CC:24',
+            '88:99:AA:BB:CC:25',
+            '88:99:AA:BB:CC:26',
         ];
         const time = new Date().toISOString();
         const result: AnalysisResult = {
@@ -920,7 +941,7 @@ export class IDSCommunication {
                 }
 
                 // save it in the state
-                void this.generateEvent(isAlert, resultUUID, text, title).catch(error => {
+                void this.generateEvent(resultUUID, text, title).catch(error => {
                     this.adapter.log.error(`[IDS] Error generating event: ${error.message}`);
                 });
             }

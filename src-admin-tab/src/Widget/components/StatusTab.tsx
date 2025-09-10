@@ -16,6 +16,7 @@ interface StatusTabProps {
     lastSeenID: string; // Last seen ID for scan analysis
     onNavigateToDetections: () => void; // Optional callback for navigation
     results: StoredStatisticsResult | null;
+    isMobile: boolean;
 }
 
 interface StatusTabState {

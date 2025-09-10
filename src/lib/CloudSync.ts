@@ -251,7 +251,7 @@ export default class CloudSync {
 
     private saveMetaFile(): string {
         const text = getDescriptionFile(this.IPs);
-        const newFile = `${this.workingDir}/${getTimestamp()}_v${this.version}_meta.json`;
+        const newFile = `${this.workingDir}/${getTimestamp()}_v${this.version}_${this.config.docker?.selfHosted ? 'auto' : 'manual'}_meta.json`;
 
         try {
             // find the latest file

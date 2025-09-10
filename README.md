@@ -46,8 +46,7 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 ```
 
 ## ToDo
-- Do not show alert if questionnaire is opened
-- Save the results to cloud sync folder with "_results" postfix
+- Mobile view
 
 <!--
 	Placeholder for the next version (at the beginning of the line):

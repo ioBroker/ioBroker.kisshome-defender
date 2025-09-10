@@ -817,7 +817,7 @@ export class KISSHomeResearchAdapter extends Adapter {
         //     this.log.warn(I18n.translate('Recording is not enabled. Do nothing.'));
         // }
         // Start every day at 20:00 the status report
-        this.dailyReportSchedule = schedule.scheduleJob('0 0 20 * * *', () => {
+        this.dailyReportSchedule = schedule.scheduleJob('0 0 18 * * *', () => {
             this.generateStatusReport().catch(e => {
                 this.log.error(`Cannot send status report: ${e}`);
             });
@@ -1454,11 +1454,9 @@ export class KISSHomeResearchAdapter extends Adapter {
         return '';
     }
 
-    generateEvent = async (isAlert: boolean, scanUUID: string, message: string, subject: string): Promise<void> => {
-        if (isAlert) {
-            // admin
-            await this.registerNotification('kisshome-research', 'alert', message);
-        }
+    generateEvent = async (scanUUID: string, message: string, subject: string): Promise<void> => {
+        // admin
+        await this.registerNotification('kisshome-defender', 'alert', message);
 
         if (!this.config.emailDisabled) {
             // email
@@ -1489,7 +1487,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                     message,
                     title: subject,
                     expire: 3600,
-                    priority: !isAlert ? 'normal' : 'high',
+                    priority: 'high',
                     payload: {
                         openUrl: `https://iobroker.pro/vis-2/?${data.project || 'main'}#${data.view || 'kisshome'}/${data.widget}/${scanUUID}`,
                     },

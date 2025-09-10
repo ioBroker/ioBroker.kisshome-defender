@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
-import { Checkbox, LinearProgress, ListItemText, MenuItem, Paper, Select, Tab, Tabs } from '@mui/material';
+import { Checkbox, Fab, LinearProgress, ListItemText, MenuItem, Paper, Select, Tab, Tabs } from '@mui/material';
 
 import type {
     DataVolumePerCountryResult,
@@ -109,6 +109,7 @@ interface StatisticsTabProps {
     themeType: ThemeType;
     socket: LegacyConnection;
     lang: ioBroker.Languages;
+    isMobile: boolean;
 }
 
 interface StatisticsTabState {
@@ -135,6 +136,7 @@ interface StatisticsTabState {
     legendOpened: boolean;
     deviceMostCountries?: string;
     deviceMostDataVolume?: string;
+    showSidebar: boolean;
 }
 
 interface BarSeriesTooltipParams {
@@ -175,6 +177,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
     private dayTimeSelected: { [dayTime: string]: boolean } = {};
     private readonly refInfo = React.createRef<HTMLDivElement>();
     private detectHeightInterval: ReturnType<typeof setInterval> | null = null;
+    private colors: ZRColor[] | undefined;
 
     constructor(props: StatisticsTabProps) {
         super(props);
@@ -205,6 +208,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
             height: 0,
             legendMacs: {},
             legendOpened: false,
+            showSidebar: false,
         };
     }
 
@@ -462,11 +466,19 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
 
         return {
             backgroundColor: 'transparent',
-            grid: {
-                top: 28,
-                bottom: 100,
-                left: 80,
-            },
+            grid: this.props.isMobile
+                ? {
+                      top: 28,
+                      bottom: 90,
+                      right: 0,
+                      left: 50,
+                  }
+                : {
+                      top: 28,
+                      bottom: 100,
+                      right: 0,
+                      left: 80,
+                  },
             tooltip: {
                 trigger: 'axis',
                 axisPointer: {
@@ -512,39 +524,45 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         };
     }
 
-    renderDayTimeChart(): React.JSX.Element {
+    renderDayTimeChart(countSelected: number): React.JSX.Element {
         const options = this.getDataVolumePerDaytimeChartOptions();
 
-        const legend = this.renderVolumeLegend(this.state.dataVolumePerDaytime.data, true);
+        const legend = this.renderVolumeLegend(this.state.dataVolumePerDaytime.data, countSelected, true);
 
         return (
             <div style={{ position: 'relative', width: '100%', height: 'calc(100% - 24px)' }}>
                 {this.renderLoading(!!this.state.dataVolumePerDaytime.data)}
                 {legend}
-                <div
-                    ref={this.refDataVolumePerDaytime}
-                    style={{ width: '100%', height: legend ? 'calc(100% - 48px)' : '100%' }}
-                >
-                    {this.state.height && options ? (
-                        <ReactEchartsCore
-                            ref={e => {
-                                this.echartsReact = e;
-                            }}
-                            echarts={echarts}
-                            option={options}
-                            notMerge
-                            lazyUpdate
-                            theme={this.props.themeType === 'dark' ? 'dark' : ''}
-                            style={{ height: `${this.state.height}px`, width: '100%' }}
-                            opts={{ renderer: 'svg' }}
-                            onEvents={{ legendselectchanged: this.onLegendDayTimeSelectChanged }}
-                        />
-                    ) : null}
-                    {!options ? (
-                        <div style={{ padding: 16, paddingLeft: 32 }}>
-                            {I18n.t('kisshome-defender_No data available')}
-                        </div>
-                    ) : null}
+                <div style={{ width: '100%', height: 'calc(100% - 32px)', overflow: 'auto' }}>
+                    <div
+                        ref={this.refDataVolumePerDaytime}
+                        style={{
+                            width: '100%',
+                            height: legend ? 'calc(100% - 48px)' : '100%',
+                            minWidth: this.props.isMobile ? countSelected * 60 : undefined,
+                        }}
+                    >
+                        {this.state.height && options ? (
+                            <ReactEchartsCore
+                                ref={e => {
+                                    this.echartsReact = e;
+                                }}
+                                echarts={echarts}
+                                option={options}
+                                notMerge
+                                lazyUpdate
+                                theme={this.props.themeType === 'dark' ? 'dark' : ''}
+                                style={{ height: `${this.state.height}px`, width: '100%' }}
+                                opts={{ renderer: 'svg' }}
+                                onEvents={{ legendselectchanged: this.onLegendDayTimeSelectChanged }}
+                            />
+                        ) : null}
+                        {!options ? (
+                            <div style={{ padding: 16, paddingLeft: 32 }}>
+                                {I18n.t('kisshome-defender_No data available')}
+                            </div>
+                        ) : null}
+                    </div>
                 </div>
             </div>
         );
@@ -659,11 +677,19 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
 
         return {
             backgroundColor: 'transparent',
-            grid: {
-                top: 28,
-                bottom: 100,
-                left: 80,
-            },
+            grid: this.props.isMobile
+                ? {
+                      top: 28,
+                      left: 50,
+                      bottom: 90,
+                      right: 0,
+                  }
+                : {
+                      top: 28,
+                      bottom: 100,
+                      left: 80,
+                      right: 0,
+                  },
             tooltip: {
                 trigger: 'axis',
                 axisPointer: {
@@ -731,38 +757,50 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         this.echartsReact?.getEchartsInstance()?.setOption({});
     };
 
-    renderDataVolumePerCountryChart(): React.JSX.Element {
+    renderDataVolumePerCountryChart(countSelected: number): React.JSX.Element {
         const options = this.getDataVolumePerCountryChartOptions();
-        const legend = this.renderVolumeLegend(this.state.dataVolumePerCountry.data, true);
+        const legend = this.renderVolumeLegend(this.state.dataVolumePerCountry.data, countSelected, true);
 
         return (
-            <div style={{ position: 'relative', width: '100%', height: 'calc(100% - 24px)' }}>
+            <div
+                style={{
+                    position: 'relative',
+                    width: '100%',
+                    height: 'calc(100% - 24px)',
+                }}
+            >
                 {this.renderLoading(!!this.state.dataVolumePerCountry.data)}
                 {legend}
-                <div
-                    ref={this.refDataVolumePerCountry}
-                    style={{ width: '100%', height: legend ? 'calc(100% - 48px)' : '100%' }}
-                >
-                    {this.state.height && options ? (
-                        <ReactEchartsCore
-                            ref={e => {
-                                this.echartsReact = e;
-                            }}
-                            echarts={echarts}
-                            option={options}
-                            notMerge
-                            lazyUpdate
-                            theme={this.props.themeType === 'dark' ? 'dark' : ''}
-                            style={{ height: `${this.state.height}px`, width: '100%' }}
-                            opts={{ renderer: 'svg' }}
-                            onEvents={{ legendselectchanged: this.onLegendSelectChanged }}
-                        />
-                    ) : null}
-                    {!options ? (
-                        <div style={{ padding: 16, paddingLeft: 32 }}>
-                            {I18n.t('kisshome-defender_No data available')}
-                        </div>
-                    ) : null}
+                <div style={{ width: '100%', height: 'calc(100% - 32px)', overflow: 'auto' }}>
+                    <div
+                        ref={this.refDataVolumePerCountry}
+                        style={{
+                            width: '100%',
+                            height: legend ? 'calc(100% - 48px)' : '100%',
+                            minWidth: this.props.isMobile ? countSelected * 60 : undefined,
+                        }}
+                    >
+                        {this.state.height && options ? (
+                            <ReactEchartsCore
+                                ref={e => {
+                                    this.echartsReact = e;
+                                }}
+                                echarts={echarts}
+                                option={options}
+                                notMerge
+                                lazyUpdate
+                                theme={this.props.themeType === 'dark' ? 'dark' : ''}
+                                style={{ height: `${this.state.height}px`, width: '100%' }}
+                                opts={{ renderer: 'svg' }}
+                                onEvents={{ legendselectchanged: this.onLegendSelectChanged }}
+                            />
+                        ) : null}
+                        {!options ? (
+                            <div style={{ padding: 16, paddingLeft: 32 }}>
+                                {I18n.t('kisshome-defender_No data available')}
+                            </div>
+                        ) : null}
+                    </div>
                 </div>
             </div>
         );
@@ -858,7 +896,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
             }, 100);
         }
 
-        const colors = this.echartsReact?.getEchartsInstance().getOption()?.color as ZRColor[] | undefined;
+        this.colors ||= this.echartsReact?.getEchartsInstance().getOption()?.color as ZRColor[] | undefined;
         const series: LineSeriesOption[] = [];
         let maxY = 0;
         let colorIndex = 0;
@@ -882,10 +920,10 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                         showSymbol: false,
                         animation: false,
                         lineStyle: {
-                            color: colors?.[colorIndex] || undefined,
+                            color: this.colors?.[colorIndex] || undefined,
                         },
                         itemStyle: {
-                            color: colors?.[colorIndex] || undefined,
+                            color: this.colors?.[colorIndex] || undefined,
                         },
                         data,
                     });
@@ -964,12 +1002,19 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                     return content;
                 },
             },
-            grid: {
-                top: 28,
-                right: 70,
-                left: 80,
-                bottom: 20,
-            },
+            grid: this.props.isMobile
+                ? {
+                      top: 28,
+                      right: 0,
+                      left: 50,
+                      bottom: 20,
+                  }
+                : {
+                      top: 28,
+                      right: 70,
+                      left: 80,
+                      bottom: 20,
+                  },
             legend: {
                 show: allMacs.length < SHOW_SELECT_LEGEND,
             },
@@ -991,7 +1036,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                         return date.toLocaleDateString(this.props.lang, { weekday: 'short' });
                     },
                 },
-                name: I18n.t('kisshome-defender_Weekday'), // Y-Achsen-Beschreibung
+                name: this.props.isMobile ? '' : I18n.t('kisshome-defender_Weekday'), // Y-Achsen-Beschreibung
                 nameLocation: 'end', // Position: 'start', 'middle', 'end'
                 nameGap: 5,
             },
@@ -1003,6 +1048,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
 
     renderVolumeLegend(
         data: DataVolumePerDeviceResult | DataVolumePerCountryResult | DataVolumePerDaytimeResult | null,
+        countSelected: number,
         noColors?: boolean,
     ): React.JSX.Element | null {
         if (!data) {
@@ -1016,23 +1062,22 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         if (!allMacs.length) {
             return null;
         }
-        const colors = noColors
-            ? undefined
-            : (this.echartsReact?.getEchartsInstance().getOption()?.color as ZRColor[] | undefined);
+        this.colors ||= this.echartsReact?.getEchartsInstance().getOption()?.color as ZRColor[] | undefined;
 
-        let countSelected = 0;
-        Object.keys(this.state.legendMacs).forEach(mac => {
-            if (this.state.legendMacs[mac]) {
-                countSelected++;
-            }
-        });
+        const colors = noColors ? undefined : this.colors;
 
         return (
-            <div style={{ paddingLeft: 32 }}>
+            <div
+                style={{ paddingLeft: 32 }}
+                key="legend"
+            >
                 <Select
+                    id="legend-select"
                     style={{ minWidth: 250 }}
                     variant="standard"
-                    value={Object.keys(this.state.legendMacs).filter(mac => this.state.legendMacs[mac])}
+                    value={Object.keys(this.state.legendMacs)
+                        .filter(mac => this.state.legendMacs[mac])
+                        .filter(it => it)}
                     multiline
                     open={this.state.legendOpened}
                     onOpen={e => {
@@ -1070,10 +1115,61 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                         }
                         return selected[0];
                     }}
+                    onChange={event => {
+                        const value = event.target.value;
+                        console.log('Select onChange', value);
+                        if (value === '__selector__') {
+                            return; // Handled in MenuItem onClick
+                        }
+                        const legendMacs: { [mac: MACAddress]: boolean } = { ...this.state.legendMacs };
+                        if (typeof value === 'string') {
+                            // Should not happen as we use multiple
+                            legendMacs[value] = !legendMacs[value];
+                            this.props.reportUxEvent({
+                                id: 'kisshome-defender-statistics-legend-item',
+                                event: 'change',
+                                ts: Date.now(),
+                                isTouchEvent: event instanceof TouchEvent,
+                                data: value,
+                            });
+                        } else if (Array.isArray(value)) {
+                            // Set all to false
+                            Object.keys(legendMacs).forEach(mac => {
+                                legendMacs[mac] = false;
+                            });
+                            // And only the selected to true
+                            value.forEach(mac => {
+                                legendMacs[mac] = true;
+                                this.props.reportUxEvent({
+                                    id: 'kisshome-defender-statistics-legend-item',
+                                    event: 'change',
+                                    ts: Date.now(),
+                                    isTouchEvent: event instanceof TouchEvent,
+                                    data: mac,
+                                });
+                            });
+                        }
+                        this.setState({ legendMacs });
+                        if (typeof value === 'string') {
+                            const scrollTop = document.querySelector('.MuiPopover-root .MuiPaper-root')?.scrollTop;
+
+                            if (scrollTop) {
+                                setTimeout(() => {
+                                    const el = document.getElementById(`list-${value.replace(/:/g, '_')}`);
+                                    el?.scrollIntoView({ behavior: 'instant', block: 'end' });
+                                    const menu = document.querySelector('.MuiPopover-root .MuiPaper-root');
+                                    if (menu) {
+                                        menu.scrollTop = scrollTop;
+                                    }
+                                }, 50);
+                            }
+                        }
+                    }}
                 >
                     <MenuItem
                         value="__selector__"
                         onClick={e => {
+                            e.preventDefault();
                             const legendMacs: { [mac: MACAddress]: boolean } = { ...this.state.legendMacs };
 
                             if (Object.keys(this.state.legendMacs).length === countSelected) {
@@ -1114,30 +1210,13 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                     </MenuItem>
                     {allMacs.map((mac, i) => (
                         <MenuItem
-                            style={colors ? { color: (colors as string[])?.[i] || undefined } : {}}
+                            id={`list-${mac.replace(/:/g, '_')}`}
+                            style={colors ? { color: (colors as string[])?.[i % colors.length] || undefined } : {}}
                             key={mac}
                             value={mac}
-                            onClick={e => {
-                                const legendMacs: { [mac: MACAddress]: boolean } = { ...this.state.legendMacs };
-                                legendMacs[mac] = !legendMacs[mac]; // Toggle selection
-                                this.props.reportUxEvent({
-                                    id: 'kisshome-defender-statistics-legend-item',
-                                    event: 'change',
-                                    ts: Date.now(),
-                                    isTouchEvent: e instanceof TouchEvent,
-                                    data: legendMacs[mac] ? `select` : `unselect`,
-                                });
-                                this.setState({ legendMacs });
-                            }}
                         >
                             <Checkbox checked={this.state.legendMacs[mac]} />
-                            <ListItemText
-                                primary={
-                                    data?.[mac]?.info?.desc ||
-                                    data?.[mac]?.info?.ip ||
-                                    mac
-                                }
-                            />
+                            <ListItemText primary={data?.[mac]?.info?.desc || data?.[mac]?.info?.ip || mac} />
                         </MenuItem>
                     ))}
                 </Select>
@@ -1145,10 +1224,10 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         );
     }
 
-    renderDataVolumePerDeviceChart(): React.JSX.Element {
+    renderDataVolumePerDeviceChart(countSelected: number): React.JSX.Element {
         const options = this.getDataVolumePerDeviceOptions();
 
-        const legend = this.renderVolumeLegend(this.state.dataVolumePerDevice.data);
+        const legend = this.renderVolumeLegend(this.state.dataVolumePerDevice.data, countSelected);
 
         return (
             <div style={{ position: 'relative', width: '100%', height: 'calc(100% - 24px)' }}>
@@ -1312,12 +1391,19 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                     return content;
                 },
             },
-            grid: {
-                top: 28,
-                right: 70,
-                left: 80,
-                bottom: 20,
-            },
+            grid: this.props.isMobile
+                ? {
+                      top: 28,
+                      right: 0,
+                      left: 50,
+                      bottom: 20,
+                  }
+                : {
+                      top: 28,
+                      right: 70,
+                      left: 80,
+                      bottom: 20,
+                  },
             legend: {
                 show: allMacs.length < SHOW_SELECT_LEGEND,
             },
@@ -1349,10 +1435,10 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         };
     }
 
-    renderDataVolumePerDayChart(): React.JSX.Element {
+    renderDataVolumePerDayChart(countSelected: number): React.JSX.Element {
         const options = this.getDataVolumePerDayOptions();
 
-        const legend = this.renderVolumeLegend(this.state.dataVolumePerDay.data);
+        const legend = this.renderVolumeLegend(this.state.dataVolumePerDay.data, countSelected);
 
         return (
             <div style={{ position: 'relative', width: '100%', height: 'calc(100% - 24px)' }}>
@@ -1387,39 +1473,48 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
     }
 
     renderChart(): React.JSX.Element {
+        let countSelected = 0;
+        Object.keys(this.state.legendMacs).forEach(mac => {
+            if (this.state.legendMacs[mac]) {
+                countSelected++;
+            }
+        });
+
         if (this.state.tab === 'dataVolumePerDevice') {
-            return this.renderDataVolumePerDeviceChart();
+            return this.renderDataVolumePerDeviceChart(countSelected);
         }
         if (this.state.tab === 'dataVolumePerDay') {
-            return this.renderDataVolumePerDayChart();
+            return this.renderDataVolumePerDayChart(countSelected);
         }
         if (this.state.tab === 'dataVolumePerCountry') {
-            return this.renderDataVolumePerCountryChart();
+            return this.renderDataVolumePerCountryChart(countSelected);
         }
         if (this.state.tab === 'dataVolumePerDaytime') {
-            return this.renderDayTimeChart();
+            return this.renderDayTimeChart(countSelected);
         }
         return <div>...</div>;
     }
 
     renderStatInfo(): React.JSX.Element {
-        let fontSize = '1.3rem';
+        let fontSize = this.props.isMobile ? '0.8rem' : '1.3rem';
         if (this.refInfo.current) {
             const height = this.refInfo.current.clientHeight;
             if (height < 120) {
-                fontSize = '1rem';
+                fontSize = this.props.isMobile ? '0.7rem' : '1rem';
             }
             if (height < 80) {
-                fontSize = '0.8rem';
+                fontSize = this.props.isMobile ? '0.6rem' : '0.8rem';
             }
         }
         return (
             <div style={{ fontSize }}>
                 {this.state.deviceMostDataVolume || this.state.deviceMostCountries ? (
                     <div style={{ fontWeight: 'bold' }}>
-                        {I18n.t(
-                            'kisshome-defender_Statistics on aggregated transmitted data volume over the past 7 days',
-                        )}
+                        {this.props.isMobile
+                            ? I18n.t('kisshome-defender_Statistics over the past 7 days')
+                            : I18n.t(
+                                  'kisshome-defender_Statistics on aggregated transmitted data volume over the past 7 days',
+                              )}
                         :
                     </div>
                 ) : null}
@@ -1439,6 +1534,81 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         );
     }
 
+    renderLeftTabs(): React.JSX.Element {
+        return (
+            <div
+                style={{
+                    width: 150,
+                    backgroundColor: this.props.themeType === 'dark' ? '#333' : '#CCC',
+                    position: this.props.isMobile ? 'absolute' : undefined,
+                    top: 0,
+                    left: 0,
+                    bottom: 0,
+                    zIndex: 1001,
+                    boxShadow: this.props.isMobile ? '2px 0 5px rgba(0,0,0,0.5)' : undefined,
+                    transform: this.props.isMobile
+                        ? this.state.showSidebar
+                            ? 'translateX(0)'
+                            : 'translateX(-100%)'
+                        : undefined,
+                    transition: this.props.isMobile ? 'transform 0.3s ease-in-out' : undefined,
+                }}
+            >
+                <Tabs
+                    className="Mui-vertical-tabs"
+                    value={this.state.tab}
+                    style={{ backgroundColor: this.props.themeType === 'dark' ? '#333' : '#CCC' }}
+                    orientation="vertical"
+                    onChange={(_e, value) => {
+                        this.echartsReact?.getEchartsInstance().dispose();
+
+                        this.setState(
+                            {
+                                showSidebar: false,
+                                tab: value as
+                                    | 'dataVolumePerDevice'
+                                    | 'dataVolumePerCountry'
+                                    | 'dataVolumePerDay'
+                                    | 'dataVolumePerDaytime',
+                            },
+                            () => this.requestData(),
+                        );
+
+                        window.localStorage.setItem('kisshome-defender-tab.statisticsTab', value);
+
+                        this.props.reportUxEvent({
+                            id: 'kisshome-defender-statistics-tabs',
+                            event: 'change',
+                            data: value,
+                            ts: Date.now(),
+                        });
+                    }}
+                >
+                    <Tab
+                        value="dataVolumePerDevice"
+                        style={{ alignItems: 'start', textTransform: 'none' }}
+                        label={I18n.t('kisshome-defender_By day')}
+                    />
+                    <Tab
+                        value="dataVolumePerDay"
+                        style={{ alignItems: 'start', textTransform: 'none', textAlign: 'left' }}
+                        label={I18n.t('kisshome-defender_By day (aggregated)')}
+                    />
+                    <Tab
+                        value="dataVolumePerCountry"
+                        style={{ alignItems: 'start', textTransform: 'none' }}
+                        label={I18n.t('kisshome-defender_By country')}
+                    />
+                    <Tab
+                        value="dataVolumePerDaytime"
+                        style={{ alignItems: 'start', textTransform: 'none' }}
+                        label={I18n.t('kisshome-defender_By day-time')}
+                    />
+                </Tabs>
+            </div>
+        );
+    }
+
     render(): React.JSX.Element {
         if (!this.props.alive) {
             return (
@@ -1449,80 +1619,84 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         }
 
         return (
-            <div style={{ width: '100%', height: '100%', display: 'flex' }}>
-                <div style={{ width: 150, backgroundColor: this.props.themeType === 'dark' ? '#333' : '#CCC' }}>
-                    <Tabs
-                        className="Mui-vertical-tabs"
-                        value={this.state.tab}
-                        style={{ backgroundColor: this.props.themeType === 'dark' ? '#333' : '#CCC' }}
-                        orientation="vertical"
-                        onChange={(_e, value) => {
-                            this.echartsReact?.getEchartsInstance().dispose();
-
-                            this.setState(
-                                {
-                                    tab: value as
-                                        | 'dataVolumePerDevice'
-                                        | 'dataVolumePerCountry'
-                                        | 'dataVolumePerDay'
-                                        | 'dataVolumePerDaytime',
-                                },
-                                () => this.requestData(),
-                            );
-
-                            window.localStorage.setItem('kisshome-defender-tab.statisticsTab', value);
-
-                            this.props.reportUxEvent({
-                                id: 'kisshome-defender-statistics-tabs',
-                                event: 'change',
-                                data: value,
-                                ts: Date.now(),
-                            });
+            <div
+                style={{ width: '100%', height: '100%', display: 'flex', position: 'relative' }}
+                onClick={() => {}}
+            >
+                {this.props.isMobile ? (
+                    <div
+                        style={{
+                            pointerEvents: this.state.showSidebar ? 'all' : 'none',
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            zIndex: 1000,
+                            bottom: 0,
+                            right: 0,
                         }}
+                        onClick={() => {
+                            this.setState({ showSidebar: false });
+                        }}
+                    />
+                ) : null}
+                {this.props.isMobile ? (
+                    <Fab
+                        size="small"
+                        color="primary"
+                        aria-label="menu"
+                        style={{
+                            position: 'absolute',
+                            top: 8,
+                            left: 8,
+                            zIndex: 999,
+                        }}
+                        onClick={() => this.setState({ showSidebar: true })}
                     >
-                        <Tab
-                            value="dataVolumePerDevice"
-                            style={{ alignItems: 'start', textTransform: 'none' }}
-                            label={I18n.t('kisshome-defender_By day')}
-                        />
-                        <Tab
-                            value="dataVolumePerDay"
-                            style={{ alignItems: 'start', textTransform: 'none', textAlign: 'left' }}
-                            label={I18n.t('kisshome-defender_By day (aggregated)')}
-                        />
-                        <Tab
-                            value="dataVolumePerCountry"
-                            style={{ alignItems: 'start', textTransform: 'none' }}
-                            label={I18n.t('kisshome-defender_By country')}
-                        />
-                        <Tab
-                            value="dataVolumePerDaytime"
-                            style={{ alignItems: 'start', textTransform: 'none' }}
-                            label={I18n.t('kisshome-defender_By day-time')}
-                        />
-                    </Tabs>
-                </div>
-                <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 20, padding: 10 }}>
+                        {'>'}
+                    </Fab>
+                ) : null}
+                {this.renderLeftTabs()}
+                <div
+                    style={{
+                        flexGrow: 1,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: this.props.isMobile ? 5 : 20,
+                        padding: this.props.isMobile ? 5 : 10,
+                        width: '100%',
+                        overflow: 'hidden',
+                    }}
+                >
                     <Paper
                         style={{
                             flexGrow: 1,
-                            padding: 10,
+                            padding: this.props.isMobile ? 5 : 10,
                             border: `2px solid ${this.props.themeType === 'dark' ? 'white' : 'black'}`,
                             borderRadius: 0,
                             backgroundColor: this.props.themeType === 'dark' ? undefined : '#E6E6E6',
                             boxShadow: 'none',
+                            width: 'calc(100% - 14px)',
                         }}
                     >
-                        <div style={{ fontSize: 'greater', fontWeight: 'bold', height: 24 }}>
-                            {I18n.t('kisshome-defender_Statistics about Data-volume in the last week')}
+                        <div
+                            style={{
+                                fontSize: this.props.isMobile ? '0.5 rem' : 'greater',
+                                fontWeight: 'bold',
+                                height: 24,
+                                marginLeft: this.props.isMobile ? 40 : 0,
+                            }}
+                        >
+                            {this.props.isMobile
+                                ? I18n.t('kisshome-defender_Last week statistics')
+                                : I18n.t('kisshome-defender_Statistics about Data-volume in the last week')}
                         </div>
                         {this.renderChart()}
                     </Paper>
                     <Paper
                         ref={this.refInfo}
                         style={{
-                            height: 80,
-                            padding: 10,
+                            height: this.props.isMobile ? 60 : 80,
+                            padding: this.props.isMobile ? 4 : 10,
                             border: `2px solid ${this.props.themeType === 'dark' ? 'white' : 'black'}`,
                             borderRadius: 0,
                             backgroundColor: this.props.themeType === 'dark' ? undefined : '#E6E6E6',

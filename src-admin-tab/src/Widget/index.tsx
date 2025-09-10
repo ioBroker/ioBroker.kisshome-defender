@@ -7,7 +7,11 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
+    Divider,
     FormControlLabel,
+    IconButton,
+    Menu,
+    MenuItem,
     Tab,
     Tabs,
     Toolbar,
@@ -28,6 +32,8 @@ import type {
     UXEvent,
 } from './types';
 import Questionnaire, { type QuestionnaireJson } from './components/Questionnaire';
+import { Menu as MenuIcon } from '@mui/icons-material';
+import { MOBILE_WIDTH } from './components/utils';
 
 function isMobile(): boolean {
     return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -56,6 +62,8 @@ interface KisshomeDefenderState {
     ignoreForNext10Minutes: boolean;
     showDetectionWithUUID: string;
     resultsDialogOpened: boolean; // If set, ignore new alerts until this date
+    width: number;
+    showMenu: null | HTMLElement;
 }
 
 const styles: Record<string, React.CSSProperties> = {
@@ -71,6 +79,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
     private ignoreNewAlerts: Date | null = null;
     private lastCreated = '';
     private lastShownAlertDialog = '';
+    private cardRef: React.RefObject<HTMLDivElement> = React.createRef();
 
     constructor(props: KisshomeDefenderProps) {
         super(props);
@@ -98,12 +107,21 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
             showDetectionWithUUID,
             resultsDialogOpened: false,
             secondPeriod: false,
+            width: 0,
+            showMenu: null,
         };
     }
+
+    onResize = (): void => {
+        this.componentDidUpdate();
+    };
 
     async componentDidMount(): Promise<void> {
         const instance = this.props.instance || '0';
         const socket = this.props.socket;
+
+        // Install onresize listener
+        window.addEventListener('resize', this.onResize);
 
         // Any initialization logic can be added here
         this.reportUxEvent({
@@ -149,6 +167,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
     }
 
     componentWillUnmount(): void {
+        window.removeEventListener('resize', this.onResize);
         window.removeEventListener('hashchange', this.onHashChange, false);
         // Any cleanup logic can be added here
         this.reportUxEvent({
@@ -498,6 +517,144 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
         );
     }
 
+    renderTabs(): React.JSX.Element {
+        return (
+            <Tabs
+                className="Mui-horizontal-tabs"
+                style={{ flexGrow: 1 }}
+                value={this.state.tab || 'status'}
+                onChange={(_event, value: string) => {
+                    this.navigate(value as KisshomeDefenderState['tab'], '');
+                    this.reportUxEvent({
+                        id: 'kisshome-defender-tabs',
+                        event: 'change',
+                        ts: Date.now(),
+                        data: value,
+                    });
+                }}
+            >
+                <Tab
+                    value="status"
+                    style={{
+                        ...styles.tabLabel,
+                        color: this.state.tab === 'status' ? '#66ccff' : 'white',
+                    }}
+                    label={I18n.t('kisshome-defender_Status')}
+                />
+                <Tab
+                    value="statistics"
+                    style={{
+                        ...styles.tabLabel,
+                        color: this.state.tab === 'statistics' ? '#66ccff' : 'white',
+                    }}
+                    label={I18n.t('kisshome-defender_Statistics')}
+                />
+                <Tab
+                    value="detections"
+                    style={{
+                        ...styles.tabLabel,
+                        color: this.state.tab === 'detections' ? '#66ccff' : 'white',
+                    }}
+                    label={I18n.t('kisshome-defender_Detections')}
+                />
+                <div style={{ flexGrow: 1 }} />
+                <Tab
+                    value="settings"
+                    style={{
+                        ...styles.tabLabel,
+                        fontStyle: 'italic',
+                        color: this.state.tab === 'settings' ? '#66ccff' : 'white',
+                    }}
+                    label={I18n.t('kisshome-defender_Settings')}
+                />
+            </Tabs>
+        );
+    }
+
+    componentDidUpdate(): void {
+        if (this.cardRef.current && this.cardRef.current.clientWidth !== this.state.width) {
+            this.setState({ width: this.cardRef.current.clientWidth });
+        }
+    }
+
+    renderMenu(): React.JSX.Element | null {
+        return (
+            <Menu
+                anchorEl={this.state.showMenu}
+                open={!!this.state.showMenu}
+                onClose={() => this.setState({ showMenu: null })}
+                slotProps={{
+                    list: {
+                        'aria-labelledby': 'basic-button',
+                    },
+                }}
+            >
+                <MenuItem
+                    onClick={() => {
+                        this.setState({ showMenu: null });
+                        this.navigate('status', '');
+                        this.reportUxEvent({
+                            id: 'kisshome-defender-tabs',
+                            event: 'change',
+                            ts: Date.now(),
+                            data: 'status',
+                        });
+                    }}
+                    selected={this.state.tab === 'status'}
+                >
+                    {I18n.t('kisshome-defender_Status')}
+                </MenuItem>
+                <MenuItem
+                    onClick={() => {
+                        this.setState({ showMenu: null });
+                        this.navigate('statistics', '');
+                        this.reportUxEvent({
+                            id: 'kisshome-defender-tabs',
+                            event: 'change',
+                            ts: Date.now(),
+                            data: 'statistics',
+                        });
+                    }}
+                    selected={this.state.tab === 'statistics'}
+                >
+                    {I18n.t('kisshome-defender_Statistics')}
+                </MenuItem>
+                <MenuItem
+                    onClick={() => {
+                        this.setState({ showMenu: null });
+                        this.navigate('detections', '');
+                        this.reportUxEvent({
+                            id: 'kisshome-defender-tabs',
+                            event: 'change',
+                            ts: Date.now(),
+                            data: 'detections',
+                        });
+                    }}
+                    selected={this.state.tab === 'detections'}
+                >
+                    {I18n.t('kisshome-defender_Detections')}
+                </MenuItem>
+                <Divider />
+                <MenuItem
+                    onClick={() => {
+                        this.setState({ showMenu: null });
+                        this.navigate('settings', '');
+                        this.reportUxEvent({
+                            id: 'kisshome-defender-tabs',
+                            event: 'change',
+                            ts: Date.now(),
+                            data: 'settings',
+                        });
+                    }}
+                    style={{ fontStyle: 'italic' }}
+                    selected={this.state.tab === 'settings'}
+                >
+                    {I18n.t('kisshome-defender_Settings')}
+                </MenuItem>
+            </Menu>
+        );
+    }
+
     render(): React.JSX.Element | React.JSX.Element[] | null {
         return (
             <Card
@@ -506,68 +663,33 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
                     height: '100%',
                     backgroundColor: this.props.themeType === 'dark' ? undefined : '#E6E6E6',
                 }}
+                ref={this.cardRef}
             >
                 {this.renderQuestionnaire()}
                 {this.renderAlarm()}
+                {this.renderMenu()}
                 <Toolbar
                     variant="dense"
-                    style={{ width: 'calc(100% - 48px)', display: 'flex', backgroundColor: '#333E50', color: 'white' }}
+                    style={{
+                        width: 'calc(100% - 32px)',
+                        display: 'flex',
+                        backgroundColor: '#333E50',
+                        color: 'white',
+                    }}
                 >
-                    <span style={{ textTransform: 'uppercase' }}>KISSHome</span>
+                    {this.state.width && this.state.width <= MOBILE_WIDTH ? (
+                        <IconButton onClick={e => this.setState({ showMenu: e.currentTarget })}>
+                            <MenuIcon />
+                        </IconButton>
+                    ) : null}
+                    <div style={{ textTransform: 'uppercase' }}>KISSHome</div>
+                    {this.state.width && this.state.width <= MOBILE_WIDTH ? <div style={{ flexGrow: 1 }} /> : null}
                     <img
                         src={logo}
                         style={{ height: 32, marginRight: 8, marginLeft: 16 }}
                         alt="KISShome Defender"
                     />
-                    <Tabs
-                        className="Mui-horizontal-tabs"
-                        style={{ flexGrow: 1 }}
-                        value={this.state.tab || 'status'}
-                        onChange={(_event, value: string) => {
-                            this.navigate(value as KisshomeDefenderState['tab'], '');
-                            this.reportUxEvent({
-                                id: 'kisshome-defender-tabs',
-                                event: 'change',
-                                ts: Date.now(),
-                                data: value,
-                            });
-                        }}
-                    >
-                        <Tab
-                            value="status"
-                            style={{
-                                ...styles.tabLabel,
-                                color: this.state.tab === 'status' ? '#66ccff' : 'white',
-                            }}
-                            label={I18n.t('kisshome-defender_Status')}
-                        />
-                        <Tab
-                            value="statistics"
-                            style={{
-                                ...styles.tabLabel,
-                                color: this.state.tab === 'statistics' ? '#66ccff' : 'white',
-                            }}
-                            label={I18n.t('kisshome-defender_Statistics')}
-                        />
-                        <Tab
-                            value="detections"
-                            style={{
-                                ...styles.tabLabel,
-                                color: this.state.tab === 'detections' ? '#66ccff' : 'white',
-                            }}
-                            label={I18n.t('kisshome-defender_Detections')}
-                        />
-                        <div style={{ flexGrow: 1 }} />
-                        <Tab
-                            value="settings"
-                            style={{
-                                ...styles.tabLabel,
-                                fontStyle: 'italic',
-                                color: this.state.tab === 'settings' ? '#66ccff' : 'white',
-                            }}
-                            label={I18n.t('kisshome-defender_Settings')}
-                        />
-                    </Tabs>
+                    {this.state.width > MOBILE_WIDTH ? this.renderTabs() : null}
                 </Toolbar>
                 <div style={{ width: '100%', height: 'calc(100% - 48px)' }}>
                     {this.state.tab === 'status' ? (
@@ -588,6 +710,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
                                     data: 'detections',
                                 });
                             }}
+                            isMobile={this.state.width && this.state.width <= MOBILE_WIDTH}
                         />
                     ) : null}
                     {this.state.tab === 'statistics' ? (
@@ -598,6 +721,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
                             instance={this.props.instance || '0'}
                             themeType={this.props.themeType}
                             lang={this.props.lang}
+                            isMobile={this.state.width && this.state.width <= MOBILE_WIDTH}
                         />
                     ) : null}
                     {this.state.tab === 'detections' ? (
@@ -613,6 +737,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
                             showDetectionWithUUID={this.state.showDetectionWithUUID}
                             onResultsDialogOpen={opened => this.setState({ resultsDialogOpened: opened })}
                             secondPeriod={this.state.secondPeriod}
+                            isMobile={this.state.width && this.state.width <= MOBILE_WIDTH}
                         />
                     ) : null}
                     {this.state.tab === 'settings' ? (
@@ -621,6 +746,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
                             socket={this.props.socket}
                             instance={this.props.instance || '0'}
                             themeType={this.props.themeType}
+                            isMobile={this.state.width && this.state.width <= MOBILE_WIDTH}
                         />
                     ) : null}
                 </div>
