@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 
-import { Button, LinearProgress, Link, Paper, Slider, Switch } from '@mui/material';
+import { Button, Divider, LinearProgress, Link, Paper, Slider, Switch } from '@mui/material';
 import { I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
 import type { ReportUxHandler } from '../types';
-import { findAdminLink } from './utils';
+import { findAdminLink, MOBILE_WIDTH } from './utils';
 
 interface SettingsTabProps {
     instance: string;
     reportUxEvent: ReportUxHandler;
     socket: LegacyConnection;
     themeType: ThemeType;
+    isMobile: boolean;
 }
 
 interface SettingsTabState {
@@ -109,32 +110,9 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
         }
     };
 
-    render(): React.JSX.Element {
-        if (!this.state.initialConfig || !this.state.newConfig) {
-            return <LinearProgress />;
-        }
-
-        const settingsChanged =
-            this.state.newConfig.saveThresholdSeconds !== this.state.initialConfig.saveThresholdSeconds;
-
+    renderDesktopScreen(settingsChanged: boolean): React.JSX.Element {
         return (
-            <Paper
-                style={{
-                    width: 'calc(100% - 52px)',
-                    height: 'calc(100% - 56px)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'start',
-                    gap: 16,
-                    padding: 16,
-                    margin: 10,
-                    borderRadius: 0,
-                    border: `2px solid ${this.props.themeType === 'dark' ? 'white' : 'black'}`,
-                    backgroundColor: this.props.themeType === 'dark' ? undefined : '#E6E6E6',
-                    boxShadow: 'none',
-                }}
-            >
+            <>
                 {this.state.adminLink ? (
                     <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 16 }}>
                         <div style={{ fontWeight: 'bold', minWidth: 280 }}>
@@ -302,6 +280,227 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                         {I18n.t('kisshome-defender_Apply new settings')}
                     </Button>
                 </div>
+            </>
+        );
+    }
+
+    renderMobileScreen(settingsChanged: boolean): React.JSX.Element {
+        return (
+            <>
+                {this.state.adminLink ? (
+                    <div
+                        style={{
+                            width: '100%',
+                            display: 'flex',
+                            gap: 8,
+                            flexDirection: 'row',
+                            flexWrap: 'wrap',
+                        }}
+                    >
+                        <div style={{ fontWeight: 'bold' }}>{I18n.t('kisshome-defender_Manage monitored devices')}</div>
+                        <Link
+                            href={this.state.adminLink}
+                            target="settings"
+                            onClick={e => {
+                                this.props.reportUxEvent({
+                                    id: 'kisshome-defender-settings-admin-link',
+                                    event: 'click',
+                                    data: this.state.adminLink,
+                                    ts: Date.now(),
+                                    isTouchEvent: e instanceof TouchEvent,
+                                });
+                            }}
+                        >
+                            {I18n.t('kisshome-defender_Open in Admin')}
+                        </Link>
+                    </div>
+                ) : null}
+                <div
+                    style={{
+                        display: 'flex',
+                        gap: 8,
+                        width: '100%',
+                        flexDirection: 'row',
+                        flexWrap: 'wrap',
+                        alignItems: 'center',
+                        justifyContent: 'flex-start',
+                    }}
+                >
+                    <div style={{ fontWeight: 'bold' }}>{I18n.t('kisshome-defender_Protection enabled')}</div>
+                    <Switch
+                        checked={this.state.enabled}
+                        onMouseDown={(event: React.MouseEvent<HTMLButtonElement>) => {
+                            this.props.reportUxEvent({
+                                id: 'kisshome-defender-settings-protection-enabled',
+                                event: 'down',
+                                ts: Date.now(),
+                                isTouchEvent: event instanceof TouchEvent,
+                            });
+                        }}
+                        onMouseUp={(event: React.MouseEvent<HTMLButtonElement>) => {
+                            this.props.reportUxEvent({
+                                id: 'kisshome-defender-settings-protection-enabled',
+                                event: 'up',
+                                ts: Date.now(),
+                                isTouchEvent: event instanceof TouchEvent,
+                            });
+                        }}
+                        onChange={async (event, checked) => {
+                            this.props.reportUxEvent({
+                                id: 'kisshome-defender-settings-protection-enabled',
+                                event: 'change',
+                                ts: Date.now(),
+                                isTouchEvent: event instanceof TouchEvent,
+                            });
+
+                            await this.props.socket.setState(
+                                `kisshome-defender.${this.props.instance}.info.recording.enabled`,
+                                checked,
+                            );
+                        }}
+                    />
+                </div>
+                <div
+                    style={{
+                        width: '100%',
+                        display: 'flex',
+                        gap: 8,
+                        justifyContent: 'flex-start',
+                        flexDirection: 'column',
+                    }}
+                >
+                    <div style={{ fontWeight: 'bold' }}>{I18n.t('kisshome-defender_Save threshold in seconds')}</div>
+                    <Slider
+                        style={{
+                            width: 'calc(100% - 40px)',
+                            marginLeft: 20,
+                        }}
+                        min={2}
+                        max={60}
+                        valueLabelDisplay="auto"
+                        valueLabelFormat={val => I18n.t('kisshome-defender_%s minutes', val)}
+                        marks={[
+                            {
+                                value: 2,
+                                label: I18n.t('kisshome-defender_%s minutes', 2),
+                            },
+                            {
+                                value: 15,
+                                label: I18n.t('kisshome-defender_%s minutes', 15),
+                            },
+                            {
+                                value: 30,
+                                label: I18n.t('kisshome-defender_%s minutes', 30),
+                            },
+                            {
+                                value: 45,
+                                label: I18n.t('kisshome-defender_%s minutes', 45),
+                            },
+                            {
+                                value: 60,
+                                label: I18n.t('kisshome-defender_one hour'),
+                            },
+                        ]}
+                        value={Math.round(this.state.newConfig.saveThresholdSeconds || 3600) / 60}
+                        onChange={(event, value) => {
+                            this.props.reportUxEvent({
+                                id: 'kisshome-defender-settings-save-threshold',
+                                event: 'change',
+                                ts: Date.now(),
+                                data: (value as number).toString(),
+                                isTouchEvent: event instanceof TouchEvent,
+                            });
+                            this.setState({
+                                newConfig: {
+                                    saveThresholdSeconds: (value as number) * 60,
+                                },
+                            });
+                        }}
+                    />
+                </div>
+                <div style={{ width: '100%', opacity: settingsChanged ? 1 : 0 }}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        disabled={!settingsChanged}
+                        onMouseDown={(event: React.MouseEvent<HTMLButtonElement>) => {
+                            this.props.reportUxEvent({
+                                id: 'kisshome-defender-settings-apply',
+                                event: 'down',
+                                ts: Date.now(),
+                                isTouchEvent: event instanceof TouchEvent,
+                            });
+                        }}
+                        onMouseUp={(event: React.MouseEvent<HTMLButtonElement>) => {
+                            this.props.reportUxEvent({
+                                id: 'kisshome-defender-settings-apply',
+                                event: 'up',
+                                ts: Date.now(),
+                                isTouchEvent: event instanceof TouchEvent,
+                            });
+                        }}
+                        onClick={async (event: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
+                            this.props.reportUxEvent({
+                                id: 'kisshome-defender-settings-apply',
+                                event: 'click',
+                                ts: Date.now(),
+                                isTouchEvent: event instanceof TouchEvent,
+                            });
+                            const configObj = await this.props.socket.getObject(
+                                `system.adapter.kisshome-defender.${this.props.instance}`,
+                            );
+                            this.setState(
+                                {
+                                    initialConfig: {
+                                        saveThresholdSeconds: this.state.newConfig?.saveThresholdSeconds || 3600,
+                                    },
+                                },
+                                () => {
+                                    configObj.native.saveThresholdSeconds =
+                                        this.state.newConfig?.saveThresholdSeconds || 3600;
+                                    void this.props.socket.setObject(
+                                        `system.adapter.kisshome-defender.${this.props.instance}`,
+                                        configObj,
+                                    );
+                                },
+                            );
+                        }}
+                    >
+                        {I18n.t('kisshome-defender_Apply new settings')}
+                    </Button>
+                </div>
+            </>
+        );
+    }
+
+    render(): React.JSX.Element {
+        if (!this.state.initialConfig || !this.state.newConfig) {
+            return <LinearProgress />;
+        }
+        const settingsChanged =
+            this.state.newConfig.saveThresholdSeconds !== this.state.initialConfig.saveThresholdSeconds;
+
+        return (
+            <Paper
+                style={{
+                    width: `calc(100% - ${this.props.isMobile ? 5 * 2 + 20 : 16 * 2 + 20}px)`,
+                    height: `calc(100% - ${this.props.isMobile ? 32 : 56}px)`,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'start',
+                    gap: this.props.isMobile ? 40 : 24,
+                    padding: this.props.isMobile ? 5 : 16,
+                    margin: 10,
+                    borderRadius: 0,
+                    border: `2px solid ${this.props.themeType === 'dark' ? 'white' : 'black'}`,
+                    backgroundColor: this.props.themeType === 'dark' ? undefined : '#E6E6E6',
+                    boxShadow: 'none',
+                }}
+            >
+                {this.props.isMobile
+                    ? this.renderMobileScreen(settingsChanged)
+                    : this.renderDesktopScreen(settingsChanged)}{' '}
             </Paper>
         );
     }

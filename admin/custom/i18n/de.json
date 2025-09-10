@@ -12,7 +12,7 @@
   "custom_kisshome_name_too_short": "Beschreibung ist zu kurz (mindestens 3 Zeichen)",
   "custom_kisshome_select_all": "Alle aktivieren",
   "custom_kisshome_training_status": "Training",
-  "custom_kisshome_training_status_tooltip": "",
+  "custom_kisshome_training_status_tooltip": "Prozentualer Fortschritt des Modelltrainings",
   "custom_kisshome_unselect_all": "Alle deaktivieren",
   "custom_kisshome_vendor": "Hersteller"
 }

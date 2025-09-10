@@ -533,7 +533,13 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
             <div style={{ position: 'relative', width: '100%', height: 'calc(100% - 24px)' }}>
                 {this.renderLoading(!!this.state.dataVolumePerDaytime.data)}
                 {legend}
-                <div style={{ width: '100%', height: 'calc(100% - 32px)', overflow: 'auto' }}>
+                <div
+                    style={{
+                        width: '100%',
+                        height: 'calc(100% - 32px)',
+                        overflow: this.props.isMobile ? 'auto' : 'hidden',
+                    }}
+                >
                     <div
                         ref={this.refDataVolumePerDaytime}
                         style={{
@@ -771,7 +777,13 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
             >
                 {this.renderLoading(!!this.state.dataVolumePerCountry.data)}
                 {legend}
-                <div style={{ width: '100%', height: 'calc(100% - 32px)', overflow: 'auto' }}>
+                <div
+                    style={{
+                        width: '100%',
+                        height: 'calc(100% - 32px)',
+                        overflow: this.props.isMobile ? 'auto' : 'hidden',
+                    }}
+                >
                     <div
                         ref={this.refDataVolumePerCountry}
                         style={{
@@ -1675,7 +1687,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                             borderRadius: 0,
                             backgroundColor: this.props.themeType === 'dark' ? undefined : '#E6E6E6',
                             boxShadow: 'none',
-                            width: 'calc(100% - 14px)',
+                            width: `calc(100% - ${this.props.isMobile ? 12 : 24}px)`,
                         }}
                     >
                         <div
@@ -1684,6 +1696,9 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                                 fontWeight: 'bold',
                                 height: 24,
                                 marginLeft: this.props.isMobile ? 40 : 0,
+                                whiteSpace: 'nowrap',
+                                width: 'calc(100% - 40px)',
+                                textOverflow: 'ellipsis',
                             }}
                         >
                             {this.props.isMobile

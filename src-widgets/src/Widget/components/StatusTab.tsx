@@ -16,6 +16,7 @@ interface StatusTabProps {
     lastSeenID: string; // Last seen ID for scan analysis
     onNavigateToDetections: () => void; // Optional callback for navigation
     results: StoredStatisticsResult | null;
+    isMobile: boolean;
 }
 
 interface StatusTabState {
@@ -227,28 +228,52 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
             <div
                 className="status-tab"
                 style={{
-                    width: 'calc(100% - 20px)',
-                    height: 'calc(100% - 20px)',
+                    width: `calc(100% - ${this.props.isMobile ? 10 : 20}px)`,
+                    height: `calc(100% - ${this.props.isMobile ? 10 : 20}px)`,
                     display: 'flex',
                     flexDirection: 'column',
-                    padding: 10,
-                    gap: 20,
+                    padding: this.props.isMobile ? 5 : 10,
+                    gap: this.props.isMobile ? 10 : 20,
                 }}
             >
                 <Paper
                     style={{
                         flexGrow: 1,
-                        padding: 10,
+                        padding: this.props.isMobile ? 5 : 10,
                         border: `2px solid ${this.props.themeType === 'dark' ? 'white' : 'black'}`,
                         borderRadius: 0,
                         backgroundColor: this.props.themeType === 'dark' ? undefined : '#E6E6E6',
                         boxShadow: 'none',
                         display: 'flex',
-                        justifyContent: 'center',
+                        justifyContent: this.props.isMobile ? 'space-evenly' : 'center',
                         alignItems: 'center',
-                        fontSize: '1.3rem',
+                        fontSize: this.props.isMobile ? '0.9rem' : '1.3rem',
+                        width: `calc(100% - ${this.props.isMobile ? 10 : 20}`,
+                        flexDirection: 'column',
                     }}
                 >
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        style={this.props.isMobile ? {} : { position: 'absolute', top: 80, right: 30 }}
+                        onClick={async event => {
+                            this.props.reportUxEvent({
+                                id: 'kisshome-defender-status-recording-enabled',
+                                event: 'change',
+                                ts: Date.now(),
+                                isTouchEvent: event instanceof TouchEvent,
+                            });
+
+                            await this.props.socket.setState(
+                                `kisshome-defender.${this.props.instance}.info.recording.enabled`,
+                                !this.state.recordingEnabled,
+                            );
+                        }}
+                    >
+                        {this.state.recordingEnabled
+                            ? I18n.t('kisshome-defender_Deactivate protection')
+                            : I18n.t('kisshome-defender_Activate protection')}
+                    </Button>
                     <table>
                         <tbody>
                             {this.props.alive ? null : (
@@ -338,32 +363,10 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                             ) : null}
                         </tbody>
                     </table>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        style={{ position: 'absolute', top: 80, right: 30 }}
-                        onClick={async event => {
-                            this.props.reportUxEvent({
-                                id: 'kisshome-defender-status-recording-enabled',
-                                event: 'change',
-                                ts: Date.now(),
-                                isTouchEvent: event instanceof TouchEvent,
-                            });
-
-                            await this.props.socket.setState(
-                                `kisshome-defender.${this.props.instance}.info.recording.enabled`,
-                                !this.state.recordingEnabled,
-                            );
-                        }}
-                    >
-                        {this.state.recordingEnabled
-                            ? I18n.t('kisshome-defender_Deactivate protection')
-                            : I18n.t('kisshome-defender_Activate protection')}
-                    </Button>
                 </Paper>
                 <Paper
                     style={{
-                        height: 80,
+                        height: this.props.isMobile ? 60 : 80,
                         padding: '10px 40px 10px 10px',
                         border: `2px solid ${this.props.themeType === 'dark' ? 'white' : 'black'}`,
                         borderRadius: 0,
@@ -395,7 +398,7 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                         style={{ marginLeft: 10 }}
                         ok={!unseenWarningsCount}
                         warning
-                        size={52}
+                        size={this.props.isMobile ? 36 : 52}
                     />
                 </Paper>
             </div>

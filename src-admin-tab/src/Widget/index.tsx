@@ -710,7 +710,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
                                     data: 'detections',
                                 });
                             }}
-                            isMobile={this.state.width && this.state.width <= MOBILE_WIDTH}
+                            isMobile={!!this.state.width && this.state.width <= MOBILE_WIDTH}
                         />
                     ) : null}
                     {this.state.tab === 'statistics' ? (
@@ -721,7 +721,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
                             instance={this.props.instance || '0'}
                             themeType={this.props.themeType}
                             lang={this.props.lang}
-                            isMobile={this.state.width && this.state.width <= MOBILE_WIDTH}
+                            isMobile={!!this.state.width && this.state.width <= MOBILE_WIDTH}
                         />
                     ) : null}
                     {this.state.tab === 'detections' ? (
@@ -737,7 +737,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
                             showDetectionWithUUID={this.state.showDetectionWithUUID}
                             onResultsDialogOpen={opened => this.setState({ resultsDialogOpened: opened })}
                             secondPeriod={this.state.secondPeriod}
-                            isMobile={this.state.width && this.state.width <= MOBILE_WIDTH}
+                            isMobile={!!this.state.width && this.state.width <= MOBILE_WIDTH}
                         />
                     ) : null}
                     {this.state.tab === 'settings' ? (
@@ -746,7 +746,7 @@ export default class KisshomeDefenderMain extends Component<KisshomeDefenderProp
                             socket={this.props.socket}
                             instance={this.props.instance || '0'}
                             themeType={this.props.themeType}
-                            isMobile={this.state.width && this.state.width <= MOBILE_WIDTH}
+                            isMobile={!!this.state.width && this.state.width <= MOBILE_WIDTH}
                         />
                     ) : null}
                 </div>

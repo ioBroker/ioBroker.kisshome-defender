@@ -12,7 +12,7 @@
   "custom_kisshome_name_too_short": "Description is too short (min 3 characters)",
   "custom_kisshome_select_all": "Enable all",
   "custom_kisshome_training_status": "Training",
-  "custom_kisshome_training_status_tooltip": "Training tooltip",
+  "custom_kisshome_training_status_tooltip": "Percentage progress of model training",
   "custom_kisshome_unselect_all": "Disable all",
   "custom_kisshome_vendor": "Vendor"
 }

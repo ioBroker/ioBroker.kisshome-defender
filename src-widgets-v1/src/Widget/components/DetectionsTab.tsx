@@ -20,9 +20,11 @@ import {
     TableRow,
     Tooltip,
     Typography,
+    Fab,
+    Menu,
 } from '@mui/material';
 import { I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
-import { Close, ExpandMore, Info } from '@mui/icons-material';
+import { Close, ExpandMore, Info, Notifications } from '@mui/icons-material';
 
 import type {
     DeviceStatistics,
@@ -41,11 +43,11 @@ const styles: Record<string, React.CSSProperties> = {
         fontWeight: 'bold',
         marginBottom: 8,
         display: 'inline-block',
-        minWidth: 250,
     },
     value: {
         fontSize: '1em',
         marginBottom: 16,
+        marginLeft: 8,
         display: 'inline-block',
     },
     row: {},
@@ -63,6 +65,7 @@ interface DetectionsTabProps {
     results: StoredStatisticsResult | null;
     onResultsDialogOpen: (opened: boolean) => void;
     secondPeriod: boolean;
+    isMobile: boolean;
 }
 
 interface DetectionsTabState {
@@ -76,6 +79,7 @@ interface DetectionsTabState {
     recordingNextWrite: number;
     detectionRunning: boolean;
     showDetectionWithUUID: string;
+    showTooltip: null | HTMLElement;
 }
 
 export default class DetectionsTab extends Component<DetectionsTabProps, DetectionsTabState> {
@@ -95,6 +99,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
             recordingNextWrite: 0,
             detectionRunning: false,
             showDetectionWithUUID: this.props.showDetectionWithUUID || '',
+            showTooltip: null,
         };
     }
 
@@ -258,12 +263,16 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         return (
             <div className="last-detection">
                 <div style={styles.row}>
-                    <div style={styles.title}>{I18n.t('kisshome-defender_Last control')}:</div>
+                    <div style={{ ...styles.title, minWidth: this.props.isMobile ? undefined : 250 }}>
+                        {I18n.t('kisshome-defender_Last control')}:
+                    </div>
                     <div style={styles.value}>{new Date(item.time).toLocaleString()}</div>
                 </div>
                 {this.state.recordingRunning ? (
                     <div style={styles.row}>
-                        <div style={styles.title}>{I18n.t('kisshome-defender_Next control')}:</div>
+                        <div style={{ ...styles.title, minWidth: this.props.isMobile ? undefined : 250 }}>
+                            {I18n.t('kisshome-defender_Next control')}:
+                        </div>
                         <div style={styles.value}>{`${nextControlText} (${reachedText})`}</div>
                     </div>
                 ) : null}
@@ -271,15 +280,20 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                     <div
                         style={{
                             paddingTop: 30,
-                            paddingRight: 30,
+                            paddingRight: this.props.isMobile ? 0 : 30,
                             display: 'flex',
                             gap: 30,
                             justifyContent: 'space-between',
                             alignItems: 'center',
+                            flexDirection: this.props.isMobile ? 'column' : undefined,
                         }}
                     >
                         <Button
-                            style={{ maxWidth: 300, whiteSpace: 'nowrap' }}
+                            style={{
+                                maxWidth: this.props.isMobile ? undefined : 300,
+                                whiteSpace: 'nowrap',
+                                width: this.props.isMobile ? '100%' : undefined,
+                            }}
                             disabled={this.state.detectionRunning}
                             variant="contained"
                             color="primary"
@@ -299,7 +313,14 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                         >
                             {I18n.t('kisshome-defender_Execute control now')}
                         </Button>
-                        <div style={{ flexGrow: 1 }}>{this.state.detectionRunning ? <LinearProgress /> : null}</div>
+                        <div
+                            style={{
+                                flexGrow: this.props.isMobile ? undefined : 1,
+                                width: this.props.isMobile ? '100%' : undefined,
+                            }}
+                        >
+                            {this.state.detectionRunning ? <LinearProgress /> : null}
+                        </div>
                     </div>
                 ) : null}
             </div>
@@ -398,7 +419,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                         alignItems: 'center',
                         fontWeight: 'bold',
                         gap: 16,
-                        fontSize: '1.8rem',
+                        fontSize: this.props.isMobile ? '1rem' : '1.8rem',
                         marginBottom: 16,
                         justifyContent: 'flex-start',
                     }}
@@ -406,8 +427,208 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                     <Info style={{ height: 48, width: 48 }} />
                     {title}
                 </div>
-                <div style={{ fontSize: '1.5rem' }}>{text}</div>
+                <div style={{ fontSize: this.props.isMobile ? '0.9rem' : '1.5rem' }}>{text}</div>
             </AccordionDetails>
+        );
+    }
+
+    renderOneDetectionDetailsTable(
+        devices: {
+            [mac: MACAddress]: {
+                type: '' | 'Warning' | 'Alert';
+                description: string[];
+                score: number;
+                name?: string;
+                statistics?: DeviceStatistics;
+            };
+        },
+        scoreTooltip: React.JSX.Element,
+        macs: MACAddress[],
+    ): React.JSX.Element {
+        return (
+            <Table size="small">
+                <TableHead style={{ backgroundColor: this.props.themeType === 'dark' ? '#505050' : '#d3d3d3' }}>
+                    <TableCell style={{ width: 250 }}>{I18n.t('kisshome-defender_Device')}</TableCell>
+                    <TableCell style={{ width: 120 }}>{I18n.t('kisshome-defender_Number of packets')}</TableCell>
+                    <Tooltip title={scoreTooltip}>
+                        <TableCell style={{ fontWeight: 'bold', width: 100 }}>
+                            {I18n.t('kisshome-defender_Anomaly Score')}*
+                        </TableCell>
+                    </Tooltip>
+                    <TableCell>{I18n.t('kisshome-defender_Status')}</TableCell>
+                </TableHead>
+                <TableBody>
+                    {macs.map(
+                        (mac: MACAddress): React.JSX.Element => (
+                            <TableRow key={mac}>
+                                <TableCell>
+                                    {devices[mac].name ? (
+                                        <div>
+                                            <div style={{ fontWeight: 'bold' }}>{devices[mac].name}</div>
+                                            <div
+                                                style={{
+                                                    fontSize: 'smaller',
+                                                    opacity: 0.8,
+                                                    fontStyle: 'italic',
+                                                }}
+                                            >
+                                                {mac}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div style={{ fontWeight: 'bold' }}>{mac}</div>
+                                    )}
+                                </TableCell>
+                                <TableCell style={{ textAlign: 'center' }}>
+                                    {devices[mac].statistics?.data_volume
+                                        ? devices[mac].statistics.data_volume.packet_count
+                                        : '--'}
+                                </TableCell>
+                                <TableCell
+                                    style={{
+                                        backgroundColor: devices[mac].type ? 'red' : 'green',
+                                        color: 'white',
+                                    }}
+                                >
+                                    {this.props.group === 'A' || this.props.secondPeriod
+                                        ? !devices[mac].type
+                                            ? I18n.t('kisshome-defender_No anomaly')
+                                            : I18n.t('kisshome-defender_Anomaly')
+                                        : `${devices[mac].score}/100`}
+                                </TableCell>
+                                <TableCell
+                                    style={{
+                                        color: devices[mac].type ? 'red' : undefined,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'flex-start',
+                                        gap: 10,
+                                        minHeight: 50,
+                                    }}
+                                >
+                                    <StatusIcon
+                                        ok={!devices[mac].type}
+                                        warning
+                                    />{' '}
+                                    {devices[mac].description.length
+                                        ? devices[mac].description.join(', ')
+                                        : I18n.t('kisshome-defender_Ok')}
+                                </TableCell>
+                            </TableRow>
+                        ),
+                    )}
+                </TableBody>
+            </Table>
+        );
+    }
+
+    renderOneDetectionDetailsList(
+        devices: {
+            [mac: MACAddress]: {
+                type: '' | 'Warning' | 'Alert';
+                description: string[];
+                score: number;
+                name?: string;
+                statistics?: DeviceStatistics;
+            };
+        },
+        scoreTooltip: React.JSX.Element,
+        macs: MACAddress[],
+    ): React.JSX.Element {
+        return (
+            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 10, marginTop: 8 }}>
+                <Menu
+                    open={!!this.state.showTooltip}
+                    anchorEl={this.state.showTooltip}
+                    onClose={() => this.setState({ showTooltip: null })}
+                >
+                    <div style={{ padding: 10, maxWidth: 400 }}>{scoreTooltip}</div>
+                </Menu>
+                {macs.map(
+                    (mac: MACAddress): React.JSX.Element => (
+                        <div
+                            key={mac}
+                            style={{
+                                border: '1px solid #888',
+                                padding: 5,
+                                backgroundColor: devices[mac].type ? 'rgba(255,0,0,0.1)' : 'rgba(0,255,0,0.1)',
+                            }}
+                        >
+                            <div style={{ display: 'flex', flexDirection: 'row', gap: 8 }}>
+                                <div>{I18n.t('kisshome-defender_Device')}:</div>
+                                {devices[mac].name ? (
+                                    <div>
+                                        <div style={{ fontWeight: 'bold' }}>{devices[mac].name}</div>
+                                        <div
+                                            style={{
+                                                fontSize: 'smaller',
+                                                opacity: 0.8,
+                                                fontStyle: 'italic',
+                                            }}
+                                        >
+                                            {mac}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div style={{ fontWeight: 'bold' }}>{mac}</div>
+                                )}
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'row', gap: 8 }}>
+                                <div>{I18n.t('kisshome-defender_Number of packets')}:</div>
+                                <div>
+                                    {devices[mac].statistics?.data_volume
+                                        ? devices[mac].statistics.data_volume.packet_count
+                                        : '--'}
+                                </div>
+                            </div>
+                            <div
+                                style={{
+                                    color: 'white',
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    gap: 8,
+                                }}
+                            >
+                                <div
+                                    style={{ fontWeight: 'bold' }}
+                                    onClick={e => this.setState({ showTooltip: e.currentTarget })}
+                                >
+                                    {I18n.t('kisshome-defender_Score')}:
+                                </div>
+                                <div>
+                                    {this.props.group === 'A' || this.props.secondPeriod
+                                        ? !devices[mac].type
+                                            ? I18n.t('kisshome-defender_No anomaly')
+                                            : I18n.t('kisshome-defender_Anomaly')
+                                        : `${devices[mac].score}/100`}
+                                </div>
+                            </div>
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'flex-start',
+                                    minHeight: 50,
+                                    flexDirection: 'row',
+                                    gap: 8,
+                                }}
+                            >
+                                <div>{I18n.t('kisshome-defender_Status')}:</div>
+                                <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
+                                    <StatusIcon
+                                        size={16}
+                                        ok={!devices[mac].type}
+                                        warning
+                                    />{' '}
+                                    {devices[mac].description.length
+                                        ? devices[mac].description.join(', ')
+                                        : I18n.t('kisshome-defender_Ok')}
+                                </div>
+                            </div>
+                        </div>
+                    ),
+                )}
+            </div>
         );
     }
 
@@ -583,7 +804,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                         alignItems: 'center',
                         fontWeight: 'bold',
                         gap: 16,
-                        fontSize: '1.8rem',
+                        fontSize: this.props.isMobile ? '1rem' : '1.8rem',
                         marginBottom: 16,
                         justifyContent: 'flex-start',
                     }}
@@ -595,80 +816,10 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                     />
                     {title}
                 </div>
-                <div style={{ fontSize: '1.5rem', fontStyle: 'italic' }}>{text}</div>
-                <Table size="small">
-                    <TableHead style={{ backgroundColor: this.props.themeType === 'dark' ? '#505050' : '#d3d3d3' }}>
-                        <TableCell style={{ width: 250 }}>{I18n.t('kisshome-defender_Device')}</TableCell>
-                        <TableCell style={{ width: 120 }}>{I18n.t('kisshome-defender_Number of packets')}</TableCell>
-                        <Tooltip title={scoreTooltip}>
-                            <TableCell style={{ fontWeight: 'bold', width: 100 }}>
-                                {I18n.t('kisshome-defender_Anomaly Score')}*
-                            </TableCell>
-                        </Tooltip>
-                        <TableCell>{I18n.t('kisshome-defender_Status')}</TableCell>
-                    </TableHead>
-                    <TableBody>
-                        {macs.map(
-                            (mac: MACAddress): React.JSX.Element => (
-                                <TableRow key={mac}>
-                                    <TableCell>
-                                        {devices[mac].name ? (
-                                            <div>
-                                                <div style={{ fontWeight: 'bold' }}>{devices[mac].name}</div>
-                                                <div
-                                                    style={{
-                                                        fontSize: 'smaller',
-                                                        opacity: 0.8,
-                                                        fontStyle: 'italic',
-                                                    }}
-                                                >
-                                                    {mac}
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div style={{ fontWeight: 'bold' }}>{mac}</div>
-                                        )}
-                                    </TableCell>
-                                    <TableCell style={{ textAlign: 'center' }}>
-                                        {devices[mac].statistics?.data_volume
-                                            ? devices[mac].statistics.data_volume.packet_count
-                                            : '--'}
-                                    </TableCell>
-                                    <TableCell
-                                        style={{
-                                            backgroundColor: devices[mac].type ? 'red' : 'green',
-                                            color: 'white',
-                                        }}
-                                    >
-                                        {this.props.group === 'A' || this.props.secondPeriod
-                                            ? !devices[mac].type
-                                                ? I18n.t('kisshome-defender_No anomaly')
-                                                : I18n.t('kisshome-defender_Anomaly')
-                                            : `${devices[mac].score}/100`}
-                                    </TableCell>
-                                    <TableCell
-                                        style={{
-                                            color: devices[mac].type ? 'red' : undefined,
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'flex-start',
-                                            gap: 10,
-                                            minHeight: 50,
-                                        }}
-                                    >
-                                        <StatusIcon
-                                            ok={!devices[mac].type}
-                                            warning
-                                        />{' '}
-                                        {devices[mac].description.length
-                                            ? devices[mac].description.join(', ')
-                                            : I18n.t('kisshome-defender_Ok')}
-                                    </TableCell>
-                                </TableRow>
-                            ),
-                        )}
-                    </TableBody>
-                </Table>
+                <div style={{ fontSize: this.props.isMobile ? '0.9rem' : '1.5rem', fontStyle: 'italic' }}>{text}</div>
+                {this.props.isMobile
+                    ? this.renderOneDetectionDetailsList(devices, scoreTooltip, macs)
+                    : this.renderOneDetectionDetailsTable(devices, scoreTooltip, macs)}
             </AccordionDetails>
         );
     }
@@ -681,6 +832,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 sx={{
                     '& .MuiButtonBase-root': {
                         backgroundColor: this.props.themeType === 'dark' ? '#505050' : '#f5f5f5',
+                        padding: this.props.isMobile ? '0px 6px' : undefined,
                     },
                 }}
                 onChange={(e, expanded) => {
@@ -708,15 +860,25 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
             >
                 <AccordionSummary expandIcon={<ExpandMore />}>
                     {item.todayReport ? (
-                        <Info style={{ marginRight: 8 }} />
+                        <Info
+                            style={{
+                                marginRight: 8,
+                                width: this.props.isMobile ? 24 : 28,
+                                height: this.props.isMobile ? 24 : 28,
+                            }}
+                        />
                     ) : (
                         <StatusIcon
                             ok={!item.isAlert}
                             warning
+                            size={this.props.isMobile ? 24 : 28}
                             style={{ marginRight: 8 }}
                         />
                     )}
-                    <Typography component="span">
+                    <Typography
+                        component="span"
+                        style={{ fontSize: this.props.isMobile ? '0.9rem' : undefined }}
+                    >
                         {item.todayReport
                             ? I18n.t('kisshome-defender_Status report at %s', new Date(item.time).toLocaleString())
                             : I18n.t('kisshome-defender_Test result at %s', new Date(item.time).toLocaleString())}
@@ -773,6 +935,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 onClose={e => onClose(e)}
                 maxWidth="lg"
                 fullWidth
+                fullScreen={this.props.isMobile}
             >
                 <DialogTitle>{I18n.t('kisshome-defender_Results')}</DialogTitle>
                 <DialogContent>
@@ -787,6 +950,9 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                         <FormControlLabel
                             label={I18n.t('kisshome-defender_Show only alarms and warnings')}
                             checked={this.state.showOnlyAlarmsAndWarnings}
+                            sx={{
+                                '& .MuiTypography-root': { fontSize: this.props.isMobile ? '1rem' : '1.3rem' },
+                            }}
                             control={
                                 <Checkbox
                                     onClick={e => {
@@ -813,9 +979,9 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                         variant="contained"
                         color="primary"
                         onClick={onClose}
-                        startIcon={<Close />}
+                        startIcon={this.props.isMobile ? null : <Close />}
                     >
-                        {I18n.t('kisshome-defender_Close')}
+                        {this.props.isMobile ? <Close /> : I18n.t('kisshome-defender_Close')}
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -869,12 +1035,12 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         return (
             <div
                 style={{
-                    width: 'calc(100% - 20px)',
-                    height: 'calc(100% - 20px)',
+                    width: `calc(100% - ${this.props.isMobile ? 10 : 20}px)`,
+                    height: `calc(100% - ${this.props.isMobile ? 10 : 20}px)`,
                     display: 'flex',
                     flexDirection: 'column',
-                    padding: 10,
-                    gap: 20,
+                    padding: this.props.isMobile ? 5 : 10,
+                    gap: this.props.isMobile ? 5 : 10,
                 }}
             >
                 {this.renderDetectionsDialog(results, onlyWarningsAndAlerts)}
@@ -892,8 +1058,8 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 </Paper>
                 <Paper
                     style={{
-                        height: 80,
-                        padding: '10px 40px 10px 10px',
+                        height: this.props.isMobile ? 60 : 80,
+                        padding: this.props.isMobile ? '8px 8px 8px 8px' : '10px 40px 10px 10px',
                         cursor: results?.length ? 'pointer' : undefined,
                         border: `2px solid ${this.props.themeType === 'dark' ? 'white' : 'black'}`,
                         borderRadius: 0,
@@ -902,32 +1068,55 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        fontSize: '1.3rem',
+                        fontSize: this.props.isMobile ? '1rem' : '1.3rem',
+                        gap: 10,
                     }}
                 >
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        disabled={!results?.length}
-                        onClick={e => {
-                            this.props.reportUxEvent({
-                                id: 'kisshome-defender-detections-show-results',
-                                event: 'click',
-                                ts: Date.now(),
-                                isTouchEvent: e instanceof TouchEvent,
-                            });
-                            this.setState({ detailed: true }, () => this.props.onResultsDialogOpen(true));
-                        }}
-                    >
-                        {I18n.t('kisshome-defender_Show results')}
-                    </Button>
+                    {this.props.isMobile ? (
+                        <Fab
+                            style={{
+                                width: 36,
+                                height: 36,
+                                minWidth: 36,
+                            }}
+                            color="primary"
+                            onClick={e => {
+                                this.props.reportUxEvent({
+                                    id: 'kisshome-defender-detections-show-results',
+                                    event: 'click',
+                                    ts: Date.now(),
+                                    isTouchEvent: e instanceof TouchEvent,
+                                });
+                                this.setState({ detailed: true }, () => this.props.onResultsDialogOpen(true));
+                            }}
+                        >
+                            <Notifications />
+                        </Fab>
+                    ) : (
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            disabled={!results?.length}
+                            onClick={e => {
+                                this.props.reportUxEvent({
+                                    id: 'kisshome-defender-detections-show-results',
+                                    event: 'click',
+                                    ts: Date.now(),
+                                    isTouchEvent: e instanceof TouchEvent,
+                                });
+                                this.setState({ detailed: true }, () => this.props.onResultsDialogOpen(true));
+                            }}
+                        >
+                            {I18n.t('kisshome-defender_Show results')}
+                        </Button>
+                    )}
                     {unseenWarningsCount
                         ? `${I18n.t('kisshome-defender_New problem detected')}: ${unseenWarningsCount}`
                         : I18n.t('kisshome-defender_Everything OK')}
                     <StatusIcon
                         ok={!unseenWarningsCount}
                         warning
-                        size={52}
+                        size={this.props.isMobile ? 32 : 52}
                     />
                 </Paper>
             </div>

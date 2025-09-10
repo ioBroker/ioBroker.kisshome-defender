@@ -1,5 +1,7 @@
 import type { LegacyConnection } from '@iobroker/adapter-react-v5';
 
+export const MOBILE_WIDTH = 600;
+
 export function bytes2string(bytes: number, maxValue?: number, noFloat?: boolean): string {
     if (maxValue !== undefined && maxValue > 1024 * 1024 * 1024) {
         // Use a part of GB

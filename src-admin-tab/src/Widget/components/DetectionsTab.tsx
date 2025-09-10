@@ -43,11 +43,11 @@ const styles: Record<string, React.CSSProperties> = {
         fontWeight: 'bold',
         marginBottom: 8,
         display: 'inline-block',
-        minWidth: 250,
     },
     value: {
         fontSize: '1em',
         marginBottom: 16,
+        marginLeft: 8,
         display: 'inline-block',
     },
     row: {},
@@ -263,12 +263,16 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         return (
             <div className="last-detection">
                 <div style={styles.row}>
-                    <div style={styles.title}>{I18n.t('kisshome-defender_Last control')}:</div>
+                    <div style={{ ...styles.title, minWidth: this.props.isMobile ? undefined : 250 }}>
+                        {I18n.t('kisshome-defender_Last control')}:
+                    </div>
                     <div style={styles.value}>{new Date(item.time).toLocaleString()}</div>
                 </div>
                 {this.state.recordingRunning ? (
                     <div style={styles.row}>
-                        <div style={styles.title}>{I18n.t('kisshome-defender_Next control')}:</div>
+                        <div style={{ ...styles.title, minWidth: this.props.isMobile ? undefined : 250 }}>
+                            {I18n.t('kisshome-defender_Next control')}:
+                        </div>
                         <div style={styles.value}>{`${nextControlText} (${reachedText})`}</div>
                     </div>
                 ) : null}
@@ -276,15 +280,20 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                     <div
                         style={{
                             paddingTop: 30,
-                            paddingRight: 30,
+                            paddingRight: this.props.isMobile ? 0 : 30,
                             display: 'flex',
                             gap: 30,
                             justifyContent: 'space-between',
                             alignItems: 'center',
+                            flexDirection: this.props.isMobile ? 'column' : undefined,
                         }}
                     >
                         <Button
-                            style={{ maxWidth: 300, whiteSpace: 'nowrap' }}
+                            style={{
+                                maxWidth: this.props.isMobile ? undefined : 300,
+                                whiteSpace: 'nowrap',
+                                width: this.props.isMobile ? '100%' : undefined,
+                            }}
                             disabled={this.state.detectionRunning}
                             variant="contained"
                             color="primary"
@@ -304,7 +313,14 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                         >
                             {I18n.t('kisshome-defender_Execute control now')}
                         </Button>
-                        <div style={{ flexGrow: 1 }}>{this.state.detectionRunning ? <LinearProgress /> : null}</div>
+                        <div
+                            style={{
+                                flexGrow: this.props.isMobile ? undefined : 1,
+                                width: this.props.isMobile ? '100%' : undefined,
+                            }}
+                        >
+                            {this.state.detectionRunning ? <LinearProgress /> : null}
+                        </div>
                     </div>
                 ) : null}
             </div>
@@ -844,11 +860,18 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
             >
                 <AccordionSummary expandIcon={<ExpandMore />}>
                     {item.todayReport ? (
-                        <Info style={{ marginRight: 8 }} />
+                        <Info
+                            style={{
+                                marginRight: 8,
+                                width: this.props.isMobile ? 24 : 28,
+                                height: this.props.isMobile ? 24 : 28,
+                            }}
+                        />
                     ) : (
                         <StatusIcon
                             ok={!item.isAlert}
                             warning
+                            size={this.props.isMobile ? 24 : 28}
                             style={{ marginRight: 8 }}
                         />
                     )}
