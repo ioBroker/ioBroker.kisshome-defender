@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "news": {
+      "0.3.2": {
+        "en": "Corrected callback URL",
+        "de": "Korrigierte Rückruf-URL",
+        "ru": "Исправлен URL обратного вызова",
+        "pt": "URL de retorno corrigida",
+        "nl": "Gecorrigeerde callback-URL",
+        "fr": "URL de rappel corrigée",
+        "it": "URL di richiamata corretta",
+        "es": "URL de devolución de llamada corregida",
+        "pl": "Poprawiony adres URL wywołania zwrotnego",
+        "uk": "Виправлено URL зворотнього виклику",
+        "zh-cn": "已更正回调 URL"
+      },
       "0.3.1": {
         "en": "Implemented mobile view",
         "de": "Mobile Ansicht implementiert",
@@ -80,19 +93,6 @@
         "pl": "Naprawiono problemy z GUI\nWyślij wyniki do folderu synchronizacji w chmurze",
         "uk": "Виправлено проблеми GUI\nНадіслати результати в папку хмарних синхронізацій",
         "zh-cn": "固定的图形用户界面问题\n将结果发送到云同步文件夹"
-      },
-      "0.1.7": {
-        "en": "Fixing GUI errors\nSend IDS result to cloud",
-        "de": "GUI-Fehler beheben\nIDS-Ergebnis nach Cloud senden",
-        "ru": "Исправление ошибок GUI\nОтправить результат IDS в облако",
-        "pt": "Corrigindo erros da GUI\nEnviar o resultado IDS para a nuvem",
-        "nl": "GUI-fouten herstellen\nIDS-resultaat naar cloud sturen",
-        "fr": "Correction des erreurs d'interface graphique\nEnvoyer le résultat d'IDS au cloud",
-        "it": "Correggere errori GUI\nInvia il risultato IDS al cloud",
-        "es": "Corrección de errores GUI\nEnviar Resultado IDS a la nube",
-        "pl": "Ustawienie błędów GUI\nWyślij wynik IDS do chmury",
-        "uk": "Виправлення помилок GUI\nНадіслати IDS результат хмари",
-        "zh-cn": "修复图形用户界面错误\n将IDS结果发送到云中"
       }
     },
     "titleLang": {
