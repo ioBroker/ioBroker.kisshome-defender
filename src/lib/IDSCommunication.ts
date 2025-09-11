@@ -416,7 +416,7 @@ export class IDSCommunication {
             contentType: 'application/json',
         });
 
-        formData.append('callback_url', `http://172.17.0.1:${this.ownPort}`);
+        formData.append('callback_url', `http://${this.ownIp}:${this.ownPort}`);
         formData.append('allow_training', this.config.allowTraining ? 'true' : 'false');
 
         try {

@@ -54,6 +54,10 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+
+-   (@GermanBluefox) Corrected callback URL
+
 ### 0.3.1 (2025-09-10)
 
 -   (@GermanBluefox) Implemented mobile view
