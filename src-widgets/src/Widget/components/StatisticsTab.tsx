@@ -891,8 +891,11 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         }
         const selectedMacs: { [mac: MACAddress]: boolean } = { ...this.state.legendMacs };
         const allMacs: MACAddress[] = Object.keys(this.state.dataVolumePerDevice.data);
-        allMacs.forEach((mac: MACAddress): void => {
+        this.colors ||= this.echartsReact?.getEchartsInstance().getOption()?.color as ZRColor[] | undefined;
+        const colorsArray: { [mac: MACAddress]: ZRColor | undefined } = {};
+        allMacs.forEach((mac: MACAddress, i: number): void => {
             selectedMacs[mac] ??= true; // Select all by default
+            colorsArray[mac] = this.colors?.[i % this.colors.length] || undefined;
         });
         // delete non-existing MACs
         Object.keys(selectedMacs).forEach(mac => {
@@ -908,10 +911,8 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
             }, 100);
         }
 
-        this.colors ||= this.echartsReact?.getEchartsInstance().getOption()?.color as ZRColor[] | undefined;
         const series: LineSeriesOption[] = [];
         let maxY = 0;
-        let colorIndex = 0;
         allMacs.forEach(mac => {
             if (this.state.dataVolumePerDevice.data) {
                 const item = this.state.dataVolumePerDevice.data[mac];
@@ -919,11 +920,8 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
 
                 if (data?.length) {
                     // if length > SHOW_SELECT_LEGEND, filter selected MACs
-                    if (allMacs.length >= SHOW_SELECT_LEGEND) {
-                        if (!selectedMacs[mac]) {
-                            colorIndex++;
-                            return; // Skip this MAC if not selected
-                        }
+                    if (allMacs.length >= SHOW_SELECT_LEGEND && !selectedMacs[mac]) {
+                        return; // Skip this MAC if not selected
                     }
                     series.push({
                         xAxisIndex: 0,
@@ -931,12 +929,8 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                         type: 'line',
                         showSymbol: false,
                         animation: false,
-                        lineStyle: {
-                            color: this.colors?.[colorIndex] || undefined,
-                        },
-                        itemStyle: {
-                            color: this.colors?.[colorIndex] || undefined,
-                        },
+                        lineStyle: { color: colorsArray[mac] },
+                        itemStyle: { color: colorsArray[mac] },
                         data,
                     });
 
@@ -945,7 +939,6 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                     if (maxValue > maxY) {
                         maxY = maxValue;
                     }
-                    colorIndex++;
                 }
             }
         });
@@ -1223,7 +1216,9 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                     {allMacs.map((mac, i) => (
                         <MenuItem
                             id={`list-${mac.replace(/:/g, '_')}`}
-                            style={colors ? { color: (colors as string[])?.[i % colors.length] || undefined } : {}}
+                            style={
+                                colors ? { color: (colors as string[])?.[i % colors.length] || undefined } : undefined
+                            }
                             key={mac}
                             value={mac}
                         >
@@ -1279,8 +1274,11 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         }
         const selectedMacs: { [mac: MACAddress]: boolean } = { ...this.state.legendMacs };
         const allMacs: MACAddress[] = Object.keys(this.state.dataVolumePerDay.data);
-        allMacs.forEach((mac: MACAddress): void => {
+        const colorsArray: { [mac: MACAddress]: ZRColor | undefined } = {};
+        this.colors ||= this.echartsReact?.getEchartsInstance().getOption()?.color as ZRColor[] | undefined;
+        allMacs.forEach((mac: MACAddress, i: number): void => {
             selectedMacs[mac] ??= true; // Select all by default
+            colorsArray[mac] = this.colors?.[i % this.colors.length] || undefined;
         });
         // delete non-existing MACs
         Object.keys(selectedMacs).forEach(mac => {
@@ -1296,10 +1294,8 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
             }, 100);
         }
 
-        const colors = this.echartsReact?.getEchartsInstance().getOption()?.color as ZRColor[] | undefined;
         const series: LineSeriesOption[] = [];
         let maxY = 0;
-        let colorIndex = 0;
         allMacs.forEach(mac => {
             if (this.state.dataVolumePerDay.data) {
                 const item = this.state.dataVolumePerDay.data[mac];
@@ -1307,11 +1303,8 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
 
                 if (data?.length) {
                     // if length > SHOW_SELECT_LEGEND, filter selected MACs
-                    if (allMacs.length >= SHOW_SELECT_LEGEND) {
-                        if (!selectedMacs[mac]) {
-                            colorIndex++;
-                            return; // Skip this MAC if not selected
-                        }
+                    if (allMacs.length >= SHOW_SELECT_LEGEND && !selectedMacs[mac]) {
+                        return; // Skip this MAC if not selected
                     }
                     series.push({
                         xAxisIndex: 0,
@@ -1320,10 +1313,10 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                         showSymbol: false,
                         animation: false,
                         lineStyle: {
-                            color: colors?.[colorIndex] || undefined,
+                            color: colorsArray[mac],
                         },
                         itemStyle: {
-                            color: colors?.[colorIndex] || undefined,
+                            color: colorsArray[mac] || undefined,
                         },
                         data,
                     });
@@ -1333,7 +1326,6 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                     if (maxValue > maxY) {
                         maxY = maxValue;
                     }
-                    colorIndex++;
                 }
             }
         });

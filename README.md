@@ -45,16 +45,16 @@ Add the following line:
 iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 ```
 
-## ToDo
-- [ ] Colors of charts by unselect changed
-- [ ] Delete sensitivity
-
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+-   (@GermanBluefox) Removed sensitivity parameter
+-   (@GermanBluefox) Corrected colors in the chart
+
 ### 0.3.2 (2025-09-11)
 
 -   (@GermanBluefox) Corrected callback URL

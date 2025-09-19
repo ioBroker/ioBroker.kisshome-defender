@@ -74053,46 +74053,42 @@ yyyy`);
       if (!this.state.dataVolumePerDevice.data)
         return null;
       const e = { ...this.state.legendMacs }, r = Object.keys(this.state.dataVolumePerDevice.data);
-      r.forEach((d) => {
-        e[d] ??= !0;
+      this.colors ||= this.echartsReact?.getEchartsInstance().getOption()?.color;
+      const n = {};
+      r.forEach((d, u) => {
+        e[d] ??= !0, n[d] = this.colors?.[u % this.colors.length] || void 0;
       }), Object.keys(e).forEach((d) => {
         r.includes(d) || delete e[d];
       }), JSON.stringify(e) !== JSON.stringify(this.state.legendMacs) && setTimeout(() => {
         this.setState({ legendMacs: e });
-      }, 100), this.colors ||= this.echartsReact?.getEchartsInstance().getOption()?.color;
-      const n = [];
-      let a = 0, o = 0;
+      }, 100);
+      const a = [];
+      let o = 0;
       if (r.forEach((d) => {
         if (this.state.dataVolumePerDevice.data) {
           const u = this.state.dataVolumePerDevice.data[d], f = u.series;
           if (f?.length) {
-            if (r.length >= kh && !e[d]) {
-              o++;
+            if (r.length >= kh && !e[d])
               return;
-            }
-            n.push({
+            a.push({
               xAxisIndex: 0,
               name: u.info?.desc || u.info?.ip || d,
               type: "line",
               showSymbol: !1,
               animation: !1,
-              lineStyle: {
-                color: this.colors?.[o] || void 0
-              },
-              itemStyle: {
-                color: this.colors?.[o] || void 0
-              },
+              lineStyle: { color: n[d] },
+              itemStyle: { color: n[d] },
               data: f
             });
             const h = Math.max(...f.map((v) => v[1]));
-            h > a && (a = h), o++;
+            h > o && (o = h);
           }
         }
       }), JSON.stringify(e) !== JSON.stringify(this.state.legendMacs) && setTimeout(() => {
         this.setState({ legendMacs: e });
-      }, 100), !n.length)
+      }, 100), !a.length)
         return null;
-      const i = fp.getNiceMax(a), s = {
+      const i = fp.getNiceMax(o), s = {
         type: "value",
         axisLabel: {
           formatter: (d) => Za(d, i, !0)
@@ -74131,7 +74127,7 @@ yyyy`);
             return u.forEach((h) => {
               f += `<tr>
     <td>${h.marker + h.seriesName}</td>
-    <td style="font-weight: bold; margin-left: 4px">${Za(h.data[1], a)}</td>
+    <td style="font-weight: bold; margin-left: 4px">${Za(h.data[1], o)}</td>
 </tr>`;
             }), f += "</tbody></table>", f;
           }
@@ -74172,7 +74168,7 @@ yyyy`);
         },
         yAxis: s,
         // @ts-expect-error fix later
-        series: n
+        series: a
       };
     }
     renderVolumeLegend(e, r, n) {
@@ -74286,7 +74282,7 @@ yyyy`);
                   cr,
                   {
                     id: `list-${i.replace(/:/g, "_")}`,
-                    style: o ? { color: o?.[s % o.length] || void 0 } : {},
+                    style: o ? { color: o?.[s % o.length] || void 0 } : void 0,
                     value: i,
                     children: [
                       /* @__PURE__ */ O.jsx(Ur, { checked: this.state.legendMacs[i] }),
@@ -74337,56 +74333,54 @@ yyyy`);
     getDataVolumePerDayOptions() {
       if (!this.state.dataVolumePerDay.data)
         return null;
-      const e = { ...this.state.legendMacs }, r = Object.keys(this.state.dataVolumePerDay.data);
-      r.forEach((u) => {
-        e[u] ??= !0;
-      }), Object.keys(e).forEach((u) => {
-        r.includes(u) || delete e[u];
+      const e = { ...this.state.legendMacs }, r = Object.keys(this.state.dataVolumePerDay.data), n = {};
+      this.colors ||= this.echartsReact?.getEchartsInstance().getOption()?.color, r.forEach((d, u) => {
+        e[d] ??= !0, n[d] = this.colors?.[u % this.colors.length] || void 0;
+      }), Object.keys(e).forEach((d) => {
+        r.includes(d) || delete e[d];
       }), JSON.stringify(e) !== JSON.stringify(this.state.legendMacs) && setTimeout(() => {
         this.setState({ legendMacs: e });
       }, 100);
-      const n = this.echartsReact?.getEchartsInstance().getOption()?.color, a = [];
-      let o = 0, i = 0;
-      if (r.forEach((u) => {
+      const a = [];
+      let o = 0;
+      if (r.forEach((d) => {
         if (this.state.dataVolumePerDay.data) {
-          const f = this.state.dataVolumePerDay.data[u], h = f.series;
-          if (h?.length) {
-            if (r.length >= kh && !e[u]) {
-              i++;
+          const u = this.state.dataVolumePerDay.data[d], f = u.series;
+          if (f?.length) {
+            if (r.length >= kh && !e[d])
               return;
-            }
             a.push({
               xAxisIndex: 0,
-              name: f.info?.desc || f.info?.ip || u,
+              name: u.info?.desc || u.info?.ip || d,
               type: "line",
               showSymbol: !1,
               animation: !1,
               lineStyle: {
-                color: n?.[i] || void 0
+                color: n[d]
               },
               itemStyle: {
-                color: n?.[i] || void 0
+                color: n[d] || void 0
               },
-              data: h
+              data: f
             });
-            const v = Math.max(...h.map((g) => g[1]));
-            v > o && (o = v), i++;
+            const h = Math.max(...f.map((v) => v[1]));
+            h > o && (o = h);
           }
         }
       }), JSON.stringify(e) !== JSON.stringify(this.state.legendMacs) && setTimeout(() => {
         this.setState({ legendMacs: e });
       }, 100), !a.length)
         return null;
-      const s = fp.getNiceMax(o), l = {
+      const i = fp.getNiceMax(o), s = {
         type: "value",
         axisLabel: {
-          formatter: (u) => Za(u, s, !0)
+          formatter: (d) => Za(d, i, !0)
           // showMaxLabel: true,
           // showMinLabel: true,
         },
         min: 0,
-        max: s,
-        interval: s / 5,
+        max: i,
+        interval: i / 5,
         axisLine: {
           show: !0
           // Show Y-Axis-Line
@@ -74400,25 +74394,25 @@ yyyy`);
         nameLocation: "end",
         // Position: 'start', 'middle', 'end'
         nameGap: 5
-      }, c = /* @__PURE__ */ new Date();
-      c.setHours(0), c.setMinutes(0), c.setSeconds(0), c.setMilliseconds(0), c.setDate(c.getDate() + 1);
-      const d = new Date(c);
-      return d.setDate(d.getDate() - 7), {
+      }, l = /* @__PURE__ */ new Date();
+      l.setHours(0), l.setMinutes(0), l.setSeconds(0), l.setMilliseconds(0), l.setDate(l.getDate() + 1);
+      const c = new Date(l);
+      return c.setDate(c.getDate() - 7), {
         backgroundColor: "transparent",
         tooltip: {
           trigger: "axis",
           axisPointer: {
             animation: !0
           },
-          formatter: (u) => {
-            const f = u;
-            let h = `${f[0].axisValueLabel}<table><tbody>`;
-            return f.forEach((v) => {
-              h += `<tr>
-    <td>${v.marker + v.seriesName}</td>
-    <td style="font-weight: bold; margin-left: 4px">${Za(v.data[1], o)}</td>
+          formatter: (d) => {
+            const u = d;
+            let f = `${u[0].axisValueLabel}<table><tbody>`;
+            return u.forEach((h) => {
+              f += `<tr>
+    <td>${h.marker + h.seriesName}</td>
+    <td style="font-weight: bold; margin-left: 4px">${Za(h.data[1], o)}</td>
 </tr>`;
-            }), h += "</tbody></table>", h;
+            }), f += "</tbody></table>", f;
           }
         },
         grid: this.props.isMobile ? {
@@ -74440,14 +74434,14 @@ yyyy`);
           splitLine: {
             show: !1
           },
-          min: d.getTime(),
-          max: c.getTime(),
+          min: c.getTime(),
+          max: l.getTime(),
           axisTick: {
             // @ts-expect-error fix later
             alignWithLabel: !0
           },
           axisLabel: {
-            formatter: (u) => new Date(u).toLocaleDateString(this.props.lang, { weekday: "short" })
+            formatter: (d) => new Date(d).toLocaleDateString(this.props.lang, { weekday: "short" })
           },
           name: B.t("kisshome-defender_Weekday"),
           // Y-Achsen-Beschreibung
@@ -74455,7 +74449,7 @@ yyyy`);
           // Position: 'start', 'middle', 'end'
           nameGap: 5
         },
-        yAxis: l,
+        yAxis: s,
         // @ts-expect-error fix later
         series: a
       };
