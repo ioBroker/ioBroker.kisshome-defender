@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "0.3.2",
+    "version": "1.0.0",
     "news": {
+      "1.0.0": {
+        "en": "Removed sensitivity parameter\nCorrected colors in the chart",
+        "de": "Sensitivitätsparameter entfernt\nDie Farben im Diagramm wurden korrigiert.",
+        "ru": "Удален параметр \"чувствительность\"\nИсправлены цвета на графике",
+        "pt": "Removido o parâmetro de sensibilidade\nCores corrigidas no gráfico",
+        "nl": "Verwijderde gevoeligheidsparameter\nGecorrigeerde kleuren in de grafiek",
+        "fr": "Suppression du paramètre de sensibilité\nCouleurs corrigées dans le graphique",
+        "it": "Rimosso il parametro di sensibilità\nColori corretti nel grafico",
+        "es": "Eliminado el parámetro de sensibilidad\nCorregidos los colores en el gráfico",
+        "pl": "Usunięto parametr sensitivity\nPoprawiono kolory w wykresie",
+        "uk": "Вилучено параметр чутливості\nВиправлено кольори на графіку",
+        "zh-cn": "移除了sensitivity参数\n在图表中修正了颜色"
+      },
       "0.3.2": {
         "en": "Corrected callback URL",
         "de": "Korrigierte Rückruf-URL",
@@ -80,19 +93,6 @@
         "pl": "Szukaj vis- (2) projektu z kisshome widget",
         "uk": "Шукайте проект vis-(2) з kisshome віджет",
         "zh-cn": "寻找带有 kisshome 部件的 相对 (2) 工程"
-      },
-      "0.1.8": {
-        "en": "Fixed GUI issues\nSend results to cloud sync folder",
-        "de": "Behobene GUI Probleme\nErgebnisse in Cloud-Sync-Ordner senden",
-        "ru": "Фиксированные проблемы GUI\nОтправить результаты в папку облачной синхронизации",
-        "pt": "Problemas GUI corrigidos\nEnviar resultados para a pasta de sincronização na nuvem",
-        "nl": "Vaste GUI-problemen\nResultaten naar cloud synchroniseren",
-        "fr": "Problèmes d'interface graphique corrigés\nEnvoyer les résultats dans le dossier de synchronisation du cloud",
-        "it": "Problemi di GUI fissi\nInvia risultati alla cartella di sincronizzazione cloud",
-        "es": "Cuestiones de interfaz gráfica fija\nEnviar resultados a la carpeta de sincronización de nubes",
-        "pl": "Naprawiono problemy z GUI\nWyślij wyniki do folderu synchronizacji w chmurze",
-        "uk": "Виправлено проблеми GUI\nНадіслати результати в папку хмарних синхронізацій",
-        "zh-cn": "固定的图形用户界面问题\n将结果发送到云同步文件夹"
       }
     },
     "titleLang": {

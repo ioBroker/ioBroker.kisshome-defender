@@ -51,7 +51,7 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.0.0 (2025-09-19)
 -   (@GermanBluefox) Removed sensitivity parameter
 -   (@GermanBluefox) Corrected colors in the chart
 
