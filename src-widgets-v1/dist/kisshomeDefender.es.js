@@ -75595,11 +75595,9 @@ yyyy`);
       e?.native ? this.setState({
         enabled: !!r?.val,
         initialConfig: {
-          // anomalySensitivity: (obj.native.anomalySensitivity as 'low' | 'medium' | 'high') || 'medium',
           saveThresholdSeconds: e.native.saveThresholdSeconds || 3600
         },
         newConfig: {
-          // anomalySensitivity: (obj.native.anomalySensitivity as 'low' | 'medium' | 'high') || 'medium',
           saveThresholdSeconds: e.native.saveThresholdSeconds || 3600
         },
         adminLink: await hW(this.props.socket, this.props.instance)
@@ -75733,7 +75731,7 @@ yyyy`);
                       label: B.t("kisshome-defender_one hour")
                     }
                   ],
-                  value: Math.round(this.state.newConfig.saveThresholdSeconds || 3600) / 60,
+                  value: Math.round(this.state.newConfig?.saveThresholdSeconds || 3600) / 60,
                   onChange: (r, n) => {
                     this.props.reportUxEvent({
                       id: "kisshome-defender-settings-save-threshold",
@@ -75932,7 +75930,7 @@ yyyy`);
                       label: B.t("kisshome-defender_one hour")
                     }
                   ],
-                  value: Math.round(this.state.newConfig.saveThresholdSeconds || 3600) / 60,
+                  value: Math.round(this.state.newConfig?.saveThresholdSeconds || 3600) / 60,
                   onChange: (r, n) => {
                     this.props.reportUxEvent({
                       id: "kisshome-defender-settings-save-threshold",

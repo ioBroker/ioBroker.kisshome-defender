@@ -86,30 +86,6 @@
                     "help": "Directory for temporary files. Leave empty to use the system directory.",
                     "disabled": "!data.email"
                 },
-                "anomalySensitivity": {
-                    "newLine": true,
-                    "type": "select",
-                    "sm": 12,
-                    "md": 6,
-                    "lg": 6,
-                    "label": "Anomaly sensitivity",
-                    "options": [
-                        {
-                            "value": "low",
-                            "label": "Low"
-                        },
-                        {
-                            "value": "medium",
-                            "label": "Medium"
-                        },
-                        {
-                            "value": "high",
-                            "label": "High"
-                        }
-                    ],
-                    "defaultValue": 1,
-                    "disabled": "!data.email"
-                },
                 "saveThresholdSeconds": {
                     "type": "slider",
                     "sm": 11,

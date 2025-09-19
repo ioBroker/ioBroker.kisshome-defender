@@ -46,7 +46,8 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 ```
 
 ## ToDo
-- Mobile view
+- [ ] Colors of charts by unselect changed
+- [ ] Delete sensitivity
 
 <!--
 	Placeholder for the next version (at the beginning of the line):

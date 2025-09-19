@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 
-import { Button, Divider, LinearProgress, Link, Paper, Slider, Switch } from '@mui/material';
+import { Button, LinearProgress, Link, Paper, Slider, Switch } from '@mui/material';
 import { I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
 import type { ReportUxHandler } from '../types';
-import { findAdminLink, MOBILE_WIDTH } from './utils';
+import { findAdminLink } from './utils';
 
 interface SettingsTabProps {
     instance: string;
@@ -46,11 +46,9 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
             this.setState({
                 enabled: !!state?.val,
                 initialConfig: {
-                    // anomalySensitivity: (obj.native.anomalySensitivity as 'low' | 'medium' | 'high') || 'medium',
                     saveThresholdSeconds: obj.native.saveThresholdSeconds || 3600,
                 },
                 newConfig: {
-                    // anomalySensitivity: (obj.native.anomalySensitivity as 'low' | 'medium' | 'high') || 'medium',
                     saveThresholdSeconds: obj.native.saveThresholdSeconds || 3600,
                 },
                 adminLink: await findAdminLink(this.props.socket, this.props.instance),
@@ -212,7 +210,7 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                                 label: I18n.t('kisshome-defender_one hour'),
                             },
                         ]}
-                        value={Math.round(this.state.newConfig.saveThresholdSeconds || 3600) / 60}
+                        value={Math.round(this.state.newConfig?.saveThresholdSeconds || 3600) / 60}
                         onChange={(event, value) => {
                             this.props.reportUxEvent({
                                 id: 'kisshome-defender-settings-save-threshold',
@@ -401,7 +399,7 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                                 label: I18n.t('kisshome-defender_one hour'),
                             },
                         ]}
-                        value={Math.round(this.state.newConfig.saveThresholdSeconds || 3600) / 60}
+                        value={Math.round(this.state.newConfig?.saveThresholdSeconds || 3600) / 60}
                         onChange={(event, value) => {
                             this.props.reportUxEvent({
                                 id: 'kisshome-defender-settings-save-threshold',

@@ -48,8 +48,6 @@ export interface DefenderAdapterConfig {
         /** Docker volume */
         volume: string;
     };
-    /** Level of anomaly sensitivity */
-    anomalySensitivity: 'low' | 'medium' | 'high';
     /** If the user wants to allow training with own data */
     allowTraining: boolean;
     /** Interval in seconds to save the pcap data at least every x seconds */
