@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "news": {
+      "1.0.1": {
+        "en": "Fixing questionnaire under Firefox",
+        "de": "Fragebogen unter Firefox beheben",
+        "ru": "Заполнение анкеты в Firefox",
+        "pt": "Fixando questionário no Firefox",
+        "nl": "Vragenlijst instellen onder Firefox",
+        "fr": "Correction du questionnaire sous Firefox",
+        "it": "Risolvere il questionario sotto Firefox",
+        "es": "Cuestionario de fijación bajo Firefox",
+        "pl": "Ustawienie kwestionariusza pod firefox",
+        "uk": "Виправлення анкети у Firefox",
+        "zh-cn": "Firefox 下填写调查问卷"
+      },
       "1.0.0": {
         "en": "Removed sensitivity parameter\nCorrected colors in the chart",
         "de": "Sensitivitätsparameter entfernt\nDie Farben im Diagramm wurden korrigiert.",
@@ -80,19 +93,6 @@
         "pl": "Dodano bezpośredni link do alarmu w widgecie",
         "uk": "Додано прямий посилання на тривогу в віджеті",
         "zh-cn": "添加直接链接到部件中的提醒"
-      },
-      "0.1.9": {
-        "en": "Look for vis-(2) project with kisshome widget",
-        "de": "Suche nach vis-(2) Projekt mit kisshome Widget",
-        "ru": "Ищите проект vis-(2) с виджетом kisshome",
-        "pt": "Procure por projeto vis-(2) com widget kisshome",
-        "nl": "Zoek vis-(2) project met kisshome widget",
-        "fr": "Rechercher le projet vis-(2) avec widget baiserhome",
-        "it": "Cercare vis-(2) progetto con widget kisshome",
-        "es": "Busque el proyecto vis-(2) con beshome widget",
-        "pl": "Szukaj vis- (2) projektu z kisshome widget",
-        "uk": "Шукайте проект vis-(2) з kisshome віджет",
-        "zh-cn": "寻找带有 kisshome 部件的 相对 (2) 工程"
       }
     },
     "titleLang": {
