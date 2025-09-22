@@ -24,14 +24,11 @@ export function bytes2string(bytes: number, maxValue?: number, noFloat?: boolean
     return `${(bytes / (1024 * 1024 * 1024)).toFixed(noFloat ? 0 : 1).replace('.', ',')}Gb`;
 }
 
-export function time2string(ms: number): string {
-    if (ms < 1000) {
-        return `${Math.round(ms)}ms`;
-    }
-    if (ms < 60_000) {
-        return `${(Math.floor(ms / 100) / 10).toString().replace('.', ',')}s`;
-    }
-    return `${Math.floor(ms / 60_000)}m ${Math.floor((ms % 60_000) / 1000).toString()}s`;
+export function isTouch(e: any): boolean {
+    return (
+        (typeof TouchEvent !== 'undefined' && e instanceof TouchEvent) ||
+        (e && typeof e === 'object' && ('touches' in e || 'changedTouches' in e))
+    );
 }
 
 export async function findAdminLink(socket: LegacyConnection, instance: string): Promise<string> {

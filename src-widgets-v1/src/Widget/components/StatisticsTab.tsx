@@ -23,7 +23,7 @@ import {
     TooltipComponent,
 } from 'echarts/components';
 import { SVGRenderer } from 'echarts/renderers';
-import { bytes2string } from './utils';
+import { bytes2string, isTouch } from './utils';
 
 echarts.use([
     TimelineComponent,
@@ -1091,7 +1091,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                             id: 'kisshome-defender-statistics-legend',
                             event: 'show',
                             ts: Date.now(),
-                            isTouchEvent: e instanceof TouchEvent,
+                            isTouchEvent: isTouch(e),
                         });
                     }}
                     onClose={e => {
@@ -1102,7 +1102,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                             id: 'kisshome-defender-statistics-legend',
                             event: 'hide',
                             ts: Date.now(),
-                            isTouchEvent: e instanceof TouchEvent,
+                            isTouchEvent: isTouch(e),
                         });
                     }}
                     displayEmpty
@@ -1120,8 +1120,8 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                         }
                         return selected[0];
                     }}
-                    onChange={event => {
-                        const value = event.target.value;
+                    onChange={e => {
+                        const value = e.target.value;
                         console.log('Select onChange', value);
                         if (value === '__selector__') {
                             return; // Handled in MenuItem onClick
@@ -1134,7 +1134,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                                 id: 'kisshome-defender-statistics-legend-item',
                                 event: 'change',
                                 ts: Date.now(),
-                                isTouchEvent: event instanceof TouchEvent,
+                                isTouchEvent: isTouch(e),
                                 data: value,
                             });
                         } else if (Array.isArray(value)) {
@@ -1149,7 +1149,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                                     id: 'kisshome-defender-statistics-legend-item',
                                     event: 'change',
                                     ts: Date.now(),
-                                    isTouchEvent: event instanceof TouchEvent,
+                                    isTouchEvent: isTouch(e),
                                     data: mac,
                                 });
                             });
@@ -1186,7 +1186,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                                     id: 'kisshome-defender-statistics-legend-item-all',
                                     event: 'change',
                                     ts: Date.now(),
-                                    isTouchEvent: e instanceof TouchEvent,
+                                    isTouchEvent: isTouch(e),
                                     data: 'unselect-all',
                                 });
                             } else {
@@ -1198,7 +1198,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                                     id: 'kisshome-defender-statistics-legend-item-all',
                                     event: 'change',
                                     ts: Date.now(),
-                                    isTouchEvent: e instanceof TouchEvent,
+                                    isTouchEvent: isTouch(e),
                                     data: 'select-all',
                                 });
                             }

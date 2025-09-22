@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Button, LinearProgress, Link, Paper, Slider, Switch } from '@mui/material';
 import { I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
 import type { ReportUxHandler } from '../types';
-import { findAdminLink } from './utils';
+import { findAdminLink, isTouch } from './utils';
 
 interface SettingsTabProps {
     instance: string;
@@ -125,7 +125,7 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                                     event: 'click',
                                     data: this.state.adminLink,
                                     ts: Date.now(),
-                                    isTouchEvent: e instanceof TouchEvent,
+                                    isTouchEvent: isTouch(e),
                                 });
                             }}
                         >
@@ -139,28 +139,28 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                     </div>
                     <Switch
                         checked={this.state.enabled}
-                        onMouseDown={(event: React.MouseEvent<HTMLButtonElement>) => {
+                        onMouseDown={(e: React.MouseEvent<HTMLButtonElement>) => {
                             this.props.reportUxEvent({
                                 id: 'kisshome-defender-settings-protection-enabled',
                                 event: 'down',
                                 ts: Date.now(),
-                                isTouchEvent: event instanceof TouchEvent,
+                                isTouchEvent: isTouch(e),
                             });
                         }}
-                        onMouseUp={(event: React.MouseEvent<HTMLButtonElement>) => {
+                        onMouseUp={(e: React.MouseEvent<HTMLButtonElement>) => {
                             this.props.reportUxEvent({
                                 id: 'kisshome-defender-settings-protection-enabled',
                                 event: 'up',
                                 ts: Date.now(),
-                                isTouchEvent: event instanceof TouchEvent,
+                                isTouchEvent: isTouch(e),
                             });
                         }}
-                        onChange={async (event, checked) => {
+                        onChange={async (e, checked) => {
                             this.props.reportUxEvent({
                                 id: 'kisshome-defender-settings-protection-enabled',
                                 event: 'change',
                                 ts: Date.now(),
-                                isTouchEvent: event instanceof TouchEvent,
+                                isTouchEvent: isTouch(e),
                             });
 
                             await this.props.socket.setState(
@@ -211,13 +211,13 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                             },
                         ]}
                         value={Math.round(this.state.newConfig?.saveThresholdSeconds || 3600) / 60}
-                        onChange={(event, value) => {
+                        onChange={(e, value) => {
                             this.props.reportUxEvent({
                                 id: 'kisshome-defender-settings-save-threshold',
                                 event: 'change',
                                 ts: Date.now(),
                                 data: (value as number).toString(),
-                                isTouchEvent: event instanceof TouchEvent,
+                                isTouchEvent: isTouch(e),
                             });
                             this.setState({
                                 newConfig: {
@@ -232,28 +232,28 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                         variant="contained"
                         color="primary"
                         disabled={!settingsChanged}
-                        onMouseDown={(event: React.MouseEvent<HTMLButtonElement>) => {
+                        onMouseDown={(e: React.MouseEvent<HTMLButtonElement>) => {
                             this.props.reportUxEvent({
                                 id: 'kisshome-defender-settings-apply',
                                 event: 'down',
                                 ts: Date.now(),
-                                isTouchEvent: event instanceof TouchEvent,
+                                isTouchEvent: isTouch(e),
                             });
                         }}
-                        onMouseUp={(event: React.MouseEvent<HTMLButtonElement>) => {
+                        onMouseUp={(e: React.MouseEvent<HTMLButtonElement>) => {
                             this.props.reportUxEvent({
                                 id: 'kisshome-defender-settings-apply',
                                 event: 'up',
                                 ts: Date.now(),
-                                isTouchEvent: event instanceof TouchEvent,
+                                isTouchEvent: isTouch(e),
                             });
                         }}
-                        onClick={async (event: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
+                        onClick={async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
                             this.props.reportUxEvent({
                                 id: 'kisshome-defender-settings-apply',
                                 event: 'click',
                                 ts: Date.now(),
-                                isTouchEvent: event instanceof TouchEvent,
+                                isTouchEvent: isTouch(e),
                             });
                             const configObj = await this.props.socket.getObject(
                                 `system.adapter.kisshome-defender.${this.props.instance}`,
@@ -305,7 +305,7 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                                     event: 'click',
                                     data: this.state.adminLink,
                                     ts: Date.now(),
-                                    isTouchEvent: e instanceof TouchEvent,
+                                    isTouchEvent: isTouch(e),
                                 });
                             }}
                         >
@@ -327,28 +327,28 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                     <div style={{ fontWeight: 'bold' }}>{I18n.t('kisshome-defender_Protection enabled')}</div>
                     <Switch
                         checked={this.state.enabled}
-                        onMouseDown={(event: React.MouseEvent<HTMLButtonElement>) => {
+                        onMouseDown={(e: React.MouseEvent<HTMLButtonElement>) => {
                             this.props.reportUxEvent({
                                 id: 'kisshome-defender-settings-protection-enabled',
                                 event: 'down',
                                 ts: Date.now(),
-                                isTouchEvent: event instanceof TouchEvent,
+                                isTouchEvent: isTouch(e),
                             });
                         }}
-                        onMouseUp={(event: React.MouseEvent<HTMLButtonElement>) => {
+                        onMouseUp={(e: React.MouseEvent<HTMLButtonElement>) => {
                             this.props.reportUxEvent({
                                 id: 'kisshome-defender-settings-protection-enabled',
                                 event: 'up',
                                 ts: Date.now(),
-                                isTouchEvent: event instanceof TouchEvent,
+                                isTouchEvent: isTouch(e),
                             });
                         }}
-                        onChange={async (event, checked) => {
+                        onChange={async (e, checked) => {
                             this.props.reportUxEvent({
                                 id: 'kisshome-defender-settings-protection-enabled',
                                 event: 'change',
                                 ts: Date.now(),
-                                isTouchEvent: event instanceof TouchEvent,
+                                isTouchEvent: isTouch(e),
                             });
 
                             await this.props.socket.setState(
@@ -400,13 +400,13 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                             },
                         ]}
                         value={Math.round(this.state.newConfig?.saveThresholdSeconds || 3600) / 60}
-                        onChange={(event, value) => {
+                        onChange={(e, value) => {
                             this.props.reportUxEvent({
                                 id: 'kisshome-defender-settings-save-threshold',
                                 event: 'change',
                                 ts: Date.now(),
                                 data: (value as number).toString(),
-                                isTouchEvent: event instanceof TouchEvent,
+                                isTouchEvent: isTouch(e),
                             });
                             this.setState({
                                 newConfig: {
@@ -421,28 +421,28 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                         variant="contained"
                         color="primary"
                         disabled={!settingsChanged}
-                        onMouseDown={(event: React.MouseEvent<HTMLButtonElement>) => {
+                        onMouseDown={(e: React.MouseEvent<HTMLButtonElement>) => {
                             this.props.reportUxEvent({
                                 id: 'kisshome-defender-settings-apply',
                                 event: 'down',
                                 ts: Date.now(),
-                                isTouchEvent: event instanceof TouchEvent,
+                                isTouchEvent: isTouch(e),
                             });
                         }}
-                        onMouseUp={(event: React.MouseEvent<HTMLButtonElement>) => {
+                        onMouseUp={(e: React.MouseEvent<HTMLButtonElement>) => {
                             this.props.reportUxEvent({
                                 id: 'kisshome-defender-settings-apply',
                                 event: 'up',
                                 ts: Date.now(),
-                                isTouchEvent: event instanceof TouchEvent,
+                                isTouchEvent: isTouch(e),
                             });
                         }}
-                        onClick={async (event: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
+                        onClick={async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
                             this.props.reportUxEvent({
                                 id: 'kisshome-defender-settings-apply',
                                 event: 'click',
                                 ts: Date.now(),
-                                isTouchEvent: event instanceof TouchEvent,
+                                isTouchEvent: isTouch(e),
                             });
                             const configObj = await this.props.socket.getObject(
                                 `system.adapter.kisshome-defender.${this.props.instance}`,

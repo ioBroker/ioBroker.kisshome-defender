@@ -18,6 +18,7 @@ import {
 import { Check, Close } from '@mui/icons-material';
 
 import type { DefenderAdapterConfig, ReportUxHandler } from '../types';
+import { isTouch } from './utils';
 
 export type QuestionnaireItemType = 'text' | 'select' | 'checkbox' | 'radio' | 'input' | 'yesNo';
 
@@ -251,7 +252,7 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                         this.props.reportUxEvent({
                             id: item.id,
                             event: 'change',
-                            isTouchEvent: e instanceof TouchEvent,
+                            isTouchEvent: isTouch(e),
                             ts: Date.now(),
                             data: value.toString(),
                         });
@@ -361,7 +362,7 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                                             this.props.reportUxEvent({
                                                 id: item.id,
                                                 event: 'change',
-                                                isTouchEvent: e instanceof TouchEvent,
+                                                isTouchEvent: isTouch(e),
                                                 ts: Date.now(),
                                                 data: value.toString(),
                                             });
@@ -433,7 +434,7 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                                     this.props.reportUxEvent({
                                         id: item.id,
                                         event: 'change',
-                                        isTouchEvent: e instanceof TouchEvent,
+                                        isTouchEvent: isTouch(e),
                                         ts: Date.now(),
                                         data: 'no',
                                     });
@@ -457,7 +458,7 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                                     this.props.reportUxEvent({
                                         id: item.id,
                                         event: 'change',
-                                        isTouchEvent: e instanceof TouchEvent,
+                                        isTouchEvent: isTouch(e),
                                         ts: Date.now(),
                                         data: 'yes',
                                     });
@@ -505,7 +506,7 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                         this.props.reportUxEvent({
                             id: item.id,
                             event: 'change',
-                            isTouchEvent: e instanceof TouchEvent,
+                            isTouchEvent: isTouch(e),
                             ts: Date.now(),
                             data: e.target.checked ? 'true' : 'false',
                         });
@@ -569,12 +570,12 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                 fullWidth
                 maxWidth="lg"
                 open={!0}
-                onClose={async (_e, reason?: 'backdropClick' | 'escapeKeyDown') => {
+                onClose={async (e, reason?: 'backdropClick' | 'escapeKeyDown') => {
                     if (reason === 'backdropClick' || reason === 'escapeKeyDown') {
                         this.props.reportUxEvent({
                             id: 'kisshome-defender-questionnaire-dialog',
                             event: 'click',
-                            isTouchEvent: _e instanceof TouchEvent,
+                            isTouchEvent: isTouch(e),
                             ts: Date.now(),
                             data: reason,
                         });
@@ -619,7 +620,7 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                                 this.props.reportUxEvent({
                                     id: 'kisshome-defender-questionnaire-cancel',
                                     event: 'click',
-                                    isTouchEvent: e instanceof TouchEvent,
+                                    isTouchEvent: isTouch(e),
                                     ts: Date.now(),
                                 });
                                 // Clear questionnaire without sending answers
@@ -644,7 +645,7 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                             this.props.reportUxEvent({
                                 id: 'kisshome-defender-questionnaire-send',
                                 event: 'click',
-                                isTouchEvent: e instanceof TouchEvent,
+                                isTouchEvent: isTouch(e),
                                 ts: Date.now(),
                             });
                             await this.sendAnswers();

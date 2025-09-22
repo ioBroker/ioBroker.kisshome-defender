@@ -34,7 +34,7 @@ import type {
     StoredStatisticsResult,
 } from '../types';
 
-import { bytes2string } from './utils';
+import { bytes2string, isTouch } from './utils';
 import { StatusIcon } from './StatusTab';
 
 const styles: Record<string, React.CSSProperties> = {
@@ -302,7 +302,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                                     id: 'kisshome-defender-detections-trigger-detection',
                                     event: 'click',
                                     ts: Date.now(),
-                                    isTouchEvent: e instanceof TouchEvent,
+                                    isTouchEvent: isTouch(e),
                                 });
                                 await this.props.socket.sendTo(
                                     `kisshome-defender.${this.props.instance}`,
@@ -843,7 +843,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                             event: 'show',
                             ts: Date.now(),
                             data: item.uuid,
-                            isTouchEvent: e instanceof TouchEvent,
+                            isTouchEvent: isTouch(e),
                         });
                     } else if (this.state.openedItem === item.uuid) {
                         this.setState({ openedItem: '' });
@@ -852,7 +852,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                             event: 'hide',
                             ts: Date.now(),
                             data: item.uuid,
-                            isTouchEvent: e instanceof TouchEvent,
+                            isTouchEvent: isTouch(e),
                         });
                     }
                 }}
@@ -914,7 +914,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 id: 'kisshome-defender-detections-close',
                 event: 'click',
                 ts: Date.now(),
-                isTouchEvent: e instanceof TouchEvent,
+                isTouchEvent: isTouch(e),
             });
             // Set all known detections as known
             const firstAlert = results?.find(item => item.isAlert);
@@ -961,7 +961,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                                             event: 'change',
                                             ts: Date.now(),
                                             data: this.state.showOnlyAlarmsAndWarnings ? 'false' : 'true',
-                                            isTouchEvent: e instanceof TouchEvent,
+                                            isTouchEvent: isTouch(e),
                                         });
                                         window.localStorage.setItem(
                                             'kisshome-defender-alarms',
@@ -1085,7 +1085,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                                     id: 'kisshome-defender-detections-show-results',
                                     event: 'click',
                                     ts: Date.now(),
-                                    isTouchEvent: e instanceof TouchEvent,
+                                    isTouchEvent: isTouch(e),
                                 });
                                 this.setState({ detailed: true }, () => this.props.onResultsDialogOpen(true));
                             }}
@@ -1102,7 +1102,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                                     id: 'kisshome-defender-detections-show-results',
                                     event: 'click',
                                     ts: Date.now(),
-                                    isTouchEvent: e instanceof TouchEvent,
+                                    isTouchEvent: isTouch(e),
                                 });
                                 this.setState({ detailed: true }, () => this.props.onResultsDialogOpen(true));
                             }}

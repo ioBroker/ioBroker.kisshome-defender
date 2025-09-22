@@ -5,7 +5,7 @@ import { Check, Close, Warning } from '@mui/icons-material';
 
 import { I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
 import type { ReportUxHandler, StoredStatisticsResult } from '../types';
-import { bytes2string, findAdminLink } from './utils';
+import { bytes2string, findAdminLink, isTouch } from './utils';
 
 interface StatusTabProps {
     instance: string;
@@ -256,12 +256,12 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                         variant="contained"
                         color="primary"
                         style={this.props.isMobile ? {} : { position: 'absolute', top: 80, right: 30 }}
-                        onClick={async event => {
+                        onClick={async e => {
                             this.props.reportUxEvent({
                                 id: 'kisshome-defender-status-recording-enabled',
                                 event: 'change',
                                 ts: Date.now(),
-                                isTouchEvent: event instanceof TouchEvent,
+                                isTouchEvent: isTouch(e),
                             });
 
                             await this.props.socket.setState(
@@ -311,7 +311,7 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                                                     event: 'click',
                                                     data: this.state.adminLink,
                                                     ts: Date.now(),
-                                                    isTouchEvent: e instanceof TouchEvent,
+                                                    isTouchEvent: isTouch(e),
                                                 });
                                             }}
                                         >
