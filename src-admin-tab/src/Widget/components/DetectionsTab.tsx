@@ -240,11 +240,13 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
 
     renderLastDetection(): React.JSX.Element {
         let item: StoredAnalysisResult | undefined;
-        // Find last not status item
-        for (let i = this.props.results.results.length - 1; i >= 0; i--) {
-            if (!this.props.results.results[i].todayReport) {
-                item = this.props.results.results[i];
-                break;
+        if (this.props.results?.results?.length) {
+            // Find last not status item
+            for (let i = this.props.results.results.length - 1; i >= 0; i--) {
+                if (!this.props.results.results[i].todayReport) {
+                    item = this.props.results.results[i];
+                    break;
+                }
             }
         }
         if (!item) {
@@ -442,7 +444,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
     renderOneDetectionDetailsTable(
         devices: {
             [mac: MACAddress]: {
-                type: '' | 'Warning' | 'Alert';
+                type: '' | 'Alert';
                 description: string[];
                 score: number;
                 name?: string;
@@ -532,7 +534,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
     renderOneDetectionDetailsList(
         devices: {
             [mac: MACAddress]: {
-                type: '' | 'Warning' | 'Alert';
+                type: '' | 'Alert';
                 description: string[];
                 score: number;
                 name?: string;
@@ -735,7 +737,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         // Create for every device the combined status
         const devices: {
             [mac: MACAddress]: {
-                type: '' | 'Warning' | 'Alert';
+                type: '' | 'Alert';
                 description: string[];
                 score: number;
                 name?: string;
@@ -750,7 +752,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 devices[mac] ||= { score: 0, type: '', description: [], name: desc ? desc.desc || desc.ip || '' : '' };
                 if (detection.ml) {
                     devices[mac].score = Math.max(devices[mac].score, detection.ml.score);
-                    devices[mac].type = detection.ml.type === 'Alert' || detection.ml.type === 'Warning' ? 'Alert' : '';
+                    devices[mac].type = detection.ml.type === 'Alert' ? 'Alert' : '';
                     if (detection.ml.description && devices[mac].type) {
                         devices[mac].description.push(detection.ml.description);
                     }
@@ -758,8 +760,8 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 if (detection.suricata.length) {
                     detection.suricata.forEach(sr => {
                         devices[mac].score = Math.max(devices[mac].score, sr.score);
-                        devices[mac].type = sr.type === 'Alert' || sr.type === 'Warning' ? 'Alert' : devices[mac].type;
-                        if ((sr.description && sr.type === 'Alert') || sr.type === 'Warning') {
+                        devices[mac].type = sr.type === 'Alert' ? 'Alert' : devices[mac].type;
+                        if (sr.description && sr.type === 'Alert') {
                             devices[mac].description.push(sr.description);
                         }
                     });

@@ -74828,11 +74828,13 @@ yyyy`);
     }
     renderLastDetection() {
       let e;
-      for (let o = this.props.results.results.length - 1; o >= 0; o--)
-        if (!this.props.results.results[o].todayReport) {
-          e = this.props.results.results[o];
-          break;
-        }
+      if (this.props.results?.results?.length) {
+        for (let o = this.props.results.results.length - 1; o >= 0; o--)
+          if (!this.props.results.results[o].todayReport) {
+            e = this.props.results.results[o];
+            break;
+          }
+      }
       if (!e)
         return /* @__PURE__ */ O.jsxs("div", { className: "last-detection", children: [
           /* @__PURE__ */ O.jsx("h3", { children: B.t("kisshome-defender_Last result") }),
@@ -75294,8 +75296,8 @@ yyyy`);
       ] }), o = {};
       e.detections?.forEach((s) => {
         const l = s.mac.toLowerCase(), c = this.props.results?.names?.[l];
-        s.ml || s.suricata.length ? (o[l] ||= { score: 0, type: "", description: [], name: c && (c.desc || c.ip) || "" }, s.ml && (o[l].score = Math.max(o[l].score, s.ml.score), o[l].type = s.ml.type === "Alert" || s.ml.type === "Warning" ? "Alert" : "", s.ml.description && o[l].type && o[l].description.push(s.ml.description)), s.suricata.length && s.suricata.forEach((d) => {
-          o[l].score = Math.max(o[l].score, d.score), o[l].type = d.type === "Alert" || d.type === "Warning" ? "Alert" : o[l].type, (d.description && d.type === "Alert" || d.type === "Warning") && o[l].description.push(d.description);
+        s.ml || s.suricata.length ? (o[l] ||= { score: 0, type: "", description: [], name: c && (c.desc || c.ip) || "" }, s.ml && (o[l].score = Math.max(o[l].score, s.ml.score), o[l].type = s.ml.type === "Alert" ? "Alert" : "", s.ml.description && o[l].type && o[l].description.push(s.ml.description)), s.suricata.length && s.suricata.forEach((d) => {
+          o[l].score = Math.max(o[l].score, d.score), o[l].type = d.type === "Alert" ? "Alert" : o[l].type, d.description && d.type === "Alert" && o[l].description.push(d.description);
         })) : o[l] ||= { score: 0, type: "", description: [], name: c && (c.desc || c.ip) || "" }, o[l].statistics = e.statistics.devices.find((d) => d.mac.toLowerCase() === l);
       });
       const i = Object.keys(o).sort((s, l) => {

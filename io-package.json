@@ -3,19 +3,6 @@
     "name": "kisshome-defender",
     "version": "1.0.3",
     "news": {
-      "1.0.3": {
-        "en": "Allowed setting of the port and the bind address for Docker",
-        "de": "Erlaubte Einstellung des Ports und der binden Adresse für Docker",
-        "ru": "Разрешенная настройка порта и адреса связывания для Docker",
-        "pt": "A configuração permitida do porto e o endereço de ligação para o Docker",
-        "nl": "Toegestane instelling van de poort en het bindadres voor Docker",
-        "fr": "Réglage autorisé du port et de l'adresse de liaison pour Docker",
-        "it": "Impostazione consentita della porta e l'indirizzo di collegamento per Docker",
-        "es": "Ajuste permitido del puerto y la dirección de enlace para Docker",
-        "pl": "Dozwolone ustawienie portu i adresu bind Docker",
-        "uk": "Дозволене встановлення порту та подвійна адреса для Docker",
-        "zh-cn": "允许设置端口和 Docker 绑定地址"
-      },
       "1.0.1": {
         "en": "Fixing questionnaire under Firefox",
         "de": "Fragebogen unter Firefox beheben",

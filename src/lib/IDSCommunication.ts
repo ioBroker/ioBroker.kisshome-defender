@@ -763,7 +763,7 @@ export class IDSCommunication {
                 mac,
                 suricata: [
                     {
-                        type: score > 70 ? 'Alert' : score > 10 ? 'Warning' : 'Info',
+                        type: score > 70 ? 'Alert' : 'Normal',
                         description: score > 70 ? 'Dangerous alert' : score > 10 ? 'Just warning' : 'Nothing special',
                         first_occurrence: time,
                         number_occurrences: score > 10 ? Math.floor(Math.random() * 5) + 1 : 0, // Random occurrences between 1 and 5
@@ -771,7 +771,7 @@ export class IDSCommunication {
                     },
                 ],
                 ml: {
-                    type: scoreMl > 70 ? 'Alert' : scoreMl > 10 ? 'Warning' : 'Info',
+                    type: scoreMl > 70 ? 'Alert' : 'Normal',
                     description: scoreMl > 70 ? 'Dangerous ML alert' : scoreMl > 10 ? 'Just ML warning' : 'OK',
                     first_occurrence: time,
                     number_occurrences: scoreMl > 10 ? Math.floor(Math.random() * 3) + 1 : 0, // Random occurrences between 1 and 3
