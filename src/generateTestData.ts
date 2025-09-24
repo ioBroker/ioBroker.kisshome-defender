@@ -98,15 +98,15 @@ for (let i = -7; i <= 0; i++) {
                 mac,
                 suricata: [
                     {
-                        type: score > 90 ? 'Alert' : score > 70 ? 'Warning' : 'Info',
-                        description: score > 90 ? 'Dangerous alert' : score > 70 ? 'Just warning' : 'Nothing special',
+                        type: score > 90 ? 'Alert' : 'Normal',
+                        description: score > 90 ? 'Dangerous alert' : 'Nothing special',
                         first_occurrence: time,
                         number_occurrences: score > 70 ? Math.floor(Math.random() * 5) + 1 : 0, // Random occurrences between 1 and 5
                         score, // Random score between 0 and 99
                     },
                 ],
                 ml: {
-                    type: scoreMl > 90 ? 'Alert' : scoreMl > 70 ? 'Warning' : 'Info',
+                    type: scoreMl > 90 ? 'Alert' : 'Normal',
                     description: scoreMl > 90 ? 'Dangerous ML alert' : scoreMl > 70 ? 'Just ML warning' : 'OK',
                     first_occurrence: time,
                     number_occurrences: scoreMl > 70 ? Math.floor(Math.random() * 3) + 1 : 0, // Random occurrences between 1 and 3

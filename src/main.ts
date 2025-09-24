@@ -191,6 +191,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                     }
                     break;
                 }
+
                 case 'getModelStatus': {
                     this.sendTo(
                         msg.from,
@@ -518,6 +519,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                     }
                     break;
                 }
+
                 case 'questionnaireCancel': {
                     // Send the questionnaire answer to the server
                     if (msg.message && typeof msg.message === 'object') {
@@ -992,7 +994,7 @@ export class KISSHomeResearchAdapter extends Adapter {
 
             closeSync(fd);
 
-            this.log.debug(I18n.translate('Saved file %s with %s', fileName, size2text(offset)));
+            this.log.debug(I18n.translate('Saved file "%s" with %s', fileName, size2text(offset)));
         }
 
         if (this.context.full.packets.length) {
@@ -1044,7 +1046,7 @@ export class KISSHomeResearchAdapter extends Adapter {
 
             closeSync(fd);
 
-            this.log.debug(I18n.translate('Saved file %s with %s', fileName, size2text(offset)));
+            this.log.debug(I18n.translate('Saved file "%s" with %s', fileName, size2text(offset)));
 
             this.idsCommunication?.triggerUpdate();
         }

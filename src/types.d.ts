@@ -47,6 +47,10 @@ export interface DefenderAdapterConfig {
         url: string;
         /** Docker volume */
         volume: string;
+        /** Docker port */
+        port: number | string;
+        /** Port bind */
+        bind: string;
     };
     /** If the user wants to allow training with own data */
     allowTraining: boolean;
@@ -57,7 +61,7 @@ export interface DefenderAdapterConfig {
 }
 
 type Detection = {
-    type: 'Warning' | 'Alert' | 'Info';
+    type: 'Alert' | 'Normal';
     description: string;
     first_occurrence: string;
     number_occurrences: number;

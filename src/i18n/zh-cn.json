@@ -55,6 +55,7 @@
   "Recording started!": "录制开始！",
   "Recording stopped.": "录音停止。",
   "Requested termination. No synchronization": "请求终止。无同步",
+  "Saved UX events to file \"%s\"": "已将 UX 事件保存至文件“%s”",
   "Saved file \"%s\" with %s": "已将文件“%s”保存为 %s",
   "Sent file \"%s\"(%s) to the cloud": "已将文件“%s”（%s）发送至云端",
   "Server requested to terminate the adapter": "服务器请求终止适配器",

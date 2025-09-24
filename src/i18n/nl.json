@@ -55,6 +55,7 @@
   "Recording started!": "Opname gestart!",
   "Recording stopped.": "Opname gestopt.",
   "Requested termination. No synchronization": "Beëindiging aangevraagd. Geen synchronisatie.",
+  "Saved UX events to file \"%s\"": "UX-gebeurtenissen opgeslagen in bestand \"%s\"",
   "Saved file \"%s\" with %s": "Opgeslagen bestand \"%s\" met %s",
   "Sent file \"%s\"(%s) to the cloud": "Bestand \"%s\"(%s) naar de cloud verzonden",
   "Server requested to terminate the adapter": "Server heeft verzocht de adapter te beëindigen",

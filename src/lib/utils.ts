@@ -4,8 +4,7 @@ import { toMAC } from '@network-utils/arp-lookup';
 import { toVendor } from '@network-utils/vendor-lookup';
 import { Socket } from 'node:net';
 
-import type { Device, IDSStatus, MACAddress } from '../types';
-import axios from 'axios';
+import type { Device, MACAddress } from '../types';
 
 // This function is used trigger the OS to resolve IP to MAC address
 async function httpPing(ip: string): Promise<boolean> {

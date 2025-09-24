@@ -55,6 +55,7 @@
   "Recording started!": "¡La grabación comenzó!",
   "Recording stopped.": "La grabación se detuvo.",
   "Requested termination. No synchronization": "Se solicitó la terminación. Sin sincronización.",
+  "Saved UX events to file \"%s\"": "Eventos de UX guardados en el archivo \"%s\"",
   "Saved file \"%s\" with %s": "Archivo guardado \"%s\" con %s",
   "Sent file \"%s\"(%s) to the cloud": "Se envió el archivo \"%s\"(%s) a la nube",
   "Server requested to terminate the adapter": "El servidor solicitó finalizar el adaptador",

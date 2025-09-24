@@ -55,6 +55,7 @@
   "Recording started!": "Запис розпочато!",
   "Recording stopped.": "Запис зупинено.",
   "Requested termination. No synchronization": "Запит на завершення. Синхронізації немає.",
+  "Saved UX events to file \"%s\"": "Події UX збережено у файлі \"%s\"",
   "Saved file \"%s\" with %s": "Збережено файл \"%s\" з %s",
   "Sent file \"%s\"(%s) to the cloud": "Надіслано файл \"%s\"(%s) до хмари",
   "Server requested to terminate the adapter": "Серверу надійшов запит на завершення роботи адаптера",

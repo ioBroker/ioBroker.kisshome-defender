@@ -51,6 +51,9 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+-   (@GermanBluefox) Allowed setting of the port and the bind address for Docker
+
 ### 1.0.1 (2025-09-22)
 -   (@GermanBluefox) Fixing questionnaire under Firefox
 

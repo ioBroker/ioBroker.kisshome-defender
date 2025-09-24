@@ -186,7 +186,7 @@
                 },
                 "docker.selfHosted": {
                     "type": "checkbox",
-                    "label": "Self-hosted",
+                    "label": "Docker container is hosted by the adapter",
                     "default": true
                 },
                 "docker.url": {
@@ -196,6 +196,24 @@
                     "help": "Like http://dockerIp:5000",
                     "hidden": "!!data.docker?.selfHosted"
                 },
+                "docker.bind": {
+                    "newLine": true,
+                    "listenOnAllPorts": true,
+                    "type": "ip",
+                    "md": 4,
+                    "sm": 8,
+                    "xs": 12,
+                    "label": "Docker bind",
+                    "hidden": "!data.docker?.selfHosted"
+                },
+                "docker.port": {
+                    "type": "port",
+                    "label": "Docker port",
+                    "md": 2,
+                    "sm": 4,
+                    "xs": 12,
+                    "hidden": "!data.docker?.selfHosted"
+                },
                 "docker.volume": {
                     "newLine": true,
                     "container": "text",
@@ -204,7 +222,9 @@
                     "jsonData": "{}",
                     "label": "Path to store models and persistent data",
                     "hidden": "!data.docker?.selfHosted",
-                    "default":  "<IOBROKER-PATH>/iobroker-data/kisshome-defender/volume"
+                    "default":  "<IOBROKER-PATH>/iobroker-data/kisshome-defender/volume",
+                    "md": 6,
+                    "xs": 12
                 },
                 "_restart": {
                     "newLine": true,
@@ -213,7 +233,7 @@
                     "control": "button",
                     "sm": 12,
                     "label": "Restart Docker Container",
-                    "hidden": "!!data.docker?.selfHosted",
+                    "hidden": "!data.docker?.selfHosted || !data.docker?.url",
                     "disabled": "!_alive"
                 }
             }

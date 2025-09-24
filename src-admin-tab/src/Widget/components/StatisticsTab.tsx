@@ -780,7 +780,7 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                 <div
                     style={{
                         width: '100%',
-                        height: 'calc(100% - 32px)',
+                        height: 'calc(100% - 32px - 18px)',
                         overflow: this.props.isMobile ? 'auto' : 'hidden',
                     }}
                 >
@@ -813,6 +813,17 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
                             </div>
                         ) : null}
                     </div>
+                </div>
+                <div style={{ height: 18, fontStyle: 'italic', opacity: 0.7, fontSize: 'smaller' }}>
+                    {I18n.t('kisshome-defender_ioBroker.kisshome-defender uses the IP2Location LITE database for')}{' '}
+                    <a
+                        href="https://lite.ip2location.com"
+                        target="_blank"
+                        style={{ color: 'inherit' }}
+                        rel="noreferrer"
+                    >
+                        {I18n.t('kisshome-defender_IP geolocation')}
+                    </a>
                 </div>
             </div>
         );

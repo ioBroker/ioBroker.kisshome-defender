@@ -26,7 +26,8 @@ export type Context = {
     libpCapFormat: boolean; // BigEndian with longer header
 };
 
-export const MAX_PACKET_LENGTH = 96;
+// Max packet length to capture
+export const MAX_PACKET_LENGTH = 1538;
 const debug = false;
 const NO_FILTER = false;
 

@@ -239,7 +239,15 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
     }
 
     renderLastDetection(): React.JSX.Element {
-        if (!this.props.results?.results?.length) {
+        let item: StoredAnalysisResult | undefined;
+        // Find last not status item
+        for (let i = this.props.results.results.length - 1; i >= 0; i--) {
+            if (!this.props.results.results[i].todayReport) {
+                item = this.props.results.results[i];
+                break;
+            }
+        }
+        if (!item) {
             return (
                 <div className="last-detection">
                     <h3>{I18n.t('kisshome-defender_Last result')}</h3>
@@ -247,7 +255,6 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 </div>
             );
         }
-        const item = this.props.results.results[this.props.results.results.length - 1];
 
         const seconds = Math.floor((this.state.recordingNextWrite - Date.now()) / 1000);
         const nextControlText = I18n.t(

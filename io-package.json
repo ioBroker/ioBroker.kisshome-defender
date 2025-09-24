@@ -207,7 +207,9 @@
     "saveThresholdSeconds": 900,
     "docker": {
       "selfHosted": true,
-      "url": ""
+      "url": "",
+      "port": 5000,
+      "bind": "127.0.0.1"
     }
   },
   "notifications": [

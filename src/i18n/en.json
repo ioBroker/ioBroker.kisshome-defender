@@ -55,6 +55,7 @@
   "Recording started!": "Recording started!",
   "Recording stopped.": "Recording stopped.",
   "Requested termination. No synchronization": "Requested termination. No synchronization",
+  "Saved UX events to file \"%s\"": "Saved UX events to file \"%s\"",
   "Saved file \"%s\" with %s": "Saved file \"%s\" with %s",
   "Sent file \"%s\"(%s) to the cloud": "Sent file \"%s\"(%s) to the cloud",
   "Server requested to terminate the adapter": "Server requested to terminate the adapter",

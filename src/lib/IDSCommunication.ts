@@ -19,11 +19,10 @@ import type {
     MACAddress,
     StoredStatisticsResult,
 } from '../types';
-import { DockerManager } from './DockerManager';
+import DockerManager from './DockerManager';
 import { fileNameToDate, normalizeMacAddress } from './utils';
 
 const MAX_FILES_ON_DISK = 6; // Maximum number of files to keep on disk
-const DOCKER_CONTAINER_NAME = 'iobroker-defender-ids';
 export const CHANGE_TIME = '2025-10-16T00:00:00Z'; // Calculation time
 
 function betaRandom(a: number, b: number): number {
@@ -217,7 +216,7 @@ export class IDSCommunication {
             this.adapter.log.warn('[IDS] No IDS URL configured, using localhost as fallback');
             throw new Error('No IDS URL configured');
         } else if (!this.idsUrl) {
-            this.idsUrl = `http://${await this.dockerManager!.getIpOfContainer()}:5000`;
+            this.idsUrl = `http://${!this.config.docker.bind || this.config.docker.bind === '0.0.0.0' ? await this.dockerManager!.getIpOfContainer() : this.config.docker.bind}:${this.config.docker.port || 5000}`;
         }
 
         const parsed = new URL(this.idsUrl);
@@ -472,7 +471,7 @@ export class IDSCommunication {
                 (this.lastStatus?.message?.status === 'Error' || this.lastStatus?.message?.status === 'Exited')
             ) {
                 this.adapter.log.warn('[IDS] IDS in the error state, restarting...');
-                await this.dockerManager.restart();
+                await this.dockerManager.containerRestart();
             }
 
             if (this.lastStatus?.message?.training) {
@@ -847,30 +846,28 @@ export class IDSCommunication {
                 const detection: DetectionsForDeviceWithUUID = newDetections[i] as DetectionsForDeviceWithUUID;
 
                 // Find the earliest occurrence time
-                let _isAlert = detection.ml?.type === 'Warning' || detection.ml?.type === 'Alert';
+                let _isAlert = detection.ml?.type === 'Alert';
 
                 if (detection.ml) {
                     // ml has no score, we generate one based on the type
-                    detection.ml.score ||=
-                        detection.ml.type === 'Warning' || detection.ml.type === 'Alert'
-                            ? Math.floor(Math.random() * 90 * 100) / 100 + 10 // 10-100
-                            : Math.floor(Math.random() * 9.99 * 100) / 100; // 0-10
+                    detection.ml.score =
+                        detection.ml.type === 'Alert'
+                            ? Math.floor(Math.random() * 10 * 100) / 100 + 90 // 90-100
+                            : Math.floor(Math.random() * 10 * 100) / 100; // 0-10
                 }
 
                 const detectionsBiggestScore = Math.max(
                     _isAlert ? detection.ml?.score || 0 : 0,
-                    ...(detection.suricata?.map(s => (s.type === 'Alert' || s.type === 'Warning' ? s.score : 0)) || [
-                        0,
-                    ]),
+                    ...(detection.suricata?.map(s => (s.type === 'Alert' ? s.score : 0)) || [0]),
                 );
 
                 let earliestOccurrence: number | null =
-                    detection.ml?.first_occurrence && (detection.ml.type === 'Alert' || detection.ml.type === 'Warning')
+                    detection.ml?.first_occurrence && detection.ml.type === 'Alert'
                         ? new Date(detection.ml.first_occurrence).getTime()
                         : null;
 
                 detection.suricata?.forEach(suricata => {
-                    if (suricata.first_occurrence && (suricata.type === 'Alert' || suricata.type === 'Warning')) {
+                    if (suricata.first_occurrence && suricata.type === 'Alert') {
                         _isAlert = true;
 
                         const occurrenceTime = new Date(suricata.first_occurrence).getTime();
@@ -970,20 +967,32 @@ export class IDSCommunication {
     async manageIdsContainer(): Promise<void> {
         if (this.config.docker?.selfHosted) {
             this.adapter.log.info(`[IDS] ${I18n.translate('Managing IDS container')}`);
-            this.dockerManager ||= new DockerManager(this.adapter, {
-                image: 'kisshome/ids:stable',
-                name: DOCKER_CONTAINER_NAME,
-                ports: ['5000'],
-                autoUpdate: true,
-                autoStart: false,
-                removeAfterStop: true,
-                volumes: [`${this.statisticsDir}/volume:/shared`],
-                securityOptions: 'apparmor=unconfined',
-            });
+            this.dockerManager ||= new DockerManager(this.adapter, undefined, [
+                {
+                    image: 'kisshome/ids:stable',
+                    ports: [
+                        {
+                            containerPort: 5000,
+                            hostPort: this.config.docker.port || 5000,
+                            hostIP: this.config.docker.bind || undefined,
+                        },
+                    ],
+                    iobAutoImageUpdate: true,
+                    iobStopOnUnload: true,
+                    mounts: [
+                        {
+                            source: true,
+                            target: '/shared',
+                            type: 'volume',
+                        },
+                    ],
+                    security: {
+                        apparmor: 'unconfined',
+                    },
+                },
+            ]);
 
-            await this.dockerManager.init();
-
-            await this.dockerManager.start();
+            await this.dockerManager.isReady();
         }
     }
 
