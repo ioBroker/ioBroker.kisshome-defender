@@ -14,24 +14,24 @@
         ".": "./dist/kisshomeDefender.es.js"
     },
     "devDependencies": {
-        "@eslint/js": "^9.32.0",
-        "@iobroker/adapter-react-v5": "^7.7.2",
-        "@iobroker/eslint-config": "^2.1.0",
+        "@eslint/js": "^9.37.0",
+        "@iobroker/adapter-react-v5": "^7.7.3",
+        "@iobroker/eslint-config": "^2.2.0",
         "@iobroker/types": "^7.0.7",
         "@iobroker/ws": "^3.0.3",
         "@mui/material": "^6.5.0",
         "@types/markdown-it": "^14.1.2",
-        "@types/react": "^18.3.24",
+        "@types/react": "^18.3.26",
         "@types/react-dom": "^18.3.7",
-        "@vitejs/plugin-react": "^4.7.0",
+        "@vitejs/plugin-react": "^5.0.4",
         "echarts": "^5.6.0",
         "echarts-for-react": "^3.0.2",
-        "globals": "^16.3.0",
+        "globals": "^16.4.0",
         "markdown-it": "^14.1.0",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
-        "typescript": "^5.8.3",
-        "vite": "^7.0.6",
+        "typescript": "^5.9.3",
+        "vite": "^7.1.9",
         "vite-plugin-commonjs": "^0.10.4"
     }
 }
