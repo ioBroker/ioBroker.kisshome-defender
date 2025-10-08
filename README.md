@@ -55,7 +55,7 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.0.5 (2025-10-08)
 -   (@GermanBluefox) Packages were updated
 -   (@GermanBluefox) Corrected questionnaire
 -   (@GermanBluefox) Send `save_threshold_seconds` to the container

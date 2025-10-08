@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "news": {
+      "1.0.5": {
+        "en": "Packages were updated\nCorrected questionnaire\nSend `save_threshold_seconds` to the container",
+        "de": "Pakete wurden aktualisiert\nBerichtigter Fragebogen\nSenden Sie `save_threshold_seconds` in den Container",
+        "ru": "Пакеты были обновлены\nИсправленный вопросник\nОтправьте «save_threshold_seconds» в контейнер",
+        "pt": "Os pacotes foram atualizados\nQuestionário corrigido\nEnviar `save_threshold_seconds` para o recipiente",
+        "nl": "Pakketten werden bijgewerkt\nGecorrigeerde vragenlijst\nStuur ",
+        "fr": "Les paquets ont été mis à jour\nQuestionnaire corrigé\nEnvoyer `save_threshold_secondes` au conteneur",
+        "it": "I pacchetti sono stati aggiornati\nQuestionario corretto\nInvia `save_threshold_seconds` al contenitore",
+        "es": "Se actualizaron los paquetes\nCuestionario corregido\nEnviar `save_threshold_seconds` al contenedor",
+        "pl": "Pakiety zostały zaktualizowane\nPoprawiony kwestionariusz\nWyślij 'save _ progress _ seconds' do pojemnika",
+        "uk": "Пакети оновлено\nКорисне анкетування\nВідправка `save_threshold_секунд` до контейнера",
+        "zh-cn": "软件包已更新\n已更正的调查问卷\n向容器发送“save_阈值_秒”"
+      },
       "1.0.4": {
         "en": "Allowed setting of the port and the bind address for Docker",
         "de": "Erlaubte Einstellung des Ports und der binden Adresse für Docker",
@@ -80,19 +93,6 @@
         "pl": "Wprowadzono dzienny raport o stanie",
         "uk": "Впроваджено щоденний звіт про стан справ",
         "zh-cn": "实施每日状态报告"
-      },
-      "0.2.1": {
-        "en": "Showed names of the devices in the chart legend",
-        "de": "Gezeigte Namen der Geräte in der Chart-Legende",
-        "ru": "Показаны имена устройств в чарте легенды",
-        "pt": "Mostrar os nomes dos dispositivos na legenda do gráfico",
-        "nl": "Toon namen van de apparaten in de kaartlegende",
-        "fr": "Afficher les noms des appareils dans la légende du graphique",
-        "it": "Mostrati nomi dei dispositivi nella leggenda del grafico",
-        "es": "Nombres mostrados de los dispositivos en la leyenda del gráfico",
-        "pl": "Pokazane nazwy urządzeń w legendzie mapy",
-        "uk": "Показати імена пристроїв в легенді діаграм",
-        "zh-cn": "图表图例中显示设备名称"
       }
     },
     "titleLang": {
