@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "news": {
+      "1.0.6": {
+        "en": "Improved selection of IP address",
+        "de": "Erweiterte Auswahl der IP-Adresse",
+        "ru": "Улучшенный выбор IP-адреса",
+        "pt": "Seleção melhorada do endereço IP",
+        "nl": "Verbeterde selectie van IP-adres",
+        "fr": "Meilleure sélection de l'adresse IP",
+        "it": "Selezione migliore dell'indirizzo IP",
+        "es": "Mejor selección de la dirección IP",
+        "pl": "Lepszy wybór adresu IP",
+        "uk": "Покращений вибір IP-адреси",
+        "zh-cn": "改进IP地址的选择"
+      },
       "1.0.5": {
         "en": "Packages were updated\nCorrected questionnaire\nSend `save_threshold_seconds` to the container",
         "de": "Pakete wurden aktualisiert\nBerichtigter Fragebogen\nSenden Sie `save_threshold_seconds` in den Container",
@@ -80,19 +93,6 @@
         "pl": "Zaimplementowano widok mobilny",
         "uk": "Реалізовано мобільний перегляд",
         "zh-cn": "实现移动视图"
-      },
-      "0.3.0": {
-        "en": "Implemented the daily status report",
-        "de": "Implementierung des täglichen Statusberichts",
-        "ru": "Реализован ежедневный отчет о состоянии",
-        "pt": "Implementou o relatório de status diário",
-        "nl": "Het dagelijkse statusrapport is geïmplementeerd",
-        "fr": "Mise en œuvre du rapport d'état quotidien",
-        "it": "Implementato il report giornaliero sullo stato",
-        "es": "Se implementó el informe de estado diario",
-        "pl": "Wprowadzono dzienny raport o stanie",
-        "uk": "Впроваджено щоденний звіт про стан справ",
-        "zh-cn": "实施每日状态报告"
       }
     },
     "titleLang": {
