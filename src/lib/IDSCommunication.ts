@@ -417,6 +417,7 @@ export class IDSCommunication {
 
         formData.append('callback_url', `http://${this.ownIp}:${this.ownPort}`);
         formData.append('allow_training', this.config.allowTraining ? 'true' : 'false');
+        formData.append('save_threshold_seconds', this.config.saveThresholdSeconds.toString());
 
         try {
             const response = await axios.post(`${this.idsUrl}/configure`, formData, {

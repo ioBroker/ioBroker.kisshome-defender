@@ -20,7 +20,7 @@ import { Check, Close } from '@mui/icons-material';
 import type { DefenderAdapterConfig, ReportUxHandler } from '../types';
 import { isTouch } from './utils';
 
-export type QuestionnaireItemType = 'text' | 'select' | 'checkbox' | 'radio' | 'input' | 'yesNo';
+export type QuestionnaireItemType = 'text' | 'number' | 'select' | 'checkbox' | 'radio' | 'input' | 'yesNo';
 
 export interface QuestionnaireItem {
     id: string;
@@ -28,6 +28,7 @@ export interface QuestionnaireItem {
     options?: { value: string; label: string; style?: React.CSSProperties }[];
     label?: string;
     required?: boolean;
+    requiredTrue?: boolean; // checkbox must be true
     text?: string; // For text items, this can be used to render Markdown or other content
     style?: React.CSSProperties; // Optional style for the item
     variant?: 'bottom' | 'end'; // Position of the radio button variant
@@ -221,6 +222,53 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         );
     }
 
+    renderNumber(item: QuestionnaireItem, index: number): React.JSX.Element {
+        return (
+            <div
+                key={`${index}_${item.id}`}
+                style={{
+                    ...styles.divItem,
+                    ...this.state.json.divStyle,
+                    ...(item.delimiter === false
+                        ? undefined
+                        : item.delimiter === 'solid'
+                          ? styles.delimiterSolid
+                          : styles.delimiter),
+                }}
+            >
+                <label
+                    htmlFor={item.id}
+                    style={{ ...styles.divLabel, ...this.state.json.labelStyle }}
+                >
+                    {item.label}
+                    {item.required ? ' *' : ''}
+                </label>
+                <TextField
+                    style={{ ...styles.divControl, ...this.state.json.itemStyle, ...item.style }}
+                    variant="standard"
+                    type="number"
+                    fullWidth
+                    value={(this.state.answers[item.id]?.value as string) || ''}
+                    onChange={e => {
+                        const value = e.target.value;
+                        if (!value && typeof value !== 'number') {
+                            const answers = { ...this.state.answers };
+                            delete answers[item.id];
+                            this.setState({ answers });
+                        } else {
+                            this.setState(prevState => ({
+                                answers: {
+                                    ...prevState.answers,
+                                    [item.id]: { ts: new Date().toISOString(), value },
+                                },
+                            }));
+                        }
+                    }}
+                />
+            </div>
+        );
+    }
+
     renderSelect(item: QuestionnaireItem, index: number): React.JSX.Element {
         return (
             <div
@@ -306,12 +354,18 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                     value={(this.state.answers[item.id]?.value as string) || ''}
                     onChange={e => {
                         const value = e.target.value;
-                        this.setState(prevState => ({
-                            answers: {
-                                ...prevState.answers,
-                                [item.id]: { ts: new Date().toISOString(), value },
-                            },
-                        }));
+                        if (!value) {
+                            const answers = { ...this.state.answers };
+                            delete answers[item.id];
+                            this.setState({ answers });
+                        } else {
+                            this.setState(prevState => ({
+                                answers: {
+                                    ...prevState.answers,
+                                    [item.id]: { ts: new Date().toISOString(), value },
+                                },
+                            }));
+                        }
                     }}
                 />
             </div>
@@ -526,6 +580,8 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         switch (item.type) {
             case 'text':
                 return this.renderText(item, index);
+            case 'number':
+                return this.renderNumber(item, index);
             case 'select':
                 return this.renderSelect(item, index);
             case 'input':
@@ -561,6 +617,9 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
         let allRequiredAnswered = true;
         this.state.json.items?.forEach((item: QuestionnaireItem) => {
             if (item.required && !this.state.answers[item.id] && item.type !== 'text') {
+                allRequiredAnswered = false;
+            }
+            if (item.requiredTrue && this.state.answers[item.id]?.value !== true) {
                 allRequiredAnswered = false;
             }
         });

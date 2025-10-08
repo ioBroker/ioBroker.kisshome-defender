@@ -1336,7 +1336,8 @@ export class KISSHomeResearchAdapter extends Adapter {
     async generateStatusReport(simulatePeriod?: boolean): Promise<void> {
         // Collect statistics for today: average time, min, max, total
         const report = this.statistics?.getReportForToday();
-        if (!report /* || report.maxScore > 10*/) {
+        // Do not send a report if there are problems today
+        if (!report || report.numberOfProblems) {
             return;
         }
 

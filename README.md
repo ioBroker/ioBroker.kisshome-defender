@@ -45,6 +45,10 @@ Add the following line:
 iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 ```
 
+## Todo
+- [] ioBroker.pro AGB on the web site
+- [] ioBroker.pro URL for licenses
+
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
@@ -53,6 +57,8 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 ## Changelog
 ### **WORK IN PROGRESS**
 -   (@GermanBluefox) Packages were updated
+-   (@GermanBluefox) Corrected questionnaire
+-   (@GermanBluefox) Send `save_threshold_seconds` to the container
 
 ### 1.0.4 (2025-09-24)
 -   (@GermanBluefox) Allowed setting of the port and the bind address for Docker
