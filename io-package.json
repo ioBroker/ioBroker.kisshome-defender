@@ -209,7 +209,7 @@
       "selfHosted": true,
       "url": "",
       "port": 5000,
-      "bind": "127.0.0.1"
+      "bind": "172.17.0.1"
     }
   },
   "notifications": [

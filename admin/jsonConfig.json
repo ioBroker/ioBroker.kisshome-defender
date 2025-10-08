@@ -198,8 +198,11 @@
                 },
                 "docker.bind": {
                     "newLine": true,
-                    "listenOnAllPorts": true,
-                    "type": "ip",
+                    "type": "selectSendTo",
+                    "command": "getBindAddresses",
+                    "data": {},
+                    "noTranslation": true,
+                    "manual": true,
                     "md": 4,
                     "sm": 8,
                     "xs": 12,

@@ -4,6 +4,7 @@ import { readFileSync, existsSync, mkdirSync, openSync, writeSync, closeSync, re
 import axios from 'axios';
 import { randomUUID, createHash } from 'node:crypto';
 import schedule, { type Job } from 'node-schedule';
+import { networkInterfaces } from 'node:os';
 
 import {
     getDefaultGateway,
@@ -34,6 +35,33 @@ import type {
 import CloudSync, { PCAP_HOST } from './lib/CloudSync';
 import { IDSCommunication, CHANGE_TIME } from './lib/IDSCommunication';
 import Statistics from './lib/Statistics';
+import { execSync } from 'node:child_process';
+
+type AddrInfo = {
+    family: string;
+    local: string;
+    prefixlen: number;
+    scope: string;
+    label?: string;
+    noprefixroute?: boolean;
+    valid_life_time: number;
+    preferred_life_time: number;
+};
+
+type NetworkInterface = {
+    ifindex: number;
+    ifname: string;
+    flags: string[];
+    mtu: number;
+    qdisc: string;
+    operstate: string;
+    group: string;
+    txqlen: number;
+    link_type: string;
+    address: string;
+    broadcast: string;
+    addr_info: AddrInfo[];
+};
 
 // save files every 60 minutes
 const SAVE_DATA_EVERY_MS = 3_600_000;
@@ -546,6 +574,48 @@ export class KISSHomeResearchAdapter extends Adapter {
                 case 'detectNow': {
                     this.triggerWriteFile();
                     break;
+                }
+
+                case 'getBindAddresses': {
+                    const list: { label: string; value: string }[] = [];
+                    if (process.platform === 'win32') {
+                        // Get standard interfaces of the host
+                        const interfaces = networkInterfaces();
+                        // List ALL ip 4 and 6 addresses
+                        Object.keys(interfaces).forEach(ifname => {
+                            (interfaces[ifname] || []).forEach(iface => {
+                                if (iface.family === 'IPv4' || iface.family === 'IPv6') {
+                                    list.push({ label: `${ifname} (${iface.address})`, value: iface.address });
+                                }
+                            });
+                        });
+                    } else {
+                        const out = execSync('ip -j addr', { encoding: 'utf8' });
+                        const data: NetworkInterface[] = JSON.parse(out);
+                        if (data?.[0]?.addr_info) {
+                            data.forEach(item => {
+                                item.addr_info.forEach((addr: any) => {
+                                    if (addr.family === 'inet' || addr.family === 'inet6') {
+                                        list.push({ label: `${item.ifname} (${addr.local})`, value: addr.local });
+                                    }
+                                });
+                            });
+                        }
+                    }
+                    // place docker interfaces at the start
+                    list.sort((a, b) => {
+                        if (a.label.startsWith('docker') && !b.label.startsWith('docker')) {
+                            return -1;
+                        }
+                        if (!a.label.startsWith('docker') && b.label.startsWith('docker')) {
+                            return 1;
+                        }
+                        return a.label.localeCompare(b.label);
+                    });
+
+                    if (msg.callback) {
+                        this.sendTo(msg.from, msg.command, list, msg.callback);
+                    }
                 }
             }
         }

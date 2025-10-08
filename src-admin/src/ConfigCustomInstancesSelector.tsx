@@ -111,7 +111,7 @@ async function browseShelly(socket: LegacyConnection, instance: string): Promise
 }
 
 async function browseClients(socket: LegacyConnection, instance: string): Promise<{ ip: string; name: string }[]> {
-    const clients = await socket.getObjectViewSystem(
+    const clients: { [id: string]: ioBroker.StateObject } = await socket.getObjectViewSystem(
         'state',
         `${instance}.info.clients.`,
         `${instance}.info.clients.\u9999`,
@@ -131,7 +131,11 @@ async function browseClients(socket: LegacyConnection, instance: string): Promis
 }
 
 async function browseUpnp(socket: LegacyConnection, instance: string): Promise<{ ip: string; name: string }[]> {
-    const objects = await socket.getObjectViewSystem('device', `${instance}.`, `${instance}.\u9999`);
+    const objects: { [id: string]: ioBroker.DeviceObject } = await socket.getObjectViewSystem(
+        'device',
+        `${instance}.`,
+        `${instance}.\u9999`,
+    );
     const objs = Object.values(objects);
     const devices: { ip: string; name: string }[] = [];
     for (let i = 0; i < objs.length; i++) {

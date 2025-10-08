@@ -46,7 +46,6 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 ```
 
 ## Todo
-- [] ioBroker.pro AGB on the web site
 - [] ioBroker.pro URL for licenses
 
 <!--
@@ -55,6 +54,9 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+-   (@GermanBluefox) Improved selection of IP address
+
 ### 1.0.5 (2025-10-08)
 -   (@GermanBluefox) Packages were updated
 -   (@GermanBluefox) Corrected questionnaire
