@@ -33,6 +33,9 @@ export interface QuestionnaireItem {
     style?: React.CSSProperties; // Optional style for the item
     variant?: 'bottom' | 'end'; // Position of the radio button variant
     delimiter?: boolean | 'solid'; // if false, no delimiter will be rendered
+    min?: number; // for number items
+    max?: number; // for number items
+    step?: number; // for number items
 }
 
 export interface QuestionnaireJson {
@@ -248,6 +251,13 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                     variant="standard"
                     type="number"
                     fullWidth
+                    slotProps={{
+                        htmlInput: {
+                            min: item.min,
+                            max: item.max,
+                            step: item.step,
+                        },
+                    }}
                     value={(this.state.answers[item.id]?.value as string) || ''}
                     onChange={e => {
                         const value = e.target.value;
