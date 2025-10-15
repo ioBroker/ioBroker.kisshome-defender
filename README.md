@@ -54,6 +54,10 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+-   (@GermanBluefox) Corrected the volume for docker
+-   (@GermanBluefox) Added min,max,step for questionnaire (number)
+
 ### 1.0.6 (2025-10-08)
 -   (@GermanBluefox) Improved selection of IP address
 

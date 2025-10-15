@@ -375,7 +375,7 @@ export default class DockerManager {
                 target: mount.Destination,
                 readOnly: mount.RW,
             })),
-            volumes: inspect.Config.Volumes ? Object.keys(inspect.Config.Volumes) : undefined,
+            volumes: inspect.Config.Volumes ? Object.keys(inspect.Config.Volumes) : inspect.HostConfig.Binds,
             extraHosts: inspect.HostConfig.ExtraHosts ?? undefined,
             dns: {
                 servers: inspect.HostConfig.Dns,
@@ -1320,7 +1320,6 @@ export default class DockerManager {
                 : undefined,
             // WorkingDir: config.workingDir,
             // { '/data': {} }
-            Volumes: config.volumes?.reduce((acc, vol) => (acc[vol] = {}), {} as { [key: string]: object }),
             Labels: config.labels,
             ExposedPorts: config.ports
                 ? config.ports.reduce(
@@ -1332,7 +1331,8 @@ export default class DockerManager {
                   )
                 : undefined,
             HostConfig: {
-                // Binds: config.binds,
+                // https://github.com/apocas/dockerode/issues/265#issuecomment-462786936
+                Binds: config.volumes,
                 PortBindings: config.ports
                     ? config.ports.reduce(
                           (acc, port) => {
@@ -1465,7 +1465,8 @@ export default class DockerManager {
                     throw new Error(`Container ${containerInfo.id} still found after remove`);
                 }
             }
-            const newContainer = await this.#dockerode.createContainer(DockerManager.getDockerodeConfig(config));
+            const dockerodeConfig = DockerManager.getDockerodeConfig(config);
+            const newContainer = await this.#dockerode.createContainer(dockerodeConfig);
             return { stdout: `Container ${newContainer.id} created`, stderr: '' };
         }
         try {

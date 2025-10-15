@@ -79334,6 +79334,13 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
                 variant: "standard",
                 type: "number",
                 fullWidth: !0,
+                slotProps: {
+                  htmlInput: {
+                    min: e.min,
+                    max: e.max,
+                    step: e.step
+                  }
+                },
                 value: this.state.answers[e.id]?.value || "",
                 onChange: (n) => {
                   const a = n.target.value;

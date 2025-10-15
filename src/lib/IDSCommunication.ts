@@ -980,13 +980,7 @@ export class IDSCommunication {
                     ],
                     iobAutoImageUpdate: true,
                     iobStopOnUnload: true,
-                    mounts: [
-                        {
-                            source: true,
-                            target: '/shared',
-                            type: 'volume',
-                        },
-                    ],
+                    volumes: [`${this.statisticsDir}/volume:/shared`],
                     security: {
                         apparmor: 'unconfined',
                     },
