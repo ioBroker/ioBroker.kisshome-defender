@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "news": {
+      "1.0.7": {
+        "en": "Corrected the volume for docker\nAdded min,max,step for questionnaire (number)",
+        "de": "Korrektur des Volumens für den Docker\nZusätzlich min,max,step für Fragebogen (Anzahl)",
+        "ru": "Исправлен объем для докера\nДобавлено min,max,step для вопросника (номер)",
+        "pt": "Corrigido o volume para docker\nAdicionado min,max, passo para o questionário (número)",
+        "nl": "Het volume voor docker gecorrigeerd\nToegevoegd min,max,step voor vragenlijst (aantal)",
+        "fr": "Corrigé le volume pour docker\nAjouté min,max,étape pour le questionnaire (nombre)",
+        "it": "Corretto il volume per docker\nAggiunto min,max,step per questionario (numero)",
+        "es": "Corregido el volumen para docker\nAñadido min,max, paso para el cuestionario (número)",
+        "pl": "Poprawiono głośność dla Dockera\nDodano min, max, krok do kwestionariusza (liczba)",
+        "uk": "Виправлено об'єм для докера\nДодано хв,макс, крок для анкети (номер)",
+        "zh-cn": "纠正了嵌入器的音量\n为调查问卷添加的分钟、最大步骤(数目)"
+      },
       "1.0.6": {
         "en": "Improved selection of IP address",
         "de": "Erweiterte Auswahl der IP-Adresse",
@@ -80,19 +93,6 @@
         "pl": "Poprawiony adres URL wywołania zwrotnego",
         "uk": "Виправлено URL зворотнього виклику",
         "zh-cn": "已更正回调 URL"
-      },
-      "0.3.1": {
-        "en": "Implemented mobile view",
-        "de": "Mobile Ansicht implementiert",
-        "ru": "Реализован мобильный вид",
-        "pt": "Implementada visualização móvel",
-        "nl": "Mobiele weergave geïmplementeerd",
-        "fr": "Vue mobile implémentée",
-        "it": "Implementata la visualizzazione mobile",
-        "es": "Vista móvil implementada",
-        "pl": "Zaimplementowano widok mobilny",
-        "uk": "Реалізовано мобільний перегляд",
-        "zh-cn": "实现移动视图"
       }
     },
     "titleLang": {
