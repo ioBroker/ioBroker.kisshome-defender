@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "news": {
+      "1.0.8": {
+        "en": "Show digits after comma in charts",
+        "de": "Stellen nach Komma in Diagrammen anzeigen",
+        "ru": "Показать цифры после запятой в диаграммах",
+        "pt": "Mostrar os dígitos após vírgula nos gráficos",
+        "nl": "In grafieken cijfers na komma tonen",
+        "fr": "Afficher les chiffres après les virgules dans les graphiques",
+        "it": "Mostra le cifre dopo la virgola nei grafici",
+        "es": "Mostrar dígitos después del coma en los gráficos",
+        "pl": "Pokaż cyfry po przecinku na wykresach",
+        "uk": "Показати цифри після коми в діаграмах",
+        "zh-cn": "在图表中逗号后显示数字"
+      },
       "1.0.7": {
         "en": "Corrected the volume for docker\nAdded min,max,step for questionnaire (number)",
         "de": "Korrektur des Volumens für den Docker\nZusätzlich min,max,step für Fragebogen (Anzahl)",
@@ -80,19 +93,6 @@
         "pl": "Usunięto parametr sensitivity\nPoprawiono kolory w wykresie",
         "uk": "Вилучено параметр чутливості\nВиправлено кольори на графіку",
         "zh-cn": "移除了sensitivity参数\n在图表中修正了颜色"
-      },
-      "0.3.2": {
-        "en": "Corrected callback URL",
-        "de": "Korrigierte Rückruf-URL",
-        "ru": "Исправлен URL обратного вызова",
-        "pt": "URL de retorno corrigida",
-        "nl": "Gecorrigeerde callback-URL",
-        "fr": "URL de rappel corrigée",
-        "it": "URL di richiamata corretta",
-        "es": "URL de devolución de llamada corregida",
-        "pl": "Poprawiony adres URL wywołania zwrotnego",
-        "uk": "Виправлено URL зворотнього виклику",
-        "zh-cn": "已更正回调 URL"
       }
     },
     "titleLang": {
