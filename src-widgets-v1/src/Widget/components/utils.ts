@@ -11,7 +11,7 @@ export function bytes2string(bytes: number, maxValue?: number, noFloat?: boolean
     if (maxValue !== undefined && maxValue > 1024 * 1024) {
         const mb = bytes / (1024 * 1024);
         // Use a part of MB
-        return `${mb.toFixed(mb > 20 && noFloat ? 0 : 1).replace('.', ',')}Mb`;
+        return `${mb.toFixed(maxValue > 20 && noFloat ? 0 : 1).replace('.', ',')}Mb`;
     }
     if (bytes < 1024) {
         return `${bytes}b`;
