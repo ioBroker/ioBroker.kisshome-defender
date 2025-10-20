@@ -2,29 +2,45 @@ import type { LegacyConnection } from '@iobroker/adapter-react-v5';
 
 export const MOBILE_WIDTH = 600;
 
+const GIGABYTE = 1024 * 1024 * 1024;
+const MEGABYTE = 1024 * 1024;
+const KILOBYTE = 1024;
+
 export function bytes2string(bytes: number, maxValue?: number, noFloat?: boolean): string {
-    if (maxValue !== undefined && maxValue > 1024 * 1024 * 1024) {
+    if (maxValue !== undefined && maxValue > GIGABYTE) {
         // Use a part of GB
-        return `${(bytes / (1024 * 1024 * 1024)).toFixed(1).replace('.', ',')}Gb`;
+        return `${(bytes / GIGABYTE).toFixed(1).replace('.', ',')}Gb`;
     }
 
-    if (maxValue !== undefined && maxValue > 1024 * 1024) {
-        const mb = bytes / (1024 * 1024);
+    if (maxValue !== undefined && maxValue > MEGABYTE) {
+        const mb = bytes / MEGABYTE;
         // Use a part of MB
-        return `${mb.toFixed(maxValue > 20 && noFloat ? 0 : 1).replace('.', ',')}Mb`;
+        return `${mb.toFixed(maxValue > 12 * MEGABYTE && noFloat ? 0 : 1).replace('.', ',')}Mb`;
     }
-    if (bytes < 1024) {
+    if (bytes < KILOBYTE) {
         return `${bytes}b`;
     }
-    if (bytes < 1024 * 1024) {
-        const kb = bytes / 1024;
+    if (maxValue !== undefined) {
+        if (bytes < 1024 * 1024) {
+            const kb = bytes / KILOBYTE;
+            return `${kb.toFixed(maxValue > 12 * KILOBYTE && noFloat ? 0 : 1).replace('.', ',')}kb`;
+        }
+        if (bytes < GIGABYTE) {
+            const mb = bytes / MEGABYTE;
+            return `${mb.toFixed(maxValue > 12 * MEGABYTE && noFloat ? 0 : 1).replace('.', ',')}Mb`;
+        }
+        return `${(bytes / GIGABYTE).toFixed(maxValue > 12 * GIGABYTE && noFloat ? 0 : 1).replace('.', ',')}Gb`;
+    }
+
+    if (bytes < MEGABYTE) {
+        const kb = bytes / KILOBYTE;
         return `${kb.toFixed(noFloat ? 0 : 1).replace('.', ',')}kb`;
     }
-    if (bytes < 1024 * 1024 * 1024) {
-        const mb = bytes / (1024 * 1024);
+    if (bytes < GIGABYTE) {
+        const mb = bytes / MEGABYTE;
         return `${mb.toFixed(noFloat ? 0 : 1).replace('.', ',')}Mb`;
     }
-    return `${(bytes / (1024 * 1024 * 1024)).toFixed(noFloat ? 0 : 1).replace('.', ',')}Gb`;
+    return `${(bytes / GIGABYTE).toFixed(noFloat ? 0 : 1).replace('.', ',')}Gb`;
 }
 
 export function isTouch(e: any): boolean {

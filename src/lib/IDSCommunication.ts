@@ -727,7 +727,7 @@ export class IDSCommunication {
             const bytes =
                 mac === '88:99:AA:BB:CC:DD'
                     ? Math.floor(Math.random() * 100000000)
-                    : Math.floor(Math.random() * 1000000);
+                    : Math.floor(Math.random() * 2000000);
             const packets = Math.floor(bytes / 1000); // Assuming 1000 bytes per packet
 
             result.statistics.packets += packets;
