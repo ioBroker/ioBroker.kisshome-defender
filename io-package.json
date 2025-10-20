@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "news": {
+      "1.0.9": {
+        "en": "Show digits after comma in charts",
+        "de": "Stellen nach Komma in Diagrammen anzeigen",
+        "ru": "Показать цифры после запятой в диаграммах",
+        "pt": "Mostrar os dígitos após vírgula nos gráficos",
+        "nl": "In grafieken cijfers na komma tonen",
+        "fr": "Afficher les chiffres après les virgules dans les graphiques",
+        "it": "Mostra le cifre dopo la virgola nei grafici",
+        "es": "Mostrar dígitos después del coma en los gráficos",
+        "pl": "Pokaż cyfry po przecinku na wykresach",
+        "uk": "Показати цифри після коми в діаграмах",
+        "zh-cn": "在图表中逗号后显示数字"
+      },
       "1.0.8": {
         "en": "Show digits after comma in charts",
         "de": "Stellen nach Komma in Diagrammen anzeigen",
@@ -80,19 +93,6 @@
         "pl": "Ustawienie kwestionariusza pod firefox",
         "uk": "Виправлення анкети у Firefox",
         "zh-cn": "Firefox 下填写调查问卷"
-      },
-      "1.0.0": {
-        "en": "Removed sensitivity parameter\nCorrected colors in the chart",
-        "de": "Sensitivitätsparameter entfernt\nDie Farben im Diagramm wurden korrigiert.",
-        "ru": "Удален параметр \"чувствительность\"\nИсправлены цвета на графике",
-        "pt": "Removido o parâmetro de sensibilidade\nCores corrigidas no gráfico",
-        "nl": "Verwijderde gevoeligheidsparameter\nGecorrigeerde kleuren in de grafiek",
-        "fr": "Suppression du paramètre de sensibilité\nCouleurs corrigées dans le graphique",
-        "it": "Rimosso il parametro di sensibilità\nColori corretti nel grafico",
-        "es": "Eliminado el parámetro de sensibilidad\nCorregidos los colores en el gráfico",
-        "pl": "Usunięto parametr sensitivity\nPoprawiono kolory w wykresie",
-        "uk": "Вилучено параметр чутливості\nВиправлено кольори на графіку",
-        "zh-cn": "移除了sensitivity参数\n在图表中修正了颜色"
       }
     },
     "titleLang": {

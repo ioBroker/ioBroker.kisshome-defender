@@ -54,7 +54,7 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.0.9 (2025-10-20)
 -   (@GermanBluefox) Show digits after comma in charts
 
 ### 1.0.7 (2025-10-15)
