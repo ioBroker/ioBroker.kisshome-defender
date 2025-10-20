@@ -9,17 +9,20 @@ export function bytes2string(bytes: number, maxValue?: number, noFloat?: boolean
     }
 
     if (maxValue !== undefined && maxValue > 1024 * 1024) {
+        const mb = bytes / (1024 * 1024);
         // Use a part of MB
-        return `${(bytes / (1024 * 1024)).toFixed(noFloat ? 0 : 1).replace('.', ',')}Mb`;
+        return `${mb.toFixed(mb > 20 && noFloat ? 0 : 1).replace('.', ',')}Mb`;
     }
     if (bytes < 1024) {
         return `${bytes}b`;
     }
     if (bytes < 1024 * 1024) {
-        return `${(bytes / 1024).toFixed(noFloat ? 0 : 1).replace('.', ',')}kb`;
+        const kb = bytes / 1024;
+        return `${kb.toFixed(noFloat ? 0 : 1).replace('.', ',')}kb`;
     }
     if (bytes < 1024 * 1024 * 1024) {
-        return `${(bytes / (1024 * 1024)).toFixed(noFloat ? 0 : 1).replace('.', ',')}Mb`;
+        const mb = bytes / (1024 * 1024);
+        return `${mb.toFixed(noFloat ? 0 : 1).replace('.', ',')}Mb`;
     }
     return `${(bytes / (1024 * 1024 * 1024)).toFixed(noFloat ? 0 : 1).replace('.', ',')}Gb`;
 }

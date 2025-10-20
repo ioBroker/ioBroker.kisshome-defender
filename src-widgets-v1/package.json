@@ -14,8 +14,8 @@
         ".": "./dist/kisshomeDefender.es.js"
     },
     "devDependencies": {
-        "@eslint/js": "^9.37.0",
-        "@iobroker/adapter-react-v5": "^7.7.3",
+        "@eslint/js": "^9.38.0",
+        "@iobroker/adapter-react-v5": "^7.7.4",
         "@iobroker/eslint-config": "^2.2.0",
         "@iobroker/types": "^7.0.7",
         "@iobroker/ws": "^3.0.3",
@@ -31,7 +31,7 @@
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
         "typescript": "^5.9.3",
-        "vite": "^7.1.9",
+        "vite": "^7.1.11",
         "vite-plugin-commonjs": "^0.10.4"
     }
 }

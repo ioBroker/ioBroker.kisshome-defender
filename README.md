@@ -54,6 +54,9 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
+#### **WORK IN PROGRESS**
+-   (@GermanBluefox) Show digits after comma in charts
+
 ### 1.0.7 (2025-10-15)
 -   (@GermanBluefox) Corrected the volume for docker
 -   (@GermanBluefox) Added min,max,step for questionnaire (number)
