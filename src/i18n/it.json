@@ -68,7 +68,7 @@
   "Synchronization still running...": "Sincronizzazione ancora in corso...",
   "Syncing files to the cloud": "Sincronizzazione dei file sul cloud",
   "The keys were restored from \"0_userdata.0.kisshomeResearchKeys\".": "Le chiavi sono state ripristinate da \"0_userdata.0.kisshomeResearchKeys\".",
-  "The saveThresholdSeconds is set to %s seconds, but it should be at least 120 seconds to avoid too frequent saves.": "saveThresholdSeconds è impostato su %s secondi, ma dovrebbe essere almeno 120 secondi per evitare salvataggi troppo frequenti.",
+  "The saveThresholdSeconds is set to %s seconds, but it should be at least 600 seconds to avoid too frequent saves.": "saveThresholdSeconds è impostato su %s secondi, ma dovrebbe essere almeno 120 secondi per evitare salvataggi troppo frequenti.",
   "The saveThresholdSeconds is set to %s seconds, but it should be less than 3600 seconds to avoid too infrequent saves.": "saveThresholdSeconds è impostato su %s secondi, ma dovrebbe essere inferiore a 3600 secondi per evitare salvataggi troppo poco frequenti.",
   "UUID changed. Please contact us via kisshome@internet-sicherheit.de": "UUID modificata. Contattaci tramite kisshome@internet-sicherheit.de",
   "Unknown email address": "Indirizzo email sconosciuto",

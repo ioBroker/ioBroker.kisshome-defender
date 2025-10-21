@@ -93,7 +93,7 @@
                     "lg": 6,
                     "newLine": true,
                     "step": 10,
-                    "min": 120,
+                    "min": 600,
                     "max": 3600,
                     "label": "Save threshold in seconds"
                 },

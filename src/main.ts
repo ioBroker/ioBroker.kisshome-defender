@@ -681,14 +681,14 @@ export class KISSHomeResearchAdapter extends Adapter {
                 parseInt(this.config.saveThresholdSeconds.toString(), 10) || SAVE_DATA_EVERY_MS / 1000;
         }
 
-        if (this.config.saveThresholdSeconds < 120) {
+        if (this.config.saveThresholdSeconds < 600) {
             this.log.warn(
                 I18n.translate(
-                    'The saveThresholdSeconds is set to %s seconds, but it should be at least 120 seconds to avoid too frequent saves.',
+                    'The saveThresholdSeconds is set to %s seconds, but it should be at least 600 seconds to avoid too frequent saves.',
                     this.config.saveThresholdSeconds,
                 ),
             );
-            this.config.saveThresholdSeconds = 120;
+            this.config.saveThresholdSeconds = 600;
         } else if (this.config.saveThresholdSeconds > 3600) {
             this.log.warn(
                 I18n.translate(

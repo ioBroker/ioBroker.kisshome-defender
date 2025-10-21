@@ -45,15 +45,15 @@ Add the following line:
 iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 ```
 
-## Todo
-- [] ioBroker.pro URL for licenses
-
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+-   (@GermanBluefox) Increased the saving data threshold
+
 ### 1.0.9 (2025-10-20)
 -   (@GermanBluefox) Show digits after comma in charts
 

@@ -23,7 +23,7 @@ import DockerManager from './DockerManager';
 import { fileNameToDate, normalizeMacAddress } from './utils';
 
 const MAX_FILES_ON_DISK = 6; // Maximum number of files to keep on disk
-export const CHANGE_TIME = '2025-11-07T00:00:00Z'; // Calculation time
+export const CHANGE_TIME = '2025-11-13T00:00:00Z'; // Calculation time
 
 function betaRandom(a: number, b: number): number {
     // Verwende die Methode von Cheng (1978) für Beta(a, b) mit a, b > 0

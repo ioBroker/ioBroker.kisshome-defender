@@ -204,7 +204,7 @@
     "tempDir": "",
     "devices": [],
     "allowTraining": true,
-    "saveThresholdSeconds": 900,
+    "saveThresholdSeconds": 3600000,
     "docker": {
       "selfHosted": true,
       "url": "",
