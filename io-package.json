@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.0.9",
+    "version": "1.0.10",
     "news": {
+      "1.0.10": {
+        "en": "Increased the saving data threshold",
+        "de": "Erhöht die Speicherdatenschwelle",
+        "ru": "Повышение порога сохранения данных",
+        "pt": "Aumento do limiar de poupança de dados",
+        "nl": "De drempel voor het opslaan van gegevens verhoogd",
+        "fr": "Augmentation du seuil de sauvegarde des données",
+        "it": "Aumento della soglia di salvataggio dei dati",
+        "es": "Aumento del umbral de datos de ahorro",
+        "pl": "Zwiększony próg oszczędności danych",
+        "uk": "Підвищений термін збереження даних",
+        "zh-cn": "提高数据保存阈值"
+      },
       "1.0.9": {
         "en": "Show digits after comma in charts",
         "de": "Stellen nach Komma in Diagrammen anzeigen",
@@ -80,19 +93,6 @@
         "pl": "Dozwolone ustawienie portu i adresu bind Docker",
         "uk": "Дозволене встановлення порту та подвійна адреса для Docker",
         "zh-cn": "允许设置端口和 Docker 绑定地址"
-      },
-      "1.0.1": {
-        "en": "Fixing questionnaire under Firefox",
-        "de": "Fragebogen unter Firefox beheben",
-        "ru": "Заполнение анкеты в Firefox",
-        "pt": "Fixando questionário no Firefox",
-        "nl": "Vragenlijst instellen onder Firefox",
-        "fr": "Correction du questionnaire sous Firefox",
-        "it": "Risolvere il questionario sotto Firefox",
-        "es": "Cuestionario de fijación bajo Firefox",
-        "pl": "Ustawienie kwestionariusza pod firefox",
-        "uk": "Виправлення анкети у Firefox",
-        "zh-cn": "Firefox 下填写调查问卷"
       }
     },
     "titleLang": {
