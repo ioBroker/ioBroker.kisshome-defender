@@ -51,6 +51,9 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+-   (@GermanBluefox) Disable docker settings if not possible
+
 ### 1.0.10 (2025-10-21)
 -   (@GermanBluefox) Increased the saving data threshold
 
