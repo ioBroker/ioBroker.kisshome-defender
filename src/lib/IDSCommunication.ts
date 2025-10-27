@@ -471,6 +471,12 @@ export class IDSCommunication {
                 this.dockerManager &&
                 (this.lastStatus?.message?.status === 'Error' || this.lastStatus?.message?.status === 'Exited')
             ) {
+                if (this.uploadStatus.status !== 'idle') {
+                    this.adapter.log.debug(`[IDS] The file upload of "${this.uploadStatus.fileName}" was interrupted due to IDS restart.`);
+                    // Do not wait for the upload result
+                    this.uploadStatus = { status: 'idle' };
+                }
+
                 this.adapter.log.warn('[IDS] IDS in the error state, restarting...');
                 await this.dockerManager.containerRestart();
             }
@@ -995,6 +1001,8 @@ export class IDSCommunication {
         this.adapter.log.info(
             `[IDS] ${I18n.translate('Starting IDS communication with URL')}: ${this.idsUrl || `http://${await this.dockerManager?.getIpOfContainer()}:5000`}`,
         );
+        this.uploadStatus = { status: 'idle' };
+
         try {
             await this.manageIdsContainer();
             await this.startWebServer();
@@ -1057,6 +1065,7 @@ export class IDSCommunication {
 
     async destroy(): Promise<void> {
         this.configSent = false;
+        this.uploadStatus = { status: 'idle' };
 
         if (this.statusInterval) {
             clearInterval(this.statusInterval);
