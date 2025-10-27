@@ -114,7 +114,7 @@ var $Ct = lY((Ma, Aa) => {
     function F(U, K) {
       return typeof U == "object" && U !== null && U.key != null ? R("" + U.key) : K.toString(36);
     }
-    function j(U, K, ie, se, oe) {
+    function B(U, K, ie, se, oe) {
       var ne = typeof U;
       (ne === "undefined" || ne === "boolean") && (U = null);
       var ke = !1;
@@ -131,22 +131,22 @@ var $Ct = lY((Ma, Aa) => {
               ke = !0;
           }
       }
-      if (ke) return ke = U, oe = oe(ke), U = se === "" ? "." + F(ke, 0) : se, C(oe) ? (ie = "", U != null && (ie = U.replace(z, "$&/") + "/"), j(oe, K, ie, "", function(ve) {
+      if (ke) return ke = U, oe = oe(ke), U = se === "" ? "." + F(ke, 0) : se, C(oe) ? (ie = "", U != null && (ie = U.replace(z, "$&/") + "/"), B(oe, K, ie, "", function(ve) {
         return ve;
       })) : oe != null && (M(oe) && (oe = I(oe, ie + (!oe.key || ke && ke.key === oe.key ? "" : ("" + oe.key).replace(z, "$&/") + "/") + U)), K.push(oe)), 1;
       if (ke = 0, se = se === "" ? "." : se + ":", C(U)) for (var _e = 0; _e < U.length; _e++) {
         ne = U[_e];
         var we = se + F(ne, _e);
-        ke += j(ne, K, ie, we, oe);
+        ke += B(ne, K, ie, we, oe);
       }
-      else if (we = f(U), typeof we == "function") for (U = we.call(U), _e = 0; !(ne = U.next()).done; ) ne = ne.value, we = se + F(ne, _e++), ke += j(ne, K, ie, we, oe);
+      else if (we = f(U), typeof we == "function") for (U = we.call(U), _e = 0; !(ne = U.next()).done; ) ne = ne.value, we = se + F(ne, _e++), ke += B(ne, K, ie, we, oe);
       else if (ne === "object") throw K = String(U), Error("Objects are not valid as a React child (found: " + (K === "[object Object]" ? "object with keys {" + Object.keys(U).join(", ") + "}" : K) + "). If you meant to render a collection of children, use an array instead.");
       return ke;
     }
     function W(U, K, ie) {
       if (U == null) return U;
       var se = [], oe = 0;
-      return j(U, se, "", "", function(ne) {
+      return B(U, se, "", "", function(ne) {
         return K.call(ie, ne, oe++);
       }), se;
     }
@@ -395,8 +395,8 @@ var $Ct = lY((Ma, Aa) => {
         w(z);
       };
       else if (typeof MessageChannel < "u") {
-        var j = new MessageChannel(), W = j.port2;
-        j.port1.onmessage = z, F = function() {
+        var B = new MessageChannel(), W = B.port2;
+        B.port1.onmessage = z, F = function() {
           W.postMessage(null);
         };
       } else F = function() {
@@ -599,7 +599,7 @@ var $Ct = lY((Ma, Aa) => {
       var $ = y.hasOwnProperty(m) ? y[m] : null;
       ($ !== null ? $.type !== 0 : S || !(2 < m.length) || m[0] !== "o" && m[0] !== "O" || m[1] !== "n" && m[1] !== "N") && (v(m, _, $, S) && (_ = null), S || $ === null ? f(m) && (_ === null ? p.removeAttribute(m) : p.setAttribute(m, "" + _)) : $.mustUseProperty ? p[$.propertyName] = _ === null ? $.type === 3 ? !1 : "" : _ : (m = $.attributeName, S = $.attributeNamespace, _ === null ? p.removeAttribute(m) : ($ = $.type, _ = $ === 3 || $ === 4 && _ === !0 ? "" : "" + _, S ? p.setAttributeNS(S, m, _) : p.setAttribute(m, _))));
     }
-    var C = t.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED, E = Symbol.for("react.element"), T = Symbol.for("react.portal"), D = Symbol.for("react.fragment"), P = Symbol.for("react.strict_mode"), I = Symbol.for("react.profiler"), M = Symbol.for("react.provider"), R = Symbol.for("react.context"), z = Symbol.for("react.forward_ref"), F = Symbol.for("react.suspense"), j = Symbol.for("react.suspense_list"), W = Symbol.for("react.memo"), H = Symbol.for("react.lazy"), Z = Symbol.for("react.offscreen"), q = Symbol.iterator;
+    var C = t.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED, E = Symbol.for("react.element"), T = Symbol.for("react.portal"), D = Symbol.for("react.fragment"), P = Symbol.for("react.strict_mode"), I = Symbol.for("react.profiler"), M = Symbol.for("react.provider"), R = Symbol.for("react.context"), z = Symbol.for("react.forward_ref"), F = Symbol.for("react.suspense"), B = Symbol.for("react.suspense_list"), W = Symbol.for("react.memo"), H = Symbol.for("react.lazy"), Z = Symbol.for("react.offscreen"), q = Symbol.iterator;
     function V(p) {
       return p === null || typeof p != "object" ? null : (p = q && p[q] || p["@@iterator"], typeof p == "function" ? p : null);
     }
@@ -707,7 +707,7 @@ var $Ct = lY((Ma, Aa) => {
           return "StrictMode";
         case F:
           return "Suspense";
-        case j:
+        case B:
           return "SuspenseList";
       }
       if (typeof p == "object") switch (p.$$typeof) {
@@ -5361,8 +5361,8 @@ Error generating stack: ` + O.message + `
           return p = Ga(12, _, m, $ | 2), p.elementType = I, p.lanes = O, p;
         case F:
           return p = Ga(13, _, m, $), p.elementType = F, p.lanes = O, p;
-        case j:
-          return p = Ga(19, _, m, $), p.elementType = j, p.lanes = O, p;
+        case B:
+          return p = Ga(19, _, m, $), p.elementType = B, p.lanes = O, p;
         case Z:
           return Cv(_, $, O, m);
         default:
@@ -8349,9 +8349,9 @@ Error generating stack: ` + O.message + `
           const W = F.theme?.components?.[c]?.variants;
           return W ? NF(F, W, [], F.theme.modularCssLayers ? "theme" : void 0) : null;
         }), b || I.push(zl), Array.isArray(P[0])) {
-          const z = P.shift(), F = new Array(D.length).fill(""), j = new Array(I.length).fill("");
+          const z = P.shift(), F = new Array(D.length).fill(""), B = new Array(I.length).fill("");
           let W;
-          W = [...F, ...z, ...j], W.raw = [...F, ...z.raw, ...j], D.unshift(W);
+          W = [...F, ...z, ...B], W.raw = [...F, ...z.raw, ...B], D.unshift(W);
         }
         const M = [...D, ...P, ...I], R = x(...M);
         return s.muiName && (R.muiName = s.muiName), R;
@@ -9263,7 +9263,7 @@ try {
         disableNestedContext: R = !1,
         disableStyleSheetGeneration: z = !1,
         defaultMode: F = "system",
-        noSsr: j
+        noSsr: B
       } = b, W = N.useRef(!1), H = V8(), Z = N.useContext(c), q = !!Z && !R, V = N.useMemo(() => x || (typeof r == "function" ? r() : r), [x]), Q = V[e], U = Q || V, {
         colorSchemes: K = u,
         components: ie = f,
@@ -9285,7 +9285,7 @@ try {
         defaultMode: we,
         storageManager: D,
         storageWindow: P,
-        noSsr: j
+        noSsr: B
       });
       let xe = ve, Ne = Pe;
       q && (xe = Z.mode, Ne = Z.colorScheme);
@@ -10234,8 +10234,8 @@ export default theme;`;
     };
     Object.keys(C.colorSchemes).forEach((I) => {
       const M = C.colorSchemes[I].palette, R = (z) => {
-        const F = z.split("-"), j = F[1], W = F[2];
-        return f(z, M[j][W]);
+        const F = z.split("-"), B = F[1], W = F[2];
+        return f(z, M[B][W]);
       };
       if (M.mode === "light" && (le(M.common, "background", "#fff"), le(M.common, "onBackground", "#000")), M.mode === "dark" && (le(M.common, "background", "#000"), le(M.common, "onBackground", "#fff")), BZ(M, ["Alert", "AppBar", "Avatar", "Button", "Chip", "FilledInput", "LinearProgress", "Skeleton", "Slider", "SnackbarContent", "SpeedDialAction", "StepConnector", "StepContent", "Switch", "TableCell", "Tooltip"]), M.mode === "light") {
         le(M.Alert, "errorColor", or(M.error.light, 0.6)), le(M.Alert, "infoColor", or(M.info.light, 0.6)), le(M.Alert, "successColor", or(M.success.light, 0.6)), le(M.Alert, "warningColor", or(M.warning.light, 0.6)), le(M.Alert, "errorFilledBg", R("palette-error-main")), le(M.Alert, "infoFilledBg", R("palette-info-main")), le(M.Alert, "successFilledBg", R("palette-success-main")), le(M.Alert, "warningFilledBg", R("palette-warning-main")), le(M.Alert, "errorFilledColor", fi(() => M.getContrastText(M.error.main))), le(M.Alert, "infoFilledColor", fi(() => M.getContrastText(M.info.main))), le(M.Alert, "successFilledColor", fi(() => M.getContrastText(M.success.main))), le(M.Alert, "warningFilledColor", fi(() => M.getContrastText(M.warning.main))), le(M.Alert, "errorStandardBg", ir(M.error.light, 0.9)), le(M.Alert, "infoStandardBg", ir(M.info.light, 0.9)), le(M.Alert, "successStandardBg", ir(M.success.light, 0.9)), le(M.Alert, "warningStandardBg", ir(M.warning.light, 0.9)), le(M.Alert, "errorIconColor", R("palette-error-main")), le(M.Alert, "infoIconColor", R("palette-info-main")), le(M.Alert, "successIconColor", R("palette-success-main")), le(M.Alert, "warningIconColor", R("palette-warning-main")), le(M.AppBar, "defaultBg", R("palette-grey-100")), le(M.Avatar, "defaultBg", R("palette-grey-400")), le(M.Button, "inheritContainedBg", R("palette-grey-300")), le(M.Button, "inheritContainedHoverBg", R("palette-grey-A100")), le(M.Chip, "defaultBorder", R("palette-grey-400")), le(M.Chip, "defaultAvatarColor", R("palette-grey-700")), le(M.Chip, "defaultIconColor", R("palette-grey-700")), le(M.FilledInput, "bg", "rgba(0, 0, 0, 0.06)"), le(M.FilledInput, "hoverBg", "rgba(0, 0, 0, 0.09)"), le(M.FilledInput, "disabledBg", "rgba(0, 0, 0, 0.12)"), le(M.LinearProgress, "primaryBg", ir(M.primary.main, 0.62)), le(M.LinearProgress, "secondaryBg", ir(M.secondary.main, 0.62)), le(M.LinearProgress, "errorBg", ir(M.error.main, 0.62)), le(M.LinearProgress, "infoBg", ir(M.info.main, 0.62)), le(M.LinearProgress, "successBg", ir(M.success.main, 0.62)), le(M.LinearProgress, "warningBg", ir(M.warning.main, 0.62)), le(M.Skeleton, "bg", `rgba(${R("palette-text-primaryChannel")} / 0.11)`), le(M.Slider, "primaryTrack", ir(M.primary.main, 0.62)), le(M.Slider, "secondaryTrack", ir(M.secondary.main, 0.62)), le(M.Slider, "errorTrack", ir(M.error.main, 0.62)), le(M.Slider, "infoTrack", ir(M.info.main, 0.62)), le(M.Slider, "successTrack", ir(M.success.main, 0.62)), le(M.Slider, "warningTrack", ir(M.warning.main, 0.62));
@@ -13106,13 +13106,13 @@ export default theme;`;
       ...n,
       orientation: b,
       collapsedSize: s
-    }, D = mQ(T), P = $s(), I = au(), M = N.useRef(null), R = N.useRef(), z = typeof s == "number" ? `${s}px` : s, F = b === "horizontal", j = F ? "width" : "height", W = N.useRef(null), H = jr(r, W), Z = (ne) => (ke) => {
+    }, D = mQ(T), P = $s(), I = au(), M = N.useRef(null), R = N.useRef(), z = typeof s == "number" ? `${s}px` : s, F = b === "horizontal", B = F ? "width" : "height", W = N.useRef(null), H = jr(r, W), Z = (ne) => (ke) => {
       if (ne) {
         const _e = W.current;
         ke === void 0 ? ne(_e) : ne(_e, ke);
       }
     }, q = () => M.current ? M.current[F ? "clientWidth" : "clientHeight"] : 0, V = Z((ne, ke) => {
-      M.current && F && (M.current.style.position = "absolute"), ne.style[j] = z, u && u(ne, ke);
+      M.current && F && (M.current.style.position = "absolute"), ne.style[B] = z, u && u(ne, ke);
     }), Q = Z((ne, ke) => {
       const _e = q();
       M.current && F && (M.current.style.position = "");
@@ -13131,11 +13131,11 @@ export default theme;`;
         ne.style.transitionDuration = `${pe}ms`, R.current = pe;
       } else
         ne.style.transitionDuration = typeof we == "string" ? we : `${we}ms`;
-      ne.style[j] = `${_e}px`, ne.style.transitionTimingFunction = ve, h && h(ne, ke);
+      ne.style[B] = `${_e}px`, ne.style.transitionTimingFunction = ve, h && h(ne, ke);
     }), U = Z((ne, ke) => {
-      ne.style[j] = "auto", f && f(ne, ke);
+      ne.style[B] = "auto", f && f(ne, ke);
     }), K = Z((ne) => {
-      ne.style[j] = `${q()}px`, v && v(ne);
+      ne.style[B] = `${q()}px`, v && v(ne);
     }), ie = Z(g), se = Z((ne) => {
       const ke = q(), {
         duration: _e,
@@ -13152,7 +13152,7 @@ export default theme;`;
         ne.style.transitionDuration = `${ve}ms`, R.current = ve;
       } else
         ne.style.transitionDuration = typeof _e == "string" ? _e : `${_e}ms`;
-      ne.style[j] = z, ne.style.transitionTimingFunction = we, y && y(ne);
+      ne.style[B] = z, ne.style.transitionTimingFunction = we, y && y(ne);
     }), oe = (ne) => {
       x === "auto" && I.start(R.current || 0, ne), a && a(W.current, ne);
     };
@@ -13507,7 +13507,7 @@ export default theme;`;
       additionalProps: {
         square: u
       }
-    }), [j, W] = ft("heading", {
+    }), [B, W] = ft("heading", {
       elementType: CQ,
       externalForwardedProps: R,
       className: P.heading,
@@ -13519,7 +13519,7 @@ export default theme;`;
     });
     return /* @__PURE__ */ A.jsxs(z, {
       ...F,
-      children: [/* @__PURE__ */ A.jsx(j, {
+      children: [/* @__PURE__ */ A.jsx(B, {
         ...W,
         children: /* @__PURE__ */ A.jsx(lj.Provider, {
           value: T,
@@ -13802,7 +13802,7 @@ export default theme;`;
         left: 0,
         top: 0
       };
-      let z, F, j;
+      let z, F, B;
       if (P || C === void 0 || C.clientX === 0 && C.clientY === 0 || !C.clientX && !C.touches)
         z = Math.round(R.width / 2), F = Math.round(R.height / 2);
       else {
@@ -13813,17 +13813,17 @@ export default theme;`;
         z = Math.round(W - R.left), F = Math.round(H - R.top);
       }
       if (P)
-        j = Math.sqrt((2 * R.width ** 2 + R.height ** 2) / 3), j % 2 === 0 && (j += 1);
+        B = Math.sqrt((2 * R.width ** 2 + R.height ** 2) / 3), B % 2 === 0 && (B += 1);
       else {
         const W = Math.max(Math.abs((M ? M.clientWidth : 0) - z), z) * 2 + 2, H = Math.max(Math.abs((M ? M.clientHeight : 0) - F), F) * 2 + 2;
-        j = Math.sqrt(W ** 2 + H ** 2);
+        B = Math.sqrt(W ** 2 + H ** 2);
       }
       C?.touches ? v.current === null && (v.current = () => {
         y({
           pulsate: D,
           rippleX: z,
           rippleY: F,
-          rippleSize: j,
+          rippleSize: B,
           cb: T
         });
       }, h.start(PQ, () => {
@@ -13832,7 +13832,7 @@ export default theme;`;
         pulsate: D,
         rippleX: z,
         rippleY: F,
-        rippleSize: j,
+        rippleSize: B,
         cb: T
       });
     }, [a, y, h]), w = N.useCallback(() => {
@@ -13950,7 +13950,7 @@ export default theme;`;
       onTouchMove: R,
       onTouchStart: z,
       tabIndex: F = 0,
-      TouchRippleProps: j,
+      TouchRippleProps: B,
       touchRippleRef: W,
       type: H,
       ...Z
@@ -14022,7 +14022,7 @@ export default theme;`;
       children: [i, ie ? /* @__PURE__ */ A.jsx(FQ, {
         ref: Q,
         center: o,
-        ...j
+        ...B
       }) : null]
     });
   });
@@ -15408,8 +15408,8 @@ export default theme;`;
     if (f === zf && R) {
       var z = R[a];
       Object.keys(M).forEach(function(F) {
-        var j = [vo, mo].indexOf(F) >= 0 ? 1 : -1, W = [pa, mo].indexOf(F) >= 0 ? "y" : "x";
-        M[F] += z[W] * j;
+        var B = [vo, mo].indexOf(F) >= 0 ? 1 : -1, W = [pa, mo].indexOf(F) >= 0 ? "y" : "x";
+        M[F] += z[W] * B;
       });
     }
     return M;
@@ -15453,13 +15453,13 @@ export default theme;`;
           allowedAutoPlacements: g
         }) : oe);
       }, []), E = e.rects.reference, T = e.rects.popper, D = /* @__PURE__ */ new Map(), P = !0, I = C[0], M = 0; M < C.length; M++) {
-        var R = C[M], z = Ni(R), F = Op(R) === $p, j = [pa, mo].indexOf(z) >= 0, W = j ? "width" : "height", H = w0(e, {
+        var R = C[M], z = Ni(R), F = Op(R) === $p, B = [pa, mo].indexOf(z) >= 0, W = B ? "width" : "height", H = w0(e, {
           placement: R,
           boundary: d,
           rootBoundary: u,
           altBoundary: f,
           padding: c
-        }), Z = j ? F ? vo : fa : F ? mo : pa;
+        }), Z = B ? F ? vo : fa : F ? mo : pa;
         E[W] > T[W] && (Z = ig(Z));
         var q = ig(Z), V = [];
         if (o && V.push(H[z] <= 0), s && V.push(H[Z] <= 0, H[q] <= 0), V.every(function(se) {
@@ -15600,10 +15600,10 @@ export default theme;`;
     };
     if (T) {
       if (o) {
-        var F, j = C === "y" ? pa : fa, W = C === "y" ? mo : vo, H = C === "y" ? "height" : "width", Z = T[C], q = Z + y[j], V = Z - y[W], Q = h ? -P[H] / 2 : 0, U = w === $p ? D[H] : P[H], K = w === $p ? -P[H] : -D[H], ie = e.elements.arrow, se = h && ie ? tk(ie) : {
+        var F, B = C === "y" ? pa : fa, W = C === "y" ? mo : vo, H = C === "y" ? "height" : "width", Z = T[C], q = Z + y[B], V = Z - y[W], Q = h ? -P[H] / 2 : 0, U = w === $p ? D[H] : P[H], K = w === $p ? -P[H] : -D[H], ie = e.elements.arrow, se = h && ie ? tk(ie) : {
           width: 0,
           height: 0
-        }, oe = e.modifiersData["arrow#persistent"] ? e.modifiersData["arrow#persistent"].padding : fj(), ne = oe[j], ke = oe[W], _e = Yh(0, D[H], se[H]), we = x ? D[H] / 2 - Q - _e - ne - M.mainAxis : U - _e - ne - M.mainAxis, ve = x ? -D[H] / 2 + Q + _e + ke + M.mainAxis : K + _e + ke + M.mainAxis, pe = e.elements.arrow && sm(e.elements.arrow), fe = pe ? C === "y" ? pe.clientTop || 0 : pe.clientLeft || 0 : 0, je = (F = R?.[C]) != null ? F : 0, Ce = Z + we - je - fe, Pe = Z + ve - je, pt = Yh(h ? Pg(q, Ce) : q, Z, h ? cu(V, Pe) : V);
+        }, oe = e.modifiersData["arrow#persistent"] ? e.modifiersData["arrow#persistent"].padding : fj(), ne = oe[B], ke = oe[W], _e = Yh(0, D[H], se[H]), we = x ? D[H] / 2 - Q - _e - ne - M.mainAxis : U - _e - ne - M.mainAxis, ve = x ? -D[H] / 2 + Q + _e + ke + M.mainAxis : K + _e + ke + M.mainAxis, pe = e.elements.arrow && sm(e.elements.arrow), fe = pe ? C === "y" ? pe.clientTop || 0 : pe.clientLeft || 0 : 0, je = (F = R?.[C]) != null ? F : 0, Ce = Z + we - je - fe, Pe = Z + ve - je, pt = Yh(h ? Pg(q, Ce) : q, Z, h ? cu(V, Pe) : V);
         T[C] = pt, z[C] = pt - Z;
       }
       if (s) {
@@ -15940,7 +15940,7 @@ export default theme;`;
       placement: D
     };
     v !== null && (R.TransitionProps = v);
-    const z = Dte(e), F = h.root ?? "div", j = Ln({
+    const z = Dte(e), F = h.root ?? "div", B = Ln({
       elementType: F,
       externalSlotProps: f.root,
       externalForwardedProps: y,
@@ -15952,7 +15952,7 @@ export default theme;`;
       className: z.root
     });
     return /* @__PURE__ */ A.jsx(F, {
-      ...j,
+      ...B,
       children: typeof a == "function" ? a(R) : a
     });
   }), Ate = /* @__PURE__ */ N.forwardRef(function(e, r) {
@@ -16123,10 +16123,10 @@ export default theme;`;
       const R = C.scrollHeight;
       let z = M;
       o && (z = Math.max(Number(o) * R, z)), a && (z = Math.min(Number(a) * R, z)), z = Math.max(z, R);
-      const F = z + (D === "border-box" ? P + I : 0), j = Math.abs(z - M) <= 1;
+      const F = z + (D === "border-box" ? P + I : 0), B = Math.abs(z - M) <= 1;
       return {
         outerHeightStyle: F,
-        overflowing: j
+        overflowing: B
       };
     }, [a, o, e.placeholder]), g = Bn(() => {
       const x = d.current, C = v();
@@ -16444,7 +16444,7 @@ export default theme;`;
       onChange: R,
       onClick: z,
       onFocus: F,
-      onKeyDown: j,
+      onKeyDown: B,
       onKeyUp: W,
       placeholder: H,
       readOnly: Z,
@@ -16567,7 +16567,7 @@ export default theme;`;
             required: Pe.required,
             rows: V,
             value: ke,
-            onKeyDown: j,
+            onKeyDown: B,
             onKeyUp: W,
             type: se,
             ...ue,
@@ -16641,13 +16641,13 @@ export default theme;`;
       // eslint-disable-next-line react/prop-types
       TransitionComponent: w = ei,
       ...x
-    } = e, C = N.useRef(null), E = jr(C, qp(s), r), T = (j) => (W) => {
-      if (j) {
+    } = e, C = N.useRef(null), E = jr(C, qp(s), r), T = (B) => (W) => {
+      if (B) {
         const H = C.current;
-        W === void 0 ? j(H) : j(H, W);
+        W === void 0 ? B(H) : B(H, W);
       }
-    }, D = T(f), P = T((j, W) => {
-      sj(j);
+    }, D = T(f), P = T((B, W) => {
+      sj(B);
       const H = Dp({
         style: y,
         timeout: b,
@@ -16655,8 +16655,8 @@ export default theme;`;
       }, {
         mode: "enter"
       });
-      j.style.webkitTransition = n.transitions.create("opacity", H), j.style.transition = n.transitions.create("opacity", H), d && d(j, W);
-    }), I = T(u), M = T(g), R = T((j) => {
+      B.style.webkitTransition = n.transitions.create("opacity", H), B.style.transition = n.transitions.create("opacity", H), d && d(B, W);
+    }), I = T(u), M = T(g), R = T((B) => {
       const W = Dp({
         style: y,
         timeout: b,
@@ -16664,9 +16664,9 @@ export default theme;`;
       }, {
         mode: "exit"
       });
-      j.style.webkitTransition = n.transitions.create("opacity", W), j.style.transition = n.transitions.create("opacity", W), h && h(j);
-    }), z = T(v), F = (j) => {
-      o && o(C.current, j);
+      B.style.webkitTransition = n.transitions.create("opacity", W), B.style.transition = n.transitions.create("opacity", W), h && h(B);
+    }), z = T(v), F = (B) => {
+      o && o(C.current, B);
     };
     return /* @__PURE__ */ A.jsx(w, {
       appear: i,
@@ -16681,14 +16681,14 @@ export default theme;`;
       addEndListener: F,
       timeout: b,
       ...x,
-      children: (j, {
+      children: (B, {
         ownerState: W,
         ...H
       }) => /* @__PURE__ */ N.cloneElement(s, {
         style: {
           opacity: 0,
-          visibility: j === "exited" && !c ? "hidden" : void 0,
-          ...Ute[j],
+          visibility: B === "exited" && !c ? "hidden" : void 0,
+          ...Ute[B],
           ...y,
           ...s.props.style
         },
@@ -17451,7 +17451,7 @@ export default theme;`;
       size: E,
       type: D,
       variant: P
-    }, F = ure(z), j = (T || w && C === "start") && /* @__PURE__ */ A.jsx(pre, {
+    }, F = ure(z), B = (T || w && C === "start") && /* @__PURE__ */ A.jsx(pre, {
       className: F.startIcon,
       ownerState: z,
       children: T || /* @__PURE__ */ A.jsx(VD, {
@@ -17491,7 +17491,7 @@ export default theme;`;
       id: w ? M : b,
       ...I,
       classes: F,
-      children: [j, C !== "end" && Z, s, C === "end" && Z, W]
+      children: [B, C !== "end" && Z, s, C === "end" && Z, W]
     });
   });
   function mre(t) {
@@ -17630,7 +17630,7 @@ export default theme;`;
       state: "checked"
     }), z = qi(), F = (oe) => {
       b && b(oe), z && z.onFocus && z.onFocus(oe);
-    }, j = (oe) => {
+    }, B = (oe) => {
       g && g(oe), z && z.onBlur && z.onBlur(oe);
     }, W = (oe) => {
       if (oe.nativeEvent.defaultPrevented)
@@ -17668,7 +17668,7 @@ export default theme;`;
           oe.onFocus?.(ne), F(ne);
         },
         onBlur: (ne) => {
-          oe.onBlur?.(ne), j(ne);
+          oe.onBlur?.(ne), B(ne);
         }
       }),
       ownerState: q,
@@ -18253,7 +18253,7 @@ export default theme;`;
       slots: z = {},
       // eslint-disable-next-line react/prop-types
       theme: F,
-      ...j
+      ...B
     } = n, W = {
       ...n,
       closeAfterTransition: l,
@@ -18302,7 +18302,7 @@ export default theme;`;
       elementType: Yre,
       externalForwardedProps: {
         ...ne,
-        ...j,
+        ...B,
         component: u
       },
       getSlotProps: H,
@@ -18540,14 +18540,14 @@ export default theme;`;
       transitionDuration: R = o,
       TransitionProps: z,
       ...F
-    } = n, j = {
+    } = n, B = {
       ...n,
       disableEscapeKeyDown: h,
       fullScreen: v,
       fullWidth: g,
       maxWidth: y,
       scroll: D
-    }, W = Qre(j), H = N.useRef(), Z = (Ce) => {
+    }, W = Qre(B), H = N.useRef(), Z = (Ce) => {
       H.current = Ce.target === Ce.currentTarget;
     }, q = (Ce) => {
       w && w(Ce), H.current && (H.current = null, b && b(Ce), x && x(Ce, "backdropClick"));
@@ -18568,29 +18568,29 @@ export default theme;`;
       elementType: ene,
       shouldForwardComponentProp: !0,
       externalForwardedProps: ie,
-      ownerState: j,
+      ownerState: B,
       className: Te(W.root, f),
       ref: r
     }), [ne, ke] = ft("backdrop", {
       elementType: Zre,
       shouldForwardComponentProp: !0,
       externalForwardedProps: ie,
-      ownerState: j
+      ownerState: B
     }), [_e, we] = ft("paper", {
       elementType: rne,
       shouldForwardComponentProp: !0,
       externalForwardedProps: ie,
-      ownerState: j,
+      ownerState: B,
       className: Te(W.paper, T.className)
     }), [ve, pe] = ft("container", {
       elementType: tne,
       externalForwardedProps: ie,
-      ownerState: j,
+      ownerState: B,
       className: Te(W.container)
     }), [fe, je] = ft("transition", {
       elementType: N6,
       externalForwardedProps: ie,
-      ownerState: j,
+      ownerState: B,
       additionalProps: {
         appear: !0,
         in: C,
@@ -19647,7 +19647,7 @@ export default theme;`;
       D(!0);
     }, []), F = N.useCallback(() => {
       D(!1);
-    }, []), j = N.useMemo(() => ({
+    }, []), B = N.useMemo(() => ({
       adornedStart: C,
       setAdornedStart: E,
       color: i,
@@ -19671,7 +19671,7 @@ export default theme;`;
       variant: y
     }), [C, i, l, c, T, M, u, f, R, F, z, v, g, y]);
     return /* @__PURE__ */ A.jsx(ik.Provider, {
-      value: j,
+      value: B,
       children: /* @__PURE__ */ A.jsx(Dne, {
         as: s,
         ownerState: w,
@@ -19819,25 +19819,25 @@ export default theme;`;
       externalForwardedProps: R,
       ownerState: I
     });
-    let j = u;
-    return j != null && j.type !== co && !c && (j = /* @__PURE__ */ A.jsx(z, {
+    let B = u;
+    return B != null && B.type !== co && !c && (B = /* @__PURE__ */ A.jsx(z, {
       component: "span",
       ...F,
       className: Te(M.label, F?.className),
-      children: j
+      children: B
     })), /* @__PURE__ */ A.jsxs(Ane, {
       className: Te(M.root, o),
       ownerState: I,
       ref: r,
       ...x,
       children: [/* @__PURE__ */ N.cloneElement(s, D), T ? /* @__PURE__ */ A.jsxs("div", {
-        children: [j, /* @__PURE__ */ A.jsxs(One, {
+        children: [B, /* @__PURE__ */ A.jsxs(One, {
           ownerState: I,
           "aria-hidden": !0,
           className: M.asterisk,
           children: [" ", "*"]
         })]
-      }) : j]
+      }) : B]
     });
   });
   function Pne(t) {
@@ -20193,7 +20193,7 @@ export default theme;`;
         delay: p3 ? Z : Z || V * 0.333,
         easing: q
       })].join(","), W.style.opacity = 0, W.style.transform = z6(0.75), u && u(W);
-    }), F = D(f), j = (W) => {
+    }), F = D(f), B = (W) => {
       g === "auto" && w.start(x.current || 0, W), n && n(E.current, W);
     };
     return /* @__PURE__ */ A.jsx(y, {
@@ -20206,7 +20206,7 @@ export default theme;`;
       onExit: z,
       onExited: F,
       onExiting: R,
-      addEndListener: j,
+      addEndListener: B,
       timeout: g === "auto" ? null : g,
       ...b,
       children: (W, {
@@ -21607,7 +21607,7 @@ export default theme;`;
         left: `${Math.round(Pe)}px`,
         transformOrigin: o$(fe)
       };
-    }, [o, l, R, z, h]), [j, W] = N.useState(v), H = N.useCallback(() => {
+    }, [o, l, R, z, h]), [B, W] = N.useState(v), H = N.useCallback(() => {
       const ve = P.current;
       if (!ve)
         return;
@@ -21700,7 +21700,7 @@ export default theme;`;
       shouldForwardComponentProp: !0,
       additionalProps: {
         elevation: f,
-        style: j ? void 0 : {
+        style: B ? void 0 : {
           opacity: 0
         }
       },
@@ -21822,7 +21822,7 @@ export default theme;`;
       externalSlotProps: w.root,
       ownerState: E,
       className: [T.root, i]
-    }), [j, W] = ft("paper", {
+    }), [B, W] = ft("paper", {
       className: T.paper,
       elementType: Iae,
       externalForwardedProps: z,
@@ -21850,7 +21850,7 @@ export default theme;`;
       transformOrigin: C ? Mae : Aae,
       slots: {
         root: b.root,
-        paper: j,
+        paper: B,
         backdrop: b.backdrop,
         ...b.transition && {
           // TODO: pass `slots.transition` directly once `TransitionComponent` is removed from Popover
@@ -22761,8 +22761,8 @@ export default theme;`;
       },
       getSlotProps: (F) => ({
         ...F,
-        onChange: (j, ...W) => {
-          F.onChange?.(j, ...W), P(j, ...W);
+        onChange: (B, ...W) => {
+          F.onChange?.(B, ...W), P(B, ...W);
         }
       }),
       ownerState: C,
@@ -22954,7 +22954,7 @@ export default theme;`;
       renderValue: R,
       required: z,
       SelectDisplayProps: F = {},
-      tabIndex: j,
+      tabIndex: B,
       // catching `type` from Input which makes no sense for SelectInput
       type: W,
       value: H,
@@ -23079,7 +23079,7 @@ export default theme;`;
     let Ee = _e;
     !i && ke && oe && (Ee = fe.clientWidth);
     let $e;
-    typeof j < "u" ? $e = j : $e = u ? null : 0;
+    typeof B < "u" ? $e = B : $e = u ? null : 0;
     const Ye = F.id || (x ? `mui-component-select-${x}` : void 0), Be = {
       ...e,
       variant: Z,
@@ -23220,23 +23220,23 @@ export default theme;`;
       props: n,
       muiFormControl: R,
       states: ["variant", "error"]
-    }), F = z.variant || P, j = {
+    }), F = z.variant || P, B = {
       ...n,
       variant: F,
       classes: i
-    }, W = _oe(j), {
+    }, W = _oe(B), {
       root: H,
       ...Z
     } = W, q = f || {
       standard: /* @__PURE__ */ A.jsx(yoe, {
-        ownerState: j
+        ownerState: B
       }),
       outlined: /* @__PURE__ */ A.jsx(boe, {
         label: v,
-        ownerState: j
+        ownerState: B
       }),
       filled: /* @__PURE__ */ A.jsx(woe, {
-        ownerState: j
+        ownerState: B
       })
     }[F], V = jr(r, qp(q));
     return /* @__PURE__ */ A.jsx(N.Fragment, {
@@ -23418,7 +23418,7 @@ export default theme;`;
       controlled: w,
       default: r ?? l,
       name: "Slider"
-    }), j = d && ((re, de, Ee) => {
+    }), B = d && ((re, de, Ee) => {
       const $e = re.nativeEvent || re, Ye = new $e.constructor($e.type, $e);
       Object.defineProperty(Ye, "target", {
         writable: !0,
@@ -23458,7 +23458,7 @@ export default theme;`;
           activeIndex: Dt
         });
       }
-      F(Be), Q(Ee), j && !Gv(Be, z) && j(re, Be, Ee), u && u(re, R.current ?? Be);
+      F(Be), Q(Ee), B && !Gv(Be, z) && B(re, Be, Ee), u && u(re, R.current ?? Be);
     }, ne = (re) => (de) => {
       if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "PageUp", "PageDown", "Home", "End"].includes(de.key)) {
         de.preventDefault();
@@ -23563,7 +23563,7 @@ export default theme;`;
         sliderRef: U,
         activeIndex: $e,
         setActive: E
-      }), F(Ee), !P && M.current > Soe && I(!0), j && !Gv(Ee, z) && j(re, Ee, $e);
+      }), F(Ee), !P && M.current > Soe && I(!0), B && !Gv(Ee, z) && B(re, Ee, $e);
     }), fe = Bn((re) => {
       const de = qv(re, x);
       if (I(!1), !de)
@@ -23593,7 +23593,7 @@ export default theme;`;
           sliderRef: U,
           activeIndex: Be,
           setActive: E
-        }), F(Ye), j && !Gv(Ye, z) && j(re, Ye, Be);
+        }), F(Ye), B && !Gv(Ye, z) && B(re, Ye, Be);
       }
       M.current = 0;
       const $e = sn(U.current);
@@ -23634,7 +23634,7 @@ export default theme;`;
           sliderRef: U,
           activeIndex: Be,
           setActive: E
-        }), F(Ye), j && !Gv(Ye, z) && j(de, Ye, Be);
+        }), F(Ye), B && !Gv(Ye, z) && B(de, Ye, Be);
       }
       M.current = 0;
       const $e = sn(U.current);
@@ -24298,7 +24298,7 @@ export default theme;`;
       step: R = 1,
       scale: z = h$,
       slotProps: F,
-      slots: j,
+      slots: B,
       tabIndex: W,
       track: H = "normal",
       value: Z,
@@ -24344,7 +24344,7 @@ export default theme;`;
       rootRef: r
     });
     U.marked = fe.length > 0 && fe.some((zt) => zt.label), U.dragging = pe, U.focusedThumbIndex = we;
-    const xe = Boe(U), Ne = j?.root ?? c.Root ?? Ioe, st = j?.rail ?? c.Rail ?? Roe, at = j?.track ?? c.Track ?? Noe, rt = j?.thumb ?? c.Thumb ?? Loe, Oe = j?.valueLabel ?? c.ValueLabel ?? zoe, ht = j?.mark ?? c.Mark ?? Foe, ue = j?.markLabel ?? c.MarkLabel ?? joe, re = j?.input ?? c.Input ?? "input", de = F?.root ?? d.root, Ee = F?.rail ?? d.rail, $e = F?.track ?? d.track, Ye = F?.thumb ?? d.thumb, Be = F?.valueLabel ?? d.valueLabel, qe = F?.mark ?? d.mark, Dt = F?.markLabel ?? d.markLabel, dt = F?.input ?? d.input, Me = Ln({
+    const xe = Boe(U), Ne = B?.root ?? c.Root ?? Ioe, st = B?.rail ?? c.Rail ?? Roe, at = B?.track ?? c.Track ?? Noe, rt = B?.thumb ?? c.Thumb ?? Loe, Oe = B?.valueLabel ?? c.ValueLabel ?? zoe, ht = B?.mark ?? c.Mark ?? Foe, ue = B?.markLabel ?? c.MarkLabel ?? joe, re = B?.input ?? c.Input ?? "input", de = F?.root ?? d.root, Ee = F?.rail ?? d.rail, $e = F?.track ?? d.track, Ye = F?.thumb ?? d.thumb, Be = F?.valueLabel ?? d.valueLabel, qe = F?.mark ?? d.mark, Dt = F?.markLabel ?? d.markLabel, dt = F?.input ?? d.input, Me = Ln({
       elementType: Ne,
       getSlotProps: ie,
       externalSlotProps: de,
@@ -24794,7 +24794,7 @@ export default theme;`;
       slotProps: R = {},
       slots: z = {},
       title: F,
-      TransitionComponent: j,
+      TransitionComponent: B,
       TransitionProps: W,
       ...H
     } = n, Z = /* @__PURE__ */ N.isValidElement(o) ? o : /* @__PURE__ */ A.jsx("span", {
@@ -24905,7 +24905,7 @@ export default theme;`;
     }, [K, M.popperOptions, Me?.popperOptions]), Lt = qoe(dt), Tr = typeof R.transition == "function" ? R.transition(dt) : R.transition, Wr = {
       slots: {
         popper: s.Popper,
-        transition: s.Transition ?? j,
+        transition: s.Transition ?? B,
         tooltip: s.Tooltip,
         arrow: s.Arrow,
         ...z
@@ -26339,21 +26339,21 @@ export default theme;`;
       variant: M = "standard",
       visibleScrollbar: R = !1,
       ...z
-    } = n, F = M === "scrollable", j = y === "vertical", W = j ? "scrollTop" : "scrollLeft", H = j ? "top" : "left", Z = j ? "bottom" : "right", q = j ? "clientHeight" : "clientWidth", V = j ? "height" : "width", Q = {
+    } = n, F = M === "scrollable", B = y === "vertical", W = B ? "scrollTop" : "scrollLeft", H = B ? "top" : "left", Z = B ? "bottom" : "right", q = B ? "clientHeight" : "clientWidth", V = B ? "height" : "width", Q = {
       ...n,
       component: f,
       allowScrollButtonsMobile: h,
       indicatorColor: v,
       orientation: y,
-      vertical: j,
+      vertical: B,
       scrollButtons: w,
       textColor: P,
       variant: M,
       visibleScrollbar: R,
       fixed: !F,
       hideScrollbar: F && !R,
-      scrollableX: F && !j,
-      scrollableY: F && j,
+      scrollableX: F && !B,
+      scrollableY: F && B,
       centered: c && !F,
       scrollButtonsHideMobile: !h
     }, U = Bie(Q), K = Ln({
@@ -26408,7 +26408,7 @@ export default theme;`;
         tabMeta: nt
       } = at();
       let Ft = 0, $t;
-      j ? ($t = "top", nt && We && (Ft = nt.top - We.top + We.scrollTop)) : ($t = o ? "right" : "left", nt && We && (Ft = (o ? -1 : 1) * (nt[$t] - We[$t] + We.scrollLeft)));
+      B ? ($t = "top", nt && We && (Ft = nt.top - We.top + We.scrollTop)) : ($t = o ? "right" : "left", nt && We && (Ft = (o ? -1 : 1) * (nt[$t] - We[$t] + We.scrollLeft)));
       const Er = {
         [$t]: Ft,
         // May be wrong until the font is loaded.
@@ -26428,7 +26428,7 @@ export default theme;`;
       }) : xe.current[W] = We;
     }, ht = (We) => {
       let nt = xe.current[W];
-      j ? nt += We : nt += We * (o ? -1 : 1), Oe(nt);
+      B ? nt += We : nt += We * (o ? -1 : 1), Oe(nt);
     }, ue = () => {
       const We = xe.current[q];
       let nt = 0;
@@ -26635,7 +26635,7 @@ export default theme;`;
       additionalProps: {
         style: {
           overflow: Ce.overflow,
-          [j ? `margin${o ? "Left" : "Right"}` : "marginBottom"]: R ? void 0 : -Ce.scrollbarWidth
+          [B ? `margin${o ? "Left" : "Right"}` : "marginBottom"]: R ? void 0 : -Ce.scrollbarWidth
         }
       }
     }), [wt, Xn] = ft("list", {
@@ -26716,7 +26716,7 @@ export default theme;`;
       onFocus: R,
       placeholder: z,
       required: F = !1,
-      rows: j,
+      rows: B,
       select: W = !1,
       SelectProps: H,
       slots: Z = {},
@@ -26795,7 +26795,7 @@ export default theme;`;
       fullWidth: h,
       multiline: D,
       name: P,
-      rows: j,
+      rows: B,
       maxRows: E,
       minRows: T,
       type: V,
@@ -26983,7 +26983,7 @@ export default theme;`;
     }
     return i;
   }
-  class B {
+  class j {
     /** List of all languages with their translations. */
     static translations = {};
     /** List of unknown translations during development. */
@@ -26997,7 +26997,7 @@ export default theme;`;
      * @param lang The default language for translations.
      */
     static setLanguage(e) {
-      e && (B.lang = e);
+      e && (j.lang = e);
     }
     /**
      * Add translations
@@ -27026,19 +27026,19 @@ export default theme;`;
         if (!r)
           e.en && e.de && e.ru ? Object.keys(e).forEach((n) => {
             const a = n;
-            B.translations[a] = B.translations[a] || {};
-            const o = B.translations[a];
+            j.translations[a] = j.translations[a] || {};
+            const o = j.translations[a];
             Object.assign(o, e[a]);
           }) : Object.keys(e).forEach((n) => {
             const a = e[n];
             Object.keys(a).forEach((o) => {
-              const i = o, s = B.translations[i];
+              const i = o, s = j.translations[i];
               s ? s[n] ? s[n] !== a[i] && console.warn(`Translation for word "${n}" in "${i}" was ignored: existing = "${s[n]}", new = ${a[i]}`) : s[n] = a[i] : console.warn(`Used unknown language: ${i}`);
             });
           });
         else {
-          B.translations[r] || console.warn(`Used unknown language: ${r}`), B.translations[r] = B.translations[r] || {};
-          const n = B.translations[r];
+          j.translations[r] || console.warn(`Used unknown language: ${r}`), j.translations[r] = j.translations[r] || {};
+          const n = j.translations[r];
           n && Object.keys(e).forEach((a) => {
             n[a] ? n[a] !== e[a] && console.warn(`Translation for word "${a}" in "${r}" was ignored: existing = "${n[a]}", new = ${e[a]}`) : n[a] = e[a];
           });
@@ -27053,7 +27053,7 @@ export default theme;`;
      * @param translations The translations to add.
      */
     static setTranslations(e) {
-      e && (B.translations = e);
+      e && (j.translations = e);
     }
     /**
      * Get the currently chosen language.
@@ -27061,7 +27061,7 @@ export default theme;`;
      * @returns The current language.
      */
     static getLanguage() {
-      return B.lang;
+      return j.lang;
     }
     /**
      * Translate the given string to the selected language
@@ -27070,13 +27070,13 @@ export default theme;`;
      * @param args Optional arguments which will replace the first (second, third, ...) occurrences of %s
      */
     static t(e, ...r) {
-      const n = B.translations[B.lang];
+      const n = j.translations[j.lang];
       if (n) {
         const a = n[e];
         if (a)
           e = a;
-        else if (B.unknownTranslations.includes(e) || (B.unknownTranslations.push(e), !B._disableWarning && console.log(`Translate: ${e}`)), B.lang !== "en" && B.translations.en) {
-          const o = B.translations.en[e];
+        else if (j.unknownTranslations.includes(e) || (j.unknownTranslations.push(e), !j._disableWarning && console.log(`Translate: ${e}`)), j.lang !== "en" && j.translations.en) {
+          const o = j.translations.en[e];
           o && (e = o);
         }
       }
@@ -27092,11 +27092,11 @@ export default theme;`;
      */
     static i18nShow(e) {
       const r = {};
-      e ? typeof e == "string" ? (B.unknownTranslations.forEach((n) => {
+      e ? typeof e == "string" ? (j.unknownTranslations.forEach((n) => {
         n.startsWith(e) && (r[n] = n.replace(e, ""));
-      }), console.log(JSON.stringify(r, null, 2))) : typeof e == "object" && (B.unknownTranslations.forEach((n) => {
+      }), console.log(JSON.stringify(r, null, 2))) : typeof e == "object" && (j.unknownTranslations.forEach((n) => {
         e.test(n) && (r[n] = n);
-      }), console.log(JSON.stringify(r, null, 2))) : (B.unknownTranslations.forEach((n) => r[n] = n), console.log(JSON.stringify(r, null, 2)));
+      }), console.log(JSON.stringify(r, null, 2))) : (j.unknownTranslations.forEach((n) => r[n] = n), console.log(JSON.stringify(r, null, 2)));
     }
     /**
      * Disable warning about non-translated words
@@ -27105,11 +27105,11 @@ export default theme;`;
      * @param disable Whether to disable the warning
      */
     static disableWarning(e) {
-      B._disableWarning = !!e;
+      j._disableWarning = !!e;
     }
   }
-  window.i18nShow = B.i18nShow;
-  window.i18nDisableWarning = B.disableWarning;
+  window.i18nShow = j.i18nShow;
+  window.i18nDisableWarning = j.disableWarning;
   const mi = "material", Pse = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"], Ise = ["Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], m3 = {
     0: "0x00 - good",
     1: "0x01 - general problem",
@@ -27157,7 +27157,7 @@ export default theme;`;
       e %= 60;
       const o = Math.floor(e).toString().padStart(2, "0");
       let i = "";
-      return r && (i += `${r} ${B.t("ra_daysShortText")} `), i += `${n}:${a}:${o}`, i;
+      return r && (i += `${r} ${j.t("ra_daysShortText")} `), i += `${n}:${a}:${o}`, i;
     }
     /**
      * Get the name of the object by id from the name or description.
@@ -27364,8 +27364,8 @@ export default theme;`;
           e = new Date(e);
       } else
         e = new Date(e);
-      let r = B.t(`ra_dow_${Pse[e.getDay()]}`).replace("ra_dow_", "");
-      return r += `. ${e.getDate()} ${B.t(`ra_month_${Ise[e.getMonth()]}`).replace("ra_month_", "")}`, r;
+      let r = j.t(`ra_dow_${Pse[e.getDay()]}`).replace("ra_dow_", "");
+      return r += `. ${e.getDate()} ${j.t(`ra_month_${Ise[e.getMonth()]}`).replace("ra_month_", "")}`, r;
     }
     /**
      * Render a text as a link.
@@ -27442,7 +27442,7 @@ export default theme;`;
      * Update the smart name of a state.
      */
     static updateSmartName(e, r, n, a, o, i) {
-      const s = B.getLanguage(), l = e;
+      const s = j.getLanguage(), l = e;
       if (typeof l.common.smartName == "string") {
         const c = l.common.smartName;
         l.common.smartName = {}, l.common.smartName[s] = c;
@@ -27921,13 +27921,13 @@ export default theme;`;
           ws,
           { variant: "extended", "aria-label": "Save", disabled: !this.props.changed || this.props.error, onClick: () => this.props.onSave(!1), style: r },
           k.createElement(V6, { style: e ? void 0 : v3.buttonIcon }),
-          !e && B.t("ra_Save")
+          !e && j.t("ra_Save")
         ),
         k.createElement(
           ws,
           { variant: "extended", "aria-label": "Save and close", disabled: !this.props.changed || this.props.error, onClick: () => this.props.onSave(!0), style: { ...r, marginLeft: 10 } },
           k.createElement(V6, { style: e ? void 0 : v3.buttonIcon }),
-          e ? "+" : B.t("ra_Save and close"),
+          e ? "+" : j.t("ra_Save and close"),
           e && k.createElement(Zo, null)
         ),
         k.createElement("div", { style: { flexGrow: 1 } }),
@@ -27935,7 +27935,7 @@ export default theme;`;
           ws,
           { variant: "extended", "aria-label": "Close", onClick: () => this.props.onClose(), style: r },
           k.createElement(Zo, { style: e ? void 0 : v3.buttonIcon }),
-          !e && B.t("ra_Close")
+          !e && j.t("ra_Close")
         )
       );
     }
@@ -27970,7 +27970,7 @@ export default theme;`;
         { open: !0, maxWidth: "md", fullWidth: this.props.fullWidth !== void 0 ? this.props.fullWidth : !0, onClose: (e, r) => {
           r !== "backdropClick" && r !== "escapeKeyDown" && this.handleCancel();
         }, "aria-labelledby": "ar_confirmation_dialog_title", "aria-describedby": "ar_confirmation_dialog_description" },
-        k.createElement(ti, { id: "ar_confirmation_dialog_title" }, this.props.title || B.t("ra_Are you sure?")),
+        k.createElement(ti, { id: "ar_confirmation_dialog_title" }, this.props.title || j.t("ra_Are you sure?")),
         k.createElement(
           ko,
           null,
@@ -27983,14 +27983,14 @@ export default theme;`;
             this.props.suppressQuestionMinutes ? k.createElement(xt, { sx: {
               "& .FormControlLabel-label": $$.suppress,
               "&.FormControlLabel-root": $$.suppressRoot
-            }, control: k.createElement(Hr, { id: `ar_dialog_confirm_suppress_${this.props.dialogName || ""}`, checked: !!this.state.suppress, onChange: () => this.setState({ suppress: !this.state.suppress }) }), label: this.props.suppressText || B.t("ra_Suppress question for next %s minutes", (this.props.suppressQuestionMinutes || 2).toString()) }) : null
+            }, control: k.createElement(Hr, { id: `ar_dialog_confirm_suppress_${this.props.dialogName || ""}`, checked: !!this.state.suppress, onChange: () => this.setState({ suppress: !this.state.suppress }) }), label: this.props.suppressText || j.t("ra_Suppress question for next %s minutes", (this.props.suppressQuestionMinutes || 2).toString()) }) : null
           )
         ),
         k.createElement(
           So,
           null,
-          k.createElement(Gt, { id: `ar_dialog_confirm_ok_${this.props.dialogName || ""}`, variant: "contained", onClick: () => this.handleOk(), color: "primary", autoFocus: !0, startIcon: k.createElement(Vi, null) }, this.props.ok || B.t("ra_Ok")),
-          k.createElement(Gt, { id: `ar_dialog_confirm_cancel_${this.props.dialogName || ""}`, variant: "contained", onClick: () => this.handleCancel(), color: "grey", startIcon: k.createElement(Zo, null) }, this.props.cancel || B.t("ra_Cancel"))
+          k.createElement(Gt, { id: `ar_dialog_confirm_ok_${this.props.dialogName || ""}`, variant: "contained", onClick: () => this.handleOk(), color: "primary", autoFocus: !0, startIcon: k.createElement(Vi, null) }, this.props.ok || j.t("ra_Ok")),
+          k.createElement(Gt, { id: `ar_dialog_confirm_cancel_${this.props.dialogName || ""}`, variant: "contained", onClick: () => this.handleCancel(), color: "grey", startIcon: k.createElement(Zo, null) }, this.props.cancel || j.t("ra_Cancel"))
         )
       );
     }
@@ -28003,16 +28003,16 @@ export default theme;`;
       return k.createElement(
         xo,
         { open: !0, maxWidth: "sm", fullWidth: this.props.fullWidth !== void 0 ? this.props.fullWidth : !0, onClose: () => this.handleOk(), "aria-labelledby": "alert-dialog-title", "aria-describedby": "alert-dialog-description" },
-        k.createElement(ti, { id: "ar_alert_dialog_title" }, this.props.title || B.t("ra_Error")),
+        k.createElement(ti, { id: "ar_alert_dialog_title" }, this.props.title || j.t("ra_Error")),
         k.createElement(
           ko,
           null,
-          k.createElement(G_, { id: "ar_alert_dialog_description" }, this.props.text || B.t("ra_Unknown error!"))
+          k.createElement(G_, { id: "ar_alert_dialog_description" }, this.props.text || j.t("ra_Unknown error!"))
         ),
         k.createElement(
           So,
           null,
-          k.createElement(Gt, { id: "ar_dialog_error_ok", variant: "contained", onClick: () => this.handleOk(), color: "primary", autoFocus: !0, startIcon: k.createElement(Vi, null) }, B.t("ra_Ok"))
+          k.createElement(Gt, { id: "ar_dialog_error_ok", variant: "contained", onClick: () => this.handleOk(), color: "primary", autoFocus: !0, startIcon: k.createElement(Vi, null) }, j.t("ra_Ok"))
         )
       );
     }
@@ -28971,8 +28971,8 @@ export default theme;`;
         case u:
           var F = a;
         case v:
-          var j = I & i;
-          if (F || (F = o), T.size != D.size && !j)
+          var B = I & i;
+          if (F || (F = o), T.size != D.size && !B)
             return !1;
           var W = z.get(T);
           if (W)
@@ -29161,8 +29161,8 @@ export default theme;`;
       if (!(b & l)) {
         var z = I && h.call(g, "__wrapped__"), F = M && h.call(y, "__wrapped__");
         if (z || F) {
-          var j = z ? g.value() : g, W = F ? y.value() : y;
-          return C || (C = new t()), x(j, W, b, w, C);
+          var B = z ? g.value() : g, W = F ? y.value() : y;
+          return C || (C = new t()), x(B, W, b, w, C);
         }
       }
       return R ? (C || (C = new t()), n(g, y, b, w, x, C)) : !1;
@@ -29927,8 +29927,8 @@ export default theme;`;
   function Dce() {
     if (kO) return s4;
     kO = 1;
-    var t = Ek(), e = oce(), r = iB(), n = sce(), a = uce(), o = dce(), i = pce(), s = fce(), l = hce(), c = Qj(), d = mce(), u = n2(), f = vce(), h = wce(), v = Sce(), g = ri(), y = gk(), b = Cce(), w = Vp(), x = Ece(), C = cm(), E = Ak(), T = 1, D = 2, P = 4, I = "[object Arguments]", M = "[object Array]", R = "[object Boolean]", z = "[object Date]", F = "[object Error]", j = "[object Function]", W = "[object GeneratorFunction]", H = "[object Map]", Z = "[object Number]", q = "[object Object]", V = "[object RegExp]", Q = "[object Set]", U = "[object String]", K = "[object Symbol]", ie = "[object WeakMap]", se = "[object ArrayBuffer]", oe = "[object DataView]", ne = "[object Float32Array]", ke = "[object Float64Array]", _e = "[object Int8Array]", we = "[object Int16Array]", ve = "[object Int32Array]", pe = "[object Uint8Array]", fe = "[object Uint8ClampedArray]", je = "[object Uint16Array]", Ce = "[object Uint32Array]", Pe = {};
-    Pe[I] = Pe[M] = Pe[se] = Pe[oe] = Pe[R] = Pe[z] = Pe[ne] = Pe[ke] = Pe[_e] = Pe[we] = Pe[ve] = Pe[H] = Pe[Z] = Pe[q] = Pe[V] = Pe[Q] = Pe[U] = Pe[K] = Pe[pe] = Pe[fe] = Pe[je] = Pe[Ce] = !0, Pe[F] = Pe[j] = Pe[ie] = !1;
+    var t = Ek(), e = oce(), r = iB(), n = sce(), a = uce(), o = dce(), i = pce(), s = fce(), l = hce(), c = Qj(), d = mce(), u = n2(), f = vce(), h = wce(), v = Sce(), g = ri(), y = gk(), b = Cce(), w = Vp(), x = Ece(), C = cm(), E = Ak(), T = 1, D = 2, P = 4, I = "[object Arguments]", M = "[object Array]", R = "[object Boolean]", z = "[object Date]", F = "[object Error]", B = "[object Function]", W = "[object GeneratorFunction]", H = "[object Map]", Z = "[object Number]", q = "[object Object]", V = "[object RegExp]", Q = "[object Set]", U = "[object String]", K = "[object Symbol]", ie = "[object WeakMap]", se = "[object ArrayBuffer]", oe = "[object DataView]", ne = "[object Float32Array]", ke = "[object Float64Array]", _e = "[object Int8Array]", we = "[object Int16Array]", ve = "[object Int32Array]", pe = "[object Uint8Array]", fe = "[object Uint8ClampedArray]", je = "[object Uint16Array]", Ce = "[object Uint32Array]", Pe = {};
+    Pe[I] = Pe[M] = Pe[se] = Pe[oe] = Pe[R] = Pe[z] = Pe[ne] = Pe[ke] = Pe[_e] = Pe[we] = Pe[ve] = Pe[H] = Pe[Z] = Pe[q] = Pe[V] = Pe[Q] = Pe[U] = Pe[K] = Pe[pe] = Pe[fe] = Pe[je] = Pe[Ce] = !0, Pe[F] = Pe[B] = Pe[ie] = !1;
     function pt(xe, Ne, st, at, rt, Oe) {
       var ht, ue = Ne & T, re = Ne & D, de = Ne & P;
       if (st && (ht = rt ? st(xe, at, rt, Oe) : st(xe)), ht !== void 0)
@@ -29940,7 +29940,7 @@ export default theme;`;
         if (ht = f(xe), !ue)
           return i(xe, ht);
       } else {
-        var $e = u(xe), Ye = $e == j || $e == W;
+        var $e = u(xe), Ye = $e == B || $e == W;
         if (y(xe))
           return o(xe, ue);
         if ($e == q || $e == I || Ye && !rt) {
@@ -38415,7 +38415,7 @@ export default theme;`;
           // style={{paddingBottom: 20}}
           color: "primary",
           onClick: () => this.onToggle(!1, e, r)
-        }, B.t("ra_Deselect all")),
+        }, j.t("ra_Deselect all")),
         k.createElement(Gt, {
           key: "addall",
           variant: "contained",
@@ -38423,10 +38423,10 @@ export default theme;`;
           style: ra.numberButton,
           color: "secondary",
           onClick: () => this.onToggle(!0, e, r)
-        }, B.t("ra_Select all")),
+        }, j.t("ra_Select all")),
         k.createElement("div", { key: "all" }, n.map((o) => [
           r === 7 && o === 4 || r === 12 && o === 7 || r === 31 && !((o - 1) % 10) || r === 60 && o && !(o % 10) || r === 24 && o && !(o % 6) ? k.createElement("div", { key: `allInner${o}`, style: { width: "100%" } }) : null,
-          k.createElement(Gt, { key: `_${o}`, variant: a.indexOf(o) !== -1 ? "contained" : "outlined", style: ra.numberButton, color: a.indexOf(o) !== -1 ? "secondary" : "primary", onClick: () => this.onToggle(o, e, r) }, r === 7 ? B.t(G0e[o]) : r === 12 ? X0e[o - 1] : o)
+          k.createElement(Gt, { key: `_${o}`, variant: a.indexOf(o) !== -1 ? "contained" : "outlined", style: ra.numberButton, color: a.indexOf(o) !== -1 ? "secondary" : "primary", onClick: () => this.onToggle(o, e, r) }, r === 7 ? j.t(G0e[o]) : r === 12 ? X0e[o - 1] : o)
         ]))
       ];
     }
@@ -38457,11 +38457,11 @@ export default theme;`;
               !d && (e === "months" || e === "dates") && (d = 1), this.setCronAttr(e, OP(d, r), c);
             }
           } },
-          k.createElement(ur, { key: "every", value: "every" }, B.t(`sc_every_${e}`)),
-          k.createElement(ur, { key: "everyN", value: "everyN" }, B.t(`sc_everyN_${e}`)),
-          k.createElement(ur, { key: "specific", value: "specific" }, B.t(`sc_specific_${e}`))
+          k.createElement(ur, { key: "every", value: "every" }, j.t(`sc_every_${e}`)),
+          k.createElement(ur, { key: "everyN", value: "everyN" }, j.t(`sc_everyN_${e}`)),
+          k.createElement(ur, { key: "specific", value: "specific" }, j.t(`sc_specific_${e}`))
         ),
-        o && k.createElement(an, { variant: "standard", key: "interval", label: B.t(`sc_${e}`), value: s, slotProps: {
+        o && k.createElement(an, { variant: "standard", key: "interval", label: j.t(`sc_${e}`), value: s, slotProps: {
           htmlInput: {
             min: 1,
             max: r
@@ -38476,7 +38476,7 @@ export default theme;`;
       );
     }
     static convertCronToText(e, r) {
-      return e.split(" ").includes("-") ? B.t("ra_Invalid CRON") : LB(e, r);
+      return e.split(" ").includes("-") ? j.t("ra_Invalid CRON") : LB(e, r);
     }
     setCronAttr(e, r, n) {
       n ? e === "seconds" ? this.setState({ seconds: r, modes: n }, () => this.recalcCron()) : e === "minutes" ? this.setState({ minutes: r, modes: n }, () => this.recalcCron()) : e === "hours" ? this.setState({ hours: r, modes: n }, () => this.recalcCron()) : e === "dates" ? this.setState({ dates: r, modes: n }, () => this.recalcCron()) : e === "months" ? this.setState({ months: r, modes: n }, () => this.recalcCron()) : e === "dow" ? this.setState({ dow: r, modes: n }, () => this.recalcCron()) : this.setState({ modes: n }, () => this.recalcCron()) : e === "seconds" ? this.setState({ seconds: r }, () => this.recalcCron()) : e === "minutes" ? this.setState({ minutes: r }, () => this.recalcCron()) : e === "hours" ? this.setState({ hours: r }, () => this.recalcCron()) : e === "dates" ? this.setState({ dates: r }, () => this.recalcCron()) : e === "months" ? this.setState({ months: r }, () => this.recalcCron()) : e === "dow" && this.setState({ dow: r }, () => this.recalcCron());
@@ -38495,21 +38495,21 @@ export default theme;`;
           "div",
           { style: { paddingLeft: 8, width: "calc(100% - px)", height: 60 } },
           Sl.convertCronToText(this.state.cron, this.props.language || "en"),
-          k.createElement("span", { style: ra.warning }, n ? B.t("ra_warning_every_second") : r ? B.t("ra_warning_every_minute") : "")
+          k.createElement("span", { style: ra.warning }, n ? j.t("ra_warning_every_second") : r ? j.t("ra_warning_every_minute") : "")
         ),
-        k.createElement(xt, { control: k.createElement(Hr, { checked: !!this.state.seconds, onChange: (a) => this.setState({ seconds: a.target.checked ? "*" : !1 }, () => this.recalcCron()) }), label: B.t("ra_use seconds") }),
+        k.createElement(xt, { control: k.createElement(Hr, { checked: !!this.state.seconds, onChange: (a) => this.setState({ seconds: a.target.checked ? "*" : !1 }, () => this.recalcCron()) }), label: j.t("ra_use seconds") }),
         k.createElement(
           gee,
           { position: "static", sx: { "&.MuiAppBar-root": ra.appBar }, color: "secondary" },
           k.createElement(
             mk,
             { value: this.state.tab, style: ra.appBar, color: "secondary", onChange: (a, o) => this.setState({ tab: o }) },
-            this.state.seconds !== !1 && k.createElement(la, { id: "sc_seconds", label: B.t("sc_seconds") }),
-            k.createElement(la, { id: "minutes", label: B.t("sc_minutes") }),
-            k.createElement(la, { id: "hours", label: B.t("sc_hours") }),
-            k.createElement(la, { id: "dates", label: B.t("sc_dates") }),
-            k.createElement(la, { id: "months", label: B.t("sc_months") }),
-            k.createElement(la, { id: "dow", label: B.t("sc_dows") })
+            this.state.seconds !== !1 && k.createElement(la, { id: "sc_seconds", label: j.t("sc_seconds") }),
+            k.createElement(la, { id: "minutes", label: j.t("sc_minutes") }),
+            k.createElement(la, { id: "hours", label: j.t("sc_hours") }),
+            k.createElement(la, { id: "dates", label: j.t("sc_dates") }),
+            k.createElement(la, { id: "months", label: j.t("sc_months") }),
+            k.createElement(la, { id: "dow", label: j.t("sc_dows") })
           )
         ),
         e === 0 && k.createElement("div", { style: ra.tabContent }, this.getPeriodsTab("seconds", 60)),
@@ -40428,7 +40428,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       return typeof y == "function" ? y : HP;
     }, [y]), F = N.useMemo(function() {
       return typeof g == "function" ? g : HP;
-    }, [g]), j = N.useRef(null), W = N.useRef(null), H = N.useReducer(Hme, aS), Z = T4(H, 2), q = Z[0], V = Z[1], Q = q.isFocused, U = q.isFileDialogActive, K = N.useRef(typeof window < "u" && window.isSecureContext && b && Tme()), ie = function() {
+    }, [g]), B = N.useRef(null), W = N.useRef(null), H = N.useReducer(Hme, aS), Z = T4(H, 2), q = Z[0], V = Z[1], Q = q.isFocused, U = q.isFileDialogActive, K = N.useRef(typeof window < "u" && window.isSecureContext && b && Tme()), ie = function() {
       !K.current && U && setTimeout(function() {
         if (W.current) {
           var re = W.current.files;
@@ -40444,16 +40444,16 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       };
     }, [W, U, F, K]);
     var se = N.useRef([]), oe = function(re) {
-      j.current && j.current.contains(re.target) || (re.preventDefault(), se.current = []);
+      B.current && B.current.contains(re.target) || (re.preventDefault(), se.current = []);
     };
     N.useEffect(function() {
       return x && (document.addEventListener("dragover", WP, !1), document.addEventListener("drop", oe, !1)), function() {
         x && (document.removeEventListener("dragover", WP), document.removeEventListener("drop", oe));
       };
-    }, [j, x]), N.useEffect(function() {
-      return !n && w && j.current && j.current.focus(), function() {
+    }, [B, x]), N.useEffect(function() {
+      return !n && w && B.current && B.current.focus(), function() {
       };
-    }, [j, w, n]);
+    }, [B, w, n]);
     var ne = N.useCallback(function(ue) {
       P ? P(ue) : console.error(ue);
     }, [P]), ke = N.useCallback(function(ue) {
@@ -40490,7 +40490,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
     }, [u, D]), we = N.useCallback(function(ue) {
       ue.preventDefault(), ue.persist(), at(ue);
       var re = se.current.filter(function(Ee) {
-        return j.current && j.current.contains(Ee);
+        return B.current && B.current.contains(Ee);
       }), de = re.indexOf(ue.target);
       de !== -1 && re.splice(de, 1), se.current = re, !(re.length > 0) && (V({
         type: "setDraggedFiles",
@@ -40498,7 +40498,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         isDragAccept: !1,
         isDragReject: !1
       }), n1(ue) && d && d(ue));
-    }, [j, d, D]), ve = N.useCallback(function(ue, re) {
+    }, [B, d, D]), ve = N.useCallback(function(ue, re) {
       var de = [], Ee = [];
       ue.forEach(function($e) {
         var Ye = WB($e, M), Be = T4(Ye, 2), qe = Be[0], Dt = Be[1], dt = UB($e, i, o), Me = T4(dt, 2), bt = Me[0], Lt = Me[1], Tr = I ? I($e) : null;
@@ -40558,8 +40558,8 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         type: "openDialog"
       }), z(), W.current.value = null, W.current.click());
     }, [V, z, F, b, ve, ne, R, s]), je = N.useCallback(function(ue) {
-      !j.current || !j.current.isEqualNode(ue.target) || (ue.key === " " || ue.key === "Enter" || ue.keyCode === 32 || ue.keyCode === 13) && (ue.preventDefault(), fe());
-    }, [j, fe]), Ce = N.useCallback(function() {
+      !B.current || !B.current.isEqualNode(ue.target) || (ue.key === " " || ue.key === "Enter" || ue.keyCode === 32 || ue.keyCode === 13) && (ue.preventDefault(), fe());
+    }, [B, fe]), Ce = N.useCallback(function() {
       V({
         type: "focus"
       });
@@ -40590,11 +40590,11 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           onDragLeave: st(vi(Me, we)),
           onDrop: st(vi(bt, pe)),
           role: typeof Ee == "string" && Ee !== "" ? Ee : "presentation"
-        }, de, j), !n && !E ? {
+        }, de, B), !n && !E ? {
           tabIndex: 0
         } : {}), Lt);
       };
-    }, [j, je, Ce, Pe, pt, ke, _e, we, pe, E, T, n]), Oe = N.useCallback(function(ue) {
+    }, [B, je, Ce, Pe, pt, ke, _e, we, pe, E, T, n]), Oe = N.useCallback(function(ue) {
       ue.stopPropagation();
     }, []), ht = N.useMemo(function() {
       return function() {
@@ -40625,7 +40625,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       isFocused: Q && !n,
       getRootProps: rt,
       getInputProps: ht,
-      rootRef: j,
+      rootRef: B,
       inputRef: W,
       open: xe(fe)
     });
@@ -40699,8 +40699,8 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       k.createElement(
         So,
         null,
-        k.createElement(Gt, { variant: "contained", disabled: !e || !!n, onClick: () => t.onClose(e), color: "primary", startIcon: k.createElement(Vi, null) }, t.applyText || B.t("ra_Ok")),
-        k.createElement(Gt, { color: "grey", variant: "contained", onClick: () => t.onClose(null), startIcon: k.createElement(Zo, null) }, t.cancelText || B.t("ra_Cancel"))
+        k.createElement(Gt, { variant: "contained", disabled: !e || !!n, onClick: () => t.onClose(e), color: "primary", startIcon: k.createElement(Vi, null) }, t.applyText || j.t("ra_Ok")),
+        k.createElement(Gt, { color: "grey", variant: "contained", onClick: () => t.onClose(null), startIcon: k.createElement(Zo, null) }, t.cancelText || j.t("ra_Cancel"))
       )
     );
   }
@@ -41461,8 +41461,8 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       title: d,
       uniqueHash: u
     } = t, [f, h] = N.useReducer(
-      (j, W) => ({
-        ...j,
+      (B, W) => ({
+        ...B,
         ...W
       }),
       {
@@ -41472,37 +41472,37 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         status: Jt.IDLE
       }
     ), { content: v, element: g, isCached: y, status: b } = f, w = XP(t), x = XP(f), C = N.useRef(u ?? cve(8)), E = N.useRef(!1), T = N.useRef(!1), D = N.useCallback(
-      (j) => {
+      (B) => {
         E.current && (h({
-          status: j.message === "Browser does not support SVG" ? Jt.UNSUPPORTED : Jt.FAILED
-        }), s?.(j));
+          status: B.message === "Browser does not support SVG" ? Jt.UNSUPPORTED : Jt.FAILED
+        }), s?.(B));
       },
       [s]
-    ), P = N.useCallback((j, W = !1) => {
+    ), P = N.useCallback((B, W = !1) => {
       E.current && h({
-        content: j,
+        content: B,
         isCached: W,
         status: Jt.LOADED
       });
     }, []), I = N.useCallback(async () => {
-      const j = await YB(c, a);
-      P(j);
+      const B = await YB(c, a);
+      P(B);
     }, [a, P, c]), M = N.useCallback(() => {
       try {
-        const j = fve({ ...t, handleError: D, hash: C.current, content: v }), W = XB(j);
+        const B = fve({ ...t, handleError: D, hash: C.current, content: v }), W = XB(B);
         if (!W || !N.isValidElement(W))
           throw new Error("Could not convert the src to a React element");
         h({
           element: W,
           status: Jt.READY
         });
-      } catch (j) {
-        D(j);
+      } catch (B) {
+        D(B);
       }
     }, [v, D, t]), R = N.useCallback(async () => {
-      const j = /^data:image\/svg[^,]*?(;base64)?,(.*)/u.exec(c);
+      const B = /^data:image\/svg[^,]*?(;base64)?,(.*)/u.exec(c);
       let W;
-      if (j ? W = j[1] ? window.atob(j[2]) : decodeURIComponent(j[2]) : c.includes("<svg") && (W = c), W) {
+      if (B ? W = B[1] ? window.atob(B[2]) : decodeURIComponent(B[2]) : c.includes("<svg") && (W = c), W) {
         P(W);
         return;
       }
@@ -41534,8 +41534,8 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                 throw new Error("Missing src");
               z();
             }
-          } catch (j) {
-            D(j);
+          } catch (B) {
+            D(B);
           }
           return T.current = !0, () => {
             E.current = !1;
@@ -43171,8 +43171,8 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
     function C(T, D) {
       var P, I, M;
       const R = [], z = /^enum\.functions\./, F = x(D, "enum");
-      for (const j of F)
-        Object.prototype.hasOwnProperty.call(T, j) && z.test(j) && ((P = T[j]) === null || P === void 0 ? void 0 : P.type) === "enum" && (!((M = (I = T[j].common) === null || I === void 0 ? void 0 : I.members) === null || M === void 0) && M.length) && R.push(j);
+      for (const B of F)
+        Object.prototype.hasOwnProperty.call(T, B) && z.test(B) && ((P = T[B]) === null || P === void 0 ? void 0 : P.type) === "enum" && (!((M = (I = T[B].common) === null || I === void 0 ? void 0 : I.members) === null || M === void 0) && M.length) && R.push(B);
       return R;
     }
     function E(T) {
@@ -46170,8 +46170,8 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                       o.favorId && (D === o.favorId ? I = !0 : P.id === o.favorId && (I = !1));
                       const M = (l = (s = (i = f[P.id]) === null || i === void 0 ? void 0 : i.common) === null || s === void 0 ? void 0 : s.role) !== null && l !== void 0 ? l : "", R = (u = (d = (c = f[D]) === null || c === void 0 ? void 0 : c.common) === null || d === void 0 ? void 0 : d.role) !== null && u !== void 0 ? u : "", z = P.defaultRole;
                       if (z && I === void 0 && (R === z ? I = !0 : M === z && (I = !1)), I === void 0) {
-                        const F = R.split("."), j = F.length, W = M.split("."), H = W.length;
-                        R === "" || F[0] === "state" && W[0] !== "state" ? I = !1 : F[0] !== "state" && W[0] === "state" || j > H ? I = !0 : j < H ? I = !1 : I = F[0] !== "state";
+                        const F = R.split("."), B = F.length, W = M.split("."), H = W.length;
+                        R === "" || F[0] === "state" && W[0] !== "state" ? I = !1 : F[0] !== "state" && W[0] === "state" || B > H ? I = !0 : B < H ? I = !1 : I = F[0] !== "state";
                       }
                       if (!I)
                         break;
@@ -46865,7 +46865,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           const i = o.result?.toString() || "";
           try {
             const s = JSON.parse(i);
-            s.native && s.common ? s.common.name !== this.props.common.name ? this.props.onError && this.props.onError(B.t("ra_otherConfig", s.common.name)) : this.props.onLoad && this.props.onLoad(s.native) : this.props.onError && this.props.onError(B.t("ra_invalidConfig"));
+            s.native && s.common ? s.common.name !== this.props.common.name ? this.props.onError && this.props.onError(j.t("ra_otherConfig", s.common.name)) : this.props.onLoad && this.props.onLoad(s.native) : this.props.onError && this.props.onError(j.t("ra_invalidConfig"));
           } catch (s) {
             this.props.onError && this.props.onError(s?.toString());
           }
@@ -46910,7 +46910,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             marginRight: 5,
             marginTop: 5,
             float: "right"
-          }, title: B.t("ra_Load configuration from file"), onClick: () => this.upload() },
+          }, title: j.t("ra_Load configuration from file"), onClick: () => this.upload() },
           k.createElement(Cse, null)
         ),
         k.createElement(
@@ -46919,7 +46919,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             marginRight: 5,
             marginTop: 5,
             float: "right"
-          }, title: B.t("ra_Save configuration to file"), onClick: () => this.download() },
+          }, title: j.t("ra_Save configuration to file"), onClick: () => this.download() },
           k.createElement(kse, null)
         )
       );
@@ -47270,91 +47270,91 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       if (e.period.once) {
         const a = pn.string2date(e.period.once), o = /* @__PURE__ */ new Date();
         if (o.setMilliseconds(0), o.setSeconds(0), o.setMinutes(0), o.setHours(0), a < o)
-          return B.t("sch_desc_onceInPast");
-        r.push(B.t("sch_desc_once_on", e.period.once));
+          return j.t("sch_desc_onceInPast");
+        r.push(j.t("sch_desc_once_on", e.period.once));
       } else if (e.period.days)
         if (e.period.days === 1)
           if (e.period.dows) {
             const a = JSON.parse(e.period.dows);
             if (a.length === 2 && a[0] === 0 && a[1] === 6)
-              r.push(B.t("sch_desc_onWeekends"));
+              r.push(j.t("sch_desc_onWeekends"));
             else if (a.length === 5 && a[0] === 1 && a[1] === 2 && a[2] === 3 && a[3] === 4 && a[4] === 5)
-              r.push(B.t("sch_desc_onWorkdays"));
+              r.push(j.t("sch_desc_onWorkdays"));
             else {
-              const o = a.map((i) => B.t(A4[i]));
+              const o = a.map((i) => j.t(A4[i]));
               if (o.length === 1)
-                r.push(B.t("sch_desc_onWeekday", o[0]));
+                r.push(j.t("sch_desc_onWeekday", o[0]));
               else if (o.length === 7)
-                r.push(B.t("sch_desc_everyDay"));
+                r.push(j.t("sch_desc_everyDay"));
               else {
                 const i = o.pop();
-                r.push(B.t("sch_desc_onWeekdays", o.join(", "), i));
+                r.push(j.t("sch_desc_onWeekdays", o.join(", "), i));
               }
             }
           } else
-            r.push(B.t("sch_desc_everyDay"));
+            r.push(j.t("sch_desc_everyDay"));
         else
-          r.push(B.t("sch_desc_everyNDay", e.period.days.toString()));
+          r.push(j.t("sch_desc_everyNDay", e.period.days.toString()));
       else if (e.period.weeks)
-        if (e.period.weeks === 1 ? r.push(B.t("sch_desc_everyWeek")) : r.push(B.t("sch_desc_everyNWeeks", e.period.weeks.toString())), e.period.dows) {
+        if (e.period.weeks === 1 ? r.push(j.t("sch_desc_everyWeek")) : r.push(j.t("sch_desc_everyNWeeks", e.period.weeks.toString())), e.period.dows) {
           const a = JSON.parse(e.period.dows);
           if (a.length === 2 && a[0] === 0 && a[1] === 6)
-            r.push(B.t("sch_desc_onWeekends"));
+            r.push(j.t("sch_desc_onWeekends"));
           else if (a.length === 5 && a[0] === 1 && a[1] === 2 && a[2] === 3 && a[3] === 4 && a[4] === 5)
-            r.push(B.t("sch_desc_onWorkdays"));
+            r.push(j.t("sch_desc_onWorkdays"));
           else {
-            const o = a.map((i) => B.t(A4[i]));
+            const o = a.map((i) => j.t(A4[i]));
             if (o.length === 1)
-              r.push(B.t("sch_desc_onWeekday", o[0]));
+              r.push(j.t("sch_desc_onWeekday", o[0]));
             else if (o.length === 7)
-              r.push(B.t("sch_desc_everyDay"));
+              r.push(j.t("sch_desc_everyDay"));
             else {
               const i = o.pop();
-              r.push(B.t("sch_desc_onWeekdays", o.join(", "), i));
+              r.push(j.t("sch_desc_onWeekdays", o.join(", "), i));
             }
           }
         } else
-          return B.t("sch_desc_never");
+          return j.t("sch_desc_never");
       else if (e.period.months) {
         if (e.period.dates) {
           const a = JSON.parse(e.period.dates);
           if (a.length === 1)
-            r.push(B.t("sch_desc_onDate", a[0]));
+            r.push(j.t("sch_desc_onDate", a[0]));
           else if (a.length === 31)
-            r.push(B.t("sch_desc_onEveryDate"));
+            r.push(j.t("sch_desc_onEveryDate"));
           else if (a.length) {
             const o = a.pop();
-            r.push(B.t("sch_desc_onDates", a.join(", "), o));
+            r.push(j.t("sch_desc_onDates", a.join(", "), o));
           } else
-            return B.t("sch_desc_never");
+            return j.t("sch_desc_never");
         } else
-          r.push(B.t("sch_desc_onEveryDate"));
+          r.push(j.t("sch_desc_onEveryDate"));
         if (e.period.months === 1)
-          r.push(B.t("sch_desc_everyMonth"));
+          r.push(j.t("sch_desc_everyMonth"));
         else if (typeof e.period.months == "number")
-          r.push(B.t("sch_desc_everyNMonths", e.period.months.toString()));
+          r.push(j.t("sch_desc_everyNMonths", e.period.months.toString()));
         else {
-          const o = JSON.parse(e.period.months).map((i) => B.t(s1[i - 1]));
+          const o = JSON.parse(e.period.months).map((i) => j.t(s1[i - 1]));
           if (!o.length)
-            return B.t("sch_desc_never");
+            return j.t("sch_desc_never");
           if (o.length === 1)
-            r.push(B.t("sch_desc_onMonth", o[0]));
+            r.push(j.t("sch_desc_onMonth", o[0]));
           else if (o.length === 12)
-            r.push(B.t("sch_desc_everyMonth"));
+            r.push(j.t("sch_desc_everyMonth"));
           else {
             const i = o.pop();
-            r.push(B.t("sch_desc_onMonths", o.join(", "), i));
+            r.push(j.t("sch_desc_onMonths", o.join(", "), i));
           }
         }
-      } else e.period.years && (e.period.years === 1 ? r.push(B.t("sch_desc_everyYear")) : r.push(B.t("sch_desc_everyNYears", e.period.years.toString())), r.push(B.t("sch_desc_onDate", e.period.yearDate.toString(), e.period.yearMonth ? B.t(s1[e.period.yearMonth - 1]) : B.t("sch_desc_everyMonth"))));
+      } else e.period.years && (e.period.years === 1 ? r.push(j.t("sch_desc_everyYear")) : r.push(j.t("sch_desc_everyNYears", e.period.years.toString())), r.push(j.t("sch_desc_onDate", e.period.yearDate.toString(), e.period.yearMonth ? j.t(s1[e.period.yearMonth - 1]) : j.t("sch_desc_everyMonth"))));
       if (e.time.exactTime)
-        Yf.includes(e.time.start) ? r.push(B.t("sch_desc_atTime", B.t(`sch_astro_${e.time.start}`))) : r.push(B.t("sch_desc_atTime", e.time.start));
+        Yf.includes(e.time.start) ? r.push(j.t("sch_desc_atTime", j.t(`sch_astro_${e.time.start}`))) : r.push(j.t("sch_desc_atTime", e.time.start));
       else {
-        e.time.mode === O4.minutes ? e.time.interval === 1 ? r.push(B.t("sch_desc_everyMinute")) : r.push(B.t("sch_desc_everyNMinutes", e.time.interval.toString())) : e.time.interval === 1 ? r.push(B.t("sch_desc_everyHour")) : r.push(B.t("sch_desc_everyNHours", e.time.interval.toString()));
-        const a = Yf.indexOf(e.time.start) !== -1 ? B.t(`sch_astro_${e.time.start}`) : e.time.start, o = Yf.indexOf(e.time.end) !== -1 ? B.t(`sch_astro_${e.time.end}`) : e.time.end;
-        (a !== "00:00" || o !== "24:00" && o !== "23:59") && r.push(B.t("sch_desc_intervalFromTo", a, o));
+        e.time.mode === O4.minutes ? e.time.interval === 1 ? r.push(j.t("sch_desc_everyMinute")) : r.push(j.t("sch_desc_everyNMinutes", e.time.interval.toString())) : e.time.interval === 1 ? r.push(j.t("sch_desc_everyHour")) : r.push(j.t("sch_desc_everyNHours", e.time.interval.toString()));
+        const a = Yf.indexOf(e.time.start) !== -1 ? j.t(`sch_astro_${e.time.start}`) : e.time.start, o = Yf.indexOf(e.time.end) !== -1 ? j.t(`sch_astro_${e.time.end}`) : e.time.end;
+        (a !== "00:00" || o !== "24:00" && o !== "23:59") && r.push(j.t("sch_desc_intervalFromTo", a, o));
       }
-      return e.period.once || (n.getTime() > Date.now() && e.valid.to ? r.push(B.t("sch_desc_validFromTo", e.valid.from, e.valid.to)) : n.getTime() > Date.now() ? r.push(B.t("sch_desc_validFrom", e.valid.from)) : e.valid.to && r.push(B.t("sch_desc_validTo", e.valid.to))), r.join(" ");
+      return e.period.once || (n.getTime() > Date.now() && e.valid.to ? r.push(j.t("sch_desc_validFromTo", e.valid.from, e.valid.to)) : n.getTime() > Date.now() ? r.push(j.t("sch_desc_validFrom", e.valid.from)) : e.valid.to && r.push(j.t("sch_desc_validTo", e.valid.to))), r.join(" ");
     }
     getTimePeriodElements() {
       const e = this.state.schedule;
@@ -47368,7 +47368,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           k.createElement(xt, { control: k.createElement(rr, { style: be.inputRadio, checked: !e.time.exactTime, onClick: () => {
             const i = JSON.parse(JSON.stringify(this.state.schedule));
             i.time.exactTime = !1, this.onChange(i);
-          } }), label: B.t("sch_intervalTime") })
+          } }), label: j.t("sch_intervalTime") })
         ),
         k.createElement(
           "div",
@@ -47385,7 +47385,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                 k.createElement(xt, { control: k.createElement(rr, { style: be.inputRadio, checked: !!o, onClick: () => {
                   const i = JSON.parse(JSON.stringify(this.state.schedule));
                   i.time.start = "00:00", i.time.end = "23:59", this.onChange(i);
-                } }), label: o ? "" : B.t("sch_fromTo") }),
+                } }), label: o ? "" : j.t("sch_fromTo") }),
                 o && [
                   k.createElement(an, {
                     variant: "standard",
@@ -47406,7 +47406,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                     slotProps: {
                       inputLabel: { shrink: !0 }
                     },
-                    label: B.t("sch_from"),
+                    label: j.t("sch_from"),
                     margin: "normal"
                   }),
                   k.createElement(an, {
@@ -47428,7 +47428,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                     slotProps: {
                       inputLabel: { shrink: !0 }
                     },
-                    label: B.t("sch_to"),
+                    label: j.t("sch_to"),
                     margin: "normal"
                   })
                 ]
@@ -47440,7 +47440,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
               k.createElement(xt, { control: k.createElement(rr, { style: be.inputRadio, checked: !!r, onClick: () => {
                 const i = JSON.parse(JSON.stringify(this.state.schedule));
                 i.time.start = "00:00", i.time.end = "24:00", this.onChange(i);
-              } }), label: B.t("sch_wholeDay") })
+              } }), label: j.t("sch_wholeDay") })
             ),
             !e.time.exactTime && k.createElement(
               "div",
@@ -47448,7 +47448,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
               k.createElement(xt, { control: k.createElement(rr, { style: be.inputRadio, checked: !!n, onClick: () => {
                 const i = JSON.parse(JSON.stringify(this.state.schedule));
                 i.time.start = "sunrise", i.time.end = "sunset", this.onChange(i);
-              } }), label: B.t("sch_astroDay") })
+              } }), label: j.t("sch_astroDay") })
             ),
             !e.time.exactTime && k.createElement(
               "div",
@@ -47456,7 +47456,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
               k.createElement(xt, { control: k.createElement(rr, { style: be.inputRadio, checked: !!a, onClick: () => {
                 const i = JSON.parse(JSON.stringify(this.state.schedule));
                 i.time.start = "sunset", i.time.end = "sunrise", this.onChange(i);
-              } }), label: B.t("sch_astroNight") })
+              } }), label: j.t("sch_astroNight") })
             )
           ),
           !e.time.exactTime && this.getPeriodSettingsMinutes(o)
@@ -47474,7 +47474,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           k.createElement(xt, { control: k.createElement(rr, { style: be.inputRadio, checked: !!this.state.schedule.time.exactTime, onClick: () => {
             const r = JSON.parse(JSON.stringify(this.state.schedule));
             r.time.exactTime = !0, this.onChange(r);
-          } }), label: B.t("sch_exactTime") })
+          } }), label: j.t("sch_exactTime") })
         ),
         this.state.schedule.time.exactTime && k.createElement(
           uo,
@@ -47482,8 +47482,8 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             const n = JSON.parse(JSON.stringify(this.state.schedule));
             n.time.start = r.target.value, this.onChange(n);
           } },
-          k.createElement(ur, { key: "specific", value: "00:00" }, B.t("sch_specificTime")),
-          Yf.map((r) => k.createElement(ur, { key: r, value: r }, B.t(`sch_astro_${r}`)))
+          k.createElement(ur, { key: "specific", value: "00:00" }, j.t("sch_specificTime")),
+          Yf.map((r) => k.createElement(ur, { key: r, value: r }, j.t(`sch_astro_${r}`)))
         ),
         this.state.schedule.time.exactTime && !e && k.createElement(
           "div",
@@ -47517,7 +47517,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             k.createElement(xt, { control: k.createElement(rr, { style: be.inputRadio, checked: !!r, onClick: () => {
               const n = JSON.parse(JSON.stringify(this.state.schedule));
               n.period.once ||= pn.now2string(!0), n.period.dows = "", n.period.months = "", n.period.dates = "", n.period.years = 0, n.period.yearDate = 0, n.period.yearMonth = 0, n.period.weeks = 0, n.period.days = 0, this.onChange(n);
-            } }), label: B.t("sch_periodOnce") })
+            } }), label: j.t("sch_periodOnce") })
           ),
           r && k.createElement(
             "div",
@@ -47540,7 +47540,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
               slotProps: {
                 inputLabel: { shrink: !0 }
               },
-              label: B.t("sch_at"),
+              label: j.t("sch_at"),
               margin: "normal"
             })
           )
@@ -47555,7 +47555,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             k.createElement(xt, { control: k.createElement(rr, { style: be.inputRadio, checked: !!e.period.days, onClick: () => {
               const n = JSON.parse(JSON.stringify(this.state.schedule));
               n.period.days = 1, n.period.dows = "", n.period.months = "", n.period.dates = "", n.period.years = 0, n.period.yearDate = 0, n.period.yearMonth = 0, n.period.weeks = 0, n.period.once = "", this.onChange(n);
-            } }), label: B.t("sch_periodDaily") })
+            } }), label: j.t("sch_periodDaily") })
           ),
           k.createElement(
             "div",
@@ -47591,7 +47591,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             k.createElement(xt, { control: k.createElement(rr, { style: be.inputRadio, checked: !!e.period.weeks, onClick: () => {
               const n = JSON.parse(JSON.stringify(this.state.schedule));
               n.period.weeks = e.period.weeks ? 0 : 1, n.period.dows ||= "[0]", n.period.months = "", n.period.dates = "", n.period.years = 0, n.period.yearDate = 0, n.period.yearMonth = 0, n.period.days = 0, n.period.once = "", this.onChange(n);
-            } }), label: B.t("sch_periodWeekly") })
+            } }), label: j.t("sch_periodWeekly") })
           ),
           k.createElement(
             Ot,
@@ -47610,7 +47610,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             k.createElement(xt, { control: k.createElement(rr, { style: be.inputRadio, checked: !!e.period.months, onClick: () => {
               const n = JSON.parse(JSON.stringify(this.state.schedule));
               n.period.months = 1, n.period.dows = "", n.period.dates = "", n.period.years = 0, n.period.yearDate = 0, n.period.yearMonth = 0, n.period.weeks = 0, n.period.days = 0, n.period.once = "", this.onChange(n);
-            } }), label: B.t("sch_periodMonthly") })
+            } }), label: j.t("sch_periodMonthly") })
           ),
           k.createElement(
             "div",
@@ -47629,7 +47629,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                   for (let o = 1; o <= 31; o++)
                     a.push(o);
                   n.period.dates ||= JSON.stringify(a), n.period.dows = "", n.period.years = 0, n.period.yearDate = 0, n.period.yearMonth = 0, n.period.weeks = 0, n.period.days = 0, n.period.once = "", this.onChange(n);
-                } }), label: B.t("sch_periodDates") })
+                } }), label: j.t("sch_periodDates") })
               ),
               k.createElement(Ot, { component: "div", sx: ot.getStyle(this.props.theme, be.settingsDiv, be.rowMonthsDates) }, this.getPeriodSettingsDates())
             ) : null
@@ -47645,7 +47645,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             k.createElement(xt, { control: k.createElement(rr, { style: be.inputRadio, checked: !!e.period.years, onClick: () => {
               const n = JSON.parse(JSON.stringify(this.state.schedule));
               n.period.years = 1, n.period.yearDate = 1, n.period.yearMonth = 1, n.period.dows = "", n.period.months = 0, n.period.dates = "", n.period.weeks = 0, n.period.days = 0, n.period.once = "", this.onChange(n);
-            } }), label: B.t("sch_periodYearly") })
+            } }), label: j.t("sch_periodYearly") })
           ),
           k.createElement(
             "div",
@@ -47654,7 +47654,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             !!e.period.years && k.createElement(
               "div",
               { style: be.settingsDiv },
-              k.createElement("span", null, B.t("sch_on")),
+              k.createElement("span", null, j.t("sch_on")),
               k.createElement(Ti, { key: "input", value: this.state.schedule.period.yearDate, style: be.inputEvery, type: "number", inputProps: { min: 1, max: 31 }, onChange: (n) => {
                 const a = JSON.parse(JSON.stringify(this.state.schedule));
                 a.period.yearDate = parseInt(n.target.value, 10), a.period.yearDate < 1 && (a.period.yearDate = 31), a.period.yearDate > 31 && (a.period.yearDate = 1), this.onChange(a);
@@ -47665,8 +47665,8 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                   const a = JSON.parse(JSON.stringify(this.state.schedule));
                   a.period.yearMonth = n.target.value, this.onChange(a);
                 } },
-                k.createElement(ur, { key: "every", value: 0 }, B.t("sch_yearEveryMonth")),
-                s1.map((n, a) => k.createElement(ur, { key: n, value: a + 1 }, B.t(n)))
+                k.createElement(ur, { key: "every", value: 0 }, j.t("sch_yearEveryMonth")),
+                s1.map((n, a) => k.createElement(ur, { key: n, value: a + 1 }, j.t(n)))
               )
             )
           )
@@ -47677,7 +47677,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       return k.createElement(
         "div",
         { style: { display: "inline-block", marginTop: e ? 15 : "inherit" } },
-        k.createElement("label", { style: { marginLeft: 4, marginRight: 4 } }, B.t("sch_every")),
+        k.createElement("label", { style: { marginLeft: 4, marginRight: 4 } }, j.t("sch_every")),
         k.createElement(Ti, { value: this.state.schedule.time.interval, style: {
           ...be.inputEvery,
           verticalAlign: "bottom"
@@ -47691,8 +47691,8 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             const n = JSON.parse(JSON.stringify(this.state.schedule));
             n.time.mode = r.target.value, this.onChange(n);
           } },
-          k.createElement(ur, { value: O4.minutes }, B.t("sch_periodMinutes")),
-          k.createElement(ur, { value: O4.hours }, B.t("sch_periodHours"))
+          k.createElement(ur, { value: O4.minutes }, j.t("sch_periodMinutes")),
+          k.createElement(ur, { value: O4.hours }, j.t("sch_periodHours"))
         )
       );
     }
@@ -47705,7 +47705,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           k.createElement(xt, { control: k.createElement(rr, { style: be.inputRadio, checked: e.period.dows === "[1, 2, 3, 4, 5]", onClick: () => {
             const n = JSON.parse(JSON.stringify(this.state.schedule));
             n.period.dows = "[1, 2, 3, 4, 5]", n.period.days && (n.period.days = 1), this.onChange(n);
-          } }), label: B.t("sch_periodWorkdays") })
+          } }), label: j.t("sch_periodWorkdays") })
         ),
         k.createElement(
           "div",
@@ -47713,7 +47713,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           k.createElement(xt, { control: k.createElement(rr, { style: be.inputRadio, checked: e.period.dows === "[0, 6]", onClick: () => {
             const n = JSON.parse(JSON.stringify(this.state.schedule));
             n.period.dows = "[0, 6]", n.period.days && (n.period.days = 1), this.onChange(n);
-          } }), label: B.t("sch_periodWeekend") })
+          } }), label: j.t("sch_periodWeekend") })
         ),
         k.createElement(
           "div",
@@ -47721,7 +47721,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           k.createElement(xt, { style: { verticalAlign: "top" }, control: k.createElement(rr, { style: be.inputRadio, checked: !!r, onClick: () => {
             const n = JSON.parse(JSON.stringify(this.state.schedule));
             n.period.dows = "[0, 1, 2, 3, 4, 5, 6]", n.period.days && (n.period.days = 1), this.onChange(n);
-          } }), label: B.t("sch_periodWeekdays") }),
+          } }), label: j.t("sch_periodWeekdays") }),
           r && (e.period.days === 1 || e.period.weeks) && k.createElement(sg, { row: !0, style: { ...be.inputGroup, width: 150 } }, [1, 2, 3, 4, 5, 6, 0].map((n) => k.createElement(xt, { key: `specific_${n}`, style: be.inputGroupElement, control: k.createElement(Hr, { style: be.inputSmallCheck, checked: e.period.dows.includes(n.toString()), onChange: (a) => {
             const o = JSON.parse(JSON.stringify(this.state.schedule));
             let i;
@@ -47731,7 +47731,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
               i = [];
             }
             a.target.checked && !i.includes(n) ? i.push(n) : !a.target.checked && i.includes(n) && i.splice(i.indexOf(n), 1), i.sort((s, l) => s - l), o.period.dows = JSON.stringify(i), o.period.days && (o.period.days = 1), this.onChange(o);
-          } }), label: B.t(A4[n]) })))
+          } }), label: j.t(A4[n]) })))
         )
       ];
     }
@@ -47746,7 +47746,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           k.createElement(xt, { control: k.createElement(rr, { style: be.inputRadio, checked: e.period.days === 1 && !e.period.dows, onClick: () => {
             const r = JSON.parse(JSON.stringify(this.state.schedule));
             r.period.days = 1, r.period.dows = "", this.onChange(r);
-          } }), label: B.t("sch_periodEveryDay") })
+          } }), label: j.t("sch_periodEveryDay") })
         ),
         k.createElement(
           "div",
@@ -47754,13 +47754,13 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           k.createElement(xt, { control: k.createElement(rr, { style: be.inputRadio, checked: e.period.days > 1, onClick: () => {
             const r = JSON.parse(JSON.stringify(this.state.schedule));
             r.period.days = 2, r.period.dows = "", this.onChange(r);
-          } }), label: B.t("sch_periodEvery") }),
+          } }), label: j.t("sch_periodEvery") }),
           e.period.days > 1 && [
             k.createElement(Ti, { key: "input", value: this.state.schedule.period.days, style: be.inputEvery, type: "number", inputProps: { min: 2 }, onChange: (r) => {
               const n = JSON.parse(JSON.stringify(this.state.schedule));
               n.period.days = parseInt(r.target.value, 10), n.period.dows = "", this.onChange(n);
             } }),
-            k.createElement("span", { key: "span", style: { paddingRight: 10 } }, B.t("sch_periodDay"))
+            k.createElement("span", { key: "span", style: { paddingRight: 10 } }, j.t("sch_periodDay"))
           ]
         )
       ];
@@ -47779,7 +47779,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             k.createElement(xt, { control: k.createElement(rr, { style: be.inputRadio, checked: e.period.weeks === 1, onClick: () => {
               const r = JSON.parse(JSON.stringify(this.state.schedule));
               r.period.weeks = 1, this.onChange(r);
-            } }), label: B.t("sch_periodEveryWeek") })
+            } }), label: j.t("sch_periodEveryWeek") })
           ),
           k.createElement(
             "div",
@@ -47787,13 +47787,13 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             k.createElement(xt, { control: k.createElement(rr, { style: be.inputRadio, checked: e.period.weeks > 1, onClick: () => {
               const r = JSON.parse(JSON.stringify(this.state.schedule));
               r.period.weeks = 2, this.onChange(r);
-            } }), label: B.t("sch_periodEvery") }),
+            } }), label: j.t("sch_periodEvery") }),
             e.period.weeks > 1 && [
               k.createElement(Ti, { key: "input", value: this.state.schedule.period.weeks, style: be.inputEvery, type: "number", inputProps: { min: 2 }, onChange: (r) => {
                 const n = JSON.parse(JSON.stringify(this.state.schedule));
                 n.period.weeks = parseInt(r.target.value, 10), this.onChange(n);
               } }),
-              k.createElement("span", { key: "text" }, B.t("sch_periodWeek"))
+              k.createElement("span", { key: "text" }, j.t("sch_periodWeek"))
             ]
           )
         )
@@ -47814,17 +47814,17 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           for (let i = 1; i <= 31; i++)
             o.push(i);
           a.period.dates = JSON.stringify(o), this.onChange(a);
-        } }), label: B.t("sch_all") }),
+        } }), label: j.t("sch_all") }),
         k.createElement(xt, { style: be.inputDateDay, control: k.createElement(Hr, { style: be.inputDateDayCheck, checked: !n.length, onChange: () => {
           const a = JSON.parse(JSON.stringify(this.state.schedule));
           a.period.dates = "[]", this.onChange(a);
-        } }), label: B.t("sch_no_one") }),
+        } }), label: j.t("sch_no_one") }),
         n.length !== 31 && !!n.length && k.createElement(xt, { style: be.inputDateDay, control: k.createElement(Hr, { style: be.inputDateDayCheck, checked: !1, onChange: () => {
           const a = JSON.parse(JSON.stringify(this.state.schedule)), o = [], i = JSON.parse(a.period.dates);
           for (let s = 1; s <= 31; s++)
             i.includes(s) || o.push(s);
           o.sort((s, l) => s - l), a.period.dates = JSON.stringify(o), this.onChange(a);
-        } }), label: B.t("sch_invert") }),
+        } }), label: j.t("sch_invert") }),
         k.createElement("div", null),
         r.map((a) => k.createElement(xt, { key: `date_${a}`, style: a ? be.inputDateDay : {
           ...be.inputDateDay,
@@ -47858,7 +47858,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           k.createElement(xt, { control: k.createElement(rr, { style: be.inputRadio, checked: typeof e.period.months == "number" && e.period.months === 1, onClick: () => {
             const n = JSON.parse(JSON.stringify(this.state.schedule));
             n.period.months = 1, this.onChange(e);
-          } }), label: B.t("sch_periodEveryMonth") })
+          } }), label: j.t("sch_periodEveryMonth") })
         ),
         k.createElement(
           "div",
@@ -47866,13 +47866,13 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           k.createElement(xt, { control: k.createElement(rr, { style: be.inputRadio, checked: typeof e.period.months == "number" && e.period.months > 1, onClick: () => {
             const n = JSON.parse(JSON.stringify(this.state.schedule));
             n.period.months = 2, this.onChange(n);
-          } }), label: B.t("sch_periodEvery") }),
+          } }), label: j.t("sch_periodEvery") }),
           typeof e.period.months == "number" && e.period.months > 1 && [
             k.createElement(Ti, { key: "input", value: e.period.months, style: be.inputEvery, type: "number", inputProps: { min: 2 }, onChange: (n) => {
               const a = JSON.parse(JSON.stringify(this.state.schedule));
               a.period.months = parseInt(n.target.value, 10), a.period.months < 1 && (a.period.months = 1), this.onChange(a);
             } }),
-            k.createElement("span", { key: "text" }, B.t("sch_periodMonth"))
+            k.createElement("span", { key: "text" }, j.t("sch_periodMonth"))
           ]
         ),
         k.createElement(
@@ -47881,7 +47881,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           k.createElement(xt, { style: { verticalAlign: "top" }, control: k.createElement(rr, { style: be.inputRadio, checked: typeof e.period.months == "string", onClick: () => {
             const n = JSON.parse(JSON.stringify(this.state.schedule));
             n.period.months = "[1,2,3,4,5,6,7,8,9,10,11,12]", this.onChange(n);
-          } }), label: B.t("sch_periodSpecificMonths") }),
+          } }), label: j.t("sch_periodSpecificMonths") }),
           typeof e.period.months == "string" && k.createElement(
             sg,
             { row: !0, style: be.inputGroup },
@@ -47890,17 +47890,17 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
               for (let o = 1; o <= 12; o++)
                 a.push(o);
               n.period.months = JSON.stringify(a), this.onChange(n);
-            } }), label: B.t("sch_all") }),
+            } }), label: j.t("sch_all") }),
             k.createElement(xt, { style: be.inputDateDay, control: k.createElement(Hr, { style: be.inputDateDayCheck, checked: !r.length, onChange: () => {
               const n = JSON.parse(JSON.stringify(this.state.schedule));
               n.period.months = "[]", this.onChange(n);
-            } }), label: B.t("sch_no_one") }),
+            } }), label: j.t("sch_no_one") }),
             r.length !== 12 && !!r.length && k.createElement(xt, { style: be.inputDateDay, control: k.createElement(Hr, { style: be.inputDateDayCheck, checked: !1, onChange: () => {
               const n = JSON.parse(JSON.stringify(this.state.schedule)), a = [], o = JSON.parse(n.period.months);
               for (let i = 1; i <= 12; i++)
                 o.includes(i) || a.push(i);
               a.sort((i, s) => i - s), n.period.months = JSON.stringify(a), this.onChange(n);
-            } }), label: B.t("sch_invert") }),
+            } }), label: j.t("sch_invert") }),
             k.createElement("div", null),
             s1.map((n, a) => k.createElement(xt, { key: `month_${a}`, style: be.inputGroupElement, control: k.createElement(Hr, { style: be.inputSmallCheck, checked: typeof e.period.months == "string" ? JSON.parse(e.period.months).includes(a + 1) : e.period.months === a, onChange: (o) => {
               const i = JSON.parse(JSON.stringify(this.state.schedule));
@@ -47911,7 +47911,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                 s = [];
               }
               o.target.checked && !s.includes(a + 1) ? s.push(a + 1) : !o.target.checked && s.includes(a + 1) && s.splice(s.indexOf(a + 1), 1), s.sort((l, c) => l - c), i.period.months = JSON.stringify(s), this.onChange(i);
-            } }), label: B.t(n) }))
+            } }), label: j.t(n) }))
           )
         )
       ];
@@ -47927,7 +47927,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           k.createElement(xt, { control: k.createElement(rr, { style: be.inputRadio, checked: e.period.years === 1, onClick: () => {
             const r = JSON.parse(JSON.stringify(this.state.schedule));
             r.period.years = 1, this.onChange(r);
-          } }), label: B.t("sch_periodEveryYear") })
+          } }), label: j.t("sch_periodEveryYear") })
         ),
         k.createElement(
           "div",
@@ -47935,13 +47935,13 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           k.createElement(xt, { control: k.createElement(rr, { style: be.inputRadio, checked: e.period.years > 1, onClick: () => {
             const r = JSON.parse(JSON.stringify(this.state.schedule));
             r.period.years = 2, this.onChange(r);
-          } }), label: B.t("sch_periodEvery") }),
+          } }), label: j.t("sch_periodEvery") }),
           e.period.years > 1 && [
             k.createElement(Ti, { key: "input", value: this.state.schedule.period.years, style: be.inputEvery, type: "number", inputProps: { min: 2 }, onChange: (r) => {
               const n = JSON.parse(JSON.stringify(this.state.schedule));
               n.period.years = parseInt(r.target.value, 10), n.period.years < 1 && (n.period.years = 1), this.onChange(n);
             } }),
-            k.createElement("span", { key: "text" }, B.t("sch_periodYear"))
+            k.createElement("span", { key: "text" }, j.t("sch_periodYear"))
           ]
         )
       ];
@@ -47962,8 +47962,8 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         k.createElement(
           "div",
           { style: { ...be.modeDiv, verticalAlign: "middle" } },
-          k.createElement("span", { style: { fontWeight: "bold", paddingRight: 10 } }, B.t("sch_valid")),
-          k.createElement("span", null, B.t("sch_validFrom"))
+          k.createElement("span", { style: { fontWeight: "bold", paddingRight: 10 } }, j.t("sch_valid")),
+          k.createElement("span", null, j.t("sch_validFrom"))
         ),
         k.createElement(
           "div",
@@ -47991,7 +47991,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           k.createElement(xt, { control: k.createElement(Hr, { style: be.inputRadio, checked: !!e.valid.to, onClick: () => {
             const r = JSON.parse(JSON.stringify(this.state.schedule));
             r.valid.to = r.valid.to ? "" : pn.now2string(!0), this.onChange(r);
-          } }), label: B.t("sch_validTo") }),
+          } }), label: j.t("sch_validTo") }),
           !!e.valid.to && k.createElement(an, {
             variant: "standard",
             inputRef: this.refTo,
@@ -48023,11 +48023,11 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         k.createElement(
           "div",
           { style: be.scrollWindow },
-          k.createElement("h5", null, B.t("sch_time")),
+          k.createElement("h5", null, j.t("sch_time")),
           this.getTimePeriodElements(),
           this.getTimeExactElements(),
           pn.getDivider(),
-          k.createElement("h5", null, B.t("sch_period")),
+          k.createElement("h5", null, j.t("sch_period")),
           this.getPeriodModes(),
           !this.state.schedule.period.once && pn.getDivider(),
           !this.state.schedule.period.once && this.getValidSettings()
@@ -48473,7 +48473,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
     };
   }
   function V1e(t, e, r, n) {
-    var a = e.aspectRatio, o = e.naturalWidth, i = e.naturalHeight, s = e.rotate, l = s === void 0 ? 0 : s, c = e.scaleX, d = c === void 0 ? 1 : c, u = e.scaleY, f = u === void 0 ? 1 : u, h = r.aspectRatio, v = r.naturalWidth, g = r.naturalHeight, y = n.fillColor, b = y === void 0 ? "transparent" : y, w = n.imageSmoothingEnabled, x = w === void 0 ? !0 : w, C = n.imageSmoothingQuality, E = C === void 0 ? "low" : C, T = n.maxWidth, D = T === void 0 ? 1 / 0 : T, P = n.maxHeight, I = P === void 0 ? 1 / 0 : P, M = n.minWidth, R = M === void 0 ? 0 : M, z = n.minHeight, F = z === void 0 ? 0 : z, j = document.createElement("canvas"), W = j.getContext("2d"), H = Cl({
+    var a = e.aspectRatio, o = e.naturalWidth, i = e.naturalHeight, s = e.rotate, l = s === void 0 ? 0 : s, c = e.scaleX, d = c === void 0 ? 1 : c, u = e.scaleY, f = u === void 0 ? 1 : u, h = r.aspectRatio, v = r.naturalWidth, g = r.naturalHeight, y = n.fillColor, b = y === void 0 ? "transparent" : y, w = n.imageSmoothingEnabled, x = w === void 0 ? !0 : w, C = n.imageSmoothingQuality, E = C === void 0 ? "low" : C, T = n.maxWidth, D = T === void 0 ? 1 / 0 : T, P = n.maxHeight, I = P === void 0 ? 1 / 0 : P, M = n.minWidth, R = M === void 0 ? 0 : M, z = n.minHeight, F = z === void 0 ? 0 : z, B = document.createElement("canvas"), W = B.getContext("2d"), H = Cl({
       aspectRatio: h,
       width: D,
       height: I
@@ -48490,9 +48490,9 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       width: R,
       height: F
     }, "cover"), K = Math.min(Q.width, Math.max(U.width, o)), ie = Math.min(Q.height, Math.max(U.height, i)), se = [-K / 2, -ie / 2, K, ie];
-    return j.width = yp(q), j.height = yp(V), W.fillStyle = b, W.fillRect(0, 0, q, V), W.save(), W.translate(q / 2, V / 2), W.rotate(l * Math.PI / 180), W.scale(d, f), W.imageSmoothingEnabled = x, W.imageSmoothingQuality = E, W.drawImage.apply(W, [t].concat(nW(se.map(function(oe) {
+    return B.width = yp(q), B.height = yp(V), W.fillStyle = b, W.fillRect(0, 0, q, V), W.save(), W.translate(q / 2, V / 2), W.rotate(l * Math.PI / 180), W.scale(d, f), W.imageSmoothingEnabled = x, W.imageSmoothingQuality = E, W.drawImage.apply(W, [t].concat(nW(se.map(function(oe) {
       return Math.floor(yp(oe));
-    })))), W.restore(), j;
+    })))), W.restore(), B;
   }
   var mW = String.fromCharCode;
   function G1e(t, e, r) {
@@ -49218,12 +49218,12 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       y.width = yp(v), y.height = yp(g), b.fillStyle = e.fillColor || "transparent", b.fillRect(0, 0, v, g);
       var w = e.imageSmoothingEnabled, x = w === void 0 ? !0 : w, C = e.imageSmoothingQuality;
       b.imageSmoothingEnabled = x, C && (b.imageSmoothingQuality = C);
-      var E = n.width, T = n.height, D = o, P = i, I, M, R, z, F, j;
-      D <= -s || D > E ? (D = 0, I = 0, R = 0, F = 0) : D <= 0 ? (R = -D, D = 0, I = Math.min(E, s + D), F = I) : D <= E && (R = 0, I = Math.min(s, E - D), F = I), I <= 0 || P <= -l || P > T ? (P = 0, M = 0, z = 0, j = 0) : P <= 0 ? (z = -P, P = 0, M = Math.min(T, l + P), j = M) : P <= T && (z = 0, M = Math.min(l, T - P), j = M);
+      var E = n.width, T = n.height, D = o, P = i, I, M, R, z, F, B;
+      D <= -s || D > E ? (D = 0, I = 0, R = 0, F = 0) : D <= 0 ? (R = -D, D = 0, I = Math.min(E, s + D), F = I) : D <= E && (R = 0, I = Math.min(s, E - D), F = I), I <= 0 || P <= -l || P > T ? (P = 0, M = 0, z = 0, B = 0) : P <= 0 ? (z = -P, P = 0, M = Math.min(T, l + P), B = M) : P <= T && (z = 0, M = Math.min(l, T - P), B = M);
       var W = [D, P, I, M];
-      if (F > 0 && j > 0) {
+      if (F > 0 && B > 0) {
         var H = v / s;
-        W.push(R * H, z * H, F * H, j * H);
+        W.push(R * H, z * H, F * H, B * H);
       }
       return b.drawImage.apply(b, [n].concat(nW(W.map(function(Z) {
         return Math.floor(yp(Z));
@@ -49426,7 +49426,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         var T = new vW(C.current, Qc(Qc({ dragMode: a }, w), { ready: function(D) {
           D.currentTarget !== null && (function(P, I) {
             I === void 0 && (I = {});
-            var M = I.enable, R = M === void 0 || M, z = I.scaleX, F = z === void 0 ? 1 : z, j = I.scaleY, W = j === void 0 ? 1 : j, H = I.zoomTo, Z = H === void 0 ? 0 : H, q = I.rotateTo;
+            var M = I.enable, R = M === void 0 || M, z = I.scaleX, F = z === void 0 ? 1 : z, B = I.scaleY, W = B === void 0 ? 1 : B, H = I.zoomTo, Z = H === void 0 ? 0 : H, q = I.rotateTo;
             R ? P.enable() : P.disable(), P.scaleX(F), P.scaleY(W), q !== void 0 && P.rotateTo(q), Z > 0 && P.zoomTo(Z);
           })(D.currentTarget.cropper, x), y && y(D);
         } }));
@@ -49693,11 +49693,11 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       return k.createElement(
         "div",
         { key: "weekdays", style: { paddingLeft: 8, width: "calc(100% - 8px)", maxWidth: 600 } },
-        k.createElement("h5", null, B.t("ra_On weekdays")),
+        k.createElement("h5", null, j.t("ra_On weekdays")),
         [1, 2, 3, 4, 5, 6, 0].map((n) => k.createElement(xt, { key: EI[n], control: k.createElement(Hr, { checked: r.weekdays.includes(n), onChange: (a) => {
           const o = JSON.parse(JSON.stringify(this.state[e])), i = o.weekdays.indexOf(n);
           a.target.checked ? i === -1 && o.weekdays.push(n) : i !== -1 && o.weekdays.splice(i, 1), o.weekdays.sort(), e === "intervalBetween" ? this.setState({ intervalBetween: o }, () => this.recalcCron()) : this.setState({ specific: o }, () => this.recalcCron());
-        }, value: n.toString() }), label: B.t(EI[n]) }))
+        }, value: n.toString() }), label: j.t(EI[n]) }))
       );
     }
     getControlsPeriodElements(e) {
@@ -49705,8 +49705,8 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       return this.state.extended ? k.createElement(
         "div",
         { key: "period", style: { paddingLeft: 8, display: "inline-block" } },
-        k.createElement("h5", { style: { marginBottom: 5 } }, B.t("sc_period")),
-        k.createElement(an, { variant: "standard", style: { marginTop: 0, marginBottom: 0, verticalAlign: "bottom" }, key: "value", label: B.t("sc_minutes"), value: r.minutes, onChange: (n) => {
+        k.createElement("h5", { style: { marginBottom: 5 } }, j.t("sc_period")),
+        k.createElement(an, { variant: "standard", style: { marginTop: 0, marginBottom: 0, verticalAlign: "bottom" }, key: "value", label: j.t("sc_minutes"), value: r.minutes, onChange: (n) => {
           const a = JSON.parse(JSON.stringify(this.state[e]));
           a.minutes = parseInt(n.target.value, 10), a.minutes < 1 && (a.minutes = 1), e === "interval" ? this.setState({ interval: a }, () => this.recalcCron()) : this.setState({ intervalBetween: a }, () => this.recalcCron());
         }, slotProps: {
@@ -49718,7 +49718,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             shrink: !0
           }
         }, type: "number", margin: "normal" }),
-        k.createElement(an, { variant: "standard", style: { marginTop: 0, marginBottom: 0, verticalAlign: "bottom" }, key: "value", label: B.t("sc_hours"), value: r.hours, onChange: (n) => {
+        k.createElement(an, { variant: "standard", style: { marginTop: 0, marginBottom: 0, verticalAlign: "bottom" }, key: "value", label: j.t("sc_hours"), value: r.hours, onChange: (n) => {
           const a = JSON.parse(JSON.stringify(this.state[e]));
           a.hours = parseInt(n.target.value, 10), a.hours < 1 && (a.hours = 1), e === "interval" ? this.setState({ interval: a }, () => this.recalcCron()) : this.setState({ intervalBetween: a }, () => this.recalcCron());
         }, slotProps: {
@@ -49733,8 +49733,8 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       ) : k.createElement(
         "div",
         { key: "period", style: { paddingLeft: 8, display: "inline-block" } },
-        k.createElement("h5", { style: { marginBottom: 5 } }, B.t("sc_period")),
-        k.createElement(an, { variant: "standard", style: { marginTop: 0, marginBottom: 0, verticalAlign: "bottom" }, key: "value", label: B.t("sc_every"), value: r.period, onChange: (n) => {
+        k.createElement("h5", { style: { marginBottom: 5 } }, j.t("sc_period")),
+        k.createElement(an, { variant: "standard", style: { marginTop: 0, marginBottom: 0, verticalAlign: "bottom" }, key: "value", label: j.t("sc_every"), value: r.period, onChange: (n) => {
           const a = JSON.parse(JSON.stringify(this.state[e]));
           a.period = parseInt(n.target.value, 10), a.period < 1 && (a.period = 1), e === "interval" ? this.setState({ interval: a }, () => this.recalcCron()) : this.setState({ intervalBetween: a }, () => this.recalcCron());
         }, slotProps: {
@@ -49752,9 +49752,9 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             const a = JSON.parse(JSON.stringify(this.state[e]));
             a.unit = n.target.value, e === "interval" ? this.setState({ interval: a }, () => this.recalcCron()) : this.setState({ intervalBetween: a }, () => this.recalcCron());
           } },
-          k.createElement(ur, { value: "seconds" }, B.t("sc_seconds")),
+          k.createElement(ur, { value: "seconds" }, j.t("sc_seconds")),
           ")",
-          k.createElement(ur, { value: "minutes" }, B.t("sc_minutes")),
+          k.createElement(ur, { value: "minutes" }, j.t("sc_minutes")),
           ")"
         )
       );
@@ -49767,7 +49767,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           ...il.formControl,
           "&.MuiFormControl-root": il.formControlMarginRight
         } },
-        k.createElement(an, { variant: "standard", key: "at", label: B.t("sc_time"), value: r.time, type: "time", sx: (n) => ({
+        k.createElement(an, { variant: "standard", key: "at", label: j.t("sc_time"), value: r.time, type: "time", sx: (n) => ({
           '& input[type="time"]::-webkit-calendar-picker-indicator': {
             filter: n.palette.mode === "dark" ? "invert(80%)" : void 0
           }
@@ -49790,7 +49790,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       return k.createElement(
         Wd,
         { variant: "standard", style: il.formControl },
-        k.createElement(an, { variant: "standard", key: "date", label: B.t("sc_date"), value: e.date, type: "text", slotProps: {
+        k.createElement(an, { variant: "standard", key: "date", label: j.t("sc_date"), value: e.date, type: "text", slotProps: {
           htmlInput: {
             style: il.formControlPaddingTop
           },
@@ -49821,11 +49821,11 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         k.createElement(
           "div",
           { key: "between", style: { paddingLeft: 8, display: "inline-block", verticalAlign: "top" } },
-          k.createElement("h5", { style: { marginBottom: 5 } }, B.t("sc_hours")),
+          k.createElement("h5", { style: { marginBottom: 5 } }, j.t("sc_hours")),
           k.createElement(
             Wd,
             { variant: "standard", style: il.formControl },
-            k.createElement(lg, { shrink: !0, htmlFor: "age-label-placeholder" }, B.t("sc_from")),
+            k.createElement(lg, { shrink: !0, htmlFor: "age-label-placeholder" }, j.t("sc_from")),
             k.createElement(uo, { variant: "standard", style: { width: 100 }, value: e.timeFrom, onChange: (r) => {
               const n = JSON.parse(JSON.stringify(this.state.intervalBetween));
               n.timeFrom = parseInt(r.target.value, 10), n.timeTo === 24 && (n.timeTo = 23), this.setState({ intervalBetween: n }, () => this.recalcCron());
@@ -49834,7 +49834,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           k.createElement(
             Wd,
             { variant: "standard", style: il.formControl },
-            k.createElement(lg, { shrink: !0, htmlFor: "age-label-placeholder" }, B.t("sc_to")),
+            k.createElement(lg, { shrink: !0, htmlFor: "age-label-placeholder" }, j.t("sc_to")),
             k.createElement(
               uo,
               { variant: "standard", style: { width: 100 }, value: e.timeTo, onChange: (r) => {
@@ -49870,21 +49870,21 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           { style: { paddingLeft: 8, width: "calc(100% - 8px)" } },
           k.createElement(an, { variant: "standard", style: { width: "100%" }, value: this.state.cron, disabled: !0, error: this.state.cron.includes("_") })
         ),
-        k.createElement("div", { style: { paddingLeft: 8, width: "calc(100% - 8px)", height: 60 } }, this.state.cron.includes("_") ? B.t("sc_invalid_cron") : LB(this.state.cron, this.props.language || "en")),
+        k.createElement("div", { style: { paddingLeft: 8, width: "calc(100% - 8px)", height: 60 } }, this.state.cron.includes("_") ? j.t("sc_invalid_cron") : LB(this.state.cron, this.props.language || "en")),
         k.createElement(
           "div",
           null,
           k.createElement(
             Wd,
             { variant: "standard", style: { ...il.formControl, marginLeft: 8, marginTop: 8 } },
-            k.createElement(lg, null, B.t("ra_Repeat")),
+            k.createElement(lg, null, j.t("ra_Repeat")),
             k.createElement(
               uo,
               { variant: "standard", value: this.state.mode, onChange: (e) => this.onModeChange(e.target.value), inputProps: { name: "mode", id: "mode" } },
-              k.createElement(ur, { value: "once" }, B.t("sc_once")),
-              k.createElement(ur, { value: "interval" }, B.t("sc_interval")),
-              k.createElement(ur, { value: "intervalBetween" }, B.t("sc_intervalBetween")),
-              k.createElement(ur, { value: "specific" }, B.t("sc_specific"))
+              k.createElement(ur, { value: "once" }, j.t("sc_once")),
+              k.createElement(ur, { value: "interval" }, j.t("sc_interval")),
+              k.createElement(ur, { value: "intervalBetween" }, j.t("sc_intervalBetween")),
+              k.createElement(ur, { value: "specific" }, j.t("sc_specific"))
             )
           )
         ),
@@ -49927,7 +49927,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       this.props.onOk(this.state.cron), this.props.onClose();
     }
     renderWarningDialog() {
-      return this.state.showWarning ? k.createElement(Rse, { title: B.t("ra_Please confirm"), text: B.t(this.state.showWarning === "everySecond" ? "ra_The schedule will be executed every second. Are you sure?" : "ra_The schedule will be executed every minute. Are you sure?"), onClose: (e) => this.setState({ showWarning: "" }, () => {
+      return this.state.showWarning ? k.createElement(Rse, { title: j.t("ra_Please confirm"), text: j.t(this.state.showWarning === "everySecond" ? "ra_The schedule will be executed every second. Are you sure?" : "ra_The schedule will be executed every minute. Are you sure?"), onClose: (e) => this.setState({ showWarning: "" }, () => {
         e && this.handleOk(!0);
       }) }) : null;
     }
@@ -49940,18 +49940,18 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         { onClose: () => {
         }, maxWidth: "md", fullWidth: !0, sx: { "& .MuiDialog-paper": uge.dialogPaper }, open: !0, "aria-labelledby": "cron-dialog-title" },
         this.renderWarningDialog(),
-        k.createElement(ti, { id: "cron-dialog-title" }, this.props.title || B.t("ra_Define schedule...")),
+        k.createElement(ti, { id: "cron-dialog-title" }, this.props.title || j.t("ra_Define schedule...")),
         k.createElement(
           ko,
           { style: { height: "100%", overflow: "hidden" } },
-          k.createElement(Sl, { cronExpression: this.state.cron, onChange: (e) => this.setState({ cron: e }), language: B.getLanguage() })
+          k.createElement(Sl, { cronExpression: this.state.cron, onChange: (e) => this.setState({ cron: e }), language: j.getLanguage() })
         ),
         k.createElement(
           So,
           null,
-          !!this.props.clearButton && k.createElement(Gt, { color: "grey", variant: "contained", onClick: () => this.handleClear(), startIcon: k.createElement(ug, null) }, this.props.clear || B.t("ra_Clear")),
-          k.createElement(Gt, { variant: "contained", onClick: () => this.handleOk(), color: "primary", startIcon: k.createElement(Vi, null) }, this.props.ok || B.t("ra_Ok")),
-          k.createElement(Gt, { color: "grey", variant: "contained", onClick: () => this.handleCancel(), startIcon: k.createElement(J_, null) }, this.props.cancel || B.t("ra_Cancel"))
+          !!this.props.clearButton && k.createElement(Gt, { color: "grey", variant: "contained", onClick: () => this.handleClear(), startIcon: k.createElement(ug, null) }, this.props.clear || j.t("ra_Clear")),
+          k.createElement(Gt, { variant: "contained", onClick: () => this.handleOk(), color: "primary", startIcon: k.createElement(Vi, null) }, this.props.ok || j.t("ra_Ok")),
+          k.createElement(Gt, { color: "grey", variant: "contained", onClick: () => this.handleCancel(), startIcon: k.createElement(J_, null) }, this.props.cancel || j.t("ra_Cancel"))
         )
       );
     }
@@ -49984,7 +49984,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         xo,
         { onClose: () => {
         }, maxWidth: "md", fullWidth: !0, sx: { "& .MuiDialog-paper": dge.dialogPaper }, open: !0, "aria-labelledby": "cron-dialog-title" },
-        k.createElement(ti, { id: "cron-dialog-title" }, this.props.title || B.t("ra_Define schedule...")),
+        k.createElement(ti, { id: "cron-dialog-title" }, this.props.title || j.t("ra_Define schedule...")),
         k.createElement(
           ko,
           { style: { height: "100%", overflow: "hidden" } },
@@ -49995,30 +49995,30 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
               k.Fragment,
               null,
               k.createElement(rr, { key: "wizard", checked: this.state.mode === "wizard", onChange: () => this.setMode("wizard") }),
-              k.createElement("label", { onClick: () => this.setMode("wizard"), style: this.state.mode !== "wizard" ? { color: "lightgrey" } : {} }, B.t("sc_wizard"))
+              k.createElement("label", { onClick: () => this.setMode("wizard"), style: this.state.mode !== "wizard" ? { color: "lightgrey" } : {} }, j.t("sc_wizard"))
             ),
             (!this.props.simple && !this.props.complex || this.props.simple) && k.createElement(
               k.Fragment,
               null,
               k.createElement(rr, { key: "simple", checked: this.state.mode === "simple", onChange: () => this.setMode("simple") }),
-              k.createElement("label", { onClick: () => this.setMode("simple"), style: this.state.mode !== "simple" ? { color: "lightgrey" } : {} }, B.t("sc_simple"))
+              k.createElement("label", { onClick: () => this.setMode("simple"), style: this.state.mode !== "simple" ? { color: "lightgrey" } : {} }, j.t("sc_simple"))
             ),
             (!this.props.simple && !this.props.complex || this.props.complex) && k.createElement(
               k.Fragment,
               null,
               k.createElement(rr, { key: "complex", checked: this.state.mode === "complex", onChange: () => this.setMode("complex") }),
-              k.createElement("label", { onClick: () => this.setMode("complex"), style: this.state.mode !== "complex" ? { color: "lightgrey" } : {} }, B.t("sc_cron"))
+              k.createElement("label", { onClick: () => this.setMode("complex"), style: this.state.mode !== "complex" ? { color: "lightgrey" } : {} }, j.t("sc_cron"))
             )
           ) : null,
-          this.state.mode === "simple" && k.createElement(D0, { cronExpression: this.state.cron, onChange: (e) => this.setState({ cron: e }), language: B.getLanguage() }),
+          this.state.mode === "simple" && k.createElement(D0, { cronExpression: this.state.cron, onChange: (e) => this.setState({ cron: e }), language: j.getLanguage() }),
           this.state.mode === "wizard" && k.createElement(pn, { theme: this.props.theme, schedule: this.state.cron, onChange: (e) => this.setState({ cron: e }) }),
-          this.state.mode === "complex" && k.createElement(Sl, { cronExpression: this.state.cron, onChange: (e) => this.setState({ cron: e }), language: B.getLanguage() })
+          this.state.mode === "complex" && k.createElement(Sl, { cronExpression: this.state.cron, onChange: (e) => this.setState({ cron: e }), language: j.getLanguage() })
         ),
         k.createElement(
           So,
           null,
-          k.createElement(Gt, { variant: "contained", onClick: () => this.handleOk(), color: "primary", startIcon: k.createElement(Vi, null) }, this.props.ok || B.t("ra_Ok")),
-          k.createElement(Gt, { variant: "contained", onClick: () => this.handleCancel(), color: "grey", startIcon: k.createElement(J_, null) }, this.props.cancel || B.t("ra_Cancel"))
+          k.createElement(Gt, { variant: "contained", onClick: () => this.handleOk(), color: "primary", startIcon: k.createElement(Vi, null) }, this.props.ok || j.t("ra_Ok")),
+          k.createElement(Gt, { variant: "contained", onClick: () => this.handleCancel(), color: "grey", startIcon: k.createElement(J_, null) }, this.props.cancel || j.t("ra_Cancel"))
         )
       );
     }
@@ -50083,7 +50083,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         k.createElement(
           "span",
           { key: "selected" },
-          B.t("ra_Selected"),
+          j.t("ra_Selected"),
           " "
         ),
         k.createElement("span", { key: "id", style: kc.headerID }, this.state.selected)
@@ -50091,11 +50091,11 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         k.createElement(
           "span",
           { key: "selected" },
-          B.t("ra_Selected"),
+          j.t("ra_Selected"),
           " "
         ),
-        k.createElement("span", { key: "id", style: kc.headerID }, B.t("%s items", this.state.selected.length))
-      ] : e = this.props.title || B.t("ra_Please select file..."), k.createElement(
+        k.createElement("span", { key: "id", style: kc.headerID }, j.t("%s items", this.state.selected.length))
+      ] : e = this.props.title || j.t("ra_Please select file..."), k.createElement(
         xo,
         { onClose: () => {
         }, maxWidth: !1, style: { zIndex: this.props.zIndex || void 0 }, sx: { "& .MuiDialog-paper": { ...kc.dialog, ...kc.dialogMobile } }, fullWidth: !0, open: !0, "aria-labelledby": "ar_dialog_selectfile_title" },
@@ -50105,13 +50105,13 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           { style: { ...kc.content, ...kc.contentMobile } },
           k.createElement(bve, { ready: !0, imagePrefix: this.props.imagePrefix || this.props.prefix || "../", allowUpload: !!this.props.allowUpload, allowDownload: this.props.allowDownload !== !1, allowCreateFolder: !!this.props.allowCreateFolder, allowDelete: !!this.props.allowDelete, allowView: this.props.allowView !== !1, showViewTypeButton: this.props.showViewTypeButton !== !1, showToolbar: this.props.showToolbar !== !1, limitPath: this.props.limitPath, filterFiles: this.props.filterFiles, filterByType: this.props.filterByType, selected: this.props.selected, restrictToFolder: this.props.restrictToFolder, allowNonRestricted: this.props.allowNonRestricted, onSelect: (r, n, a) => {
             this.setState({ selected: Array.isArray(r) ? r : [r] }, () => n && (!this.props.selectOnlyFolders || a) && this.handleOk());
-          }, t: this.props.t || B.t, lang: this.props.lang || B.getLanguage(), socket: this.props.socket, themeType: this.props.themeType, themeName: this.props.themeName, theme: this.props.theme, showExpertButton: this.props.showExpertButton, expertMode: this.props.expertMode, showTypeSelector: this.props.showTypeSelector })
+          }, t: this.props.t || j.t, lang: this.props.lang || j.getLanguage(), socket: this.props.socket, themeType: this.props.themeType, themeName: this.props.themeName, theme: this.props.theme, showExpertButton: this.props.showExpertButton, expertMode: this.props.expertMode, showTypeSelector: this.props.showTypeSelector })
         ),
         k.createElement(
           So,
           null,
-          k.createElement(Gt, { variant: "contained", onClick: () => this.handleOk(), startIcon: k.createElement(Vi, null), disabled: !this.state.selected.length, color: "primary" }, this.props.ok || B.t("ra_Ok")),
-          k.createElement(Gt, { color: "grey", variant: "contained", onClick: () => this.handleCancel(), startIcon: k.createElement(J_, null) }, this.props.cancel || B.t("ra_Cancel"))
+          k.createElement(Gt, { variant: "contained", onClick: () => this.handleOk(), startIcon: k.createElement(Vi, null), disabled: !this.state.selected.length, color: "primary" }, this.props.ok || j.t("ra_Ok")),
+          k.createElement(Gt, { color: "grey", variant: "contained", onClick: () => this.handleCancel(), startIcon: k.createElement(J_, null) }, this.props.cancel || j.t("ra_Cancel"))
         )
       );
     }
@@ -50140,24 +50140,24 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         xo,
         { onClose: () => {
         }, maxWidth: "md", fullWidth: !0, sx: { "& .MuiDialog-paper": pge.dialogPaper }, open: !0, "aria-labelledby": "cron-dialog-title" },
-        k.createElement(ti, { id: "cron-dialog-title" }, this.props.title || B.t("ra_Define CRON...")),
+        k.createElement(ti, { id: "cron-dialog-title" }, this.props.title || j.t("ra_Define CRON...")),
         k.createElement(
           ko,
           { style: { height: "100%", overflow: "hidden" } },
-          k.createElement(D0, { cronExpression: this.state.cron, onChange: (e) => this.setState({ cron: e }), language: B.getLanguage() })
+          k.createElement(D0, { cronExpression: this.state.cron, onChange: (e) => this.setState({ cron: e }), language: j.getLanguage() })
         ),
         k.createElement(
           So,
           null,
-          k.createElement(Gt, { variant: "contained", disabled: !this.state.cron || this.state.cron.includes("_"), onClick: () => this.handleOk(), color: "primary", startIcon: k.createElement(Vi, null) }, this.props.ok || B.t("ra_Ok")),
-          k.createElement(Gt, { variant: "contained", onClick: () => this.handleCancel(), color: "grey", startIcon: k.createElement(J_, null) }, this.props.cancel || B.t("ra_Cancel"))
+          k.createElement(Gt, { variant: "contained", disabled: !this.state.cron || this.state.cron.includes("_"), onClick: () => this.handleOk(), color: "primary", startIcon: k.createElement(Vi, null) }, this.props.ok || j.t("ra_Ok")),
+          k.createElement(Gt, { variant: "contained", onClick: () => this.handleCancel(), color: "grey", startIcon: k.createElement(J_, null) }, this.props.cancel || j.t("ra_Cancel"))
         )
       );
     }
   }
   const fge = "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='2000'%20height='2000'%20fill='gray'%20xmlns:v='https://vecta.io/nano'%3e%3cpath%20d='M969.073%2081.839l2.62-.029%202.853-.013%202.919-.017%206.133-.02%209.369-.072%205.953-.016%202.829-.037c5.035.017%208.047.334%2012.249%203.366l3.5.438c4.117.662%205.371%201.881%208.5%204.563%201.485.86%202.987%201.691%204.5%202.5%203.494%201.891%206.429%203.967%209.5%206.5l4.375%202.813c3.848%202.523%206.96%205.315%2010.117%208.648%201.574%201.686%201.574%201.686%203.945%203.352L1060%20115v2l2%20.688c6.282%202.748%2011.332%206.266%2016%2011.313l2.25%202.25c1.548%201.548%203.084%203.11%204.574%204.715%204.23%204.449%208.588%208.118%2013.676%2011.535%206.013%204.067%2010.965%208.784%2016%2014%205.502%205.7%2010.946%2010.566%2017.53%2014.958%205.403%203.666%209.776%208.095%2014.294%2012.78%204.696%204.847%209.519%209.08%2015.176%2012.762%208.433%205.503%2015.241%2012.647%2022.221%2019.845l1.888%201.924%201.687%201.738c1.655%201.583%201.655%201.583%203.791%202.507C1193%20229%201193%20229%201195%20232l5.079%202.786c3.441%202.174%206.076%205.148%208.859%208.089%204.267%204.398%208.424%208.549%2013.512%2012.012C1224%20256%201224%20256%201225.441%20257.473c1.793%201.757%203.687%202.935%205.809%204.277%205.861%204.011%2010.648%208.93%2015.571%2014.007l1.858%201.915%201.648%201.722c1.685%201.695%201.685%201.695%203.88%203.189L1256%20284v2l2.125.75c6.911%203.005%2011.524%207.714%2016.688%2013.063%209.038%209.498%209.038%209.498%2019.999%2016.47%203.368%201.815%205.531%203.731%208.192%206.464l2.744%202.787%202.814%202.904%205.566%205.684%202.471%202.545c3.087%203.002%206.215%205.631%209.92%207.83%206.676%204.048%2012.172%2010.149%2017.605%2015.691%206.057%206.114%2012.675%2010.78%2019.895%2015.418%201.901%201.339%203.471%202.627%204.98%204.395v2l1.688.688c3.661%202.078%206.255%205.167%209.094%208.242l1.969%202.07%201.797%201.938c2.22%201.866%204.106%202.964%206.664%204.27%205.481%202.942%209.41%207.003%2013.664%2011.48l4.43%204.574%201.937%202.03c1.849%201.9%201.849%201.9%204.758%203.708v2l2.313.813c2.682%201.185%203.684%202.145%205.688%204.188l4.063%203.063c4.546%203.485%208.447%207.41%2012.441%2011.504%203.01%202.935%206.208%205.466%209.586%207.961%201.91%201.473%201.91%201.473%203.269%202.898%201.809%201.736%203.673%202.93%205.805%204.247%205.037%203.301%209.059%207.244%2013.211%2011.578l4.148%204.266%201.81%201.884c1.779%201.803%201.779%201.803%204.667%203.601v2l2.125.75c6.889%202.995%2011.434%207.656%2016.563%2013%206.816%206.965%2013.621%2012.865%2022.031%2017.867%205.756%203.838%2010.33%209.358%2015.117%2014.297%205.345%205.448%2010.803%2010.086%2017.08%2014.404%204.893%203.383%208.932%207.454%2013.084%2011.682%205.4%205.493%2010.754%2010.235%2017.22%2014.445%207.521%205.024%2013.455%2011.06%2019.636%2017.615%203.801%203.93%207.299%207.226%2012.094%209.893%206.113%203.419%2010.566%208.196%2015.363%2013.234l5.176%205.355%202.267%202.376c2.271%202.106%204.589%203.513%207.245%205.081l1%202%205.031%202.805c4.994%203.032%208.789%206.903%2012.371%2011.48%203.092%203.319%206.793%205.985%2010.367%208.762L1678%20648v2l2%20.625c8.076%203.701%2013.962%2010.162%2020.076%2016.437%202.373%202.429%204.616%204.709%207.346%206.739L1709%20675v2l2.125.75c5.726%202.49%209.946%206.101%2014.25%2010.563%204.909%205.022%209.972%209.754%2015.449%2014.152%201.421%201.143%202.803%202.334%204.176%203.535v2l2%20.625c7.102%203.255%2012.196%208.526%2017.563%2014.063%204.658%204.797%209.379%208.943%2014.875%2012.75%206.453%204.475%2011.889%209.567%2017.289%2015.261%205.344%205.596%2011.126%209.947%2017.66%2014.067%205.506%203.626%209.879%208.247%2014.426%2012.984l4.957%205.109%202.175%202.265c1.968%201.796%203.7%202.7%206.055%203.876l2%203%205%203a125.39%20125.39%200%200%201%204.625%204.063l2.637%202.402%205.445%205.102%202.73%202.559%202.434%202.32c2.579%202.269%205.384%203.951%208.324%205.719%206.274%203.914%2011.151%208.766%2016.242%2014.086l5.184%205.328%202.263%202.356c2.052%202.103%202.052%202.103%204.389%203.717L1905%20844v2l1.781.766c9.728%205.412%2015.307%2018.305%2019.219%2028.234l1%201c.126%202.826.189%205.626.203%208.453l.017%202.583.02%205.427.072%208.283.016%205.27.037%202.497c-.018%204.759-.52%207.507-3.366%2011.487l-1%203.5c-.964%203.373-2.164%205.549-4%208.5l-1.309%202.359c-3.628%206.418-7.89%2011.481-13.129%2016.641l-2.197%202.27c-4.344%204.333-7.365%206.492-13.365%207.73l-1%202c-2.764.608-5.532.959-8.336%201.34-2.691.382-2.691.382-3.888%202.174-2.773%202.32-5.303%201.893-8.858%201.919l-2.096.016a430.12%20430.12%200%200%201-4.39-.003c-2.226-.008-4.45.02-6.676.052-1.425.002-2.85.001-4.275-.002l-3.909.006c-4.145-.582-6.209-2.092-9.571-4.502l-5.926-.465c-3.438-.887-5.496-3.251-7.922-5.746-2.16-1.992-2.16-1.992-5.387-3.016-5.022-2.009-8.296-5.913-11.953-9.773l-4.168-4.312-1.833-1.926c-1.798-1.835-1.798-1.835-4.04-3.367L1793%20934v-2l-2.125-.75c-6.889-2.995-11.434-7.656-16.562-13-6.052-6.185-12.025-11.539-19.312-16.25-9.669-6.26-9.669-6.26-12.062-11.187-.789-1.968-.789-1.968-2.785-2.707-2.417-1.241-3.708-2.597-5.527-4.605-3.41-3.523-7.073-6.275-11.125-9-6.697-4.551-12.245-9.937-17.818-15.791-4.248-4.432-8.659-8.181-13.682-11.709-5.484-3.857-10.232-8.114-14.928-12.89-5.185-5.268-10.366-10.075-16.572-14.11-8.433-5.503-15.241-12.647-22.221-19.845l-1.888-1.924-1.687-1.738c-1.655-1.583-1.655-1.583-3.791-2.507C1629%20793%201629%20793%201627%20790l-5.079-2.786c-3.441-2.174-6.076-5.148-8.859-8.089-4.267-4.398-8.424-8.549-13.512-12.012C1598%20766%201598%20766%201596.559%20764.527c-1.793-1.757-3.687-2.935-5.809-4.277-5.792-3.969-10.529-8.809-15.396-13.831-4.723-4.869-9.374-9.381-15.292-12.794-4.765-3.086-8.503-6.953-12.437-11-6.574-6.756-13.21-12.401-21.348-17.246-5.755-3.836-10.328-9.355-15.113-14.293-4.773-4.865-9.569-9.193-15.164-13.086-6.693-4.817-12.424-10.266-18.127-16.201l-1.736-1.787-1.54-1.611c-1.751-1.537-3.5-2.405-5.596-3.401l-3-3c-1.648-1.193-3.317-2.358-5-3.5-5.881-3.991-5.881-3.991-8-6.5v-2l-1.687-.687c-2.959-1.68-4.937-3.88-7.312-6.312l-3.125-2.625C1438%20628%201438%20628%201436.581%20626.519c-1.787-1.717-3.65-2.9-5.757-4.203-4.961-3.252-8.924-7.108-13.012-11.379-7.95-8.449-7.95-8.449-17.437-15-5.235-3.159-9.242-7.647-13.473-11.992-4.326-4.435-8.975-8.428-13.84-12.258C1371%20570%201371%20570%201370%20568c-1.323-.744-2.675-1.438-4.039-2.105-5.393-2.912-9.172-6.772-13.336-11.207-5.475-5.662-10.77-10.644-17.285-15.082-5.871-4.029-10.802-9.046-15.777-14.105-4.952-5.022-10.089-9.976-16.273-13.465-6.31-3.627-10.919-8.484-15.914-13.722-5.62-5.773-11.076-11.294-17.812-15.75-6.444-4.268-11.592-9.297-16.918-14.875-2.543-2.767-2.543-2.767-5.645-4.687v-2l-2.437-.875C1242%20459%201242%20459%201241%20457c-1.304-.728-2.637-1.406-3.98-2.059-5.728-3.092-9.861-7.337-14.332-12.004l-2.377-2.432-4.347-4.479L1214%20434l-1.987-2.12c-2.017-1.883-3.767-2.922-6.24-4.11-5.323-2.851-9.046-6.713-13.148-11.082-6.157-6.362-12.148-11.895-19.625-16.687-4.13-2.671-7.59-5.415-11-9l-2.25-2.25-4.926-4.961-2.387-2.414-2.254-2.289c-2.115-2.114-2.115-2.114-4.461-3.734L1144%20374v-2l-2.141-.187c-3.72-1.057-5.903-3.184-8.609-5.812l-1.587-1.495c-3.207-3.039-6.319-6.164-9.413-9.318-3.811-3.859-7.845-7.041-12.25-10.187-6.051-4.423-11.343-9.231-16.594-14.578-4.639-4.669-9.382-8.833-14.906-12.422-7.62-4.959-13.876-11.26-20.2-17.737-4.22-4.296-8.543-7.785-13.608-11.013-4.87-3.21-8.75-7.036-12.754-11.25-4.503-4.711-8.958-8.987-14.277-12.773C1016%20264%201016%20264%201014.062%20262c-2.028-1.966-4-3.297-6.375-4.812-5.732-3.736-10.168-8.251-14.437-13.563-2.046-2.843-2.046-2.843-5.25-3.625l-2.062%202.125c-3.781%203.77-7.653%207.559-12.297%2010.234-3.12%201.938-5.723%204.265-8.391%206.766l-1.58%201.463c-4.025%203.749-7.907%207.631-11.775%2011.541-2.845%202.81-5.708%205.201-9.191%207.168-3.064%201.93-5.546%204.118-8.203%206.578l-1.56%201.436c-2.828%202.628-5.576%205.316-8.26%208.091-5.453%205.634-10.37%2010.66-17.461%2014.254-2.867%201.736-4.894%203.934-7.219%206.344l-5.687%205.188c-3.989%203.613-7.819%207.317-11.562%2011.188-3.437%203.492-6.765%206.232-11.059%208.59-1.87%201.145-3.176%202.456-4.691%204.035l-3.25%202.75c-2.944%202.539-5.713%205.199-8.434%207.973l-1.993%202.03-3.955%204.092c-5.78%205.918-5.78%205.918-10.368%207.155v2l-2.375.25L834%20372l-.867%201.805c-1.476%202.86-3.324%204.125-5.883%206.07-5.48%204.335-10.331%209.084-15.126%2014.164-3.512%203.638-6.999%206.338-11.418%208.812-2.014%201.2-2.014%201.2-3.706%204.149l-2.288%201.354c-3.175%201.927-5.558%204.313-8.098%206.978l-3.096%203.17-4.784%204.956c-5.788%206.017-11.146%2011.394-18.625%2015.322-2.964%201.714-5.092%203.972-7.417%206.454-1.708%201.783-3.495%203.359-5.379%204.953-2.527%202.163-4.921%204.401-7.242%206.781l-1.568%201.605-3.027%203.164c-3.504%203.613-6.969%205.996-11.476%208.263h-2l-1%203c-1.571%201.541-1.571%201.541-3.57%203.184-3.653%203.097-6.993%206.372-10.315%209.817-5.646%205.851-10.872%2011.102-18.142%2014.913-2.832%201.559-4.793%203.725-6.973%206.086l-2.875%202.313c-3.306%202.672-5.92%205.836-8.609%209.113L669%20520h-2l-.687%201.75c-2.008%203.442-4.873%205.345-8.219%207.449-8.534%205.395-15.687%2012.305-22.727%2019.484l-1.857%201.889-3.527%203.656c-3.696%203.797-7.223%206.412-11.984%208.771h-2l-.801%201.824c-1.265%202.295-2.357%203.362-4.387%204.988-3.64%203.05-6.932%206.328-10.23%209.734-5.445%205.61-10.46%2010.724-17.531%2014.278-2.211%201.149-2.211%201.149-4.195%203.32L577%20599h-2l-1%203c-1.426%201.402-1.426%201.402-3.312%202.938-4.37%203.685-8.345%207.678-12.298%2011.799-3.194%203.27-6.404%205.951-10.389%208.264h-3l-.773%201.797c-1.354%202.431-2.711%203.69-4.856%205.445-2.925%202.474-5.674%205.01-8.336%207.766l-1.986%202.051-3.961%204.156c-4.051%204.158-7.906%206.985-13.06%209.639-2.852%201.612-4.828%203.739-7.028%206.146l-3.016%202.797-1.589%201.453-1.646%201.5c-3.949%203.61-7.788%207.269-11.5%2011.125-3.469%203.533-7.087%206.251-11.305%208.836-1.925%201.275-3.353%202.628-4.945%204.289l-3.25%202.75c-5.053%204.376-9.703%209.151-14.382%2013.919-3.989%204.043-7.87%207.881-12.817%2010.753-3.128%201.936-5.704%204.312-8.363%206.828l-3.203%202.984-1.557%201.451c-1.792%201.65-3.635%203.235-5.49%204.814-2.813%202.421-5.417%204.989-8.003%207.65-4.122%204.24-8.086%207.946-13.282%2010.858-2.224%201.336-3.862%203.133-5.652%204.992h-2l-1%203c-1.566%201.539-1.566%201.539-3.562%203.18-5.145%204.363-9.777%209.165-14.437%2014.035-4.236%204.327-8.524%208.097-14%2010.785h-2l-1%203c-1.637%201.648-1.637%201.648-3.687%203.375l-2.18%201.855-3.891%203.195c-2.866%202.326-5.054%204.62-7.242%207.574h-2l-.687%201.75C334.593%20815.412%20329.5%20818.2%20325%20821h-2l-.694%201.749c-1.65%202.844-3.59%204.266-6.2%206.262-4.243%203.378-8.146%206.874-11.93%2010.758l-1.461%201.495-5.888%206.101C291.272%20853.152%20286.378%20857.699%20279%20861c-1.714%201.618-3.375%203.293-5%205l-2.796%202.859-1.478%201.518-6.662%206.779-3.476%203.558c-6.062%206.239-11.712%2012.032-19.515%2016.097-2.959%201.697-5.062%203.948-7.38%206.421-1.717%201.793-3.515%203.381-5.408%204.986-5.024%204.355-9.605%209.107-14.197%2013.908-4.035%204.122-8.111%207.374-12.975%2010.468-3.069%202.04-5.701%204.432-8.363%206.968l-1.484%201.381c-2.368%202.213-4.664%204.469-6.914%206.803-2.868%202.749-5.695%203.741-9.352%205.254-1.145.806-2.27%201.64-3.375%202.5-3.326%202.506-6.626%203.689-10.609%204.824-2.291.67-2.291.67-5.016%202.676-2.915.208-5.732.304-8.648.301l-2.574.013-5.391.002c-2.744-.003-5.486.02-8.229.046l-5.242.002-2.478.028c-4.754-.038-7.432-.61-11.436-3.391l-3.367-.297c-4.977-.963-7.26-3.44-10.758-6.953l-1.801-1.738-3.462-3.404-3.154-3.074c-1.19-1.14-2.329-2.332-3.458-3.533v-2l-3-1c-3.697-3.937-6.229-7.605-7-13l-1.488-1.359c-1.926-2.09-1.898-3.278-2.012-6.078-.111-3.469-.111-3.469-2.003-6.268-2.067-3.167-1.87-5.494-1.861-9.255l-.002-2.025.029-4.231.014-6.432c.061-15.091.061-15.091%203.322-18.352l.375-3.375c.676-3.921%201.017-4.069%203.625-6.625.81-1.867.81-1.867%201.375-3.875%201.422-4.058%203.413-6.219%206.625-9.125l2.375-2.937c2.326-2.852%204.931-5.154%207.781-7.473%202.41-2.078%204.609-4.325%206.844-6.59l3.156-3.156%201.66-1.66%206.641-6.633%202.992-3.07c1.148-1.195%202.345-2.343%203.551-3.48h2l.688-1.687c3.244-5.716%208.467-8.866%2013.77-12.5%203.761-2.68%207.131-5.708%2010.543-8.812l2.191-1.914c3.958-3.482%207.792-7.038%2011.465-10.82l1.955-2.004%203.772-3.945c3.812-3.927%207.478-6.618%2012.421-8.989%202.869-1.734%204.887-3.899%207.196-6.327l2.704-2.767%201.418-1.457%206.387-6.505%203.33-3.412c5.962-6.144%2011.488-11.52%2019.075-15.653%202.852-1.649%204.878-3.781%207.086-6.206l5.688-5.187a299.92%20299.92%200%200%200%2011.918-11.457l2.394-2.431%204.644-4.781c4.177-4.262%207.949-7.57%2013.357-10.144h2l.781-1.805c1.327-2.39%202.608-3.595%204.719-5.312%203.29-2.784%206.358-5.688%209.375-8.766l2.547-2.598%205.156-5.312c4.829-4.91%209.341-8.936%2015.422-12.207h2l.789-1.809c1.3-2.352%202.523-3.552%204.586-5.254%206.985-5.93%2013.812-12.035%2020.227-18.582l1.841-1.877%203.485-3.62c3.476-3.571%206.99-6.274%2011.303-8.779%208.264-5.048%2012.691-14.287%2015.769-23.081l1.559-2.335c1.757-3.249%201.812-5.368%201.804-9.05l.014-3.93-.031-4.312.003-4.585-.032-12.604-.018-13.591-.044-23.551-.058-34.061-.082-55.273-.007-3.342-.027-13.408-.069-36.924-.006-3.34-.074-55.072-.062-33.989-.041-23.272-.03-13.441-.02-12.29-.014-4.459-.005-6.036-.007-3.394C365%20212%20365%20212%20367%20209h2l.191-1.723c1.058-6.672%203.411-10.252%208.809-14.277%206.301-4.2%2011.79-5.565%2019.336-5.664%203.127-.394%204.197-1.46%206.664-3.336%204.657-1.038%209.256-1.159%2014.006-1.177l2.363-.02%207.69-.041%202.665-.012%2013.952-.045%2014.378-.085%2011.09-.038%205.3-.035%207.423-.016%202.19-.039c5.509.056%208.416%201.667%2012.945%204.509%203.098.537%203.098.537%206.125.5%204.916.245%207.346.857%2010.875%204.5l3%201%20.438%201.938L519%20197l1.875.938c2.869%201.434%203.63%203.277%205.125%206.063l2%203c.337%203.033.441%206.041.559%209.09.161%202.914.161%202.914%201.944%204.516%202.32%203.71%201.92%207.315%201.896%2011.607l.02%202.856.014%209.498.031%206.8.043%2018.482.06%2019.307.087%2032.412.084%2033.385.007%202.079.034%2010.324L533%20453c4.653-.864%207.006-3.696%2010.164-7.012l3.652-3.736%205.686-5.891c12.5-12.958%2012.5-12.958%2020.468-17.217%202.849-1.605%204.839-3.739%207.03-6.143l6-5.5c5.354-4.897%2010.526-9.946%2015.598-15.135%204.112-4.18%208.129-7.729%2013.402-10.365l1.625-1.625L618%20379h2l1-3c1.566-1.539%201.566-1.539%203.563-3.18%205.145-4.363%209.777-9.165%2014.438-14.035%204.236-4.327%208.524-8.097%2014-10.785h2l.789-1.809c1.3-2.352%202.523-3.552%204.586-5.254%203.561-3.019%207.055-6.099%2010.5-9.25l1.551-1.415c3.387-3.114%206.621-6.342%209.824-9.648%203.437-3.492%206.765-6.232%2011.059-8.59%201.874-1.147%203.143-2.478%204.691-4.035l3.559-3.051c6.045-5.258%2011.543-11.073%2017.107-16.83%204.492-4.568%208.487-8.42%2014.334-11.119h2l.758-1.781c1.406-2.512%202.909-3.885%205.117-5.719%202.281-1.922%204.415-3.798%206.5-5.937C749%20262%20749%20262%20751%20262l.688-1.687c1.688-2.974%203.779-5.033%206.313-7.313h2l.723-1.801c1.555-2.678%203.123-3.707%205.715-5.387%2011.137-7.478%2020.439-16.462%2029.661-26.103%205.251-5.473%2010.152-10.283%2017.004-13.699%202.871-1.529%204.716-3.609%206.897-6.011l4.617-4.687%202.59-2.617%202.668-2.695%202.645-2.695C843.611%20176.13%20843.611%20176.13%20850%20174a187.01%20187.01%200%200%200%205-5l5.938-5.437c4.933-4.499%209.649-9.162%2014.313-13.937%204.357-4.443%208.6-8.234%2013.945-11.484%202.663-1.683%204.636-3.866%206.805-6.141l4.375-3.875a173.87%20173.87%200%200%200%209.363-8.937l1.977-2.028%203.843-4.019c3.897-4.013%207.175-6.05%2012.442-8.141%202.823-2.139%202.823-2.139%205.313-4.562l2.551-2.379L940%2094l6-2a197.6%20197.6%200%200%200%205-3c4.25-2.246%208.527-4.238%2013-6%201.533-1.533%202.937-1.142%205.073-1.161z'/%3e%3cpath%20d='M453.383%20871.504l2.109-.004%204.392.034%206.721.008%204.277.025%203.918.03c3.414.431%204.128.819%206.199%203.404%202.429.537%202.429.537%205.125.75%205.597.865%208.66%202.933%2012.887%206.59%202.043%201.844%202.043%201.844%205.113%203.16%207.496%203.911%2011.324%2010.499%2015.297%2017.73%201.485%202.747%201.485%202.747%203.25%204.973C524%20910%20524%20910%20524.5%20912.563c.247%202.491.247%202.491%202%203.688%202.222%202.592%201.908%204.828%202%208.188-.092%204.516-.092%204.516%202.002%208.236%202.197%203.412%201.913%206.758%201.88%2010.688l.015%202.592-.005%208.656.018%206.245.008%2017.206.024%2018.538.029%2032.134.026%2033.709.003%202.116.016%2010.639.081%2075.384.013%2018.273.002%202.29.049%2052.671.002%202.279.061%2051.489.003%202.184.025%2019.446.05%2050.639.028%2031.745.013%2018.343.015%2016.763.002%206.093.01%208.224-.006%202.439c-.318%203.568-.318%203.568%201.136%206.544%202.865.099%205.706.132%208.572.123l2.771.003%209.315-.006%206.697.003%2018.498-.007%2017.87-.002%2036.573-.008%2036.229-.011h2.273l11.425-.001%2080.993-.018%2078.699-.021h2.449l24.347-.004%2049.6-.008h2.304L1075%201440c1.276-2.553%201.128-4.346%201.131-7.205l.012-3.343-.002-3.685.016-5.879.011-6.332.041-13.2.019-4.519.01-2.286.087-30.736.069-20.725.027-10.965.048-12.245-.02-3.655c.075-6.687.651-10.75%204.55-16.226l1.375-3c4.597-8.487%2010.718-12.205%2019.25-16.242%205.06-2.425%208.594-4.623%2012.375-8.758h2l.018-1.94.245-20.002.084-7.464.142-10.731.019-3.369.06-3.154.034-2.766c.477-3.083%201.708-4.983%203.399-7.575.427-2.011.427-2.011.371-3.996l.053-2.193.016-4.484c.137-5.308%201.354-7.948%204.561-12.326.773-2.484.773-2.484%201.063-4.937a42.82%2042.82%200%200%201%203.938-12.062l1.316-2.816c3.522-7.347%207.55-13.497%2012.809-19.684%201.648-2.198%202.671-4.093%203.813-6.562%201.767-3.694%203.732-5.501%207.063-7.937l2.188-2.937c2.826-3.571%206.411-4.98%2010.477-6.852%202.533-1.158%202.533-1.158%204.711-3.648%203.533-3.449%207.535-5.153%2011.98-7.23%202.717-1.195%202.717-1.195%204.645-3.332%202.537-.857%205.101-1.527%207.688-2.219%202.471-.644%202.471-.644%204.313-2.781%202.451-.586%204.905-.952%207.395-1.34%202.677-.527%202.677-.527%204.912-2.177%203.082-1.697%204.905-1.863%208.399-1.871l3.398-.029%203.643.018%203.769-.009%209.901.026%206.052-.01%2011.652-.007%203.637-.018c11.926.1%2011.926.1%2016.242%204.417%203.096.535%206.201.966%209.313%201.402l2.688.598%201%202%203.375.438c3.934.61%204.09.922%206.625%203.563l3.188.688c4.439%201.086%206.773%204.004%209.723%207.34%202.476%202.338%205.045%203.469%208.09%204.973%203.515%202.803%206.735%205.911%2010%209l1.988%201.793c4.144%203.868%206.912%208.016%209.652%2012.973%201.217%202.219%201.217%202.219%202.813%203.617%202.298%202.402%203.601%205.284%205.047%208.242l.932%201.886C1360%201176.988%201360%201176.988%201360%201182l3%201%20.078%202.012.172%202.676.141%202.637c.417%202.825.417%202.825%202.616%204.933%202.452%203.375%202.492%205.171%202.491%209.306l.03%203.964-.012%202.103.016%206.545.031%2011.531.056%2018.466-.009%206.441.021%203.954-.003%203.48c.414%203.285%201.286%204.468%203.372%206.953l.5%203.188c1.493%205.959%207.715%209.512%2012.5%2012.813l3.109%201.453c3.326%201.78%204.741%203.471%206.891%206.547l2.105%202.793c7.846%2012.792%206.874%2026.658%206.857%2041.166-.391%2011.335-.391%2011.335%202.546%2022.015%202.177%204.995%201.903%2010.007%201.864%2015.374l.011%203.402-.02%2011.097.002%207.729-.029%2016.182-.018%2018.679-.011%2018.012-.003%207.647-.028%2010.685.008%203.188c-.043%205.935-.59%2010.646-3.282%2016.03-.132%201.586-.205%203.178-.25%204.769l-.092%203.004-.088%203.254-.223%206.775-.322%2010.719-.331%2010.319-.076%203.248-.111%203.013-.078%202.653c-.517%202.701-1.448%203.423-3.43%205.245l-.812%203.25c-1.431%204.52-3.658%207.595-7.187%2010.75h-2l-.625%202.25c-1.822%203.645-3.881%204.679-7.375%206.75l-1.855%201.254c-4.269%202.854-8.32%204.667-13.262%206.07-2.091.599-2.091.599-3.883%202.676-2.866.254-2.866.254-6.624.259l-2.097.011-7.029.002-5.065.015-13.985.015-15.075.027-26.203.038-38.189.057-62.356.1-59.893.084-3.686.006-40.221.067-3.622.006-14.383.026-38.094.058-88.48.23-3.279.014-42.919.265-12.373.08-14.336.113-5.233.032-7.147.066-2.074-.006c-4.84.091-8.251%201.521-12.639%203.434-3.253.377-3.253.377-6.667.38l-3.966.026-4.322-.018-4.619.016-12.67.003c-4.558-.005-9.115.008-13.673.018l-26.777.013c-7.254-.004-14.508-.003-21.761.003l-3.128.002-6.291.005c-19.665.014-39.33.008-58.995-.003-17.994-.01-35.989.003-53.983.027l-55.424.027c-10.373-.003-20.746-.001-31.119.016a7272.77%207272.77%200%200%201-26.488-.002%202558.84%202558.84%200%200%200-13.515.005c-4.124.014-8.248.009-12.372-.01-1.492-.004-2.984-.001-4.475.01-13.394.087-13.394.087-19.754-4.517-3.131-.573-3.131-.573-6.187-.562-4.462-.097-6.378-.626-9.812-3.437-2.008-.735-2.008-.735-4.125-1.25-4.796-1.502-8.38-3.951-12.391-6.934-2.346-1.715-4.747-3.193-7.234-4.691-4.074-2.692-6.343-5.682-8.844-9.836-1.387-2.258-2.924-4.235-4.594-6.289-2.667-3.475-4.011-6.815-5.172-11.02-.633-2.264-.633-2.264-2.641-4.98-.302-3.229-.378-6.434-.461-9.676-.285-3.42-.285-3.42-2.541-5.936-2.639-4.477-2.555-7.833-2.501-12.931l-.018-2.905.013-9.676-.019-6.992v-17.225l-.009-20.632-.008-40.426.008-35.379-.001-2.369-.004-9.521.02-89.344-.002-79.394-.018-89.174.004-9.505.001-2.364-.011-35.357.013-40.201.001-20.521.016-18.773-.008-6.803.019-9.226-.028-2.686c.071-5.844%201.317-9.104%204.532-13.982.565-2.14.565-2.14.504-4.078l.057-2.078.002-2.094c.046-7.28.046-7.28%201.898-9.508L400%20914l2-7%202-1%20.707-3.113c1.281-4.877%204.416-7.673%207.98-11.074l1.818-1.826c3.889-3.805%207.707-6.42%2012.494-8.986l2.375-2.187c3.223-2.225%205.499-2.29%209.344-2.344%202.478-.306%202.478-.306%204.462-2.467%203.614-2.566%205.8-2.504%2010.202-2.498zM1236%201173l-1.371%201.531c-2.711%202.445-5.841%201.939-9.352%202.063L1223%201177l-2%203-3.133.734c-5.115%201.289-8.161%204.829-11.742%208.516l-2.047%201.988c-3.83%203.868-5.567%206.186-6.078%2011.762l-3%202c-.689%202.319-.689%202.319-1%204.938-.676%204.784-.676%204.784-2.515%206.367-2.104%202.402-1.866%204.076-1.873%207.237l-.029%203.438.018%203.712-.009%203.807.016%207.971-.011%2010.226.003%209.746-.018%203.718.029%203.428.007%203.028.381%202.384c3.098%202.065%203.747%202.25%207.251%202.254l2.626.017%202.872-.012%203.031.011%209.94-.004%206.893.006%2014.456-.011%2018.553.007h14.237l6.842.005%209.553-.014%202.872.012%202.626-.017%202.282-.002c2.29-.144%202.29-.144%204.969-2.252.466-2.336.466-2.336.404-5.089l.038-3.217-.009-3.491.016-3.58-.003-7.515.052-11.482-.002-7.297.034-3.466c-.055-6.351-.436-9.953-4.53-14.862-.504-2.703-.504-2.703-.562-5.25-.003-2.522-.003-2.522-.437-4.75l-3-2-.937-3.5c-.658-3.569-.658-3.569-3.125-4.75L1285%201194l-1-3c-2.375-2.708-2.375-2.708-5-5h-2l-.562-1.875c-2.131-3.151-4.862-3.167-8.437-4.125l-2-3a79.25%2079.25%200%200%200-8.125-1.187l-2.285-.248-5.59-.564-1-3-4.812-.062-2.707-.035c-2.615-.012-2.615-.012-5.48%201.098zm-9%20198l-2.453%201.371c-2.966%201.897-4.978%204.049-7.297%206.691l-2.359%202.66c-3.369%204.058-3.082%207.528-3.129%2012.609l-.024%202.511-.032%205.268-.105%208.039-.025%205.119-.053%202.422c.02%205.233.986%207.266%204.479%2011.309.518%202.827.518%202.827.531%205.895l.016%203.396-.047%203.521.047%203.486c-.033%207.163-1.089%2011.486-4.547%2017.701.395%202.791.395%202.791%202%205a92.8%2092.8%200%200%200%205.222.145l3.378.019%203.677.003%203.748.01%207.866.007%208.087.021%2011.612.025%203.671.022%203.387-.009%202.992.004c2.549-.017%202.549-.017%204.36-2.247.399-4.239.329-8.493.316-12.749l.046-6.333.002-4.035.009-3.707c-.402-3.431-1.156-4.627-3.372-7.176-.375-2.5-.375-2.5%200-5l1.438-1.812c1.892-2.649%201.961-4.785%202.059-7.992.504-2.195.504-2.195%202.508-4.82%202.714-4.589%202.587-8.271%202.496-13.5l.047-2.707c.046-5.188.046-5.188-2.477-9.543L1273%201385c-.914-1.93-.914-1.93-1.625-3.875-2.184-4.729-5.624-6.466-10.133-8.801C1259%201371%201259%201371%201257%201368c-2.646-.467-2.646-.467-5.742-.398l-3.48-.012-3.652.035-3.629-.035-3.488.012-3.199.01c-3.171.438-4.437%201.306-6.809%203.388zM788.199%20862.482l2.461-.021%208.028.008%205.593-.012%2011.711.021%2015-.014%2011.545.001%205.531-.01%207.733.028%202.302-.025c4.981.08%207.283%201.193%2010.897%204.542%202.778.651%202.778.651%205.625.688%203.121.15%205.392.318%208.375%201.313l1%202c3.074.317%206.126.38%209.215.461L896%20872c1.137%202.004%201.137%202.004%202%204%202.011.292%204.028.574%206.055.723%202.587.369%203.877%201.726%205.945%203.277%201.944.343%201.944.343%204.063.5%204.191.532%204.341.677%206.938%203.5l3.625%201%203.375%201%201%203%203.313.313c3.927.732%204.148%201.042%206.688%203.688l5.034%201.386c3.31%201.034%206.337%202.646%209.404%204.239l4.215%202.145L962%20903l8.5%204.313%201.92.985c4.428%202.238%208.911%204.024%2013.58%205.703v2l3.688.813c3.558.879%206.213%202.207%209.313%204.188l2.188.5c1.813.5%201.813.5%203.813%203.5l7%201a33.97%2033.97%200%200%201%203%203l6%202%202%202%203.438.938c3.598%201.073%204.102%201.602%206.563%204.063%202.31.744%204.643%201.422%207%202v2l3.313.313c3.935.734%204.133%201.053%206.688%203.688%201.794.884%201.794.884%203.75%201.5%202.689.943%205.324%201.925%207.938%203.063a137.19%20137.19%200%200%200%206.125%202.5C1070%20954%201070%20954%201072%20956l3.438.438c3.563.563%203.563.563%204.984%202.07%202.127%202.011%203.505%201.854%206.391%201.93%203.699.244%204.886.336%207.938%202.625%204.604%202.745%208.564%202.056%2013.813%201.688%203.438.25%203.438.25%205.806%202.235%205.002%203.48%2011.332%202.563%2017.166%202.511l3.974.004%208.304-.034%2010.618-.013%2010.167-.02%203.842.009%203.58-.038%203.141-.016c3.258-.445%205.116-1.597%207.839-3.388%202.448-.388%202.448-.388%204.977-.398l2.781-.012%202.867.035%202.891-.035%202.773.012%202.522.01c2.663.472%203.425%201.41%205.189%203.388%202.141.464%202.141.464%204.438.5%203.858.311%205.6.932%208.563%203.5l3.563%201.5c4.551%201.986%204.551%201.986%206.438%204.5.388%202.496.388%202.496.398%205.438l.012%203.211-.035%203.352.035%203.352-.012%203.211-.01%202.941c-.454%202.92-1.218%203.601-3.388%205.496l-.875%202.813c-1.943%205.506-6.074%209.136-10.125%2013.188-2.33%202.73-3.861%204.583-5%208h-2l-.702%202.186c-1.545%203.35-3.42%205.261-6.059%207.833l-1.421%201.401-4.505%204.392-5.887%205.77-2.826%202.776c-2.923%202.97-5.635%206.061-8.271%209.285L1178%201065h-2l-.687%201.688c-1.688%202.974-3.779%205.033-6.312%207.313h-2l-.625%201.688c-1.547%202.602-3.45%204.163-5.801%206.035-3.525%202.86-6.501%206.168-9.387%209.652-2.012%202.376-4.054%204.426-6.453%206.406-4.13%203.567-7.943%207.397-11.762%2011.289l-1.932%201.963-7.984%208.157-5.897%206.005-1.772%201.844c-3.795%203.818-7.606%206.437-12.412%208.869-2.848%201.574-4.793%203.701-6.976%206.092l-6.5%206.063-1.684%201.564c-7.749%207.156-7.749%207.156-12.332%209.854-2.754%201.684-4.891%203.615-7.234%205.832-3.832%203.52-7.7%206.431-12.082%209.215-3.009%202.044-5.66%204.412-8.344%206.859-2.652%202.345-4.978%204.28-8.297%205.586-2.785%201.132-4.656%202.551-6.965%204.465-3.391%202.724-6.671%204.617-10.562%206.563-1.829%201.506-3.583%203.081-5.348%204.66-2.054%201.666-4.205%202.361-6.652%203.34a108.77%20108.77%200%200%200-3.375%203c-3.316%202.991-6.278%203.913-10.625%205-1.625%201.458-1.625%201.458-3%203l-2.281.91c-2.759%201.106-5.08%202.449-7.594%204.027-6.466%203.935-15.295%209.063-23.125%209.063l-1%203c-3.566%201.549-7.447.955-11.25.813-5.499-.127-9.216.459-13.914%203.352-3.495%201.591-7.256.96-10.836-.164l-1.707-1.562c-4.098-2.569-8.961-1.509-13.65-1.232-5.386.183-7.542-.451-11.643-4.205-2.64-.886-2.64-.886-5.312-1.25l-2.676-.453L886%201229l-1-3c-1.919-.512-3.843-1.017-5.797-1.375-2.749-.78-4.793-2.095-7.203-3.625l-2.676-1.535-2.637-1.527-2.676-1.535L862%201215v-2l-3-.062c-4.514-.61-6.822-3.191-10.023-6.238-2.688-2.311-5.732-3.317-8.977-4.699-1.607-1.482-3.058-3.058-4.539-4.664-1.526-1.582-1.526-1.582-4.398-2.273-3.215-1.115-4.121-1.954-6.375-4.375-3.164-3.38-6.339-5.264-10.422-7.375-3.873-2.243-6.987-5.296-10.266-8.312l-3.312-2.75c-2.687-2.25-2.687-2.25-4.113-3.74-1.706-1.636-3.428-2.704-5.455-3.917-6.798-4.469-12.322-10.343-18.038-16.077l-3.685-3.669-7.672-7.676-9.794-9.756-7.59-7.578-3.611-3.592c-6.049-5.995-11.548-11.61-15.579-19.212-1.79-3.162-4.091-5.215-6.776-7.658-3.719-3.508-6.331-6.609-8.289-11.348-1.473-2.75-3.451-4.758-5.586-7.027-3.369-3.583-5.587-6.726-7.539-11.203-1.087-2.033-2.321-3.252-4.023-4.797-2.987-2.741-3.887-5.252-5.086-9.059-.989-2.254-2.146-3.378-3.977-5.004-2.709-2.434-2.875-2.94-3.75-6.812L680%201031l-3-1c-.71-1.622-1.409-3.249-2.051-4.898-1.471-3.256-3.507-6.084-5.527-9.02-1.116-1.634-2.159-3.319-3.172-5.02-1.21-2.181-1.21-2.181-3.25-4.062l-2-7-2-2-.937-2.937c-.791-3.029-.791-3.029-2.625-4.562C654%20989%20654%20989%20653.5%20985.937L653%20983l-3-2-2-7-3-4-.5-2.625c-.287-2.739-.287-2.739-3.5-4.375-.406-2.898-.406-2.898-.5-6.375-.13-4.782-.55-6.92-3.5-10.625.313-3.75.313-3.75%201-7l3-1-.437-3c-.038-4.641%202.544-6.986%205.613-10.203L648%20923l1.605-1.734C651%20920%20651%20920%20653%20920v-2c1.574-1.184%201.574-1.184%203.688-2.437l2.207-1.328L661%20913c3.744-2.189%203.744-2.189%207-5l3.438-.937c3.549-1.059%204.174-1.57%206.563-4.062l6-2a113.16%20113.16%200%200%200%205-3c4.257-2.6%208.233-4.448%2013-6l2-2c2.323-.4%204.657-.74%207-1l1-3c1.777-.879%201.777-.879%203.938-1.562%202.791-.897%203.94-1.315%206.063-3.437%202.273-.341%204.514-.441%206.809-.559%202.667-.537%203.311-1.551%205.191-3.441%202.305-.625%202.305-.625%204.875-1%203.106-.533%204.971-.906%207.688-2.562%203.127-1.844%205.769-1.885%209.352-2.031%202.18-.206%202.18-.206%203.43-1.91%203.196-2.887%208.097-1.927%2012.211-1.992%203.506-.186%203.506-.186%205.648-2.503%203.643-2.606%206.682-2.564%2010.996-2.518zM1504%20872l13.342-.22%204.533-.082%206.539-.089%203.967-.063c4.197.527%206.278%201.938%209.619%204.454%202.07.495%202.07.495%204%20.438%203.771.307%205.657%201.539%208.445%204.184%201.706%201.513%203.454%202.558%205.43%203.691%207.57%204.652%2012.563%2010.753%2016.801%2018.488%201.212%202.221%201.212%202.221%202.93%203.773%202.251%202.302%202.524%205.378%203.395%208.426l1.563%201.418C1586%20918%201586%20918%201586.188%20920.27l-.187%202.543c-.152%204.518.51%207.303%203%2011.188l1%201a250.38%20250.38%200%200%201%20.134%209.005l.007%202.913.006%209.794.011%207.041.016%2017.405.02%2020.835.04%2050.369.015%2023.818.04%2081.495.001%205.119.001%202.564.004%2012.862.001%202.578.064%2082.771.057%2087.462.001%209.598v2.387l.038%2038.07.016%2038.254.017%2020.733.001%2018.968.014%206.874-.01%209.322.031%202.715c-.065%205.887-1.325%209.117-4.526%2014.046-.334%202.618-.334%202.618%200%205.063.214%204.886-.958%207.027-4%2010.938a252.44%20252.44%200%200%200-3%207c-2.242%205.154-5.192%208.779-9%2012.813l-1.617%201.771c-3.993%204.286-3.993%204.286-7.383%205.416l-1%203c-4.856%203.556-10.409%205.673-16.152%207.324-2.059.606-2.059.606-3.848%202.676a102.86%20102.86%200%200%201-8.07.195l-2.413-.009-7.642-.062-5.176-.027L1504%201568l-.777-1.973L1502%201564c-1.897-.233-3.797-.455-5.703-.598-5.615-.984-10.38-4.41-14.297-8.402l-2.687-1.562L1477%201552v-2l-4-1-.25-1.875c-.53-2.287-.53-2.287-2.625-3.062-2.882-1.441-3.542-3.281-5.125-6.062l-1.535-2.43c-4.625-7.404-4.625-7.404-5.652-11.445-.532-3.092-.532-3.092-2.34-4.715-2.343-3.834-1.883-7.693-1.85-12.1l-.013-3.027.01-10.122-.014-7.298-.003-15.91-.004-23.658-.006-42.25.006-36.977-.001-2.475-.003-9.946.015-93.359-.001-82.978-.013-93.177.003-9.93v-2.47l-.008-36.953.01-42.015-.002-23.525.015-17.544-.006-7.114.014-9.639-.021-2.817c.046-5.3.403-10.128%204.399-14.124.531-2.28.963-4.572%201.402-6.871C1460%20911%201460%20911%201462%20909l1.313-3.187c2.697-6.467%206.609-11.079%2012.039-15.453%201.659-1.368%203.141-2.828%204.648-4.359%204.157-3.779%207.698-5.938%2013-8l2.125-1.187c2.374-1.029%204.316-.955%206.875-.812l2-4z'/%3e%3cpath%20d='M786.756%20667.612l2.318-.016%207.555.006%205.263-.009%2011.018.016%2014.12-.011h10.863l5.207-.007%207.274.021%202.171-.018c4.167.053%206.359.615%209.456%203.407%202.26.45%202.26.45%204.66.406l2.654.066%205.508.055%202.65.066%202.414.021c2.617.476%203.352%201.458%205.113%203.385%204.262%201.421%208.499%201.332%2012.969%201.523%203.373.53%203.806%201.115%206.031%203.477%202.405.466%202.405.466%205%20.5%204.052.145%205.224.657%208%203.5%202.173.501%202.173.501%204.5.563%203.504.193%204.429.39%207.5%202.438v2l2.301.113%203.012.199%202.988.176c3.035.575%203.703%201.28%205.699%203.512l7%202%204%203%207%202%202%202a70.97%2070.97%200%200%200%204.5%201.5c2.963.885%204.278%201.278%206.5%203.5l3.5.438%203.5.563%202%203c2.322.705%204.656%201.372%207%202l2%202%203.5.938C999%20717%20999%20717%201001%20720c2.322.705%204.656%201.372%207%202l2%202%203.5.938C1017%20726%201017%20726%201019%20729c2.322.705%204.656%201.372%207%202l2%202%203.438.938c3.549%201.059%204.174%201.57%206.563%204.063l6%202%202%202%203.313.938c3.463.998%205.647%202.21%208.688%204.063l5.438%202.5c10.984%204.921%2010.984%204.921%2012.563%206.5l3.375.375c3.625.625%203.625.625%205.035%202.137%202.659%202.489%205.819%201.907%209.313%201.984L1096%20761l.941%202%201.059%202c2.749.594%202.749.594%205.875.563%205.746.12%205.746.12%207.902%201.927%202.992%202.034%205.141%201.957%208.743%202.058l3.995.124%204.298.079%204.409.103c10.367.212%2020.726.157%2031.091-.103l3.986-.079%203.69-.124%203.236-.099c3.109-.502%204.394-1.464%206.776-3.448%203.068-.659%206.107-1.005%209.223-1.375%203.034-.683%203.768-1.382%205.777-3.625l7-2%204-3%202.625-.5c2.739-.287%202.739-.287%204.375-3.5%202.023-.406%202.023-.406%204.375-.5%203.512-.114%203.512-.114%206.367-2%203.007-1.997%205.077-1.887%208.668-1.898l3.748-.012%203.904.035%203.916-.035%203.744.012%203.43.01c3.199.436%203.816%201.024%205.847%203.388l3.141.68c5.427%201.389%208.814%205.55%2012.609%209.445l2.285%202.227c4.625%204.666%207.02%208.39%208.965%2014.648l2%202a102.86%20102.86%200%200%201%20.195%208.07l-.009%202.413-.062%207.642-.027%205.176L1288%20816l-1.98.809L1284%20818l-.312%203.063c-.84%204.811-2.769%207-5.898%2010.629-1.908%202.292-1.908%202.292-3.168%205.211-1.89%203.612-4.303%206.272-7.184%209.098l-1.598%201.588a52.76%2052.76%200%200%201-12.684%209.131c-2.298%201.245-2.298%201.245-4.312%203.438L1247%20862h-2l-1%203c-1.672.844-1.672.844-3.75%201.5-3.399%201.165-6.212%202.553-9.25%204.5a58.75%2058.75%200%200%201-13%206l-2%202c-1.973.223-3.948.442-5.93.559-2.18.298-2.18.298-3.875%201.934-3.103%202.131-5.721%202.023-9.445%202.195l-3.828.199L1190%20884v2c-4.239%202.045-7.753%202.263-12.433%202.291l-2.214.02-7.22.025-5.04.02-10.556.014a1751.67%201751.67%200%200%200-13.493.062l-10.408.025-4.973.027-6.97.002-3.999.009c-4.525-.606-6.838-2.107-10.693-4.494-3.36-.575-3.36-.575-6.687-.562-4.732-.095-6.629-.588-10.312-3.437-3.068-.659-6.107-1.005-9.223-1.375-3.034-.683-3.749-1.408-5.777-3.625l-7-1-1.937-1.5c-2.303-1.675-3.349-1.758-6.125-2-4.191-.532-4.341-.677-6.937-3.5l-3.625-1-3.375-1-1-3-3.312-.312c-3.927-.732-4.148-1.042-6.687-3.687l-3.625-1-3.375-1-1-3-3.312-.312c-3.927-.732-4.148-1.042-6.687-3.687l-3.625-1-3.375-1-1-3-3.312-.312c-3.927-.732-4.148-1.042-6.687-3.687l-7-2-2-2-3.5-1.5C978%20833%20978%20833%20976%20831l-3.5-1c-3.5-1-3.5-1-5.5-3l-5.664-2.086c-2.495-.976-4.829-2.127-7.211-3.352-4.269-2.194-8.596-3.996-13.094-5.668C939%20815%20939%20815%20937%20813l-3.5-.437L930%20812l-2-3c-2.322-.705-4.656-1.372-7-2l-2-2c-1.649-.557-3.319-1.05-5-1.5-4.778-1.278-4.778-1.278-7-3.5-2.031-.569-2.031-.569-4.312-.937-2.853-.575-4.622-1.022-7.125-2.562-3.341-1.955-6.56-2.375-10.355-2.973C883%20793%20883%20793%20881%20791c-3.184-.312-6.346-.379-9.543-.461C868%20790%20868%20790%20864.793%20787.961c-4.797-2.986-9.834-2.241-15.293-1.961l-6.031.25-2.674.141c-3.204-.448-5.206-1.805-7.93-3.473-3.178-1.563-6.462-1.488-9.923-1.448l-2.267-.012c-1.572-.003-3.145.005-4.717.021-2.386.021-4.769%200-7.155-.025-9.922-.074-9.922-.074-18.947%203.674-3.976%201.871-8.631%201.106-12.918.873-7.553-.408-11.534-.029-17.937%204-3.387.504-3.387.504-6.687.563-4.711.094-6.659.56-10.312%203.438-2.775.653-5.519%201.002-8.344%201.375-2.916.686-4.329%201.802-6.656%203.625l-7%201-4%203c-2.304.841-4.623%201.562-6.977%202.254-2.212.655-2.212.655-4.023%202.746l-7%202-2%202-2.937.938c-3.031.781-3.031.781-4.5%202.625-2.487%202.288-5.301%202.13-8.562%202.438v2l-3.562%201.625a31.82%2031.82%200%200%200-8%205.5c-3.228%202.948-6.184%203.812-10.437%204.875-1.625%201.458-1.625%201.458-3%203a124.97%20124.97%200%200%201-5%202l-3%202c-2.324.394-4.658.735-7%201l-1%203-6.25.188-3.516.105c-3.537-.32-4.593-1.069-7.234-3.293l-3.187-.125c-5.875-1.348-9.183-5.197-12.812-9.875-1.058-2.379-1.484-4.422-2-7l-1.562-1.5c-2.278-2.377-1.99-5.313-2.437-8.5l-1.506-1.797c-2.076-3.063-1.882-5.339-1.892-9.016l-.009-1.972.016-4.115-.019-6.28.012-4.008.01-3.668c.419-3.391%201.179-4.629%203.388-7.145.424-2.117.424-2.117.438-4.312.324-3.839%201.209-6.396%203.34-9.68%201.555-2.553%202.724-5.23%203.973-7.945%202.89-5.853%206.436-9.75%2011.25-14.062a366.85%20366.85%200%200%200%208.086-8.227l3.289-3.398%201.633-1.734c3.767-3.857%206.982-5.691%2011.992-7.641%201.857-1.361%201.857-1.361%203.313-2.875%203.469-3.17%207.191-5.023%2011.453-6.949%202.218-1.167%203.499-2.406%205.234-4.176l6-2%201.438-1.562c2.487-2.288%205.301-2.13%208.563-2.437l1-3%203.313-.312c3.59-.304%203.59-.304%205.137-2.168%202.42-2.371%205.144-2.374%208.395-2.895%202.231-.456%202.231-.456%203.629-2.125%202.047-2.011%203.654-2.094%206.465-2.5%203.788-.546%203.788-.546%206.988-2.52%202.782-1.985%204.941-1.984%208.324-2.168l3.266-.199L729%20680l1-3%203.395-.113%204.418-.199%202.236-.068c4.181-.116%204.181-.116%207.713-2.1L749%20673c2.949-.966%205.72-1.145%208.809-1.211l2.764-.086%205.719-.133%202.768-.094%202.51-.06c2.527-.256%202.527-.256%204.599-1.918%203.573-1.89%206.648-1.92%2010.589-1.886zm695.928%201066.15l2.582-.024%205.404-.032%208.262-.105%205.252-.025%202.494-.053c5.78.022%205.78.022%208.676%202.462L1517%201738l3.16.688c5.707%201.39%209.35%206.224%2013.277%2010.313l2.506%202.523c6.057%206.182%206.057%206.182%206.057%208.477h5l.823-1.8c1.881-3.517%204.639-6.071%207.427-8.887l1.699-1.799c3.624-3.671%205.79-4.944%2011.051-5.514l2-3%207-2%201.454-1.537c2.017-1.909%203.102-1.847%205.846-1.867l2.62-.038%202.822.009%202.911-.016%206.098.003%209.316-.052%205.926.002%202.81-.034c5.428.058%208.185.547%2012.198%204.53l6%202c10.552%204.028%2014.192%2010.144%2019%2020l2%202c.588%203.596.944%207.127%201.176%2010.762l.199%202.863.148%202.664c.314%202.788.314%202.788%201.985%205.109%202.193%205.297%201.885%2010.263%201.832%2015.941l.001%203.756-.038%2010.158-.024%2010.63-.064%2020.112-.065%2022.904-.151%2047.1c-3.113.828-5.814%201.122-9.044%201.114h-3.033l-3.252-.016-3.346-.004-10.576-.031-7.172-.014L1607%201915c-1.747-3.027-2.245-5.179-2.22-8.661l.005-2.825.036-3.078.014-3.258.046-7.004.06-11.082.176-31.509.09-19.271.049-7.348.053-10.27.042-3.072c-.007-5.134-.171-8.378-3.351-12.622l-1.125-3.812c-2.183-6.118-7.623-10.6-13.355-13.398-6.062-1.899-12.747-1.387-18.52%201.211l-2%202-3.375%201.313c-4.58%202.132-6.692%204.173-8.461%208.941a140.28%20140.28%200%200%200-1.453%204.758C1553%201798%201553%201798%201551%201800c-.314%202.106-.314%202.106-.278%204.568l-.034%202.915-.007%203.208-.03%203.37-.065%2011.071-.059%207.659-.117%2018.126-.138%2020.633L1550%201914c-3.221.86-6.035%201.127-9.379%201.129l-3.256.01-3.498-.006-3.601.003a3890.69%203890.69%200%200%201-7.53-.005c-3.854-.005-7.707%200-11.561.006l-7.309-.004-3.51.006-3.237-.01-2.857-.002C1492%201915%201492%201915%201490%201914l-1-123-3-1-1.25-3.375c-.877-2.311-1.315-3.365-3.461-4.648L1476%201780l-1-3-7.687-.062-2.186-.025c-5.646-.057-5.646-.057-11.127%201.088l-2%203-3.437%201.25c-4.704%202.311-4.876%203.957-6.562%208.75l-2%201c-.32%202.684-.38%205.342-.461%208.043-.539%202.957-.539%202.957-2.544%205.503-2.704%204.683-2.529%208.372-2.449%2013.682l-.002%203.077.065%2010.031.017%206.969.099%2018.317.079%2018.702L1435%201913c-3.22%201.712-5.343%202.249-9.012%202.243l-3.013.009-3.233-.022-3.332-.001-6.965-.023-10.692-.02-6.762-.018-3.245-.003-2.994-.019-2.642-.012C1381%201915%201381%201915%201379%201914v-175l53-1c3%203%203%203%203.293%206.574l-.105%204.113-.041%202.127L1435%201756h5l.625-1.687c2.316-3.895%205.63-6.658%209.875-8.25%202.632-1.118%203.466-2.025%205.313-4.125%203.456-3.698%206.261-3.54%2011.188-3.937%202.285-1.4%202.285-1.4%204-3%203.894-1.298%207.622-1.202%2011.684-1.238zm-585.476-65.882l2.954.007h3.383l3.583.016%203.273.003%2012.16.032L950%201668l1%2096c3.389%201.695%207.247%201.166%2010.976%201.177l2.819.02%209.26.041%203.189.012%2016.703.045%2017.278.085%2013.264.038%206.371.035%208.906.016%202.667.039c3.642-.031%205.932-.14%209.119-1.99%202.119-3.684%201.958-7.166%201.872-11.295l-.008-2.682-.094-8.769-.032-6.089-.131-16.026-.192-25.675-.09-8.984-.04-5.481-.041-2.538c-.008-1.994.088-3.988.204-5.979%202.513-2.513%203.367-2.265%206.845-2.306l3.055-.048%203.311-.016%203.393-.027%207.117-.027%2010.896-.112%206.906-.021%203.299-.059%203.074.018%202.7-.015c3.609.923%204.468%202.452%206.404%205.615.579%203.251.523%206.455.481%209.751l.01%202.995-.037%209.945.002%207.125-.042%2017.346-.039%2020.185-.073%2035.997-.082%2034.965-.003%202.177-.015%2010.814-.201%2089.7c-3.095.822-5.802%201.131-9.012%201.145l-3.013.019-3.233.003-3.332.01-6.965.007-10.692.039-6.762.006-3.245.022-2.994-.009-2.642.004C1056%201915%201056%201915%201054%201913c-.183-2.907-.241-5.718-.211-8.625l.004-2.705.047-8.885.016-6.158.065-16.237.096-25.982.045-9.092.02-5.561.02-2.565c.006-3.324-.043-6.013-1.102-9.189-4.635-1.169-9.112-1.148-13.858-1.145l-2.672-.01-8.724-.013-6.071-.01-12.712-.007a5209%205209%200%200%201-16.299-.031l-12.531-.013-6.01-.013-8.395-.001-2.511-.017c-5.492-.103-5.492-.103-10.217%202.26-2.554%204.297-2.27%208.887-2.227%2013.738l-.001%202.633.033%208.587.009%205.965.049%2015.679.04%2016.007L951%201913c-3.521%201.589-6.27%202.252-10.126%202.259l-3.013.019-3.217-.012-3.327.006a1654.38%201654.38%200%200%201-6.947-.011c-3.555-.011-7.11%200-10.665.013l-6.748-.008-3.235.012-2.984-.019-2.632-.005C896%201915%20896%201915%20894%201913c-.25-1.812-.25-1.812-.249-4.054l-.014-2.586.016-2.857-.007-3.022.012-10.09-.006-7.208.01-17.583.01-20.457.023-36.487.021-35.442v-2.205-2.201l.014-40.299.005-14.275.017-19.194.004-7.067.012-9.602-.005-2.864c.028-7.446.028-7.446%203.347-7.626zm-739.062-.009l3.327-.01%203.62.006%203.688-.003%207.737.005%2011.891-.006%207.496.004%203.62-.006%203.327.01%202.945.002C208%201668%20208%201668%20209%201669l.205%209.201.03%202.927.081%209.626.063%206.655.153%2017.553.161%2017.896L210%201768l7%201%201.645-2.957%202.168-3.855%201.08-1.947c1.779-3.149%203.496-5.753%206.107-8.24.856-1.433%201.667-2.894%202.438-4.375%201.908-3.542%204.048-6.482%206.563-9.625%201.303-2.28%202.541-4.585%203.754-6.914%201.245-2.087%201.245-2.087%202.71-3.548%201.965-1.97%203.156-4.126%204.535-6.539%201.772-3.101%203.452-5.517%206-8l1.375-2.812C257%201707%20257%201707%20259.562%201704.062c2.645-2.917%202.645-2.917%203.438-6.625%201.18-4.056%202.773-5.776%206-8.437h2l.187-3.039c.972-6.43%204.881-10.849%209.669-15.029%209.711-6.676%2024.492-4.374%2035.773-3.894l11.304.278L350%201668c.174%205.775.174%205.775-1.391%207.801l-1.859%201.512c-3.589%203.243-5.035%206.253-6.793%2010.695-1.356%202.822-3.485%204.123-5.957%205.992-2.415%203.348-4.425%206.929-6.375%2010.563-1.524%202.287-3.013%203.816-5%205.688-3.292%203.175-5.166%206.378-7.238%2010.418-2.055%203.456-4.733%206.215-7.52%209.094-2.005%202.225-2.005%202.225-3.328%205.199-1.647%203.253-3.506%205.371-6.039%207.977-3.723%203.962-3.723%203.962-6.125%208.75-1.606%203.87-3.665%205.793-6.668%208.625-3.202%203.165-5.272%206.782-7.207%2010.813-1.52%202.914-2.991%204.77-5.5%206.875h-2l-.25%205.75-.141%203.234c.484%203.737%201.666%204.533%204.391%207.016l.906%202.379c1.724%204.132%204.987%206.949%208.105%2010.072%203.247%203.374%204.654%206.11%205.988%2010.549%201.473%202.05%201.473%202.05%203.25%203.813%202.552%202.768%204.72%205.517%206.75%208.688a60.87%2060.87%200%200%200%206.5%208.438c2.611%202.874%204.583%205.749%206.5%209.125%202.364%204.145%205.011%207.062%208.48%2010.297%202.307%202.491%203.211%205.532%204.52%208.641%201.688%202.095%203.486%204.053%205.309%206.031%201.529%201.78%202.607%203.402%203.691%205.469%202.739%205.18%206.882%209.382%2011%2013.5l.844%202.305c1.393%203.247%203.239%205.254%205.656%207.82%206.454%206.894%206.454%206.894%206.625%2010.563L359%201914c-3.501%201.064-6.781%201.167-10.43%201.228l-3.956.066-15.579.07c-3.934-.004-7.865.017-11.799.098-27.5.543-27.5.543-33.704-4.204-3.975-4.051-5.968-8.935-8.161-14.078-1.247-2.893-2.02-4.222-4.371-6.181-2.653-2.458-3.823-4.655-5.094-8.082-1.547-3.275-3.933-5.911-6.203-8.711a42.86%2042.86%200%200%201-3.891-6.02c-1.585-3.154-1.585-3.154-3.75-5-2.155-2.286-3.154-4.241-4.5-7.062-1.457-3.048-2.834-5.707-5.062-8.25-2.43-2.794-4.265-5.581-6.18-8.73-1.887-3.065-3.895-6.044-5.902-9.031l-3.668-5.551c-1.65-2.586-1.65-2.586-3.75-4.562l-.875-2.25c-1.323-3.233-3.131-5.892-5.125-8.75l-4%201-.031%203.859-.308%2035.935-.158%2018.476-.156%2017.818-.056%206.811-.086%209.511-.017%202.868-.03%202.609-.02%202.274C212%201912%20212%201912%20211%201914l-22.192.495-10.304.229-11.84.253-3.747.098-3.458.061-3.055.067C154%201915%20154%201915%20152%201913c-.25-1.812-.25-1.812-.249-4.054l-.014-2.586.016-2.857-.007-3.022.012-10.09-.006-7.208.01-17.583.01-20.457.023-36.487.021-35.442v-2.205-2.201l.014-40.299.005-14.275.017-19.194.004-7.067.012-9.602-.005-2.864c.029-7.63.029-7.63%206.285-7.635z'/%3e%3cpath%20d='M756.119%201662.482l2.077-.021%206.745.008%204.714-.012%209.857.021%2012.616-.014%209.726.001%204.652-.01%206.504.028%203.734.01c3.844.6%205.407%201.943%208.256%204.508%202.55.612%202.55.612%205.125.625%203.673.145%204.688.25%207.875%202.375v2l5%202%201%2048-4%201-1-3-2.082-.113-2.73-.199-2.707-.176c-2.849-.588-3.584-1.398-5.48-3.512-4.691-1.564-9.432-.852-14.336-.645-3.664-.355-3.664-.355-5.747-2.338-4.29-2.967-8.152-2.647-13.257-2.654l-3.029-.033-6.332-.016-9.664-.124-6.162-.014-2.908-.071c-5.121.028-5.121.028-9.466%202.448-1.492%201.753-2.781%203.563-4.099%205.448l-4%203c-1.267%203.802-1.262%207.411-1.312%2011.375l-.088%202.289c-.044%203.915.099%205.857%202.236%209.25%202.518%202.427%205.238%204.175%208.164%206.086l2.438%202.625c3.045%202.822%205.611%203.311%209.563%204.375l1%203%203.313.313c3.927.732%204.148%201.042%206.688%203.688l4.875%201.289c3.558%201.19%206.686%203.15%209.941%204.992%204.259%202.3%208.638%204.298%2013.057%206.27a45.98%2045.98%200%200%201%209.127%205.448l2.445.953c4.832%201.98%208.576%205.73%2012.555%209.047l2.168%201.719%201.895%201.531%201.66%201.328c1.274%201.42%201.274%201.42%201.77%203.529L839%201802l3%201c1.381%201.967%202.715%203.969%204%206l2%202%20.438%203%20.563%203%203%202a76.16%2076.16%200%200%201%20.5%207.875c.062%204.919.124%208.3%203.5%2012.125.734%202.987%201.212%205.01%201%208-.983%201.573-1.973%203.144-3.02%204.676-1.685%203.995-1.522%208.352-1.564%2012.639-.095%204.281-.568%206.494-3.417%209.686l-2.139%205.873c-2.88%207.118-7.799%2012.587-13.173%2017.939l-1.896%201.982c-4.345%204.363-7.947%206.32-13.791%208.205l-2%202-3.312.438c-3.623.297-3.623.297-6.035%202.066-3.899%202.199-7.515%201.958-11.91%202.09-2.769.099-2.769.099-3.995%201.907-2.676%202.295-4.976%201.88-8.45%201.887l-2.051.016a643.23%20643.23%200%200%201-6.711-.006l-4.667.009a1730.17%201730.17%200%200%201-9.782-.016c-4.178-.017-8.355-.007-12.532.011h-9.638a791.73%20791.73%200%200%200-4.62.007%20556.95%20556.95%200%200%201-6.463-.021l-3.714-.007c-3.399-.415-4.553-1.238-7.118-3.381-3.568-.166-7.026.068-10.59.285-4.095-.342-5.414-1.587-8.41-4.285l-3.562-.937c-4.248-1.313-5.184-2.252-7.437-6.062-.551-3.365-.49-6.675-.426-10.078l.01-2.931.059-6.112.073-9.395.045-5.937.022-2.853.039-2.62.03-2.316C685%201860%20685%201860%20686%201859a136.79%20136.79%200%200%201%207.438-.25l2.104-.062c2.018-.016%202.018-.016%205.459.313l2%203c2.977.695%202.977.695%206.375%201%204.687.508%206.922%201.221%2010.625%204%202.873.465%202.873.465%205.938.5%205.523.168%205.523.168%208.422%201.953%203.517%202.06%206.975%202.391%2010.953%202.797l2.186.273c5.061.563%209.466.204%2014.502-.523l11.805-.523L777%201871l2-3%203.313-.875c4.454-1.359%205.918-2.379%208.688-6.125.713-3.682.653-7.261.563-11l.033-2.984c-.044-4.349-.138-7.222-2.338-11.035a30.6%2030.6%200%200%200-6.945-4.668c-4.215-2.118-4.215-2.118-5.312-4.312l-3.5-.937L770%201825l-1-3-3.312-.312c-3.927-.732-4.148-1.042-6.687-3.687l-3.625-1-3.375-1-1-3-3.312-.312c-3.927-.732-4.148-1.042-6.687-3.687l-3.625-1-3.375-1-1-3-3.312-.312c-3.927-.732-4.148-1.042-6.687-3.687l-3.25-.75c-4.349-1.45-6.089-3.293-9.125-6.586-1.648-1.83-1.648-1.83-4.25-3.227-3.296-1.995-5.074-4.348-7.375-7.437v-2l-1.687-.625c-5.903-3.51-7.684-7.976-9.312-14.375l-1.625-2.375c-1.753-3.348-1.427-5.764-1.285-9.469-.143-3.431-1.709-5.775-4.09-8.156-.307-3.053-.278-6.121-.312-9.187l-.088-2.58c-.058-5.756.927-8.491%204.4-13.232.333-2.576.333-2.576%200-5.062-.208-4.64-.208-4.64%201.875-7.625L689%201705l.851-3.321c1.271-4.07%202.678-5.851%205.657-8.851l2.742-2.762%201.434-1.402%204.246-4.278c5.143-5.107%209.092-8.393%2016.07-10.387l2-2%203.438-.437c3.493-.174%203.493-.174%204.953-2.07%202.748-2.548%206.129-1.913%209.723-1.988%203.049-.313%203.049-.313%205.622-2.503%203.816-2.339%205.944-2.507%2010.384-2.518zm-199.952.048l2.091-.007%206.788.051%204.735.01%209.895.059%2012.698.067%2012.11.051%202.339.01%206.528.051%203.754.03C620%201663%20620%201663%20622%201664v2l2.738.367%203.574.508%203.551.492C635%201668%20635%201668%20638%201670v2l5%202%20.537%2018.262.187%206.216.253%208.921.098%202.819.061%202.608.067%202.301C644%201717%20644%201717%20642%201719c-6.178-.343-6.178-.343-8.91-2.525-2.568-1.812-4.036-1.856-7.152-1.881l-2.914-.066-3.023-.027-5.937-.094-2.652-.021c-2.41-.385-2.41-.385-4.274-1.888-2.501-1.753-3.704-1.863-6.721-1.838l-2.729.001-2.92.047-3.01.013-9.506.093-6.449.041L560%201711l-1%203-7%203c-1.751%201.582-1.751%201.582-3%203h-2c-.895%203.869-1.194%207.531-1.25%2011.5l-.078%203.344c.654%206.291%204.879%2010.185%209.219%2014.445%202.81%202.279%205.64%202.782%209.109%203.711%202.165%201.688%204.137%203.511%206.141%205.387%202.136%201.853%204.182%202.747%206.859%203.613l2%202%203.438.938c3.549%201.059%204.174%201.57%206.563%204.063l6%202%202%202%202.875.938c3.018%201.026%204.62%202.184%207.125%204.063l6%202%202%202%202.625.75c3.739%201.385%206.199%203.23%209.297%205.684%202.001%201.508%204.023%202.714%206.203%203.941%206.084%203.705%209.313%209.64%2012.875%2015.625l1.57%202.473c3.695%206.155%205.101%2010.899%205.129%2018.094l.3%202.431%203%202c.586%202.772.857%205.185%201%208l.195%203.43c.227%207.159-.048%2010.663-4.195%2016.57-.412%203.371-.562%206.68-.629%2010.074-.415%203.274-.961%203.856-3.371%205.926l-.812%203.25c-1.431%204.52-3.658%207.595-7.187%2010.75h-2l-.691%202.238c-1.577%203.327-3.328%204.734-6.246%206.949l-2.652%202.043c-2.82%202.071-5.128%203.677-8.473%204.77-3.018.786-3.018.786-4.937%203l-3.437.938c-3.486.698-3.486.698-4.945%202.629-1.62%201.433-1.62%201.433-4.179%201.62l-5.75-.375c-2.73-.078-2.73-.078-4.429%201.675-3.13%202.092-5.409%201.894-9.155%201.901l-2.076.016a665.82%20665.82%200%200%201-6.778-.006l-4.722.009a1768.84%201768.84%200%200%201-9.893-.016c-4.221-.017-8.442-.007-12.663.011h-9.752c-1.556-.002-3.112%200-4.668.007a569.33%20569.33%200%200%201-6.534-.021l-3.752-.007c-3.551-.414-5.325-1.439-8.27-3.381-3.621-.427-7.176-.501-10.82-.594-3.497-.447-3.962-.899-6.18-3.406-2.245-.587-4.447-.876-6.746-1.18-3.444-1.253-4.375-2.643-6.254-5.82-.496-3.82-.325-7.584-.172-11.426l.084-3.342.337-10.545.199-7.158L486%201854c3-1%203-1%206.066.363l3.496%201.949%203.504%201.926C502%201860%20502%201860%20504%201862l2.875.938C510%201864%20510%201864%20511.812%201865.562c2.958%201.944%205.58%201.89%209.066%202.031%202.121.406%202.121.406%203.473%201.902%202.568%202.343%205.061%201.954%208.461%202.066%204.811.17%208.679.733%2013.188%202.438%202.46.909%202.46.909%205%201l2.637-1.473c3.996-1.814%207.39-1.801%2011.676-1.777%207.986-.217%2011.976-2.05%2017.688-7.75l2.313-1.527c3.681-2.511%205.387-4.288%206.5-8.676.366-5.283.219-9.178-2.672-13.715-2.267-2.514-4.651-4.79-7.141-7.082a100.33%20100.33%200%200%201-2.625-3.5c-2.944-3.099-5.283-3.477-9.375-4.5-1.707-1.281-3.374-2.618-5-4-3.355-2.189-6.565-3.855-10.375-5.125L552%201815l-1-2-3.375-.437c-3.934-.61-4.09-.922-6.625-3.562l-7-2-1-2-3.25-.875c-3.951-1.185-5.625-2.521-8.75-5.125l-4.117-2.121c-5.363-2.942-9.377-6.781-13.633-11.129l-2.207-2.16c-6.082-6.126-9.969-12.55-13.043-20.59l-2-3c-.319-1.894-.319-1.894-.414-4.027l-.118-2.381-.093-2.529-.113-2.607c-.265-6.492-.411-12.959-.262-19.456l-.055-3.945c.044-13.558%204.711-25.561%2014.285-35.395L501%201688l1.863-1.816c4.285-3.976%208.84-6.976%2013.938-9.824%202.227-1.241%202.227-1.241%203.73-3.02%201.469-1.34%201.469-1.34%203.512-1.633L530%201672v-2c3.618-2.046%206.499-2.302%2010.586-2.461%202.63-.416%202.63-.416%205.117-2.543%203.858-2.335%205.991-2.487%2010.464-2.466zm670.219%2071.293l3.338-.039%203.608-.022%203.711-.024%207.78-.032%2011.89-.105%207.557-.025%203.59-.053c6.434.017%2010.193.271%2015.141%204.479%202.398.568%202.398.568%204.688.563%203.965.116%203.965.116%205.898%201.902L1295%201742l6%202%204%203%202.629.633c4.776%201.937%207.737%205.097%2011.309%208.742l2.147%202.163c4.84%205.01%208.512%209.867%2011.654%2016.107%201.115%202.38%201.115%202.38%202.898%203.902%201.828%201.948%201.757%203.258%201.863%205.891.129%203.489.129%203.489%202%206.344%202.515%203.721%201.973%208.107%202.027%2012.463-.011%204.033-.011%204.033%201.941%207.377L1345%201812c1.408%205.172%201.018%2010.387.75%2015.688l-.082%202.588-.121%202.486-.099%202.249c-.557%202.473-1.676%203.239-3.448%204.99-.348%203.527-.436%206.95-.439%2010.488-.144%205.647-1.555%208.743-4.561%2013.512v2.625c0%203.434-1.849%204.781-4%207.375l-.937%202.938c-1.468%204.231-3.935%207.999-8.062%2010.063l-1.5%202.563-1.5%202.438h-2l-.25%201.875c-.75%202.125-.75%202.125-2.625%203.188L1314%201898l-3%203c-4.6%203.68-9.552%206.565-14.812%209.188l-2.11%201.059c-4.645%202.253-8.997%203.78-14.159%204.402-2.239.28-2.239.28-4.918%202.352-2.536.261-2.536.261-5.601.275l-3.479.029-3.76-.003-3.86.013-8.088.002a1231.89%201231.89%200%200%200-10.353.034l-9.887.013-3.753.028-3.489-.019-3.068.002c-3.065-.431-4.336-1.401-6.663-3.374-2.338-.673-2.338-.673-4.812-1-9.423-1.694-18.514-6.104-25.187-13l-3.437-1.875c-4.796-2.624-7.525-6.552-10.5-11.062-1.653-2.454-3.261-4.408-5.25-6.562-2.745-3.095-3.331-5.362-3.812-9.5l-3-2c-.415-2.225-.439-4.353-.496-6.613-.341-2.576-.341-2.576-2.504-4.671-2.342-3.18-2.501-4.663-2.502-8.56l-.028-3.488.034-3.738-.004-3.858.034-8.064.013-10.333.02-9.869-.009-3.75.038-3.469.016-3.056c.451-2.939%201.199-3.631%203.388-5.529.683-2.628.683-2.628%201-5.5.522-4.044%201.006-5.767%204-8.5l.688-3.125c1.132-4.584%204.189-7.32%207.363-10.672a25.38%2025.38%200%200%200%204.012-5.953c2.841-4.766%206.687-6.923%2011.375-9.687%202.293-1.398%204.274-2.899%206.375-4.562%203.903-2.981%207.541-4.451%2012.188-6l2-1.125c2.116-.926%203.712-1.098%206-1.312%203.512-.358%205.319-1.179%208-3.562%203.056-1.019%205.185-1.145%208.386-1.177zm-5.261%2054.802l-2.336%202.352c-5.133%205.205-6.856%207.547-7.312%2014.832-.477%202.191-.477%202.191-1.981%203.379-2.333%202.827-1.884%205.395-1.894%209l-.009%202.118.016%204.428-.019%206.774.012%204.305.01%203.957c.412%203.426.774%204.172%203.388%206.23.266%201.98.266%201.98.25%204.188.5%205.952%203.622%208.777%207.75%2012.813l2.184%202.324c5.903%206.189%2011.292%2011.763%2020.199%2012.305l5.742-.066%202.918.033c5.892-.061%209.237-.783%2013.957-4.596l3.5-1.375c4.064-1.887%206.835-4.024%209.5-7.625.949-2.714.949-2.714%201-5l3-1%20.313-3.312c.692-3.711.959-4.414%203.688-6.687%201.309-3.927%201.202-7.7%201.238-11.797l.024-2.627.032-5.508.105-8.381.025-5.359.053-2.513c-.021-5.781-1.269-9.006-4.479-13.815l-1.812-3.937c-3.049-6.097-6.916-11.56-13.5-13.937L1263%201779l-2-2c-4.663-1.384-9.55-1.256-14.375-1.312l-2.5-.088c-10.626-.11-15.96%205.791-23%2013.025zm547.652-55.086l3.164.003%206.614.047%2010.099.041%206.436.035%203.04.007c4.959.067%209.283.202%2013.87%202.329l1%202%206.078.656c2.485.444%203.282%201.48%204.922%203.344l3%201c3.051%201.017%203.904%201.721%206%204l2.688%201.563L1838%201750v2l4%201%20.25%201.875c.523%202.278.523%202.278%202.563%203%204.878%202.509%206.977%208.515%209.258%2013.293%201.012%202.083%201.012%202.083%202.93%204.832l1%203.063c.786%203.018.786%203.018%203%204.938.26%203.276.366%206.51.391%209.795l.07%202.092.025%201.882c.455%202.526.455%202.526%202.523%205.468%202.422%204.065%202.513%207.458%202.381%2012.104l-.017%202.324-.123%207.274-.055%204.963-.195%2012.1c-3.021%201.741-5.182%202.248-8.657%202.241l-2.821.008-3.073-.022-3.253.001-10.648-.033-7.382-.009-19.432-.049-19.827-.04-38.908-.1c-.553%202.076-1%203.844-1%206h2c1.292%204.12%202.263%207.668%202%2012l1.688.688c3.954%202.244%206.76%205.733%209.875%209%203.471%203.293%206.147%204.528%2010.91%204.762l2.688.134%202.902.104%203.021.114c8.164.25%2016.314.218%2024.479.011l3.475-.054c6.295-.219%209.861-.79%2014.963-4.759%202.703-.504%202.703-.504%205.25-.562%202.522-.003%202.522-.003%204.75-.437l2-3c2.5-.812%202.5-.812%205-1%202.916%202.916%202.344%205.984%202.371%209.895l.027%202.377.027%204.986.112%207.604.021%204.846.059%202.289c-.034%203.971-.452%205.793-2.934%208.952-3.154%202.411-5.855%203.095-9.684%204.052l-2.437%201.625c-2.71%201.454-3.659%201.495-6.625%201.375-3.819-.408-3.819-.408-5.799%201.476-2.871%202.046-4.792%201.905-8.297%201.912l-3.772.029-4.066-.018-4.184.009a1387.57%201387.57%200%200%201-8.763-.016%201196.81%201196.81%200%200%200-11.21.011h-8.64a632.55%20632.55%200%200%200-4.132.007c-1.929.008-3.858-.006-5.786-.021l-3.321-.007c-3.343-.429-5.194-1.522-7.966-3.381-2.064-.452-2.064-.452-4.062-.5-4.091-.519-4.901-1.033-7.937-3.5l-5.873-2.14c-7.145-2.891-12.587-7.823-17.939-13.235l-1.982-1.922c-4.014-4.018-6.256-7.379-8.205-12.703l-2-3-.437-3.062L1702%201872l-3-2c-.512-2.82-.512-2.82-.687-6.125l-.199-3.32L1698%201858l-3-1c-1.128-2.926-1.141-5.823-1.177-8.933l-.039-2.964-.022-3.185-.024-3.296-.032-6.902-.105-10.527-.025-6.713-.053-3.167c.019-6.392.862-10.032%204.479-15.314.56-2.245.56-2.245.563-4.25.473-4.051.686-4.219%203.438-6.75l2-7%202-2%201.188-3.187c1.59-3.935%204.073-6.326%207.191-9.137%201.716-1.774%202.529-3.486%203.621-5.676l4-1%20.883-1.809c1.31-2.569%202.795-3.901%204.992-5.754l2.055-1.754c4.012-3.263%207.12-5.069%2012.07-6.684l2-2c2.209-.304%204.386-.378%206.613-.461%202.558-.352%202.558-.352%204.362-2.544%204.488-2.961%208.538-2.531%2013.802-2.456zM1765%201778l-2.68%202.414-2.195%202.211-2.242%202.227c-2.882%203.288-4.044%205.871-4.32%2010.211-.562%203.938-.562%203.938-2.125%205.938l-1.437%201%201%203c3.004%201.001%205.019%201.132%208.158%201.145l3.185.019%203.438.003%203.53.01%207.394.007%2011.337.039%207.176.006%203.438.022%203.185-.009%202.806.004c2.622-.091%202.622-.091%205.353-2.247a70.1%2070.1%200%200%200%20.188-8.125l-.041-2.285-.146-5.59-1.949-.754c-2.051-1.246-2.051-1.246-2.633-3.086l-.23-2.098c-.365-2.156-.365-2.156-1.187-4.062-3.328-1.915-3.328-1.915-7-3l-1.617-1.539c-3.829-2.348-7.729-2.014-12.133-2.023l-2.633-.111c-6.933-.047-10.602%202.014-15.617%206.674zM389.055%201667.871l3.266-.01%203.554.006%203.621-.003%207.596.005%2011.674-.006%207.359.004%203.554-.006%203.266.01%202.891.002C438%201668%20438%201668%20439%201669l.12%209.421.003%203.034-.009%2010.148v7.242l-.008%2015.633-.012%2022.603-.018%2036.669-.021%2035.629-.001%202.217-.004%2011.009L439%201914c-3.095.822-5.802%201.131-9.012%201.145l-3.013.019-3.233.003-3.332.01-6.965.007-10.692.039-6.762.006-3.245.022-2.994-.009-2.642.004C385%201915%20385%201915%20383%201913c-.25-1.812-.25-1.812-.249-4.054l-.014-2.586.016-2.857-.007-3.022.012-10.09-.006-7.208.01-17.583.01-20.457.023-36.487.021-35.442v-2.205-2.201l.014-40.299.005-14.275.017-19.194.004-7.067.012-9.602-.005-2.864c.029-7.63.029-7.63%206.193-7.635z'/%3e%3c/svg%3e", Cc = 600, Tc = 1024 * 1024 * 1024, Ec = 1024 * 1024, u1 = 1024;
   function Qa(t, e, r) {
-    return e !== void 0 && e > Tc ? `${(t / Tc).toFixed(1).replace(".", ",")}Gb` : e !== void 0 && e > Ec ? `${(t / Ec).toFixed(e > 12 * Ec && r ? 0 : 1).replace(".", ",")}Mb` : t < u1 ? `${t}b` : e !== void 0 ? t < 1024 * 1024 ? `${(t / u1).toFixed(e > 12 * u1 && r ? 0 : 1).replace(".", ",")}kb` : t < Tc ? `${(t / Ec).toFixed(e > 12 * Ec && r ? 0 : 1).replace(".", ",")}Mb` : `${(t / Tc).toFixed(e > 12 * Tc && r ? 0 : 1).replace(".", ",")}Gb` : t < Ec ? `${(t / u1).toFixed(r ? 0 : 1).replace(".", ",")}kb` : t < Tc ? `${(t / Ec).toFixed(r ? 0 : 1).replace(".", ",")}Mb` : `${(t / Tc).toFixed(r ? 0 : 1).replace(".", ",")}Gb`;
+    return t == null || isNaN(t) ? "--" : e !== void 0 && e > Tc ? `${(t / Tc).toFixed(1).replace(".", ",")}Gb` : e !== void 0 && e > Ec ? `${(t / Ec).toFixed(e > 12 * Ec && r ? 0 : 1).replace(".", ",")}Mb` : t < u1 ? `${t}b` : e !== void 0 ? t < 1024 * 1024 ? `${(t / u1).toFixed(e > 12 * u1 && r ? 0 : 1).replace(".", ",")}kb` : t < Tc ? `${(t / Ec).toFixed(e > 12 * Ec && r ? 0 : 1).replace(".", ",")}Mb` : `${(t / Tc).toFixed(e > 12 * Tc && r ? 0 : 1).replace(".", ",")}Gb` : t < Ec ? `${(t / u1).toFixed(r ? 0 : 1).replace(".", ",")}kb` : t < Tc ? `${(t / Ec).toFixed(r ? 0 : 1).replace(".", ",")}Mb` : `${(t / Tc).toFixed(r ? 0 : 1).replace(".", ",")}Gb`;
   }
   function Ct(t) {
     return typeof TouchEvent < "u" && t instanceof TouchEvent || t && typeof t == "object" && ("touches" in t || "changedTouches" in t);
@@ -50291,7 +50291,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       } else
         n = r.length;
       let a = "";
-      return this.props.alive ? this.state.idsStatus === "Error" ? a = B.t("kisshome-defender_Detection engine exited") : this.state.recordingRunning || (a = B.t("kisshome-defender_Recording is not running. Please check the log for more details")) : a = B.t("kisshome-defender_Instance is not running"), /* @__PURE__ */ A.jsxs(
+      return this.props.alive ? this.state.idsStatus === "Error" ? a = j.t("kisshome-defender_Detection engine exited") : this.state.recordingRunning || (a = j.t("kisshome-defender_Recording is not running. Please check the log for more details")) : a = j.t("kisshome-defender_Instance is not running"), /* @__PURE__ */ A.jsxs(
         "div",
         {
           className: "status-tab",
@@ -50339,7 +50339,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                           !this.state.recordingEnabled
                         );
                       },
-                      children: this.state.recordingEnabled ? B.t("kisshome-defender_Deactivate protection") : B.t("kisshome-defender_Activate protection")
+                      children: this.state.recordingEnabled ? j.t("kisshome-defender_Deactivate protection") : j.t("kisshome-defender_Activate protection")
                     }
                   ) : null,
                   /* @__PURE__ */ A.jsx("table", { children: /* @__PURE__ */ A.jsxs("tbody", { children: [
@@ -50354,7 +50354,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                         },
                         children: [
                           /* @__PURE__ */ A.jsx("td", { style: Ta.result, children: /* @__PURE__ */ A.jsx(Ho, { ok: this.props.alive }) }),
-                          /* @__PURE__ */ A.jsx("td", { style: Ta.title, children: B.t("kisshome-defender_Instance is not running") })
+                          /* @__PURE__ */ A.jsx("td", { style: Ta.title, children: j.t("kisshome-defender_Instance is not running") })
                         ]
                       }
                     ),
@@ -50382,7 +50382,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                                 isTouchEvent: Ct(o)
                               });
                             },
-                            children: B.t("kisshome-defender_Enable the instance in the admin")
+                            children: j.t("kisshome-defender_Enable the instance in the admin")
                           }
                         ) })
                       }
@@ -50396,25 +50396,25 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                           children: /* @__PURE__ */ A.jsx(Ho, { ok: this.state.recordingRunning })
                         }
                       ),
-                      /* @__PURE__ */ A.jsx("td", { style: Ta.title, children: this.state.recordingRunning ? B.t("kisshome-defender_Software activated") : B.t("kisshome-defender_Software not activated") })
+                      /* @__PURE__ */ A.jsx("td", { style: Ta.title, children: this.state.recordingRunning ? j.t("kisshome-defender_Software activated") : j.t("kisshome-defender_Software not activated") })
                     ] }) : null,
                     this.props.alive ? /* @__PURE__ */ A.jsxs("tr", { style: Ta.row, children: [
                       /* @__PURE__ */ A.jsxs("td", { style: { ...Ta.result, color: this.getStatusColor() }, children: [
                         /* @__PURE__ */ A.jsx(Ho, { ok: this.getStatusColor() === "green" }),
-                        /* @__PURE__ */ A.jsx("span", { style: { fontSize: "smaller", fontStyle: "italic" }, children: B.t(`kisshome-defender_${this.state.idsStatus}`) })
+                        /* @__PURE__ */ A.jsx("span", { style: { fontSize: "smaller", fontStyle: "italic" }, children: j.t(`kisshome-defender_${this.state.idsStatus}`) })
                       ] }),
-                      /* @__PURE__ */ A.jsx("td", { style: Ta.title, children: B.t("kisshome-defender_Detection engine status") })
+                      /* @__PURE__ */ A.jsx("td", { style: Ta.title, children: j.t("kisshome-defender_Detection engine status") })
                     ] }) : null,
                     this.props.alive && this.state.recordingRunning ? /* @__PURE__ */ A.jsxs("tr", { style: Ta.row, children: [
                       /* @__PURE__ */ A.jsxs("td", { style: { ...Ta.result, fontSize: "0.9rem" }, children: [
                         /* @__PURE__ */ A.jsx(Ho, { ok: !0 }),
                         /* @__PURE__ */ A.jsx(B_, {}),
-                        /* @__PURE__ */ A.jsx("span", { children: B.t(
+                        /* @__PURE__ */ A.jsx("span", { children: j.t(
                           "kisshome-defender_%s collected",
                           Qa(this.state.recordingCaptured)
                         ) })
                       ] }),
-                      /* @__PURE__ */ A.jsx("td", { style: Ta.title, children: B.t("kisshome-defender_Recording is running") })
+                      /* @__PURE__ */ A.jsx("td", { style: Ta.title, children: j.t("kisshome-defender_Recording is running") })
                     ] }) : null
                   ] }) })
                 ]
@@ -50446,7 +50446,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                 },
                 children: [
                   /* @__PURE__ */ A.jsx("div", {}),
-                  n ? `${B.t("kisshome-defender_New problem detected")}: ${n}` : B.t("kisshome-defender_Everything OK"),
+                  n ? `${j.t("kisshome-defender_New problem detected")}: ${n}` : j.t("kisshome-defender_Everything OK"),
                   /* @__PURE__ */ A.jsx(
                     Ho,
                     {
@@ -55632,9 +55632,9 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           T > 0 ? (x.tokens = x.tokens.slice(0, T), b(x, E, C), r.lines = r.lines.slice(0, w + 1)) : r.lines = r.lines.slice(0, w), r.isTruncated = r.isTruncated || r.lines.length < F;
           break e;
         }
-        var j = P.width, W = j == null || j === "auto";
-        if (typeof j == "string" && j.charAt(j.length - 1) === "%")
-          D.percentWidth = j, d.push(D), D.contentWidth = Pa(D.text, R);
+        var B = P.width, W = B == null || B === "auto";
+        if (typeof B == "string" && B.charAt(B.length - 1) === "%")
+          D.percentWidth = B, d.push(D), D.contentWidth = Pa(D.text, R);
         else {
           if (W) {
             var H = P.backgroundColor, Z = H && H.image;
@@ -56052,8 +56052,8 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             break;
           }
           case Kt.A:
-            var P = e[f++], I = e[f++], M = e[f++], R = e[f++], z = e[f++], F = e[f++], j = F + z;
-            f += 1, v && (s = zc(z) * M + P, l = Fc(z) * R + I), g = hx(M, R) * fx(ml, Math.abs(F)), o = zc(j) * M + P, i = Fc(j) * R + I;
+            var P = e[f++], I = e[f++], M = e[f++], R = e[f++], z = e[f++], F = e[f++], B = F + z;
+            f += 1, v && (s = zc(z) * M + P, l = Fc(z) * R + I), g = hx(M, R) * fx(ml, Math.abs(F)), o = zc(B) * M + P, i = Fc(B) * R + I;
             break;
           case Kt.R: {
             s = o = e[f++], l = i = e[f++];
@@ -56100,31 +56100,31 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
               break;
             }
             case Kt.C: {
-              var j = n[T++], W = n[T++], H = n[T++], Z = n[T++], q = n[T++], V = n[T++];
+              var B = n[T++], W = n[T++], H = n[T++], Z = n[T++], q = n[T++], V = n[T++];
               if (h) {
                 var R = v[b++];
                 if (y + R > w) {
                   var z = (w - y) / R;
-                  t_(c, j, H, q, z, Nc), t_(d, W, Z, V, z, Lc), e.bezierCurveTo(Nc[1], Lc[1], Nc[2], Lc[2], Nc[3], Lc[3]);
+                  t_(c, B, H, q, z, Nc), t_(d, W, Z, V, z, Lc), e.bezierCurveTo(Nc[1], Lc[1], Nc[2], Lc[2], Nc[3], Lc[3]);
                   break e;
                 }
                 y += R;
               }
-              e.bezierCurveTo(j, W, H, Z, q, V), c = q, d = V;
+              e.bezierCurveTo(B, W, H, Z, q, V), c = q, d = V;
               break;
             }
             case Kt.Q: {
-              var j = n[T++], W = n[T++], H = n[T++], Z = n[T++];
+              var B = n[T++], W = n[T++], H = n[T++], Z = n[T++];
               if (h) {
                 var R = v[b++];
                 if (y + R > w) {
                   var z = (w - y) / R;
-                  r_(c, j, H, z, Nc), r_(d, W, Z, z, Lc), e.quadraticCurveTo(Nc[1], Lc[1], Nc[2], Lc[2]);
+                  r_(c, B, H, z, Nc), r_(d, W, Z, z, Lc), e.quadraticCurveTo(Nc[1], Lc[1], Nc[2], Lc[2]);
                   break e;
                 }
                 y += R;
               }
-              e.quadraticCurveTo(j, W, H, Z), c = H, d = Z;
+              e.quadraticCurveTo(B, W, H, Z), c = H, d = Z;
               break;
             }
             case Kt.A:
@@ -56806,9 +56806,9 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         s && this._renderBackground(r, r, E, T, d, c);
       }
       C += h / 2, a && (x = IR(g, b, a), w === "top" ? C += a[0] : w === "bottom" && (C -= a[2]));
-      for (var D = 0, P = !1, I = PR("fill" in r ? r.fill : (P = !0, v.fill)), M = OR("stroke" in r ? r.stroke : !l && (!v.autoStroke || P) ? (D = DR, v.stroke) : null), R = r.textShadowBlur > 0, z = r.width != null && (r.overflow === "truncate" || r.overflow === "break" || r.overflow === "breakAll"), F = i.calculatedLineHeight, j = 0; j < f.length; j++) {
+      for (var D = 0, P = !1, I = PR("fill" in r ? r.fill : (P = !0, v.fill)), M = OR("stroke" in r ? r.stroke : !l && (!v.autoStroke || P) ? (D = DR, v.stroke) : null), R = r.textShadowBlur > 0, z = r.width != null && (r.overflow === "truncate" || r.overflow === "break" || r.overflow === "breakAll"), F = i.calculatedLineHeight, B = 0; B < f.length; B++) {
         var W = this._getOrCreateChild(F0), H = W.createStyle();
-        W.useStyle(H), H.text = f[j], H.x = x, H.y = C, H.textAlign = b, H.textBaseline = "middle", H.opacity = r.opacity, H.strokeFirst = !0, R && (H.shadowBlur = r.textShadowBlur || 0, H.shadowColor = r.textShadowColor || "transparent", H.shadowOffsetX = r.textShadowOffsetX || 0, H.shadowOffsetY = r.textShadowOffsetY || 0), H.stroke = M, H.fill = I, M && (H.lineWidth = r.lineWidth || D, H.lineDash = r.lineDash, H.lineDashOffset = r.lineDashOffset || 0), H.font = n, MR(H, r), C += h, z && W.setBoundingRect(new Qt(Bh(H.x, u, H.textAlign), sp(H.y, F, H.textBaseline), u, F));
+        W.useStyle(H), H.text = f[B], H.x = x, H.y = C, H.textAlign = b, H.textBaseline = "middle", H.opacity = r.opacity, H.strokeFirst = !0, R && (H.shadowBlur = r.textShadowBlur || 0, H.shadowColor = r.textShadowColor || "transparent", H.shadowOffsetX = r.textShadowOffsetX || 0, H.shadowOffsetY = r.textShadowOffsetY || 0), H.stroke = M, H.fill = I, M && (H.lineWidth = r.lineWidth || D, H.lineDash = r.lineDash, H.lineDashOffset = r.lineDashOffset || 0), H.font = n, MR(H, r), C += h, z && W.setBoundingRect(new Qt(Bh(H.x, u, H.textAlign), sp(H.y, F, H.textBaseline), u, F));
       }
     }, e.prototype._updateRichTexts = function() {
       var r = this.style, n = RR(r), a = Nye(n, r), o = a.width, i = a.outerWidth, s = a.outerHeight, l = r.padding, c = r.x || 0, d = r.y || 0, u = this._defaultStyle, f = r.align || u.align, h = r.verticalAlign || u.verticalAlign;
@@ -56818,12 +56818,12 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       var w = y + o;
       _x(r) && this._renderBackground(r, r, v, g, i, s);
       for (var x = !!r.backgroundColor, C = 0; C < a.lines.length; C++) {
-        for (var E = a.lines[C], T = E.tokens, D = T.length, P = E.lineHeight, I = E.width, M = 0, R = y, z = w, F = D - 1, j = void 0; M < D && (j = T[M], !j.align || j.align === "left"); )
-          this._placeToken(j, r, P, b, R, "left", x), I -= j.width, R += j.width, M++;
-        for (; F >= 0 && (j = T[F], j.align === "right"); )
-          this._placeToken(j, r, P, b, z, "right", x), I -= j.width, z -= j.width, F--;
+        for (var E = a.lines[C], T = E.tokens, D = T.length, P = E.lineHeight, I = E.width, M = 0, R = y, z = w, F = D - 1, B = void 0; M < D && (B = T[M], !B.align || B.align === "left"); )
+          this._placeToken(B, r, P, b, R, "left", x), I -= B.width, R += B.width, M++;
+        for (; F >= 0 && (B = T[F], B.align === "right"); )
+          this._placeToken(B, r, P, b, z, "right", x), I -= B.width, z -= B.width, F--;
         for (R += (o - (R - y) - (w - z) - I) / 2; M <= F; )
-          j = T[M], this._placeToken(j, r, P, b, R + j.width / 2, "center", x), R += j.width, M++;
+          B = T[M], this._placeToken(B, r, P, b, R + B.width / 2, "center", x), R += B.width, M++;
         b += P;
       }
     }, e.prototype._placeToken = function(r, n, a, o, i, s, l) {
@@ -57482,8 +57482,8 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       return f = (d * (e - o) - u * (t - a)) / f, [t + f * l, e + f * c];
   }
   function $1(t, e, r, n, a, o, i) {
-    var s = t - r, l = e - n, c = (i ? o : -o) / s0(s * s + l * l), d = c * l, u = -c * s, f = t + d, h = e + u, v = r + d, g = n + u, y = (f + v) / 2, b = (h + g) / 2, w = v - f, x = g - h, C = w * w + x * x, E = a - o, T = f * g - v * h, D = (x < 0 ? -1 : 1) * s0(Wh(0, E * E * C - T * T)), P = (T * x - w * D) / C, I = (-T * w - x * D) / C, M = (T * x + w * D) / C, R = (-T * w + x * D) / C, z = P - y, F = I - b, j = M - y, W = R - b;
-    return z * z + F * F > j * j + W * W && (P = M, I = R), {
+    var s = t - r, l = e - n, c = (i ? o : -o) / s0(s * s + l * l), d = c * l, u = -c * s, f = t + d, h = e + u, v = r + d, g = n + u, y = (f + v) / 2, b = (h + g) / 2, w = v - f, x = g - h, C = w * w + x * x, E = a - o, T = f * g - v * h, D = (x < 0 ? -1 : 1) * s0(Wh(0, E * E * C - T * T)), P = (T * x - w * D) / C, I = (-T * w - x * D) / C, M = (T * x + w * D) / C, R = (-T * w + x * D) / C, z = P - y, F = I - b, B = M - y, W = R - b;
+    return z * z + F * F > B * B + W * W && (P = M, I = R), {
       cx: P,
       cy: I,
       x0: -d,
@@ -57518,13 +57518,13 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         else if (h > xx - jo)
           t.moveTo(d + n * Md(l), u + n * Bc(l)), t.arc(d, u, n, l, c, !f), a > jo && (t.moveTo(d + a * Md(c), u + a * Bc(c)), t.arc(d, u, a, c, l, f));
         else {
-          var g = void 0, y = void 0, b = void 0, w = void 0, x = void 0, C = void 0, E = void 0, T = void 0, D = void 0, P = void 0, I = void 0, M = void 0, R = void 0, z = void 0, F = void 0, j = void 0, W = n * Md(l), H = n * Bc(l), Z = a * Md(c), q = a * Bc(c), V = h > jo;
+          var g = void 0, y = void 0, b = void 0, w = void 0, x = void 0, C = void 0, E = void 0, T = void 0, D = void 0, P = void 0, I = void 0, M = void 0, R = void 0, z = void 0, F = void 0, B = void 0, W = n * Md(l), H = n * Bc(l), Z = a * Md(c), q = a * Bc(c), V = h > jo;
           if (V) {
             var Q = e.cornerRadius;
             Q && (r = Ybe(Q), g = r[0], y = r[1], b = r[2], w = r[3]);
             var U = KR(n - a) / 2;
-            if (x = bi(U, b), C = bi(U, w), E = bi(U, g), T = bi(U, y), I = D = Wh(x, C), M = P = Wh(E, T), (D > jo || P > jo) && (R = n * Md(c), z = n * Bc(c), F = a * Md(l), j = a * Bc(l), h < HU)) {
-              var K = Xbe(W, H, F, j, R, z, Z, q);
+            if (x = bi(U, b), C = bi(U, w), E = bi(U, g), T = bi(U, y), I = D = Wh(x, C), M = P = Wh(E, T), (D > jo || P > jo) && (R = n * Md(c), z = n * Bc(c), F = a * Md(l), B = a * Bc(l), h < HU)) {
+              var K = Xbe(W, H, F, B, R, z, Z, q);
               if (K) {
                 var ie = W - K[0], se = H - K[1], oe = R - K[0], ne = z - K[1], ke = 1 / Bc(Gbe((ie * oe + se * ne) / (s0(ie * ie + se * se) * s0(oe * oe + ne * ne))) / 2), _e = s0(K[0] * K[0] + K[1] * K[1]);
                 I = bi(D, (n - _e) / (ke + 1)), M = bi(P, (a - _e) / (ke - 1));
@@ -57534,14 +57534,14 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           if (!V)
             t.moveTo(d + W, u + H);
           else if (I > jo) {
-            var we = bi(b, I), ve = bi(w, I), pe = $1(F, j, W, H, n, we, f), fe = $1(R, z, Z, q, n, ve, f);
+            var we = bi(b, I), ve = bi(w, I), pe = $1(F, B, W, H, n, we, f), fe = $1(R, z, Z, q, n, ve, f);
             t.moveTo(d + pe.cx + pe.x0, u + pe.cy + pe.y0), I < D && we === ve ? t.arc(d + pe.cx, u + pe.cy, I, kn(pe.y0, pe.x0), kn(fe.y0, fe.x0), !f) : (we > 0 && t.arc(d + pe.cx, u + pe.cy, we, kn(pe.y0, pe.x0), kn(pe.y1, pe.x1), !f), t.arc(d, u, n, kn(pe.cy + pe.y1, pe.cx + pe.x1), kn(fe.cy + fe.y1, fe.cx + fe.x1), !f), ve > 0 && t.arc(d + fe.cx, u + fe.cy, ve, kn(fe.y1, fe.x1), kn(fe.y0, fe.x0), !f));
           } else
             t.moveTo(d + W, u + H), t.arc(d, u, n, l, c, !f);
           if (!(a > jo) || !V)
             t.lineTo(d + Z, u + q);
           else if (M > jo) {
-            var we = bi(g, M), ve = bi(y, M), pe = $1(Z, q, R, z, a, -ve, f), fe = $1(W, H, F, j, a, -we, f);
+            var we = bi(g, M), ve = bi(y, M), pe = $1(Z, q, R, z, a, -ve, f), fe = $1(W, H, F, B, a, -we, f);
             t.lineTo(d + pe.cx + pe.x0, u + pe.cy + pe.y0), M < P && we === ve ? t.arc(d + pe.cx, u + pe.cy, M, kn(pe.y0, pe.x0), kn(fe.y0, fe.x0), !f) : (ve > 0 && t.arc(d + pe.cx, u + pe.cy, ve, kn(pe.y0, pe.x0), kn(pe.y1, pe.x1), !f), t.arc(d, u, a, kn(pe.cy + pe.y1, pe.cx + pe.x1), kn(fe.cy + fe.y1, fe.cx + fe.x1), f), we > 0 && t.arc(d + fe.cx, u + fe.cy, we, kn(fe.y1, fe.x1), kn(fe.y0, fe.x0), !f));
           } else
             t.lineTo(d + Z, u + q), t.arc(d, u, a, c, l, f);
@@ -63081,9 +63081,9 @@ yyyy`);
       function I() {
         for (var R = 1, z = 0, F = x.length; z < F; ++z)
           R = vR(R, x[z]);
-        for (var j = 1, z = 0, F = w.length; z < F; ++z)
-          j = vR(j, w[z].length);
-        R *= j;
+        for (var B = 1, z = 0, F = w.length; z < F; ++z)
+          B = vR(B, w[z].length);
+        R *= B;
         var W = C * x.length * w.length;
         return {
           width: Math.max(1, Math.min(R, i.maxTileWidth)),
@@ -63096,22 +63096,22 @@ yyyy`);
           R += b[z];
         if (R <= 0)
           return;
-        for (var F = -C, j = 0, W = 0, H = 0; F < D.height; ) {
-          if (j % 2 === 0) {
+        for (var F = -C, B = 0, W = 0, H = 0; F < D.height; ) {
+          if (B % 2 === 0) {
             for (var Z = W / 2 % w.length, q = 0, V = 0, Q = 0; q < D.width * 2; ) {
               for (var U = 0, z = 0; z < y[H].length; ++z)
                 U += y[H][z];
               if (U <= 0)
                 break;
               if (V % 2 === 0) {
-                var K = (1 - i.symbolSize) * 0.5, ie = q + y[H][V] * K, se = F + b[j] * K, oe = y[H][V] * i.symbolSize, ne = b[j] * i.symbolSize, ke = Q / 2 % w[Z].length;
+                var K = (1 - i.symbolSize) * 0.5, ie = q + y[H][V] * K, se = F + b[B] * K, oe = y[H][V] * i.symbolSize, ne = b[B] * i.symbolSize, ke = Q / 2 % w[Z].length;
                 _e(ie, se, oe, ne, w[Z][ke]);
               }
               q += y[H][V], ++Q, ++V, V === y[H].length && (V = 0);
             }
             ++H, H === y.length && (H = 0);
           }
-          F += b[j], ++W, ++j, j === b.length && (j = 0);
+          F += b[B], ++W, ++B, B === b.length && (B = 0);
         }
         function _e(we, ve, pe, fe, je) {
           var Ce = a ? 1 : r, Pe = Yl(je, we * Ce, ve * Ce, pe * Ce, fe * Ce, i.color, i.symbolKeepAspect);
@@ -63792,20 +63792,20 @@ yyyy`);
           var h = this, v = this.getModel(), g = u.type, y = u.escapeConnect, b = b_[g], w = b.actionInfo, x = (w.update || "update").split(":"), C = x.pop(), E = x[0] != null && Oi(x[0]);
           this[Cn] = !0;
           var T = [u], D = !1;
-          u.batch && (D = !0, T = Ge(u.batch, function(j) {
-            return j = Ut(Ae({}, j), u), j.batch = null, j;
+          u.batch && (D = !0, T = Ge(u.batch, function(B) {
+            return B = Ut(Ae({}, B), u), B.batch = null, B;
           }));
           var P = [], I, M = GS(u), R = qR(u);
-          if (R && FU(this._api), X(T, function(j) {
-            if (I = b.action(j, h._model, h._api), I = I || Ae({}, j), I.type = w.event || I.type, P.push(I), R) {
+          if (R && FU(this._api), X(T, function(B) {
+            if (I = b.action(B, h._model, h._api), I = I || Ae({}, B), I.type = w.event || I.type, P.push(I), R) {
               var W = z9(u), H = W.queryOptionMap, Z = W.mainTypeSpecified, q = Z ? H.keys()[0] : "series";
-              j1(h, C, j, q), Ya(h);
-            } else M ? (j1(h, C, j, "series"), Ya(h)) : E && j1(h, C, j, E.main, E.sub);
+              j1(h, C, B, q), Ya(h);
+            } else M ? (j1(h, C, B, "series"), Ya(h)) : E && j1(h, C, B, E.main, E.sub);
           }), C !== "none" && !R && !M && !E)
             try {
               this[aa] ? (Rd(this), ul.update.call(this, u), this[aa] = null) : ul[C].call(this, u);
-            } catch (j) {
-              throw this[Cn] = !1, j;
+            } catch (B) {
+              throw this[Cn] = !1, B;
             }
           if (D ? I = {
             type: w.event || g,
@@ -64749,8 +64749,8 @@ yyyy`);
       if (M < 0) {
         var R = n[I], z = it(R) ? R : {
           name: R
-        }, F = new Cg(), j = z.name;
-        j != null && c.get(j) != null && (F.name = F.displayName = j), z.type != null && (F.type = z.type), z.displayName != null && (F.displayName = z.displayName);
+        }, F = new Cg(), B = z.name;
+        B != null && c.get(B) != null && (F.name = F.displayName = B), z.type != null && (F.type = z.type), z.displayName != null && (F.displayName = z.displayName);
         var W = o.length;
         return f[I] = W, F.storeDimIndex = I, o.push(F), F;
       }
@@ -64766,9 +64766,9 @@ yyyy`);
         return;
       }
       var z = u.set(M, []);
-      X(R, function(F, j) {
+      X(R, function(F, B) {
         var W = He(F) ? c.get(F) : F;
-        W != null && W < i && (z[j] = W, y(v(W), M, j));
+        W != null && W < i && (z[B] = W, y(v(W), M, B));
       });
     });
     var g = 0;
@@ -64778,8 +64778,8 @@ yyyy`);
         M = I, F = {};
       else {
         F = I, M = F.name;
-        var j = F.ordinalMeta;
-        F.ordinalMeta = null, F = Ae({}, F), F.ordinalMeta = j, R = F.dimsDef, z = F.otherDims, F.name = F.coordDim = F.coordDimIndex = F.dimsDef = F.otherDims = null;
+        var B = F.ordinalMeta;
+        F.ordinalMeta = null, F = Ae({}, F), F.ordinalMeta = B, R = F.dimsDef, z = F.otherDims, F.name = F.coordDim = F.coordDimIndex = F.dimsDef = F.otherDims = null;
       }
       var W = u.get(M);
       if (W !== !1) {
@@ -65410,18 +65410,18 @@ yyyy`);
           return {
             progress: function(x, C) {
               for (var E = x.count, T = v && ys(E * 3), D = v && l && ys(E * 3), P = v && ys(E), I = n.master.getRect(), M = f ? I.width : I.height, R, z = C.getStore(), F = 0; (R = x.next()) != null; ) {
-                var j = z.get(u ? y : i, R), W = z.get(s, R), H = h, Z = void 0;
-                u && (Z = +j - z.get(i, R));
+                var B = z.get(u ? y : i, R), W = z.get(s, R), H = h, Z = void 0;
+                u && (Z = +B - z.get(i, R));
                 var q = void 0, V = void 0, Q = void 0, U = void 0;
                 if (f) {
-                  var K = n.dataToPoint([j, W]);
+                  var K = n.dataToPoint([B, W]);
                   if (u) {
                     var ie = n.dataToPoint([Z, W]);
                     H = ie[0];
                   }
                   q = H, V = K[1] + w, Q = K[0] - H, U = b, Math.abs(Q) < g && (Q = (Q < 0 ? -1 : 1) * g);
                 } else {
-                  var K = n.dataToPoint([W, j]);
+                  var K = n.dataToPoint([W, B]);
                   if (u) {
                     var ie = n.dataToPoint([W, Z]);
                     H = ie[1];
@@ -65599,20 +65599,20 @@ yyyy`);
   }
   function xxe(t, e, r, n) {
     var a = 1e4, o = cH, i = 0;
-    function s(M, R, z, F, j, W, H) {
+    function s(M, R, z, F, B, W, H) {
       for (var Z = new Date(R), q = R, V = Z[F](); q < z && q <= n[1]; )
         H.push({
           value: q
-        }), V += M, Z[j](V), q = Z.getTime();
+        }), V += M, Z[B](V), q = Z.getTime();
       H.push({
         value: q,
         notAdd: !0
       });
     }
     function l(M, R, z) {
-      var F = [], j = !R.length;
+      var F = [], B = !R.length;
       if (!vxe(kp(M), n[0], n[1], r)) {
-        j && (R = [{
+        B && (R = [{
           // TODO Optimize. Not include so may ticks.
           value: wxe(new Date(n[0]), M, r)
         }, {
@@ -66942,8 +66942,8 @@ yyyy`);
         this._sizeX = a[0] / 2, this._sizeY = a[1] / 2;
         var F = s.ensureState("emphasis");
         F.style = c, s.ensureState("select").style = u, s.ensureState("blur").style = d;
-        var j = y == null || y === !0 ? Math.max(1.1, 3 / this._sizeY) : isFinite(y) && y > 0 ? +y : 1;
-        F.scaleX = this._sizeX * j, F.scaleY = this._sizeY * j, this.setSymbolScale(1), c_(this, f, h, v);
+        var B = y == null || y === !0 ? Math.max(1.1, 3 / this._sizeY) : isFinite(y) && y > 0 ? +y : 1;
+        F.scaleX = this._sizeX * B, F.scaleY = this._sizeY * B, this.setSymbolScale(1), c_(this, f, h, v);
       }, e.prototype.setSymbolScale = function(r) {
         this.scaleX = this.scaleY = r;
       }, e.prototype.fadeOut = function(r, n, a) {
@@ -67143,8 +67143,8 @@ yyyy`);
           (isNaN(P) || isNaN(I)) && (P = M, I = R), c.push(P, I), d.push(M, R), u.push(r[T], r[T + 1]), f.push(n[D], n[D + 1]), g.push(e.getRawIndex(C.idx1));
           break;
         case "+":
-          var z = C.idx, F = y.dataDimsForPoint, j = a.dataToPoint([e.get(F[0], z), e.get(F[1], z)]);
-          D = z * 2, c.push(j[0], j[1]), d.push(w[D], w[D + 1]);
+          var z = C.idx, F = y.dataDimsForPoint, B = a.dataToPoint([e.get(F[0], z), e.get(F[1], z)]);
+          D = z * 2, c.push(B[0], B[1]), d.push(w[D], w[D + 1]);
           var W = nV(y, a, e, z);
           u.push(W[0], W[1]), f.push(n[D], n[D + 1]), g.push(e.getRawIndex(z));
           break;
@@ -67204,9 +67204,9 @@ yyyy`);
             h = b, v = w;
           else {
             M = T - c, R = D - d;
-            var j = b - c, W = T - b, H = w - d, Z = D - w, q = void 0, V = void 0;
+            var B = b - c, W = T - b, H = w - d, Z = D - w, q = void 0, V = void 0;
             if (s === "x") {
-              q = Math.abs(j), V = Math.abs(W);
+              q = Math.abs(B), V = Math.abs(W);
               var Q = M > 0 ? 1 : -1;
               h = b - Q * q * i, v = w, z = b + Q * V * i, F = w;
             } else if (s === "y") {
@@ -67214,7 +67214,7 @@ yyyy`);
               var U = R > 0 ? 1 : -1;
               h = b, v = w - U * q * i, z = b, F = w + U * V * i;
             } else
-              q = Math.sqrt(j * j + H * H), V = Math.sqrt(W * W + Z * Z), I = V / (V + q), h = b - M * i * (1 - I), v = w - R * i * (1 - I), z = b + M * i * I, F = w + R * i * I, z = pl(z, fl(T, b)), F = pl(F, fl(D, w)), z = fl(z, pl(T, b)), F = fl(F, pl(D, w)), M = z - b, R = F - w, h = b - M * q / V, v = w - R * q / V, h = pl(h, fl(c, b)), v = pl(v, fl(d, w)), h = fl(h, pl(c, b)), v = fl(v, pl(d, w)), M = b - h, R = w - v, z = b + M * V / q, F = w + R * V / q;
+              q = Math.sqrt(B * B + H * H), V = Math.sqrt(W * W + Z * Z), I = V / (V + q), h = b - M * i * (1 - I), v = w - R * i * (1 - I), z = b + M * i * I, F = w + R * i * I, z = pl(z, fl(T, b)), F = pl(F, fl(D, w)), z = fl(z, pl(T, b)), F = fl(F, pl(D, w)), M = z - b, R = F - w, h = b - M * q / V, v = w - R * q / V, h = pl(h, fl(c, b)), v = pl(v, fl(d, w)), h = fl(h, pl(c, b)), v = fl(v, pl(d, w)), M = b - h, R = w - v, z = b + M * V / q, F = w + R * V / q;
           }
           t.bezierCurveTo(u, f, h, v, b, w), u = z, f = F;
         } else
@@ -67625,9 +67625,9 @@ yyyy`);
           w && !g ? g = this._newPolygon(d, E) : g && !w && (y.remove(g), g = this._polygon = null), u || this._initOrUpdateEndLabel(r, o, Su(z));
           var F = y.getClipPath();
           if (F) {
-            var j = Yx(this, o, !1, r);
+            var B = Yx(this, o, !1, r);
             Ui(F, {
-              shape: j.shape
+              shape: B.shape
             }, r);
           } else
             y.setClipPath(Yx(this, o, !0, r));
@@ -67818,8 +67818,8 @@ yyyy`);
                 x: z[0] + E,
                 y: z[1] + T
               });
-              var F = f.getRawValue(I[0]), j = f.getRawValue(I[1]);
-              i && (R = _ye(a, v, F, j, P.t));
+              var F = f.getRawValue(I[0]), B = f.getRawValue(I[1]);
+              i && (R = _ye(a, v, F, B, P.t));
             }
             o.lastFrameIndex = I[0];
           } else {
@@ -68263,17 +68263,17 @@ yyyy`);
         s.diff(l).add(function(R) {
           var z = s.getItemModel(R), F = K1[c.type](s, R, z);
           if (b && P(R), !(!s.hasValue(R) || !UL[c.type](F))) {
-            var j = !1;
-            v && (j = FL[c.type](g, F));
+            var B = !1;
+            v && (B = FL[c.type](g, F));
             var W = jL[c.type](r, s, R, F, u, f, d.model, !1, y);
             h && (W.forceLabelAnimation = !0), HL(W, s, R, z, F, r, u, c.type === "polar"), T ? W.attr({
               shape: F
             }) : h ? BL(h, f, W, F, R, u, !1, !1) : Ui(W, {
               shape: F
-            }, r, R), s.setItemGraphicEl(R, W), i.add(W), W.ignore = j;
+            }, r, R), s.setItemGraphicEl(R, W), i.add(W), W.ignore = B;
           }
         }).update(function(R, z) {
-          var F = s.getItemModel(R), j = K1[c.type](s, R, F);
+          var F = s.getItemModel(R), B = K1[c.type](s, R, F);
           if (b) {
             var W = void 0;
             E.length === 0 ? W = P(z) : (W = E[z], W.useStyle(w.getItemStyle()), c.type === "cartesian2d" ? W.setShape("r", x) : W.setShape("cornerRadius", x), C[R] = W);
@@ -68283,23 +68283,23 @@ yyyy`);
             }, f, R);
           }
           var q = l.getItemGraphicEl(z);
-          if (!s.hasValue(R) || !UL[c.type](j)) {
+          if (!s.hasValue(R) || !UL[c.type](B)) {
             i.remove(q);
             return;
           }
           var V = !1;
-          if (v && (V = FL[c.type](g, j), V && i.remove(q)), q ? YU(q) : q = jL[c.type](r, s, R, j, u, f, d.model, !!q, y), h && (q.forceLabelAnimation = !0), D) {
+          if (v && (V = FL[c.type](g, B), V && i.remove(q)), q ? YU(q) : q = jL[c.type](r, s, R, B, u, f, d.model, !!q, y), h && (q.forceLabelAnimation = !0), D) {
             var Q = q.getTextContent();
             if (Q) {
               var U = j2(Q);
               U.prevValue != null && (U.prevValue = U.value);
             }
           } else
-            HL(q, s, R, F, j, r, u, c.type === "polar");
+            HL(q, s, R, F, B, r, u, c.type === "polar");
           T ? q.attr({
-            shape: j
-          }) : h ? BL(h, f, q, j, R, u, !0, D) : ga(q, {
-            shape: j
+            shape: B
+          }) : h ? BL(h, f, q, B, R, u, !0, D) : ga(q, {
+            shape: B
           }, r, R, null), s.setItemGraphicEl(R, q), q.ignore = V, i.add(q);
         }).remove(function(R) {
           var z = l.getItemGraphicEl(R);
@@ -69532,7 +69532,7 @@ yyyy`);
           var E = u[b];
           it(E) && E.textStyle && (C = new mr(E.textStyle, i, r.ecModel));
         }
-        var T = C.getTextColor() || r.get(["axisLine", "lineStyle", "color"]), D = a.dataToCoord(b), P = C.getShallow("align", !0) || d.textAlign, I = vt(C.getShallow("alignMinLabel", !0), P), M = vt(C.getShallow("alignMaxLabel", !0), P), R = C.getShallow("verticalAlign", !0) || C.getShallow("baseline", !0) || d.textVerticalAlign, z = vt(C.getShallow("verticalAlignMinLabel", !0), R), F = vt(C.getShallow("verticalAlignMaxLabel", !0), R), j = new Zr({
+        var T = C.getTextColor() || r.get(["axisLine", "lineStyle", "color"]), D = a.dataToCoord(b), P = C.getShallow("align", !0) || d.textAlign, I = vt(C.getShallow("alignMinLabel", !0), P), M = vt(C.getShallow("alignMaxLabel", !0), P), R = C.getShallow("verticalAlign", !0) || C.getShallow("baseline", !0) || d.textVerticalAlign, z = vt(C.getShallow("verticalAlignMinLabel", !0), R), F = vt(C.getShallow("verticalAlignMaxLabel", !0), R), B = new Zr({
           x: D,
           y: n.labelOffset + n.labelDirection * s,
           rotation: d.rotation,
@@ -69555,22 +69555,22 @@ yyyy`);
             ) : T
           })
         });
-        if (j.anid = "label_" + b, R2({
-          el: j,
+        if (B.anid = "label_" + b, R2({
+          el: B,
           componentModel: r,
           itemName: w,
           formatterParamsExtra: {
             isTruncated: function() {
-              return j.isTruncated;
+              return B.isTruncated;
             },
             value: x,
             tickIndex: y
           }
         }), v) {
           var W = Ll.makeAxisEventDataBase(r);
-          W.targetType = "axisLabel", W.value = x, W.tickIndex = y, a.type === "category" && (W.dataIndex = b), It(j).eventData = W;
+          W.targetType = "axisLabel", W.value = x, W.tickIndex = y, a.type === "category" && (W.dataIndex = b), It(B).eventData = W;
         }
-        e.add(j), j.updateTransform(), f.push(j), t.add(j), j.decomposeTransform();
+        e.add(B), B.updateTransform(), f.push(B), t.add(B), B.decomposeTransform();
       }), f;
     }
   }
@@ -71142,9 +71142,9 @@ yyyy`);
                   }), R.axisValueLabel = T, R.marker = f.makeTooltipMarker("item", Su(R.color), l);
                   var z = $N(I.formatTooltip(M, !0, null)), F = z.frag;
                   if (F) {
-                    var j = Ch([I], o).get("valueFormatter");
-                    D.blocks.push(j ? Ae({
-                      valueFormatter: j
+                    var B = Ch([I], o).get("valueFormatter");
+                    D.blocks.push(B ? Ae({
+                      valueFormatter: B
                     }, F) : F);
                   }
                   z.text && u.push(z.text), c.push(R);
@@ -72324,8 +72324,8 @@ yyyy`);
                     fill: nc(z, "rgba")
                   }));
                   var F = this._createItem(D, g, v, h, n, r, {}, M, R, u, o);
-                  F.on("click", Ld(Ez, null, g, o, f)).on("mouseover", Ld(k8, null, g, o, f)).on("mouseout", Ld(C8, null, g, o, f)), a.ssr && F.eachChild(function(j) {
-                    var W = It(j);
+                  F.on("click", Ld(Ez, null, g, o, f)).on("mouseover", Ld(k8, null, g, o, f)).on("mouseout", Ld(C8, null, g, o, f)), a.ssr && F.eachChild(function(B) {
+                    var W = It(B);
                     W.seriesIndex = D.seriesIndex, W.dataIndex = v, W.ssrType = "legend";
                   }), d.set(g, !0);
                 }
@@ -72403,12 +72403,12 @@ yyyy`);
             // Cannot use 'invisible' because SVG SSR will miss the node
             fill: "transparent"
           }
-        }), j = o.getModel("tooltip");
-        return j.get("show") && R2({
+        }), B = o.getModel("tooltip");
+        return B.get("show") && R2({
           el: F,
           componentModel: i,
           itemName: n,
-          itemTooltipOption: j.option
+          itemTooltipOption: B.option
         }), E.add(F), E.eachChild(function(W) {
           W.silent = !0;
         }), F.silent = !u, this.getContentGroup().add(E), mu(E), E.__legendDataIndex = a, E;
@@ -73052,12 +73052,12 @@ yyyy`);
         z ? z === "shape" && I(R, T) : !n && I(R, E);
       }
       for (var F in E) {
-        var j = {};
-        aU(j, t), Ae(j, E[F]);
-        var W = eU(j), H = E[F][P];
+        var B = {};
+        aU(B, t), Ae(B, E[F]);
+        var W = eU(B), H = E[F][P];
         D[F] = W ? {
           transform: W
-        } : {}, ake(D[F], j), H && (D[F][P] = H);
+        } : {}, ake(D[F], B), H && (D[F][P] = H);
       }
       var Z, q = !0;
       for (var F in T) {
@@ -73313,8 +73313,8 @@ yyyy`);
       } else if (f == null || h == null) {
         var b = function(M, R) {
           if (M) {
-            var z = M.elm, F = f || R.width, j = h || R.height;
-            M.tag === "pattern" && (c ? (j = 1, F /= o.width) : d && (F = 1, j /= o.height)), M.attrs.width = F, M.attrs.height = j, z && (z.setAttribute("width", F), z.setAttribute("height", j));
+            var z = M.elm, F = f || R.width, B = h || R.height;
+            M.tag === "pattern" && (c ? (B = 1, F /= o.width) : d && (F = 1, B /= o.height)), M.attrs.width = F, M.attrs.height = B, z && (z.setAttribute("width", F), z.setAttribute("height", B));
           }
         }, w = j9(v, null, t, function(M) {
           l || b(T, M), b(u, M);
@@ -73832,7 +73832,7 @@ yyyy`);
           min: 0,
           max: l,
           interval: l / 5,
-          name: B.t("kisshome-defender_Data volume"),
+          name: j.t("kisshome-defender_Data volume"),
           // Y-Achsen-Beschreibung
           nameLocation: "end",
           // Position: 'start', 'middle', 'end'
@@ -73881,7 +73881,7 @@ yyyy`);
                       onEvents: { legendselectchanged: this.onLegendDayTimeSelectChanged }
                     }
                   ) : null,
-                  r ? null : /* @__PURE__ */ A.jsx("div", { style: { padding: 16, paddingLeft: 32 }, children: B.t("kisshome-defender_No data available") })
+                  r ? null : /* @__PURE__ */ A.jsx("div", { style: { padding: 16, paddingLeft: 32 }, children: j.t("kisshome-defender_No data available") })
                 ]
               }
             )
@@ -73997,7 +73997,7 @@ yyyy`);
           min: 0,
           max: l,
           interval: l / 5,
-          name: B.t("kisshome-defender_Data volume"),
+          name: j.t("kisshome-defender_Data volume"),
           // Y-Achsen-Beschreibung
           nameLocation: "end",
           // Position: 'start', 'middle', 'end'
@@ -74062,14 +74062,14 @@ yyyy`);
                           onEvents: { legendselectchanged: this.onLegendSelectChanged }
                         }
                       ) : null,
-                      r ? null : /* @__PURE__ */ A.jsx("div", { style: { padding: 16, paddingLeft: 32 }, children: B.t("kisshome-defender_No data available") })
+                      r ? null : /* @__PURE__ */ A.jsx("div", { style: { padding: 16, paddingLeft: 32 }, children: j.t("kisshome-defender_No data available") })
                     ]
                   }
                 )
               }
             ),
             /* @__PURE__ */ A.jsxs("div", { style: { height: 18, fontStyle: "italic", opacity: 0.7, fontSize: "smaller" }, children: [
-              B.t("kisshome-defender_ioBroker.kisshome-defender uses the IP2Location LITE database for"),
+              j.t("kisshome-defender_ioBroker.kisshome-defender uses the IP2Location LITE database for"),
               " ",
               /* @__PURE__ */ A.jsx(
                 "a",
@@ -74078,7 +74078,7 @@ yyyy`);
                   target: "_blank",
                   style: { color: "inherit" },
                   rel: "noreferrer",
-                  children: B.t("kisshome-defender_IP geolocation")
+                  children: j.t("kisshome-defender_IP geolocation")
                 }
               )
             ] })
@@ -74087,7 +74087,7 @@ yyyy`);
       );
     }
     renderLoading(e) {
-      return this.props.alive && this.state.requestRunning ? /* @__PURE__ */ A.jsx(X_, { style: { position: "absolute", top: 0, left: 0, right: 0 } }) : !e && !this.props.alive ? /* @__PURE__ */ A.jsx("div", { style: { position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }, children: /* @__PURE__ */ A.jsx("p", { children: B.t("kisshome-defender_Adapter is not running") }) }) : null;
+      return this.props.alive && this.state.requestRunning ? /* @__PURE__ */ A.jsx(X_, { style: { position: "absolute", top: 0, left: 0, right: 0 } }) : !e && !this.props.alive ? /* @__PURE__ */ A.jsx("div", { style: { position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }, children: /* @__PURE__ */ A.jsx("p", { children: j.t("kisshome-defender_Adapter is not running") }) }) : null;
     }
     updateHeight() {
       if (this.state.tab === "dataVolumePerDay" && this.refDataVolumePerDay.current) {
@@ -74176,7 +74176,7 @@ yyyy`);
           // @ts-expect-error fix later
           alignWithLabel: !0
         },
-        name: B.t("kisshome-defender_Data volume"),
+        name: j.t("kisshome-defender_Data volume"),
         // Y-Achsen-Beschreibung
         nameLocation: "end",
         // Position: 'start', 'middle', 'end'
@@ -74230,7 +74230,7 @@ yyyy`);
           axisLabel: {
             formatter: (d) => new Date(d).toLocaleDateString(this.props.lang, { weekday: "short" })
           },
-          name: this.props.isMobile ? "" : B.t("kisshome-defender_Weekday"),
+          name: this.props.isMobile ? "" : j.t("kisshome-defender_Weekday"),
           // Y-Achsen-Beschreibung
           nameLocation: "end",
           // Position: 'start', 'middle', 'end'
@@ -74279,7 +74279,7 @@ yyyy`);
                 });
               },
               displayEmpty: !0,
-              renderValue: (i) => (i = i.filter((s) => s !== "__selector__"), i?.length ? i.length === a.length ? B.t("kisshome-defender_All selected") : i.length > 1 ? B.t("kisshome-defender_Selected: %s", i.length) : i[0] : B.t("kisshome-defender_Nothing selected")),
+              renderValue: (i) => (i = i.filter((s) => s !== "__selector__"), i?.length ? i.length === a.length ? j.t("kisshome-defender_All selected") : i.length > 1 ? j.t("kisshome-defender_Selected: %s", i.length) : i[0] : j.t("kisshome-defender_Nothing selected")),
               onChange: (i) => {
                 const s = i.target.value;
                 if (console.log("Select onChange", s), s === "__selector__")
@@ -74344,7 +74344,7 @@ yyyy`);
                           indeterminate: r > 0 && r < Object.keys(this.state.legendMacs).length
                         }
                       ),
-                      /* @__PURE__ */ A.jsx(H6, { primary: B.t("kisshome-defender_All") })
+                      /* @__PURE__ */ A.jsx(H6, { primary: j.t("kisshome-defender_All") })
                     ]
                   }
                 ),
@@ -74394,7 +74394,7 @@ yyyy`);
                   opts: { renderer: "svg" }
                 }
               ) : null,
-              r ? null : /* @__PURE__ */ A.jsx("div", { style: { padding: 16, paddingLeft: 32 }, children: B.t("kisshome-defender_No data available") })
+              r ? null : /* @__PURE__ */ A.jsx("div", { style: { padding: 16, paddingLeft: 32 }, children: j.t("kisshome-defender_No data available") })
             ]
           }
         )
@@ -74459,7 +74459,7 @@ yyyy`);
           // @ts-expect-error fix later
           alignWithLabel: !0
         },
-        name: B.t("kisshome-defender_Data volume"),
+        name: j.t("kisshome-defender_Data volume"),
         // Y-Achsen-Beschreibung
         nameLocation: "end",
         // Position: 'start', 'middle', 'end'
@@ -74513,7 +74513,7 @@ yyyy`);
           axisLabel: {
             formatter: (d) => new Date(d).toLocaleDateString(this.props.lang, { weekday: "short" })
           },
-          name: B.t("kisshome-defender_Weekday"),
+          name: j.t("kisshome-defender_Weekday"),
           // Y-Achsen-Beschreibung
           nameLocation: "end",
           // Position: 'start', 'middle', 'end'
@@ -74550,7 +74550,7 @@ yyyy`);
                   opts: { renderer: "svg" }
                 }
               ) : null,
-              r ? null : /* @__PURE__ */ A.jsx("div", { style: { padding: 16, paddingLeft: 32 }, children: B.t("kisshome-defender_No data available") })
+              r ? null : /* @__PURE__ */ A.jsx("div", { style: { padding: 16, paddingLeft: 32 }, children: j.t("kisshome-defender_No data available") })
             ]
           }
         )
@@ -74570,20 +74570,20 @@ yyyy`);
       }
       return /* @__PURE__ */ A.jsxs("div", { style: { fontSize: e }, children: [
         this.state.deviceMostDataVolume || this.state.deviceMostCountries ? /* @__PURE__ */ A.jsxs("div", { style: { fontWeight: "bold" }, children: [
-          this.props.isMobile ? B.t("kisshome-defender_Statistics over the past 7 days") : B.t(
+          this.props.isMobile ? j.t("kisshome-defender_Statistics over the past 7 days") : j.t(
             "kisshome-defender_Statistics on aggregated transmitted data volume over the past 7 days"
           ),
           ":"
         ] }) : null,
         this.state.deviceMostDataVolume ? /* @__PURE__ */ A.jsxs("div", { children: [
           "- ",
-          B.t("kisshome-defender_Device with the highest transmitted data volume"),
+          j.t("kisshome-defender_Device with the highest transmitted data volume"),
           ":",
           /* @__PURE__ */ A.jsx("span", { style: { fontWeight: "bold", marginLeft: 8 }, children: this.state.deviceMostDataVolume })
         ] }) : null,
         this.state.deviceMostCountries ? /* @__PURE__ */ A.jsxs("div", { children: [
           "- ",
-          B.t("kisshome-defender_Device that contacted the most countries"),
+          j.t("kisshome-defender_Device that contacted the most countries"),
           ":",
           /* @__PURE__ */ A.jsx("span", { style: { fontWeight: "bold", marginLeft: 8 }, children: this.state.deviceMostCountries })
         ] }) : null
@@ -74632,7 +74632,7 @@ yyyy`);
                   {
                     value: "dataVolumePerDevice",
                     style: { alignItems: "start", textTransform: "none" },
-                    label: B.t("kisshome-defender_By day")
+                    label: j.t("kisshome-defender_By day")
                   }
                 ),
                 /* @__PURE__ */ A.jsx(
@@ -74640,7 +74640,7 @@ yyyy`);
                   {
                     value: "dataVolumePerDay",
                     style: { alignItems: "start", textTransform: "none", textAlign: "left" },
-                    label: B.t("kisshome-defender_By day (aggregated)")
+                    label: j.t("kisshome-defender_By day (aggregated)")
                   }
                 ),
                 /* @__PURE__ */ A.jsx(
@@ -74648,7 +74648,7 @@ yyyy`);
                   {
                     value: "dataVolumePerCountry",
                     style: { alignItems: "start", textTransform: "none" },
-                    label: B.t("kisshome-defender_By country")
+                    label: j.t("kisshome-defender_By country")
                   }
                 ),
                 /* @__PURE__ */ A.jsx(
@@ -74656,7 +74656,7 @@ yyyy`);
                   {
                     value: "dataVolumePerDaytime",
                     style: { alignItems: "start", textTransform: "none" },
-                    label: B.t("kisshome-defender_By day-time")
+                    label: j.t("kisshome-defender_By day-time")
                   }
                 )
               ]
@@ -74745,7 +74745,7 @@ yyyy`);
                               width: "calc(100% - 40px)",
                               textOverflow: "ellipsis"
                             },
-                            children: this.props.isMobile ? B.t("kisshome-defender_Last week statistics") : B.t("kisshome-defender_Statistics about Data-volume in the last week")
+                            children: this.props.isMobile ? j.t("kisshome-defender_Last week statistics") : j.t("kisshome-defender_Statistics about Data-volume in the last week")
                           }
                         ),
                         this.renderChart()
@@ -74776,7 +74776,7 @@ yyyy`);
             )
           ]
         }
-      ) : /* @__PURE__ */ A.jsx("div", { style: { width: "calc(100% - 32px)", height: "calc(100% - 32px)", display: "flex", padding: 16 }, children: /* @__PURE__ */ A.jsx("p", { children: B.t("kisshome-defender_Instance is not running") }) });
+      ) : /* @__PURE__ */ A.jsx("div", { style: { width: "calc(100% - 32px)", height: "calc(100% - 32px)", display: "flex", padding: 16 }, children: /* @__PURE__ */ A.jsx("p", { children: j.t("kisshome-defender_Instance is not running") }) });
     }
   }
   const zd = {
@@ -74797,6 +74797,7 @@ yyyy`);
   class Uo extends N.Component {
     updateTimeout = null;
     showTimeout = null;
+    triggerWriteInterval = null;
     constructor(e) {
       super(e), this.state = {
         detailed: !1,
@@ -74807,14 +74808,15 @@ yyyy`);
         recordingCaptured: 0,
         recordingRunning: !1,
         recordingNextWrite: 0,
+        lastTriggerWrite: 0,
         detectionRunning: !1,
         showDetectionWithUUID: this.props.showDetectionWithUUID || "",
         showTooltip: null
       };
     }
     async componentDidMount() {
-      const e = `kisshome-defender.${this.props.instance}.info.recording.running`, r = `kisshome-defender.${this.props.instance}.info.recording.capturedFull`, n = `kisshome-defender.${this.props.instance}.info.recording.nextWrite`, a = `kisshome-defender.${this.props.instance}.info.analysis.running`, o = await this.props.socket.getState(e), i = await this.props.socket.getState(r), s = await this.props.socket.getState(n), l = await this.props.socket.getState(a);
-      this.onRecordingRunningChanged(e, o), this.onRecordingCapturedChanged(r, i), this.onRecordingNextTimeChanged(n, s), this.onDetectionRunningChanged(a, l), await this.props.socket.subscribeState(e, this.onRecordingRunningChanged), await this.props.socket.subscribeState(r, this.onRecordingCapturedChanged), await this.props.socket.subscribeState(n, this.onRecordingNextTimeChanged), await this.props.socket.subscribeState(a, this.onDetectionRunningChanged), this.state.showDetectionWithUUID && this.setState({ openedItem: this.state.showDetectionWithUUID, detailed: !0 }, () => {
+      const e = `kisshome-defender.${this.props.instance}.info.recording.running`, r = `kisshome-defender.${this.props.instance}.info.recording.capturedFull`, n = `kisshome-defender.${this.props.instance}.info.recording.nextWrite`, a = `kisshome-defender.${this.props.instance}.info.analysis.running`, o = `kisshome-defender.${this.props.instance}.info.recording.triggerWrite`, i = await this.props.socket.getState(e), s = await this.props.socket.getState(r), l = await this.props.socket.getState(n), c = await this.props.socket.getState(a), d = await this.props.socket.getState(o);
+      this.onRecordingRunningChanged(e, i), this.onRecordingCapturedChanged(r, s), this.onRecordingNextTimeChanged(n, l), this.onDetectionRunningChanged(a, c), this.onTriggerWriteChanged(o, d), await this.props.socket.subscribeState(e, this.onRecordingRunningChanged), await this.props.socket.subscribeState(r, this.onRecordingCapturedChanged), await this.props.socket.subscribeState(n, this.onRecordingNextTimeChanged), await this.props.socket.subscribeState(a, this.onDetectionRunningChanged), await this.props.socket.subscribeState(o, this.onTriggerWriteChanged), this.state.showDetectionWithUUID && this.setState({ openedItem: this.state.showDetectionWithUUID, detailed: !0 }, () => {
         this.props.onResultsDialogOpen(!0), this.props.reportUxEvent({
           id: "kisshome-defender-detection",
           event: "show",
@@ -74864,8 +74866,21 @@ yyyy`);
         detectionRunning: !!r?.val
       });
     };
+    onTriggerWriteChanged = (e, r) => {
+      (r?.lc || 0) !== this.state.lastTriggerWrite && this.setState(
+        {
+          lastTriggerWrite: r?.lc || 0
+        },
+        () => {
+          this.state.lastTriggerWrite + 12e4 >= Date.now() ? this.triggerWriteInterval || (this.triggerWriteInterval = setInterval(this.onTriggerWriteInterval, 1e3)) : this.triggerWriteInterval && (clearInterval(this.triggerWriteInterval), this.triggerWriteInterval = null);
+        }
+      );
+    };
+    onTriggerWriteInterval = () => {
+      this.state.lastTriggerWrite + 12e4 >= Date.now() ? this.forceUpdate() : this.triggerWriteInterval && (clearInterval(this.triggerWriteInterval), this.triggerWriteInterval = null);
+    };
     componentWillUnmount() {
-      this.showTimeout && (clearTimeout(this.showTimeout), this.showTimeout = null), this.updateTimeout && (clearTimeout(this.updateTimeout), this.updateTimeout = null), this.props.socket.unsubscribeState(
+      this.showTimeout && (clearTimeout(this.showTimeout), this.showTimeout = null), this.triggerWriteInterval && (clearInterval(this.triggerWriteInterval), this.triggerWriteInterval = null), this.updateTimeout && (clearTimeout(this.updateTimeout), this.updateTimeout = null), this.props.socket.unsubscribeState(
         `kisshome-defender.${this.props.instance}.info.recording.running`,
         this.onRecordingRunningChanged
       ), this.props.socket.unsubscribeState(
@@ -74876,6 +74891,9 @@ yyyy`);
         this.onRecordingCapturedChanged
       ), this.props.socket.unsubscribeState(
         `kisshome-defender.${this.props.instance}.info.analysis.running`,
+        this.onRecordingCapturedChanged
+      ), this.props.socket.unsubscribeState(
+        `kisshome-defender.${this.props.instance}.info.analysis.triggerWrite`,
         this.onRecordingCapturedChanged
       );
     }
@@ -74890,13 +74908,13 @@ yyyy`);
       }
       if (!e)
         return /* @__PURE__ */ A.jsxs("div", { className: "last-detection", children: [
-          /* @__PURE__ */ A.jsx("h3", { children: B.t("kisshome-defender_Last result") }),
-          /* @__PURE__ */ A.jsx("div", { children: B.t("kisshome-defender_No results yet exist") })
+          /* @__PURE__ */ A.jsx("h3", { children: j.t("kisshome-defender_Last result") }),
+          /* @__PURE__ */ A.jsx("div", { children: j.t("kisshome-defender_No results yet exist") })
         ] });
-      const r = Math.floor((this.state.recordingNextWrite - Date.now()) / 1e3), n = B.t(
+      const r = Math.floor((this.state.recordingNextWrite - Date.now()) / 1e3), n = j.t(
         "kisshome-defender_In %s minutes or when the maximal file size is reached",
         r > 120 ? Math.round(r / 60) : (Math.round(r / 6) / 10).toString().replace(".", ",")
-      ), a = B.t(
+      ), a = j.t(
         "kisshome-defender_%s of %s reached",
         Qa(this.state.recordingCaptured),
         "50MB"
@@ -74904,14 +74922,14 @@ yyyy`);
       return /* @__PURE__ */ A.jsxs("div", { className: "last-detection", children: [
         /* @__PURE__ */ A.jsxs("div", { style: zd.row, children: [
           /* @__PURE__ */ A.jsxs("div", { style: { ...zd.title, minWidth: this.props.isMobile ? void 0 : 250 }, children: [
-            B.t("kisshome-defender_Last control"),
+            j.t("kisshome-defender_Last control"),
             ":"
           ] }),
           /* @__PURE__ */ A.jsx("div", { style: zd.value, children: new Date(e.time).toLocaleString() })
         ] }),
         this.state.recordingRunning ? /* @__PURE__ */ A.jsxs("div", { style: zd.row, children: [
           /* @__PURE__ */ A.jsxs("div", { style: { ...zd.title, minWidth: this.props.isMobile ? void 0 : 250 }, children: [
-            B.t("kisshome-defender_Next control"),
+            j.t("kisshome-defender_Next control"),
             ":"
           ] }),
           /* @__PURE__ */ A.jsx("div", { style: zd.value, children: `${n} (${a})` })
@@ -74929,15 +74947,17 @@ yyyy`);
               flexDirection: this.props.isMobile ? "column" : void 0
             },
             children: [
-              /* @__PURE__ */ A.jsx(
+              /* @__PURE__ */ A.jsxs(
                 Gt,
                 {
                   style: {
                     maxWidth: this.props.isMobile ? void 0 : 300,
                     whiteSpace: "nowrap",
-                    width: this.props.isMobile ? "100%" : void 0
+                    width: this.props.isMobile ? "100%" : void 0,
+                    display: "flex",
+                    flexDirection: "column"
                   },
-                  disabled: this.state.detectionRunning,
+                  disabled: this.state.detectionRunning || this.state.lastTriggerWrite + 12e4 > Date.now(),
                   variant: "contained",
                   color: "primary",
                   onClick: async (o) => {
@@ -74946,13 +74966,18 @@ yyyy`);
                       event: "click",
                       ts: Date.now(),
                       isTouchEvent: Ct(o)
-                    }), await this.props.socket.sendTo(
-                      `kisshome-defender.${this.props.instance}`,
-                      "detectNow",
-                      {}
+                    }), await this.props.socket.setState(
+                      `kisshome-defender.${this.props.instance}.info.recording.triggerWrite`,
+                      !0
                     );
                   },
-                  children: B.t("kisshome-defender_Execute control now")
+                  children: [
+                    /* @__PURE__ */ A.jsx("div", { children: j.t("kisshome-defender_Execute control now") }),
+                    this.state.lastTriggerWrite + 12e4 > Date.now() ? /* @__PURE__ */ A.jsx("div", { style: { fontSize: 10, opacity: 0.7, fontStyle: "italic", textTransform: "none" }, children: j.t(
+                      "kisshome-defender_Try again in %s sec.",
+                      Math.round((this.state.lastTriggerWrite + 12e4 - Date.now()) / 1e3)
+                    ) }) : null
+                  ]
                 }
               ),
               /* @__PURE__ */ A.jsx(
@@ -74972,7 +74997,7 @@ yyyy`);
     }
     static secondsToMs(e) {
       const r = Math.floor(e / 60), a = (e % 60).toString().padStart(2, "0");
-      return `${r}:${a} ${B.t("kisshome-defender_minutes")}`;
+      return `${r}:${a} ${j.t("kisshome-defender_minutes")}`;
     }
     static secondsToHms(e) {
       e = Number(e);
@@ -74981,11 +75006,11 @@ yyyy`);
     }
     renderStatusReport(e) {
       if (!e.todayReport)
-        return /* @__PURE__ */ A.jsx("div", { children: B.t("kisshome-defender_No status report available.") });
-      const r = [], n = B.t("kisshome-defender_Status Report");
+        return /* @__PURE__ */ A.jsx("div", { children: j.t("kisshome-defender_No status report available.") });
+      const r = [], n = j.t("kisshome-defender_Status Report");
       if (this.props.secondPeriod)
         r.push(
-          /* @__PURE__ */ A.jsx("div", { children: B.t(
+          /* @__PURE__ */ A.jsx("div", { children: j.t(
             "kisshome-defender_Below you will find information about checks on %s.",
             new Date(e.time).toLocaleDateString()
           ) })
@@ -74993,7 +75018,7 @@ yyyy`);
           /* @__PURE__ */ A.jsxs("div", { style: { marginTop: 20 }, children: [
             "- ",
             /* @__PURE__ */ A.jsxs("span", { style: { fontWeight: "bold" }, children: [
-              B.t("kisshome-defender_Average check time"),
+              j.t("kisshome-defender_Average check time"),
               ":"
             ] }),
             " ",
@@ -75003,7 +75028,7 @@ yyyy`);
           /* @__PURE__ */ A.jsxs("div", { children: [
             "- ",
             /* @__PURE__ */ A.jsxs("span", { style: { fontWeight: "bold" }, children: [
-              B.t("kisshome-defender_Minimum check time"),
+              j.t("kisshome-defender_Minimum check time"),
               ":"
             ] }),
             " ",
@@ -75013,7 +75038,7 @@ yyyy`);
           /* @__PURE__ */ A.jsxs("div", { children: [
             "- ",
             /* @__PURE__ */ A.jsxs("span", { style: { fontWeight: "bold" }, children: [
-              B.t("kisshome-defender_Maximum check time"),
+              j.t("kisshome-defender_Maximum check time"),
               ":"
             ] }),
             " ",
@@ -75023,23 +75048,23 @@ yyyy`);
           /* @__PURE__ */ A.jsxs("div", { children: [
             "- ",
             /* @__PURE__ */ A.jsxs("span", { style: { fontWeight: "bold" }, children: [
-              B.t("kisshome-defender_Duration of checks"),
+              j.t("kisshome-defender_Duration of checks"),
               ":"
             ] }),
             " ",
             Uo.secondsToMs(Math.round(e.todayReport.totalDuration / 1e3))
           ] })
         ), r.push(
-          /* @__PURE__ */ A.jsx("div", { style: { marginTop: 20 }, children: B.t(
+          /* @__PURE__ */ A.jsx("div", { style: { marginTop: 20 }, children: j.t(
             "kisshome-defender_No anomalies were detected during the checks. Therefore, everything is in order."
           ) })
         );
       else {
         let a;
-        this.props.group === "A" ? a = B.t(
+        this.props.group === "A" ? a = j.t(
           "kisshome-defender_<strong>No anomalies</strong> were detected during the checks on %s. Therefore, everything is in order.",
           new Date(e.time).toLocaleDateString()
-        ) : a = B.t(
+        ) : a = j.t(
           "kisshome-defender_During the checks on %s, a <strong>maximum anomaly score of %s</strong> was detected. Therefore, everything is in order.",
           new Date(e.time).toLocaleDateString(),
           e.todayReport.maxScore
@@ -75070,13 +75095,13 @@ yyyy`);
     renderOneDetectionDetailsTable(e, r, n) {
       return /* @__PURE__ */ A.jsxs(sie, { size: "small", children: [
         /* @__PURE__ */ A.jsxs(wie, { style: { backgroundColor: this.props.themeType === "dark" ? "#505050" : "#d3d3d3" }, children: [
-          /* @__PURE__ */ A.jsx(nl, { style: { width: 250 }, children: B.t("kisshome-defender_Device") }),
-          /* @__PURE__ */ A.jsx(nl, { style: { width: 120 }, children: B.t("kisshome-defender_Number of packets") }),
+          /* @__PURE__ */ A.jsx(nl, { style: { width: 250 }, children: j.t("kisshome-defender_Device") }),
+          /* @__PURE__ */ A.jsx(nl, { style: { width: 120 }, children: j.t("kisshome-defender_Number of packets") }),
           /* @__PURE__ */ A.jsx(cg, { title: r, children: /* @__PURE__ */ A.jsxs(nl, { style: { fontWeight: "bold", width: 100 }, children: [
-            B.t("kisshome-defender_Anomaly Score"),
+            j.t("kisshome-defender_Anomaly Score"),
             "*"
           ] }) }),
-          /* @__PURE__ */ A.jsx(nl, { children: B.t("kisshome-defender_Status") })
+          /* @__PURE__ */ A.jsx(nl, { children: j.t("kisshome-defender_Status") })
         ] }),
         /* @__PURE__ */ A.jsx(pie, { children: n.map(
           (a) => /* @__PURE__ */ A.jsxs(Mie, { children: [
@@ -75102,7 +75127,7 @@ yyyy`);
                   backgroundColor: e[a].type ? "red" : "green",
                   color: "white"
                 },
-                children: this.props.group === "A" || this.props.secondPeriod ? e[a].type ? B.t("kisshome-defender_Anomaly") : B.t("kisshome-defender_No anomaly") : `${e[a].score}/100`
+                children: this.props.group === "A" || this.props.secondPeriod ? e[a].type ? j.t("kisshome-defender_Anomaly") : j.t("kisshome-defender_No anomaly") : `${e[a].score}/100`
               }
             ),
             /* @__PURE__ */ A.jsxs(
@@ -75125,7 +75150,7 @@ yyyy`);
                     }
                   ),
                   " ",
-                  e[a].description.length ? e[a].description.join(", ") : B.t("kisshome-defender_Ok")
+                  e[a].description.length ? e[a].description.join(", ") : j.t("kisshome-defender_Ok")
                 ]
               }
             )
@@ -75156,7 +75181,7 @@ yyyy`);
               children: [
                 /* @__PURE__ */ A.jsxs("div", { style: { display: "flex", flexDirection: "row", gap: 8 }, children: [
                   /* @__PURE__ */ A.jsxs("div", { children: [
-                    B.t("kisshome-defender_Device"),
+                    j.t("kisshome-defender_Device"),
                     ":"
                   ] }),
                   e[a].name ? /* @__PURE__ */ A.jsxs("div", { children: [
@@ -75176,7 +75201,7 @@ yyyy`);
                 ] }),
                 /* @__PURE__ */ A.jsxs("div", { style: { display: "flex", flexDirection: "row", gap: 8 }, children: [
                   /* @__PURE__ */ A.jsxs("div", { children: [
-                    B.t("kisshome-defender_Number of packets"),
+                    j.t("kisshome-defender_Number of packets"),
                     ":"
                   ] }),
                   /* @__PURE__ */ A.jsx("div", { children: e[a].statistics?.data_volume ? e[a].statistics.data_volume.packet_count : "--" })
@@ -75197,12 +75222,12 @@ yyyy`);
                           style: { fontWeight: "bold" },
                           onClick: (o) => this.setState({ showTooltip: o.currentTarget }),
                           children: [
-                            B.t("kisshome-defender_Score"),
+                            j.t("kisshome-defender_Score"),
                             ":"
                           ]
                         }
                       ),
-                      /* @__PURE__ */ A.jsx("div", { children: this.props.group === "A" || this.props.secondPeriod ? e[a].type ? B.t("kisshome-defender_Anomaly") : B.t("kisshome-defender_No anomaly") : `${e[a].score}/100` })
+                      /* @__PURE__ */ A.jsx("div", { children: this.props.group === "A" || this.props.secondPeriod ? e[a].type ? j.t("kisshome-defender_Anomaly") : j.t("kisshome-defender_No anomaly") : `${e[a].score}/100` })
                     ]
                   }
                 ),
@@ -75219,7 +75244,7 @@ yyyy`);
                     },
                     children: [
                       /* @__PURE__ */ A.jsxs("div", { children: [
-                        B.t("kisshome-defender_Status"),
+                        j.t("kisshome-defender_Status"),
                         ":"
                       ] }),
                       /* @__PURE__ */ A.jsxs("div", { style: { display: "flex", gap: 5, alignItems: "center" }, children: [
@@ -75232,7 +75257,7 @@ yyyy`);
                           }
                         ),
                         " ",
-                        e[a].description.length ? e[a].description.join(", ") : B.t("kisshome-defender_Ok")
+                        e[a].description.length ? e[a].description.join(", ") : j.t("kisshome-defender_Ok")
                       ] })
                     ]
                   }
@@ -75246,17 +75271,17 @@ yyyy`);
     }
     renderOneDetectionDetails(e) {
       let r, n;
-      if (e.isAlert ? (n = B.t("kisshome-defender_Unusual activity detected!"), r = B.t(
+      if (e.isAlert ? (n = j.t("kisshome-defender_Unusual activity detected!"), r = j.t(
         "kisshome-defender_Your smart devices were checked on %s at %s. Unusual activity was detected on at least one device.",
         new Date(e.time).toLocaleDateString(),
         new Date(e.time).toLocaleTimeString()
-      )) : (r = B.t(
+      )) : (r = j.t(
         "kisshome-defender_Your smart devices were checked on %s at %s. No unusual activities were detected.",
         new Date(e.time).toLocaleDateString(),
         new Date(e.time).toLocaleTimeString()
-      ), n = B.t("kisshome-defender_Everything is OK!")), this.props.secondPeriod) {
+      ), n = j.t("kisshome-defender_Everything is OK!")), this.props.secondPeriod) {
         const s = Math.round(e.statistics.analysisDurationMs / 1e3);
-        r += " ", r += B.t("kisshome-defender_The control time was %s minutes.", Uo.secondsToHms(s));
+        r += " ", r += j.t("kisshome-defender_The control time was %s minutes.", Uo.secondsToHms(s));
         const l = /* @__PURE__ */ new Date();
         l.setHours(0, 0, 0, 0);
         const c = this.props.results?.results.filter(
@@ -75272,7 +75297,7 @@ yyyy`);
               {
                 style: { fontWeight: "bold" },
                 children: [
-                  B.t("kisshome-defender_Scan details (today)"),
+                  j.t("kisshome-defender_Scan details (today)"),
                   ":"
                 ]
               },
@@ -75281,53 +75306,53 @@ yyyy`);
             /* @__PURE__ */ A.jsxs("div", { children: [
               /* @__PURE__ */ A.jsxs("span", { style: { fontWeight: "bold" }, children: [
                 "- ",
-                B.t("kisshome-defender_Average control time"),
+                j.t("kisshome-defender_Average control time"),
                 ":"
               ] }),
               " ",
               /* @__PURE__ */ A.jsx("span", { children: Uo.secondsToHms(f) }),
               /* @__PURE__ */ A.jsxs("span", { children: [
                 " ",
-                B.t("kisshome-defender_minutes")
+                j.t("kisshome-defender_minutes")
               ] })
             ] }, "details_avg"),
             /* @__PURE__ */ A.jsxs("div", { children: [
               /* @__PURE__ */ A.jsxs("span", { style: { fontWeight: "bold" }, children: [
                 "- ",
-                B.t("kisshome-defender_Minimal control time"),
+                j.t("kisshome-defender_Minimal control time"),
                 ":"
               ] }),
               " ",
               /* @__PURE__ */ A.jsx("span", { children: Uo.secondsToHms(h) }),
               /* @__PURE__ */ A.jsxs("span", { children: [
                 " ",
-                B.t("kisshome-defender_minutes")
+                j.t("kisshome-defender_minutes")
               ] })
             ] }, "details_min"),
             /* @__PURE__ */ A.jsxs("div", { children: [
               /* @__PURE__ */ A.jsxs("span", { style: { fontWeight: "bold" }, children: [
                 "- ",
-                B.t("kisshome-defender_Maximal control time"),
+                j.t("kisshome-defender_Maximal control time"),
                 ":"
               ] }),
               " ",
               /* @__PURE__ */ A.jsx("span", { children: Uo.secondsToHms(v) }),
               /* @__PURE__ */ A.jsxs("span", { children: [
                 " ",
-                B.t("kisshome-defender_minutes")
+                j.t("kisshome-defender_minutes")
               ] })
             ] }, "details_max"),
             /* @__PURE__ */ A.jsxs("div", { children: [
               /* @__PURE__ */ A.jsxs("span", { style: { fontWeight: "bold" }, children: [
                 "- ",
-                B.t("kisshome-defender_Duration of controls"),
+                j.t("kisshome-defender_Duration of controls"),
                 ":"
               ] }),
               " ",
               /* @__PURE__ */ A.jsx("span", { children: Uo.secondsToHms(u) }),
               /* @__PURE__ */ A.jsxs("span", { children: [
                 " ",
-                B.t("kisshome-defender_minutes")
+                j.t("kisshome-defender_minutes")
               ] })
             ] }, "details_total")
           ];
@@ -75336,16 +75361,16 @@ yyyy`);
       const a = /* @__PURE__ */ A.jsxs("div", { style: { fontSize: "1rem" }, children: [
         /* @__PURE__ */ A.jsxs("b", { children: [
           "*",
-          B.t("kisshome-defender_Anomaly Score")
+          j.t("kisshome-defender_Anomaly Score")
         ] }),
         ": ",
-        B.t("kisshome-defender_tooltip_score_1"),
+        j.t("kisshome-defender_tooltip_score_1"),
         /* @__PURE__ */ A.jsx("br", {}),
         /* @__PURE__ */ A.jsx("br", {}),
-        B.t("kisshome-defender_tooltip_score_2"),
+        j.t("kisshome-defender_tooltip_score_2"),
         /* @__PURE__ */ A.jsx("br", {}),
         /* @__PURE__ */ A.jsx("br", {}),
-        B.t("kisshome-defender_tooltip_score_3")
+        j.t("kisshome-defender_tooltip_score_3")
       ] }), o = {};
       e.detections?.forEach((s) => {
         const l = s.mac.toLowerCase(), c = this.props.results?.names?.[l];
@@ -75439,7 +75464,7 @@ yyyy`);
                 {
                   component: "span",
                   style: { fontSize: this.props.isMobile ? "0.9rem" : void 0 },
-                  children: e.todayReport ? B.t("kisshome-defender_Status report at %s", new Date(e.time).toLocaleString()) : B.t("kisshome-defender_Test result at %s", new Date(e.time).toLocaleString())
+                  children: e.todayReport ? j.t("kisshome-defender_Status report at %s", new Date(e.time).toLocaleString()) : j.t("kisshome-defender_Test result at %s", new Date(e.time).toLocaleString())
                 }
               ),
               /* @__PURE__ */ A.jsx("div", { style: { display: "none" }, children: e.uuid })
@@ -75477,13 +75502,13 @@ yyyy`);
           fullWidth: !0,
           fullScreen: this.props.isMobile,
           children: [
-            /* @__PURE__ */ A.jsx(ti, { children: B.t("kisshome-defender_Results") }),
-            /* @__PURE__ */ A.jsx(ko, { children: e ? e.map((a) => this.renderOneDetection(a)) : /* @__PURE__ */ A.jsx("p", { children: B.t("kisshome-defender_No results available") }) }),
+            /* @__PURE__ */ A.jsx(ti, { children: j.t("kisshome-defender_Results") }),
+            /* @__PURE__ */ A.jsx(ko, { children: e ? e.map((a) => this.renderOneDetection(a)) : /* @__PURE__ */ A.jsx("p", { children: j.t("kisshome-defender_No results available") }) }),
             /* @__PURE__ */ A.jsxs(So, { children: [
               r?.length ? /* @__PURE__ */ A.jsx(
                 xt,
                 {
-                  label: B.t("kisshome-defender_Show only alarms and warnings"),
+                  label: j.t("kisshome-defender_Show only alarms and warnings"),
                   checked: this.state.showOnlyAlarmsAndWarnings,
                   sx: {
                     "& .MuiTypography-root": { fontSize: this.props.isMobile ? "1rem" : "1.3rem" }
@@ -75516,7 +75541,7 @@ yyyy`);
                   color: "primary",
                   onClick: n,
                   startIcon: this.props.isMobile ? null : /* @__PURE__ */ A.jsx(Zo, {}),
-                  children: this.props.isMobile ? /* @__PURE__ */ A.jsx(Zo, {}) : B.t("kisshome-defender_Close")
+                  children: this.props.isMobile ? /* @__PURE__ */ A.jsx(Zo, {}) : j.t("kisshome-defender_Close")
                 }
               )
             ] })
@@ -75536,7 +75561,7 @@ yyyy`);
               flexDirection: "column",
               padding: 16
             },
-            children: /* @__PURE__ */ A.jsx("p", { children: B.t("kisshome-defender_Instance is not running") })
+            children: /* @__PURE__ */ A.jsx("p", { children: j.t("kisshome-defender_Instance is not running") })
           }
         );
       const e = this.props.results?.results || [], r = e.filter(
@@ -75631,10 +75656,10 @@ yyyy`);
                           isTouchEvent: Ct(a)
                         }), this.setState({ detailed: !0 }, () => this.props.onResultsDialogOpen(!0));
                       },
-                      children: B.t("kisshome-defender_Show results")
+                      children: j.t("kisshome-defender_Show results")
                     }
                   ),
-                  n ? `${B.t("kisshome-defender_New problem detected")}: ${n}` : B.t("kisshome-defender_Everything OK"),
+                  n ? `${j.t("kisshome-defender_New problem detected")}: ${n}` : j.t("kisshome-defender_Everything OK"),
                   /* @__PURE__ */ A.jsx(
                     Ho,
                     {
@@ -75706,7 +75731,7 @@ yyyy`);
     renderDesktopScreen(e) {
       return /* @__PURE__ */ A.jsxs(A.Fragment, { children: [
         this.state.adminLink ? /* @__PURE__ */ A.jsxs("div", { style: { width: "100%", display: "flex", alignItems: "center", gap: 16 }, children: [
-          /* @__PURE__ */ A.jsx("div", { style: { fontWeight: "bold", minWidth: 280 }, children: B.t("kisshome-defender_Manage monitored devices") }),
+          /* @__PURE__ */ A.jsx("div", { style: { fontWeight: "bold", minWidth: 280 }, children: j.t("kisshome-defender_Manage monitored devices") }),
           /* @__PURE__ */ A.jsx(
             U6,
             {
@@ -75721,12 +75746,12 @@ yyyy`);
                   isTouchEvent: Ct(r)
                 });
               },
-              children: B.t("kisshome-defender_Open in Admin")
+              children: j.t("kisshome-defender_Open in Admin")
             }
           )
         ] }) : null,
         /* @__PURE__ */ A.jsxs("div", { style: { width: "100%", display: "flex", alignItems: "center", gap: 16 }, children: [
-          /* @__PURE__ */ A.jsx("div", { style: { fontWeight: "bold", minWidth: 280 }, children: B.t("kisshome-defender_Protection enabled") }),
+          /* @__PURE__ */ A.jsx("div", { style: { fontWeight: "bold", minWidth: 280 }, children: j.t("kisshome-defender_Protection enabled") }),
           /* @__PURE__ */ A.jsx(
             g$,
             {
@@ -75772,7 +75797,7 @@ yyyy`);
               marginRight: 32
             },
             children: [
-              /* @__PURE__ */ A.jsx("div", { style: { fontWeight: "bold", minWidth: 280 }, children: B.t("kisshome-defender_Save threshold in seconds") }),
+              /* @__PURE__ */ A.jsx("div", { style: { fontWeight: "bold", minWidth: 280 }, children: j.t("kisshome-defender_Save threshold in seconds") }),
               /* @__PURE__ */ A.jsx(
                 m$,
                 {
@@ -75780,27 +75805,27 @@ yyyy`);
                   min: 2,
                   max: 60,
                   valueLabelDisplay: "on",
-                  valueLabelFormat: (r) => B.t("kisshome-defender_%s minutes", r),
+                  valueLabelFormat: (r) => j.t("kisshome-defender_%s minutes", r),
                   marks: [
                     {
                       value: 2,
-                      label: B.t("kisshome-defender_%s minutes", 2)
+                      label: j.t("kisshome-defender_%s minutes", 2)
                     },
                     {
                       value: 15,
-                      label: B.t("kisshome-defender_%s minutes", 15)
+                      label: j.t("kisshome-defender_%s minutes", 15)
                     },
                     {
                       value: 30,
-                      label: B.t("kisshome-defender_%s minutes", 30)
+                      label: j.t("kisshome-defender_%s minutes", 30)
                     },
                     {
                       value: 45,
-                      label: B.t("kisshome-defender_%s minutes", 45)
+                      label: j.t("kisshome-defender_%s minutes", 45)
                     },
                     {
                       value: 60,
-                      label: B.t("kisshome-defender_one hour")
+                      label: j.t("kisshome-defender_one hour")
                     }
                   ],
                   value: Math.round(this.state.newConfig?.saveThresholdSeconds || 3600) / 60,
@@ -75868,7 +75893,7 @@ yyyy`);
                 }
               );
             },
-            children: B.t("kisshome-defender_Apply new settings")
+            children: j.t("kisshome-defender_Apply new settings")
           }
         ) })
       ] });
@@ -75886,7 +75911,7 @@ yyyy`);
               flexWrap: "wrap"
             },
             children: [
-              /* @__PURE__ */ A.jsx("div", { style: { fontWeight: "bold" }, children: B.t("kisshome-defender_Manage monitored devices") }),
+              /* @__PURE__ */ A.jsx("div", { style: { fontWeight: "bold" }, children: j.t("kisshome-defender_Manage monitored devices") }),
               /* @__PURE__ */ A.jsx(
                 U6,
                 {
@@ -75901,7 +75926,7 @@ yyyy`);
                       isTouchEvent: Ct(r)
                     });
                   },
-                  children: B.t("kisshome-defender_Open in Admin")
+                  children: j.t("kisshome-defender_Open in Admin")
                 }
               )
             ]
@@ -75920,7 +75945,7 @@ yyyy`);
               justifyContent: "flex-start"
             },
             children: [
-              /* @__PURE__ */ A.jsx("div", { style: { fontWeight: "bold" }, children: B.t("kisshome-defender_Protection enabled") }),
+              /* @__PURE__ */ A.jsx("div", { style: { fontWeight: "bold" }, children: j.t("kisshome-defender_Protection enabled") }),
               /* @__PURE__ */ A.jsx(
                 g$,
                 {
@@ -75968,7 +75993,7 @@ yyyy`);
               flexDirection: "column"
             },
             children: [
-              /* @__PURE__ */ A.jsx("div", { style: { fontWeight: "bold" }, children: B.t("kisshome-defender_Save threshold in seconds") }),
+              /* @__PURE__ */ A.jsx("div", { style: { fontWeight: "bold" }, children: j.t("kisshome-defender_Save threshold in seconds") }),
               /* @__PURE__ */ A.jsx(
                 m$,
                 {
@@ -75979,27 +76004,27 @@ yyyy`);
                   min: 2,
                   max: 60,
                   valueLabelDisplay: "auto",
-                  valueLabelFormat: (r) => B.t("kisshome-defender_%s minutes", r),
+                  valueLabelFormat: (r) => j.t("kisshome-defender_%s minutes", r),
                   marks: [
                     {
                       value: 2,
-                      label: B.t("kisshome-defender_%s minutes", 2)
+                      label: j.t("kisshome-defender_%s minutes", 2)
                     },
                     {
                       value: 15,
-                      label: B.t("kisshome-defender_%s minutes", 15)
+                      label: j.t("kisshome-defender_%s minutes", 15)
                     },
                     {
                       value: 30,
-                      label: B.t("kisshome-defender_%s minutes", 30)
+                      label: j.t("kisshome-defender_%s minutes", 30)
                     },
                     {
                       value: 45,
-                      label: B.t("kisshome-defender_%s minutes", 45)
+                      label: j.t("kisshome-defender_%s minutes", 45)
                     },
                     {
                       value: 60,
-                      label: B.t("kisshome-defender_one hour")
+                      label: j.t("kisshome-defender_one hour")
                     }
                   ],
                   value: Math.round(this.state.newConfig?.saveThresholdSeconds || 3600) / 60,
@@ -76067,7 +76092,7 @@ yyyy`);
                 }
               );
             },
-            children: B.t("kisshome-defender_Apply new settings")
+            children: j.t("kisshome-defender_Apply new settings")
           }
         ) })
       ] });
@@ -77709,13 +77734,13 @@ yyyy`);
       const M = t.tight, R = t.tShift[l], z = t.sCount[l], F = t.listIndent;
       if (t.listIndent = t.blkIndent, t.blkIndent = P, t.tight = !0, t.tShift[l] = T - t.bMarks[l], t.sCount[l] = E, T >= a && t.isEmpty(l + 1) ? t.line = Math.min(t.line + 2, r) : t.md.block.tokenize(t, l, r, !0), (!t.tight || b) && (c = !1), b = t.line - l > 1 && t.isEmpty(t.line - 1), t.blkIndent = t.listIndent, t.listIndent = F, t.tShift[l] = R, t.sCount[l] = z, t.tight = M, s = t.push("list_item_close", "li", -1), s.markup = String.fromCharCode(v), l = t.line, I[1] = l, l >= r || t.sCount[l] < t.blkIndent || t.sCount[l] - t.blkIndent >= 4)
         break;
-      let j = !1;
+      let B = !1;
       for (let W = 0, H = w.length; W < H; W++)
         if (w[W](t, l, r, !0)) {
-          j = !0;
+          B = !0;
           break;
         }
-      if (j)
+      if (B)
         break;
       if (u) {
         if (h = rF(t, l), h < 0)
@@ -79986,11 +80011,11 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
       for (const a of this.state.showNewAlert.detections)
         a.isAlert && e++;
       let r;
-      e === 1 ? r = B.t(
+      e === 1 ? r = j.t(
         "kisshome-defender_During the inspection on %s at %s, an anomaly was detected that could indicate a potential security risk.",
         new Date(this.state.showNewAlert.time).toLocaleDateString(),
         new Date(this.state.showNewAlert.time).toLocaleTimeString()
-      ) : r = B.t(
+      ) : r = j.t(
         "kisshome-defender_During the inspection on %s at %s, %s anomalies were detected that could indicate a potential security risk.",
         new Date(this.state.showNewAlert.time).toLocaleDateString(),
         new Date(this.state.showNewAlert.time).toLocaleTimeString(),
@@ -80047,7 +80072,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
                             data: "detections"
                           });
                         },
-                        children: B.t("kisshome-defender_Click here to get more information")
+                        children: j.t("kisshome-defender_Click here to get more information")
                       }
                     ),
                     /* @__PURE__ */ A.jsx(
@@ -80069,7 +80094,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
                             style: { marginLeft: 8 }
                           }
                         ),
-                        label: B.t("kisshome-defender_Do not show this alert again for 10 minutes")
+                        label: j.t("kisshome-defender_Do not show this alert again for 10 minutes")
                       }
                     )
                   ] }),
@@ -80090,7 +80115,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
                 variant: "contained",
                 color: "primary",
                 onClick: n,
-                children: B.t("kisshome-defender_Ok")
+                children: j.t("kisshome-defender_Ok")
               }
             ) })
           ]
@@ -80121,7 +80146,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
                   ...eg.tabLabel,
                   color: this.state.tab === "status" ? "#66ccff" : "white"
                 },
-                label: B.t("kisshome-defender_Status")
+                label: j.t("kisshome-defender_Status")
               }
             ),
             /* @__PURE__ */ A.jsx(
@@ -80132,7 +80157,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
                   ...eg.tabLabel,
                   color: this.state.tab === "statistics" ? "#66ccff" : "white"
                 },
-                label: B.t("kisshome-defender_Statistics")
+                label: j.t("kisshome-defender_Statistics")
               }
             ),
             /* @__PURE__ */ A.jsx(
@@ -80143,7 +80168,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
                   ...eg.tabLabel,
                   color: this.state.tab === "detections" ? "#66ccff" : "white"
                 },
-                label: B.t("kisshome-defender_Detections")
+                label: j.t("kisshome-defender_Detections")
               }
             ),
             /* @__PURE__ */ A.jsx("div", { style: { flexGrow: 1 } }),
@@ -80156,7 +80181,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
                   fontStyle: "italic",
                   color: this.state.tab === "settings" ? "#66ccff" : "white"
                 },
-                label: B.t("kisshome-defender_Settings")
+                label: j.t("kisshome-defender_Settings")
               }
             )
           ]
@@ -80191,7 +80216,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
                   });
                 },
                 selected: this.state.tab === "status",
-                children: B.t("kisshome-defender_Status")
+                children: j.t("kisshome-defender_Status")
               }
             ),
             /* @__PURE__ */ A.jsx(
@@ -80206,7 +80231,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
                   });
                 },
                 selected: this.state.tab === "statistics",
-                children: B.t("kisshome-defender_Statistics")
+                children: j.t("kisshome-defender_Statistics")
               }
             ),
             /* @__PURE__ */ A.jsx(
@@ -80221,7 +80246,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
                   });
                 },
                 selected: this.state.tab === "detections",
-                children: B.t("kisshome-defender_Detections")
+                children: j.t("kisshome-defender_Detections")
               }
             ),
             /* @__PURE__ */ A.jsx(L6, {}),
@@ -80238,7 +80263,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
                 },
                 style: { fontStyle: "italic" },
                 selected: this.state.tab === "settings",
-                children: B.t("kisshome-defender_Settings")
+                children: j.t("kisshome-defender_Settings")
               }
             )
           ]
@@ -85704,6 +85729,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     Time: Bxt,
     "Total bytes": "Total bytes",
     "Total detections %s in the last 7 days": "Total detections %s in the last 7 days",
+    "Try again in %s sec.": "Try again in %s sec.",
     Unknown: Wxt,
     "Unusual activities detected": "Unusual activities detected",
     "Unusual activity detected!": "Unusual activity detected!",
@@ -85838,6 +85864,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     Time: x6t,
     "Total bytes": "Gesamtbytes",
     "Total detections %s in the last 7 days": "Gesamterkennungen %s in den letzten 7 Tagen",
+    "Try again in %s sec.": "Erneut in %s Sek. versuchen",
     Unknown: S6t,
     "Unusual activities detected": "Ungewöhnliche Aktivität(en) erkannt",
     "Unusual activity detected!": "Ungewöhnliche Aktivität erkannt!",
@@ -85972,6 +85999,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     Time: nSt,
     "Total bytes": "Всего байт",
     "Total detections %s in the last 7 days": "Всего обнаружений %s за последние 7 дней",
+    "Try again in %s sec.": "Попробуйте еще раз через %s сек.",
     Unknown: aSt,
     "Unusual activities detected": "Обнаружена необычная активность",
     "Unusual activity detected!": "Обнаружена необычная активность!",
@@ -86106,6 +86134,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     Time: zSt,
     "Total bytes": "Total de bytes",
     "Total detections %s in the last 7 days": "Total de detecções %s nos últimos 7 dias",
+    "Try again in %s sec.": "Tente novamente em %s seg.",
     Unknown: FSt,
     "Unusual activities detected": "Atividades incomuns detectadas",
     "Unusual activity detected!": "Atividade incomum detectada!",
@@ -86240,6 +86269,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     Time: y8t,
     "Total bytes": "Totaal aantal bytes",
     "Total detections %s in the last 7 days": "Totaal aantal detecties %s in de afgelopen 7 dagen",
+    "Try again in %s sec.": "Probeer het over %s sec. opnieuw.",
     Unknown: b8t,
     "Unusual activities detected": "Ongebruikelijke activiteiten gedetecteerd",
     "Unusual activity detected!": "Ongebruikelijke activiteit gedetecteerd!",
@@ -86374,6 +86404,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     Time: ekt,
     "Total bytes": "Nombre total d'octets",
     "Total detections %s in the last 7 days": "Détections totales %s au cours des 7 derniers jours",
+    "Try again in %s sec.": "Réessayez dans %s sec.",
     Unknown: tkt,
     "Unusual activities detected": "Activités inhabituelles détectées",
     "Unusual activity detected!": "Activité inhabituelle détectée !",
@@ -86508,6 +86539,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     Time: Rkt,
     "Total bytes": "Byte totali",
     "Total detections %s in the last 7 days": "Rilevazioni totali %s negli ultimi 7 giorni",
+    "Try again in %s sec.": "Riprova tra %s sec.",
     Unknown: Nkt,
     "Unusual activities detected": "Rilevate attività insolite",
     "Unusual activity detected!": "Rilevata attività insolita!",
@@ -86642,6 +86674,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     Time: v9t,
     "Total bytes": "Total de bytes",
     "Total detections %s in the last 7 days": "Detecciones totales %s en los últimos 7 días",
+    "Try again in %s sec.": "Inténtalo de nuevo en %s seg.",
     Unknown: g9t,
     "Unusual activities detected": "Se detectaron actividades inusuales",
     "Unusual activity detected!": "¡Actividad inusual detectada!",
@@ -86776,6 +86809,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     Time: J9t,
     "Total bytes": "Całkowita liczba bajtów",
     "Total detections %s in the last 7 days": "Łączna liczba wykryć %s w ciągu ostatnich 7 dni",
+    "Try again in %s sec.": "Spróbuj ponownie za %s sek.",
     Unknown: Z9t,
     "Unusual activities detected": "Wykryto nietypowe działania",
     "Unusual activity detected!": "Wykryto nietypową aktywność!",
@@ -86910,6 +86944,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     Time: O7t,
     "Total bytes": "Загальна кількість байтів",
     "Total detections %s in the last 7 days": "Загальна кількість виявлень %s за останні 7 днів",
+    "Try again in %s sec.": "Спробуйте ще раз через %s сек.",
     Unknown: P7t,
     "Unusual activities detected": "Виявлено незвичайну активність",
     "Unusual activity detected!": "Виявлено незвичайну активність!",
@@ -87044,6 +87079,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
     Time: fCt,
     "Total bytes": "总字节数",
     "Total detections %s in the last 7 days": "过去 7 天内共检测 %s 次",
+    "Try again in %s sec.": "请在 %s 秒后重试。",
     Unknown: hCt,
     "Unusual activities detected": "检测到异常活动",
     "Unusual activity detected!": "检测到异常活动！",
@@ -87112,7 +87148,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
         r[o],
         a[o]
       )
-    ), B.setTranslations(r), (!t.protocol || !t.host || !t.port) && window.socketUrl) {
+    ), j.setTranslations(r), (!t.protocol || !t.host || !t.port) && window.socketUrl) {
       window.socketUrl.startsWith("https") ? t.protocol = "https:" : t.protocol = "http:";
       const [o, i] = window.socketUrl.split("/")[2].split(":");
       t.port = i || 80, t.host = o;
@@ -87141,7 +87177,7 @@ onclick="window._visQuestionnaireLinkClick('${a}');"
         socket: null,
         connected: !1,
         editMode: this.props.editMode === !0 || this.props.editMode === "true"
-      }, B.setLanguage(e.language || "en");
+      }, j.setLanguage(e.language || "en");
     }
     iobOnPropertyChanged = (e, r) => {
       if (console.log(`New value ${e}, ${r}`), e === "editMode") {
