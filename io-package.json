@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.0.11",
+    "version": "1.0.12",
     "news": {
+      "1.0.12": {
+        "en": "Reset the file upload state if IDS restarting\nHide some control elements if instance is offline",
+        "de": "Legen Sie den Datei-Upload-Zustand zurück, wenn IDS Neustart\nVerstecken Sie einige Steuerelemente, wenn Instanz offline ist",
+        "ru": "Сброс состояния загрузки файла при перезапуске IDS\nСкрыть некоторые элементы управления, если экземпляр отключен",
+        "pt": "Repor o estado de envio do ficheiro se o IDS reiniciar\nOcultar alguns elementos de controle se a instância estiver offline",
+        "nl": "Bestand upload status resetten als IDS herstart\nSommige controle-elementen verbergen als instantie offline is",
+        "fr": "Réinitialiser l'état de téléchargement du fichier si IDS redémarre\nMasquer certains éléments de contrôle si l'instance est hors ligne",
+        "it": "Reimpostare lo stato di caricamento del file se IDS riavvia\nNascondi alcuni elementi di controllo se l'istanza è offline",
+        "es": "Restablecer el estado de carga del archivo si IDS reinicia\nOcultar algunos elementos de control si la instancia está fuera de línea",
+        "pl": "Resetuj stan wysyłania plików, jeśli IDS ponownie uruchomi\nUkryj niektóre elementy sterujące, jeśli instancja jest offline",
+        "uk": "Відновити стан завантаження файлів, якщо перезавантаження IDS\nПриховати елементи керування, якщо екземпляр вимкнено",
+        "zh-cn": "重新启动 IDS 时重置文件上传状态\n如果实例脱机, 隐藏一些控制元素"
+      },
       "1.0.11": {
         "en": "Disable docker settings if not possible",
         "de": "Docker-Einstellungen deaktivieren, wenn nicht möglich",
@@ -80,19 +93,6 @@
         "pl": "Lepszy wybór adresu IP",
         "uk": "Покращений вибір IP-адреси",
         "zh-cn": "改进IP地址的选择"
-      },
-      "1.0.5": {
-        "en": "Packages were updated\nCorrected questionnaire\nSend `save_threshold_seconds` to the container",
-        "de": "Pakete wurden aktualisiert\nBerichtigter Fragebogen\nSenden Sie `save_threshold_seconds` in den Container",
-        "ru": "Пакеты были обновлены\nИсправленный вопросник\nОтправьте «save_threshold_seconds» в контейнер",
-        "pt": "Os pacotes foram atualizados\nQuestionário corrigido\nEnviar `save_threshold_seconds` para o recipiente",
-        "nl": "Pakketten werden bijgewerkt\nGecorrigeerde vragenlijst\nStuur ",
-        "fr": "Les paquets ont été mis à jour\nQuestionnaire corrigé\nEnvoyer `save_threshold_secondes` au conteneur",
-        "it": "I pacchetti sono stati aggiornati\nQuestionario corretto\nInvia `save_threshold_seconds` al contenitore",
-        "es": "Se actualizaron los paquetes\nCuestionario corregido\nEnviar `save_threshold_seconds` al contenedor",
-        "pl": "Pakiety zostały zaktualizowane\nPoprawiony kwestionariusz\nWyślij 'save _ progress _ seconds' do pojemnika",
-        "uk": "Пакети оновлено\nКорисне анкетування\nВідправка `save_threshold_секунд` до контейнера",
-        "zh-cn": "软件包已更新\n已更正的调查问卷\n向容器发送“save_阈值_秒”"
       }
     },
     "titleLang": {
