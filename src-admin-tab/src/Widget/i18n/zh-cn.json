@@ -116,6 +116,7 @@
   "Time": "时间",
   "Total bytes": "总字节数",
   "Total detections %s in the last 7 days": "过去 7 天内共检测 %s 次",
+  "Try again in %s sec.": "请在 %s 秒后重试。",
   "Unknown": "未知",
   "Unusual activities detected": "检测到异常活动",
   "Unusual activity detected!": "检测到异常活动！",

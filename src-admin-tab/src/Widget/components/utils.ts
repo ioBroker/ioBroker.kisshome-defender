@@ -7,6 +7,9 @@ const MEGABYTE = 1024 * 1024;
 const KILOBYTE = 1024;
 
 export function bytes2string(bytes: number, maxValue?: number, noFloat?: boolean): string {
+    if (bytes === undefined || bytes === null || isNaN(bytes)) {
+        return '--';
+    }
     if (maxValue !== undefined && maxValue > GIGABYTE) {
         // Use a part of GB
         return `${(bytes / GIGABYTE).toFixed(1).replace('.', ',')}Gb`;

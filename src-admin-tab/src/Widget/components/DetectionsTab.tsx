@@ -78,6 +78,7 @@ interface DetectionsTabState {
     recordingCaptured: number;
     recordingNextWrite: number;
     detectionRunning: boolean;
+    lastTriggerWrite: number;
     showDetectionWithUUID: string;
     showTooltip: null | HTMLElement;
 }
@@ -85,6 +86,7 @@ interface DetectionsTabState {
 export default class DetectionsTab extends Component<DetectionsTabProps, DetectionsTabState> {
     private updateTimeout: ReturnType<typeof setTimeout> | null = null;
     private showTimeout: ReturnType<typeof setTimeout> | null = null;
+    private triggerWriteInterval: ReturnType<typeof setInterval> | null = null;
 
     constructor(props: DetectionsTabProps) {
         super(props);
@@ -97,6 +99,7 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
             recordingCaptured: 0,
             recordingRunning: false,
             recordingNextWrite: 0,
+            lastTriggerWrite: 0,
             detectionRunning: false,
             showDetectionWithUUID: this.props.showDetectionWithUUID || '',
             showTooltip: null,
@@ -108,21 +111,25 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         const recordingCapturedId = `kisshome-defender.${this.props.instance}.info.recording.capturedFull`;
         const recordingNextWriteId = `kisshome-defender.${this.props.instance}.info.recording.nextWrite`;
         const detectionRunningId = `kisshome-defender.${this.props.instance}.info.analysis.running`;
+        const triggerWriteId = `kisshome-defender.${this.props.instance}.info.recording.triggerWrite`;
 
         const recordingRunning = await this.props.socket.getState(recordingRunningId);
         const recordingCaptured = await this.props.socket.getState(recordingCapturedId);
         const recordingNextWrite = await this.props.socket.getState(recordingNextWriteId);
         const detectionRunning = await this.props.socket.getState(detectionRunningId);
+        const triggerWrite = await this.props.socket.getState(triggerWriteId);
 
         this.onRecordingRunningChanged(recordingRunningId, recordingRunning);
         this.onRecordingCapturedChanged(recordingCapturedId, recordingCaptured);
         this.onRecordingNextTimeChanged(recordingNextWriteId, recordingNextWrite);
         this.onDetectionRunningChanged(detectionRunningId, detectionRunning);
+        this.onTriggerWriteChanged(triggerWriteId, triggerWrite);
 
         await this.props.socket.subscribeState(recordingRunningId, this.onRecordingRunningChanged);
         await this.props.socket.subscribeState(recordingCapturedId, this.onRecordingCapturedChanged);
         await this.props.socket.subscribeState(recordingNextWriteId, this.onRecordingNextTimeChanged);
         await this.props.socket.subscribeState(detectionRunningId, this.onDetectionRunningChanged);
+        await this.props.socket.subscribeState(triggerWriteId, this.onTriggerWriteChanged);
 
         if (this.state.showDetectionWithUUID) {
             this.setState({ openedItem: this.state.showDetectionWithUUID, detailed: true }, () => {
@@ -210,10 +217,48 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         }
     };
 
+    onTriggerWriteChanged = (_id: string, state: ioBroker.State | null | undefined): void => {
+        if ((state?.lc || 0) !== this.state.lastTriggerWrite) {
+            this.setState(
+                {
+                    lastTriggerWrite: state?.lc || 0,
+                },
+                () => {
+                    if (this.state.lastTriggerWrite + 120_000 >= Date.now()) {
+                        if (!this.triggerWriteInterval) {
+                            this.triggerWriteInterval = setInterval(this.onTriggerWriteInterval, 1_000);
+                        }
+                    } else {
+                        if (this.triggerWriteInterval) {
+                            clearInterval(this.triggerWriteInterval);
+                            this.triggerWriteInterval = null;
+                        }
+                    }
+                },
+            );
+        }
+    };
+
+    onTriggerWriteInterval = (): void => {
+        if (this.state.lastTriggerWrite + 120_000 >= Date.now()) {
+            this.forceUpdate();
+        } else {
+            if (this.triggerWriteInterval) {
+                clearInterval(this.triggerWriteInterval);
+                this.triggerWriteInterval = null;
+            }
+        }
+    };
+
     componentWillUnmount(): void {
         if (this.showTimeout) {
             clearTimeout(this.showTimeout);
             this.showTimeout = null;
+        }
+
+        if (this.triggerWriteInterval) {
+            clearInterval(this.triggerWriteInterval);
+            this.triggerWriteInterval = null;
         }
 
         if (this.updateTimeout) {
@@ -234,6 +279,10 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
         );
         this.props.socket.unsubscribeState(
             `kisshome-defender.${this.props.instance}.info.analysis.running`,
+            this.onRecordingCapturedChanged,
+        );
+        this.props.socket.unsubscribeState(
+            `kisshome-defender.${this.props.instance}.info.analysis.triggerWrite`,
             this.onRecordingCapturedChanged,
         );
     }
@@ -302,8 +351,10 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                                 maxWidth: this.props.isMobile ? undefined : 300,
                                 whiteSpace: 'nowrap',
                                 width: this.props.isMobile ? '100%' : undefined,
+                                display: 'flex',
+                                flexDirection: 'column',
                             }}
-                            disabled={this.state.detectionRunning}
+                            disabled={this.state.detectionRunning || this.state.lastTriggerWrite + 120_000 > Date.now()}
                             variant="contained"
                             color="primary"
                             onClick={async e => {
@@ -313,14 +364,21 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                                     ts: Date.now(),
                                     isTouchEvent: isTouch(e),
                                 });
-                                await this.props.socket.sendTo(
-                                    `kisshome-defender.${this.props.instance}`,
-                                    'detectNow',
-                                    {},
+                                await this.props.socket.setState(
+                                    `kisshome-defender.${this.props.instance}.info.recording.triggerWrite`,
+                                    true,
                                 );
                             }}
                         >
-                            {I18n.t('kisshome-defender_Execute control now')}
+                            <div>{I18n.t('kisshome-defender_Execute control now')}</div>
+                            {this.state.lastTriggerWrite + 120_000 > Date.now() ? (
+                                <div style={{ fontSize: 10, opacity: 0.7, fontStyle: 'italic', textTransform: 'none' }}>
+                                    {I18n.t(
+                                        'kisshome-defender_Try again in %s sec.',
+                                        Math.round((this.state.lastTriggerWrite + 120_000 - Date.now()) / 1000),
+                                    )}
+                                </div>
+                            ) : null}
                         </Button>
                         <div
                             style={{

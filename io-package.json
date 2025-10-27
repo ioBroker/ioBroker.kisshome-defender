@@ -3,19 +3,6 @@
     "name": "kisshome-defender",
     "version": "1.0.12",
     "news": {
-      "1.0.12": {
-        "en": "Reset the file upload state if IDS restarting\nHide some control elements if instance is offline",
-        "de": "Legen Sie den Datei-Upload-Zustand zurück, wenn IDS Neustart\nVerstecken Sie einige Steuerelemente, wenn Instanz offline ist",
-        "ru": "Сброс состояния загрузки файла при перезапуске IDS\nСкрыть некоторые элементы управления, если экземпляр отключен",
-        "pt": "Repor o estado de envio do ficheiro se o IDS reiniciar\nOcultar alguns elementos de controle se a instância estiver offline",
-        "nl": "Bestand upload status resetten als IDS herstart\nSommige controle-elementen verbergen als instantie offline is",
-        "fr": "Réinitialiser l'état de téléchargement du fichier si IDS redémarre\nMasquer certains éléments de contrôle si l'instance est hors ligne",
-        "it": "Reimpostare lo stato di caricamento del file se IDS riavvia\nNascondi alcuni elementi di controllo se l'istanza è offline",
-        "es": "Restablecer el estado de carga del archivo si IDS reinicia\nOcultar algunos elementos de control si la instancia está fuera de línea",
-        "pl": "Resetuj stan wysyłania plików, jeśli IDS ponownie uruchomi\nUkryj niektóre elementy sterujące, jeśli instancja jest offline",
-        "uk": "Відновити стан завантаження файлів, якщо перезавантаження IDS\nПриховати елементи керування, якщо екземпляр вимкнено",
-        "zh-cn": "重新启动 IDS 时重置文件上传状态\n如果实例脱机, 隐藏一些控制元素"
-      },
       "1.0.11": {
         "en": "Disable docker settings if not possible",
         "de": "Docker-Einstellungen deaktivieren, wenn nicht möglich",

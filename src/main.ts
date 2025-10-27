@@ -571,11 +571,6 @@ export class KISSHomeResearchAdapter extends Adapter {
                     break;
                 }
 
-                case 'detectNow': {
-                    this.triggerWriteFile();
-                    break;
-                }
-
                 case 'getBindAddresses': {
                     const list: { label: string; value: string }[] = [];
                     if (process.platform === 'win32') {
