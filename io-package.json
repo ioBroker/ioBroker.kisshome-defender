@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.0.14",
+    "version": "1.0.15",
     "news": {
+      "1.0.15": {
+        "en": "Reset the file upload state if IDS restarting\nHide some control elements if instance is offline\nAdded countdown to the manual trigger button\nSend configuration to the container at start",
+        "de": "Legen Sie den Datei-Upload-Zustand zurück, wenn IDS Neustart\nVerstecken Sie einige Steuerelemente, wenn Instanz offline ist\nCountdown zur manuellen Triggertaste hinzugefügt\nSenden Sie Konfiguration an den Container zu Beginn",
+        "ru": "Сброс состояния загрузки файла при перезапуске IDS\nСкрыть некоторые элементы управления, если экземпляр отключен\nДобавлен обратный отсчет к кнопке ручного триггера\nОтправить конфигурацию в контейнер в начале",
+        "pt": "Repor o estado de envio do ficheiro se o IDS reiniciar\nOcultar alguns elementos de controle se a instância estiver offline\nAdicionada contagem regressiva ao botão de gatilho manual\nEnviar a configuração para o recipiente no início",
+        "nl": "Bestand upload status resetten als IDS herstart\nSommige controle-elementen verbergen als instantie offline is\nAftellen toegevoegd aan de handmatige trekkerknop\nConfiguratie naar de container sturen bij het begin",
+        "fr": "Réinitialiser l'état de téléchargement du fichier si IDS redémarre\nMasquer certains éléments de contrôle si l'instance est hors ligne\nAjout du compte à rebours au bouton de déclenchement manuel\nEnvoyer la configuration au conteneur au début",
+        "it": "Reimpostare lo stato di caricamento del file se IDS riavvia\nNascondi alcuni elementi di controllo se l'istanza è offline\nConto alla rovescia aggiunto al pulsante di attivazione manuale\nInviare la configurazione al contenitore all'inizio",
+        "es": "Restablecer el estado de carga del archivo si IDS reinicia\nOcultar algunos elementos de control si la instancia está fuera de línea\nCuenta regresiva al botón de activación manual\nEnviar configuración al contenedor al inicio",
+        "pl": "Resetuj stan wysyłania plików, jeśli IDS ponownie uruchomi\nUkryj niektóre elementy sterujące, jeśli instancja jest offline\nDodano odliczanie do przycisku ręcznego uruchamiania\nWyślij konfigurację do kontenera na początku",
+        "uk": "Відновити стан завантаження файлів, якщо перезавантаження IDS\nПриховати елементи керування, якщо екземпляр вимкнено\nДодано відлік до кнопки ручного запуску\nВідправте налаштування контейнера при старті",
+        "zh-cn": "重新启动 IDS 时重置文件上传状态\n如果实例脱机, 隐藏一些控制元素\n将倒计时添加到手动触发按钮\n启动时将配置发送给容器"
+      },
       "1.0.11": {
         "en": "Disable docker settings if not possible",
         "de": "Docker-Einstellungen deaktivieren, wenn nicht möglich",
