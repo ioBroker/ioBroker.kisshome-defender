@@ -53,6 +53,7 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 ## Changelog
 ### **WORK IN PROGRESS**
 -   (@GermanBluefox) Reset the file upload state if IDS restarting
+-   (@GermanBluefox) Hide some control elements if instance is offline
 
 ### 1.0.11 (2025-10-23)
 -   (@GermanBluefox) Disable docker settings if not possible
