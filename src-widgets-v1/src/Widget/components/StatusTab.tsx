@@ -252,28 +252,30 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                         flexDirection: 'column',
                     }}
                 >
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        style={this.props.isMobile ? {} : { position: 'absolute', top: 80, right: 30 }}
-                        onClick={async e => {
-                            this.props.reportUxEvent({
-                                id: 'kisshome-defender-status-recording-enabled',
-                                event: 'change',
-                                ts: Date.now(),
-                                isTouchEvent: isTouch(e),
-                            });
+                    {this.props.alive ? (
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            style={this.props.isMobile ? {} : { position: 'absolute', top: 80, right: 30 }}
+                            onClick={async e => {
+                                this.props.reportUxEvent({
+                                    id: 'kisshome-defender-status-recording-enabled',
+                                    event: 'change',
+                                    ts: Date.now(),
+                                    isTouchEvent: isTouch(e),
+                                });
 
-                            await this.props.socket.setState(
-                                `kisshome-defender.${this.props.instance}.info.recording.enabled`,
-                                !this.state.recordingEnabled,
-                            );
-                        }}
-                    >
-                        {this.state.recordingEnabled
-                            ? I18n.t('kisshome-defender_Deactivate protection')
-                            : I18n.t('kisshome-defender_Activate protection')}
-                    </Button>
+                                await this.props.socket.setState(
+                                    `kisshome-defender.${this.props.instance}.info.recording.enabled`,
+                                    !this.state.recordingEnabled,
+                                );
+                            }}
+                        >
+                            {this.state.recordingEnabled
+                                ? I18n.t('kisshome-defender_Deactivate protection')
+                                : I18n.t('kisshome-defender_Activate protection')}
+                        </Button>
+                    ) : null}
                     <table>
                         <tbody>
                             {this.props.alive ? null : (
@@ -364,43 +366,45 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
                         </tbody>
                     </table>
                 </Paper>
-                <Paper
-                    style={{
-                        height: this.props.isMobile ? 60 : 80,
-                        padding: '10px 40px 10px 10px',
-                        border: `2px solid ${this.props.themeType === 'dark' ? 'white' : 'black'}`,
-                        borderRadius: 0,
-                        backgroundColor: this.props.themeType === 'dark' ? undefined : '#E6E6E6',
-                        boxShadow: 'none',
-                        cursor: this.props.results?.results.length ? 'pointer' : 'default',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        gap: 10,
-                        fontSize: '1.3rem',
-                    }}
-                    onClick={() => {
-                        if (this.props.results?.results.length) {
-                            this.props.reportUxEvent({
-                                id: 'kisshome-defender-status-detections',
-                                event: 'click',
-                                ts: Date.now(),
-                            });
-                            this.props.onNavigateToDetections();
-                        }
-                    }}
-                >
-                    <div />
-                    {unseenWarningsCount
-                        ? `${I18n.t('kisshome-defender_New problem detected')}: ${unseenWarningsCount}`
-                        : I18n.t('kisshome-defender_Everything OK')}
-                    <StatusIcon
-                        style={{ marginLeft: 10 }}
-                        ok={!unseenWarningsCount}
-                        warning
-                        size={this.props.isMobile ? 36 : 52}
-                    />
-                </Paper>
+                {this.props.alive ? (
+                    <Paper
+                        style={{
+                            height: this.props.isMobile ? 60 : 80,
+                            padding: '10px 40px 10px 10px',
+                            border: `2px solid ${this.props.themeType === 'dark' ? 'white' : 'black'}`,
+                            borderRadius: 0,
+                            backgroundColor: this.props.themeType === 'dark' ? undefined : '#E6E6E6',
+                            boxShadow: 'none',
+                            cursor: this.props.results?.results.length ? 'pointer' : 'default',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            gap: 10,
+                            fontSize: '1.3rem',
+                        }}
+                        onClick={() => {
+                            if (this.props.results?.results.length) {
+                                this.props.reportUxEvent({
+                                    id: 'kisshome-defender-status-detections',
+                                    event: 'click',
+                                    ts: Date.now(),
+                                });
+                                this.props.onNavigateToDetections();
+                            }
+                        }}
+                    >
+                        <div />
+                        {unseenWarningsCount
+                            ? `${I18n.t('kisshome-defender_New problem detected')}: ${unseenWarningsCount}`
+                            : I18n.t('kisshome-defender_Everything OK')}
+                        <StatusIcon
+                            style={{ marginLeft: 10 }}
+                            ok={!unseenWarningsCount}
+                            warning
+                            size={this.props.isMobile ? 36 : 52}
+                        />
+                    </Paper>
+                ) : null}
             </div>
         );
     }

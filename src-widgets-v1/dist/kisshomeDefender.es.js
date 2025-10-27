@@ -50322,7 +50322,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                   flexDirection: "column"
                 },
                 children: [
-                  /* @__PURE__ */ A.jsx(
+                  this.props.alive ? /* @__PURE__ */ A.jsx(
                     Gt,
                     {
                       variant: "contained",
@@ -50341,7 +50341,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                       },
                       children: this.state.recordingEnabled ? B.t("kisshome-defender_Deactivate protection") : B.t("kisshome-defender_Activate protection")
                     }
-                  ),
+                  ) : null,
                   /* @__PURE__ */ A.jsx("table", { children: /* @__PURE__ */ A.jsxs("tbody", { children: [
                     this.props.alive ? null : /* @__PURE__ */ A.jsxs(
                       "tr",
@@ -50420,7 +50420,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                 ]
               }
             ),
-            /* @__PURE__ */ A.jsxs(
+            this.props.alive ? /* @__PURE__ */ A.jsxs(
               Ia,
               {
                 style: {
@@ -50458,7 +50458,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                   )
                 ]
               }
-            )
+            ) : null
           ]
         }
       );

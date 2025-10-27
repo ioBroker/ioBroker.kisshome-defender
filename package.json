@@ -37,7 +37,7 @@
         "@alcalzone/release-script-plugin-license": "^4.0.0",
         "@iobroker/build-tools": "^2.0.15",
         "@iobroker/eslint-config": "^2.2.0",
-        "@iobroker/types": "^7.0.8-alpha.7-20250928-40cb80c18",
+        "@iobroker/types": "^7.0.7",
         "@iobroker/legacy-testing": "^2.0.2",
         "@iobroker/testing": "^5.1.1",
         "@module-federation/vite": "^1.8.1",
