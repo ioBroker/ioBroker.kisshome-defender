@@ -458,11 +458,17 @@ export class IDSCommunication {
             //   }
             // }
             this.lastStatus = response.data;
-            if (!this.configSent && this.lastStatus?.message?.status === 'Started') {
+            // If not yet sent, send the configuration once the IDS is started or if not self-hosted
+            if (
+                !this.configSent &&
+                (this.lastStatus?.message?.status === 'Started' || !this.config.docker.selfHosted)
+            ) {
                 await this._sendConfig();
                 this.configSent = true;
             }
-            if (this.configSent && this.lastStatus?.message?.status !== 'Started') {
+            // If self-hosted and status changed from Started to something else,
+            // reset configSent to send config again as the status will be 'Started' after each restart
+            if (this.configSent && this.lastStatus?.message?.status !== 'Started' && this.config.docker.selfHosted) {
                 this.configSent = false;
             }
 
@@ -472,7 +478,9 @@ export class IDSCommunication {
                 (this.lastStatus?.message?.status === 'Error' || this.lastStatus?.message?.status === 'Exited')
             ) {
                 if (this.uploadStatus.status !== 'idle') {
-                    this.adapter.log.debug(`[IDS] The file upload of "${this.uploadStatus.fileName}" was interrupted due to IDS restart.`);
+                    this.adapter.log.debug(
+                        `[IDS] The file upload of "${this.uploadStatus.fileName}" was interrupted due to IDS restart.`,
+                    );
                     // Do not wait for the upload result
                     this.uploadStatus = { status: 'idle' };
                 }
