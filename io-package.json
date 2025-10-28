@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.0.15",
+    "version": "1.0.16",
     "news": {
+      "1.0.16": {
+        "en": "Added error log proxying",
+        "de": "Fehlersuche hinzugefügt",
+        "ru": "Добавлена ошибка log proxying",
+        "pt": "Proxy do log de erro adicionado",
+        "nl": "Foutlog proxy toegevoegd",
+        "fr": "Ajout de log d'erreur proxy",
+        "it": "Aggiunta di errore log proxying",
+        "es": "Proxy de registro de error añadido",
+        "pl": "Dodano proxy dziennika błędów",
+        "uk": "Додано проксіювання журналу помилок",
+        "zh-cn": "添加错误日志代理"
+      },
       "1.0.15": {
         "en": "Reset the file upload state if IDS restarting\nHide some control elements if instance is offline\nAdded countdown to the manual trigger button\nSend configuration to the container at start",
         "de": "Legen Sie den Datei-Upload-Zustand zurück, wenn IDS Neustart\nVerstecken Sie einige Steuerelemente, wenn Instanz offline ist\nCountdown zur manuellen Triggertaste hinzugefügt\nSenden Sie Konfiguration an den Container zu Beginn",
@@ -80,19 +93,6 @@
         "pl": "Poprawiono głośność dla Dockera\nDodano min, max, krok do kwestionariusza (liczba)",
         "uk": "Виправлено об'єм для докера\nДодано хв,макс, крок для анкети (номер)",
         "zh-cn": "纠正了嵌入器的音量\n为调查问卷添加的分钟、最大步骤(数目)"
-      },
-      "1.0.6": {
-        "en": "Improved selection of IP address",
-        "de": "Erweiterte Auswahl der IP-Adresse",
-        "ru": "Улучшенный выбор IP-адреса",
-        "pt": "Seleção melhorada do endereço IP",
-        "nl": "Verbeterde selectie van IP-adres",
-        "fr": "Meilleure sélection de l'adresse IP",
-        "it": "Selezione migliore dell'indirizzo IP",
-        "es": "Mejor selección de la dirección IP",
-        "pl": "Lepszy wybór adresu IP",
-        "uk": "Покращений вибір IP-адреси",
-        "zh-cn": "改进IP地址的选择"
       }
     },
     "titleLang": {
