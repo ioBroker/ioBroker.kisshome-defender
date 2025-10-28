@@ -408,7 +408,7 @@ export default class CloudSync {
 
         // send files to the cloud
 
-        // first send json files and meta file
+        // first send JSON files and meta file
         let sentMeta = false;
         for (let i = 0; i < allFiles.length; i++) {
             const file = allFiles[i];

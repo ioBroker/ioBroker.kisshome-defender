@@ -11,6 +11,7 @@ export interface IDSStatusMessage {
     error?: string;
     version?: string;
     training?: { [mac: MACAddress]: { progress: number; description: string } };
+    error_logs?: any;
 }
 export interface IDSStatus {
     result: 'Success' | 'Error';

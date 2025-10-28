@@ -85,6 +85,7 @@ export class IDSCommunication {
     private simulateInterval: NodeJS.Timeout | null = null;
     private simulateIntervalRecording: NodeJS.Timeout | null = null;
     private simulateRecordingBytes = 0;
+    private lastSentErrors = '';
 
     constructor(
         adapter: ioBroker.Adapter,
@@ -471,7 +472,17 @@ export class IDSCommunication {
             if (this.configSent && this.lastStatus?.message?.status !== 'Started' && this.config.docker.selfHosted) {
                 this.configSent = false;
             }
-
+            if (
+                this.lastStatus?.message?.error_logs &&
+                JSON.stringify(this.lastStatus.message.error_logs) !== this.lastSentErrors
+            ) {
+                this.lastSentErrors = JSON.stringify(this.lastStatus.message.error_logs);
+                // Save the answer in ids cloud sync directory
+                writeFileSync(
+                    `${this.workingCloudDir}/${new Date().toISOString().replace(/[:.]/g, '-')}_ids_error_logs.json`,
+                    this.lastSentErrors,
+                );
+            }
             // Restart the IDS if it exited
             if (
                 this.dockerManager &&
