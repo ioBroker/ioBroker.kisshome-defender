@@ -132,5 +132,6 @@
   "set_label": "KISSHome Defender",
   "tooltip_score_1": "Il nostro software monitora i tuoi dispositivi intelligenti utilizzando due metodi.",
   "tooltip_score_2": "Un metodo di riconoscimento di pattern collaudato rileva malware noti con un elevato grado di certezza. Un approccio moderno si basa sull'intelligenza artificiale (IA): il metodo di IA valuta il comportamento di comunicazione dei dispositivi intelligenti e può quindi rilevare anche nuove minacce. Tuttavia, questo metodo è soggetto a maggiore incertezza.",
-  "tooltip_score_3": "In generale, più alto è il punteggio dell'anomalia, più è probabile che si sia verificata un'attività insolita."
+  "tooltip_score_3": "In generale, più alto è il punteggio dell'anomalia, più è probabile che si sia verificata un'attività insolita.",
+  "tooltip_score_4": "In pratica, il risultato mostra se il comportamento comunicativo di un dispositivo si discosta dai modelli tipici."
 }

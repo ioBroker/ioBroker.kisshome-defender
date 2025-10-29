@@ -132,5 +132,6 @@
     "set_label": "KISSHome Defender",
     "tooltip_score_1": "Our software monitors your smart devices using two methods.",
     "tooltip_score_2": "A proven pattern recognition method detects known malware with a high degree of certainty. A modern approach is based on artificial intelligence (AI): The AI method evaluates the communication behavior of smart devices and can thus also detect new threats. However, this method is subject to greater uncertainty.",
-    "tooltip_score_3": "In general, the higher the anomaly rating, the more likely unusual activity has occurred."
+    "tooltip_score_3": "In general, the higher the anomaly rating, the more likely unusual activity has occurred.",
+    "tooltip_score_4": "Basically, the result shows whether a device's communication behavior deviates from typical patterns."
 }

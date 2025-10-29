@@ -132,5 +132,6 @@
   "set_label": "KISSHome Defender",
   "tooltip_score_1": "Nosso software monitora seus dispositivos inteligentes usando dois métodos.",
   "tooltip_score_2": "Um método comprovado de reconhecimento de padrões detecta malware conhecido com alto grau de certeza. Uma abordagem moderna se baseia em inteligência artificial (IA): o método de IA avalia o comportamento de comunicação de dispositivos inteligentes e, assim, também pode detectar novas ameaças. No entanto, esse método está sujeito a maior incerteza.",
-  "tooltip_score_3": "Em geral, quanto maior a classificação de anomalia, maior a probabilidade de ter ocorrido atividade incomum."
+  "tooltip_score_3": "Em geral, quanto maior a classificação de anomalia, maior a probabilidade de ter ocorrido atividade incomum.",
+  "tooltip_score_4": "Basicamente, o resultado mostra se o comportamento de comunicação de um dispositivo se desvia dos padrões típicos."
 }

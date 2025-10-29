@@ -132,5 +132,6 @@
   "set_label": "Defensor del hogar KISS",
   "tooltip_score_1": "Nuestro software monitorea sus dispositivos inteligentes utilizando dos métodos.",
   "tooltip_score_2": "Un método probado de reconocimiento de patrones detecta malware conocido con un alto grado de certeza. Un enfoque moderno se basa en la inteligencia artificial (IA): este método evalúa el comportamiento de comunicación de los dispositivos inteligentes y, por lo tanto, también puede detectar nuevas amenazas. Sin embargo, este método está sujeto a una mayor incertidumbre.",
-  "tooltip_score_3": "En general, cuanto mayor sea el índice de anomalía, mayor será la probabilidad de que se haya producido una actividad inusual."
+  "tooltip_score_3": "En general, cuanto mayor sea el índice de anomalía, mayor será la probabilidad de que se haya producido una actividad inusual.",
+  "tooltip_score_4": "Básicamente, el resultado muestra si el comportamiento de comunicación de un dispositivo se desvía de los patrones típicos."
 }

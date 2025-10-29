@@ -789,7 +789,9 @@ export default class DetectionsTab extends Component<DetectionsTabProps, Detecti
                 {I18n.t('kisshome-defender_tooltip_score_2')}
                 <br />
                 <br />
-                {I18n.t('kisshome-defender_tooltip_score_3')}
+                {this.props.group === 'A' || this.props.secondPeriod
+                    ? I18n.t('kisshome-defender_tooltip_score_4')
+                    : I18n.t('kisshome-defender_tooltip_score_3')}
             </div>
         );
         // Create for every device the combined status

@@ -132,5 +132,6 @@
   "set_label": "KISSHome Defender",
   "tooltip_score_1": "Onze software bewaakt uw slimme apparaten op twee manieren.",
   "tooltip_score_2": "Een beproefde patroonherkenningsmethode detecteert bekende malware met een hoge mate van zekerheid. Een moderne aanpak is gebaseerd op kunstmatige intelligentie (AI): de AI-methode evalueert het communicatiegedrag van slimme apparaten en kan zo ook nieuwe bedreigingen detecteren. Deze methode is echter onderhevig aan grotere onzekerheid.",
-  "tooltip_score_3": "Over het algemeen geldt: hoe hoger de anomalieclassificatie, hoe waarschijnlijker het is dat er ongebruikelijke activiteit heeft plaatsgevonden."
+  "tooltip_score_3": "Over het algemeen geldt: hoe hoger de anomalieclassificatie, hoe waarschijnlijker het is dat er ongebruikelijke activiteit heeft plaatsgevonden.",
+  "tooltip_score_4": "In principe geeft het resultaat aan of het communicatiegedrag van een apparaat afwijkt van de gebruikelijke patronen."
 }

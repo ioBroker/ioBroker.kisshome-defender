@@ -132,5 +132,6 @@
   "set_label": "KISSHome Defender",
   "tooltip_score_1": "Notre logiciel surveille vos appareils intelligents à l’aide de deux méthodes.",
   "tooltip_score_2": "Une méthode éprouvée de reconnaissance de formes détecte les logiciels malveillants connus avec un haut degré de certitude. Une approche moderne repose sur l'intelligence artificielle (IA) : cette méthode évalue le comportement de communication des appareils intelligents et peut ainsi détecter de nouvelles menaces. Cependant, cette méthode est soumise à une plus grande incertitude.",
-  "tooltip_score_3": "En général, plus le niveau d’anomalie est élevé, plus il est probable qu’une activité inhabituelle se soit produite."
+  "tooltip_score_3": "En général, plus le niveau d’anomalie est élevé, plus il est probable qu’une activité inhabituelle se soit produite.",
+  "tooltip_score_4": "En résumé, le résultat indique si le comportement de communication d'un appareil s'écarte des schémas typiques."
 }

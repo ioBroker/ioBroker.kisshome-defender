@@ -132,5 +132,6 @@
   "set_label": "KISSHome Defender",
   "tooltip_score_1": "Nasze oprogramowanie monitoruje Twoje inteligentne urządzenia za pomocą dwóch metod.",
   "tooltip_score_2": "Sprawdzona metoda rozpoznawania wzorców wykrywa znane złośliwe oprogramowanie z dużą pewnością. Nowoczesne podejście opiera się na sztucznej inteligencji (AI): metoda AI ocenia zachowania komunikacyjne inteligentnych urządzeń i dzięki temu może wykrywać nowe zagrożenia. Metoda ta jest jednak obarczona większą niepewnością.",
-  "tooltip_score_3": "Ogólnie rzecz biorąc, im wyższy stopień anomalii, tym większe prawdopodobieństwo wystąpienia nietypowej aktywności."
+  "tooltip_score_3": "Ogólnie rzecz biorąc, im wyższy stopień anomalii, tym większe prawdopodobieństwo wystąpienia nietypowej aktywności.",
+  "tooltip_score_4": "Wynik pokazuje zasadniczo, czy zachowanie komunikacyjne urządzenia odbiega od typowych wzorców."
 }
