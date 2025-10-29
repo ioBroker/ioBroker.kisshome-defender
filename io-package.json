@@ -172,10 +172,12 @@
       ]
     },
     "ifInstalledDependencies": {
-      "vis-2": ">=2.12.8"
+      "vis-2": ">=2.12.8",
+      "vis": ">=1.5.5"
     },
     "restartAdapters": [
-      "vis-2"
+      "vis-2",
+      "vis"
     ],
     "visWidgets": {
       "kisshome-defender": {

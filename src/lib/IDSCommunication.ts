@@ -474,6 +474,7 @@ export class IDSCommunication {
             }
             if (
                 this.lastStatus?.message?.error_logs &&
+                Object.keys(this.lastStatus.message.error_logs).length &&
                 JSON.stringify(this.lastStatus.message.error_logs) !== this.lastSentErrors
             ) {
                 this.lastSentErrors = JSON.stringify(this.lastStatus.message.error_logs);
@@ -536,7 +537,9 @@ export class IDSCommunication {
             };
         }
         if (this.currentStatus !== (this.lastStatus?.message?.status || 'No connection')) {
-            this.configSent = false;
+            if (this.config.docker.selfHosted) {
+                this.configSent = false;
+            }
             this.currentStatus = this.lastStatus?.message?.status || 'No connection';
             // Update variables
             void this.adapter.setState('info.ids.status', this.lastStatus?.message?.status || 'No connection', true);

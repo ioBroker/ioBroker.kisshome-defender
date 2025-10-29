@@ -45,12 +45,18 @@ Add the following line:
 iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 ```
 
+## Todo
+- vis-2 wird required obwohl nicht installed ist
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+-   (@GermanBluefox) Do not send empty error log
+-   (@GermanBluefox) Do not send config too often
+
 ### 1.0.16 (2025-10-28)
 -   (@GermanBluefox) Added error log proxying
 
