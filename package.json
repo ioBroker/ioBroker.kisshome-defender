@@ -1,6 +1,6 @@
 {
   "name": "iobroker.kisshome-defender",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "Collection of information for KISSHome defender",
   "author": {
     "name": "Denis Haev",
