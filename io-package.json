@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.0.19",
+    "version": "1.0.20",
     "news": {
+      "1.0.20": {
+        "en": "Do not send empty error log\nDo not send config too often\nChanged wording",
+        "de": "Nicht leeres Fehlerprotokoll senden\nNicht zu oft config senden\nGeänderte Formulierung",
+        "ru": "Не отправляйте пустой журнал ошибок\nНе отправляйте конфигурацию слишком часто\nИзмененная формулировка",
+        "pt": "Não enviar o registo de erros vazio\nNão enviar configuração com demasiada frequência\nTexto alterado",
+        "nl": "Geen leeg foutlog versturen\nConfig niet te vaak verzenden\nGewijzigde formulering",
+        "fr": "Ne pas envoyer de journal d'erreur vide\nNe pas envoyer de config trop souvent\nTexte modifié",
+        "it": "Non inviare log di errore vuoto\nNon inviare la configurazione troppo spesso\nCambiato formulazione",
+        "es": "No enviar registro de error vacío\nNo enviar config demasiado a menudo\nPalabras modificadas",
+        "pl": "Nie wysyłaj pustego dziennika błędów\nNie wysyłaj config zbyt często\nZmienione brzmienie",
+        "uk": "Не надсилати порожній журнал помилок\nНе надсилати налаштування занадто часто\nЗмінене слово",
+        "zh-cn": "不发送空错误日志\n不要经常发送配置\n修改措辞"
+      }
     },
     "titleLang": {
       "en": "KISSHome defender",
