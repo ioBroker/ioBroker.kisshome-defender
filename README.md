@@ -45,8 +45,6 @@ Add the following line:
 iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 ```
 
-## Todo
-- vis-2 wird required obwohl nicht installed ist
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**

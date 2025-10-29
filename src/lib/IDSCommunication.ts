@@ -81,6 +81,7 @@ export class IDSCommunication {
     private simulateIntervalRecording: NodeJS.Timeout | null = null;
     private simulateRecordingBytes = 0;
     private lastSentErrors = '';
+    private wasRunning: boolean = false;
 
     constructor(
         adapter: ioBroker.Adapter,
@@ -454,6 +455,13 @@ export class IDSCommunication {
             //   }
             // }
             this.lastStatus = response.data;
+
+            if (!this.config.docker.selfHosted && this.lastStatus?.message?.status === 'Started' && this.wasRunning) {
+                await this._sendConfig();
+                this.configSent = true;
+                this.wasRunning = false;
+            }
+
             // If not yet sent, send the configuration once the IDS is started or if not self-hosted
             if (
                 !this.configSent &&
@@ -461,7 +469,12 @@ export class IDSCommunication {
             ) {
                 await this._sendConfig();
                 this.configSent = true;
+                this.wasRunning = false;
             }
+            if (this.lastStatus?.message?.status === 'Analyzing' || this.lastStatus?.message?.status === 'Running') {
+                this.wasRunning = true;
+            }
+
             // If self-hosted and status changed from Started to something else,
             // reset configSent to send config again as the status will be 'Started' after each restart
             if (this.configSent && this.lastStatus?.message?.status !== 'Started' && this.config.docker.selfHosted) {
@@ -479,6 +492,7 @@ export class IDSCommunication {
                     this.lastSentErrors,
                 );
             }
+
             // Restart the IDS if it exited
             if (
                 this.dockerManager &&
