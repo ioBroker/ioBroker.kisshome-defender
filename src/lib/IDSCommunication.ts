@@ -25,25 +25,20 @@ import { fileNameToDate, normalizeMacAddress } from './utils';
 const MAX_FILES_ON_DISK = 6; // Maximum number of files to keep on disk
 export const CHANGE_TIME = '2025-11-17T00:00:00Z'; // Calculation time
 
-function betaRandom(a: number, b: number): number {
-    // Verwende die Methode von Cheng (1978) für Beta(a, b) mit a, b > 0
-    // Für a = b = 0.5 ist die Verteilung U-förmig
-    const u = Math.random() * a;
-    const v = Math.random() * b;
-    return Math.sin(Math.PI * u) ** 2 / (Math.sin(Math.PI * u) ** 2 + Math.sin(Math.PI * v) ** 2);
-}
+function randNormalClipped(min = 1, mean = 12, std = 2, max = 20): number {
+    // Box–Muller transform to generate a normal-distributed value
+    const u1 = Math.random();
+    const u2 = Math.random();
+    const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
 
-function generateFluctuatingTimes(realTime: number, size = 100): number {
-    const minVal = realTime;
-    const maxVal = realTime * 4;
-    const a = 0.5;
-    const b = 0.5;
-    const betaSamples: number[] = [];
-    for (let i = 0; i < size; i++) {
-        betaSamples.push(betaRandom(a, b));
-    }
-    const scaled = betaSamples.map(sample => sample * (maxVal - minVal) + minVal);
-    return scaled.map(val => Math.round(val * 100) / 100)[0];
+    // Scale + shift to desired mean/std
+    let value = mean + std * z;
+
+    // Clip to range
+    value = Math.max(min, Math.min(max, value));
+
+    // Round to 2 decimals
+    return Math.round(value * 100) / 100;
 }
 
 export class IDSCommunication {
@@ -782,10 +777,9 @@ export class IDSCommunication {
                 },
             });
 
-            const score =
-                Math.random() > 0.95 ? Math.floor(Math.random() * 1000) / 10 : Math.floor(Math.random() * 100) / 10; // Random score between 0 and 100
+            const score = Math.random() > 0.95 ? randNormalClipped(95, 97.5, 1, 100) : randNormalClipped(0, 2.5, 1, 5); // Random score between 0 and 100
             const scoreMl =
-                Math.random() > 0.95 ? Math.floor(Math.random() * 1000) / 10 : Math.floor(Math.random() * 100) / 10; // Random score between 0 and 100
+                Math.random() > 0.95 ? randNormalClipped(95, 97.5, 1, 100) : randNormalClipped(0, 2.5, 1, 5); // Random score between 0 and 100
 
             // Generate for each MAC a detection
             const detection: DetectionsForDevice = {
@@ -864,9 +858,9 @@ export class IDSCommunication {
 
             let sendEvent = 0;
 
-            // After 15 October
+            // After 17 November October
             if (new Date(CHANGE_TIME).getTime() <= Date.now() && this.group === 'B') {
-                analysisResult.statistics.analysisDurationMs = generateFluctuatingTimes(
+                analysisResult.statistics.analysisDurationMs = randNormalClipped(
                     analysisResult.statistics.analysisDurationMs,
                 );
             }
@@ -881,8 +875,8 @@ export class IDSCommunication {
                     // ml has no score, we generate one based on the type
                     detection.ml.score =
                         detection.ml.type === 'Alert'
-                            ? Math.floor(Math.random() * 10 * 100) / 100 + 90 // 90-100
-                            : Math.floor(Math.random() * 10 * 100) / 100; // 0-10
+                            ? randNormalClipped(95, 97.5, 1, 100) // 95-100
+                            : randNormalClipped(0, 2.5, 1, 5); // 0-5
                 }
 
                 const detectionsBiggestScore = Math.max(
