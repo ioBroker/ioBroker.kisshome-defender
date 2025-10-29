@@ -51,7 +51,7 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.0.18 (2025-10-29)
 -   (@GermanBluefox) Do not send empty error log
 -   (@GermanBluefox) Do not send config too often
 
