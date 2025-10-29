@@ -132,5 +132,6 @@
     "set_label": "KISSHome Defender",
     "tooltip_score_1": "Unsere Software überwacht Ihre smarten Geräte mit zwei Verfahren.",
     "tooltip_score_2": "Ein bewährtes Mustererkennungsverfahren erkennt bekannte Schadsoftware mit hoher Sicherheit. Ein moderner Ansatz basiert auf künstlicher Intelligenz (KI): Das KI-Verfahren bewertet das Kommunikationsverhalten der smarten Geräte und kann so auch neue Gefahren entdecken. Allerdings ist dieses Verfahren mit mehr Unsicherheit behaftet.",
-    "tooltip_score_3": "Grundsätzlich gilt: Je höher die Anomalie-Bewertung ausfällt, desto wahrscheinlicher hat eine ungewöhnliche Aktivität stattgefunden."
+    "tooltip_score_3": "Grundsätzlich gilt: Das Ergebnis zeigt, wie stark das Kommunikationsverhalten eines Geräts von typischen Mustern abweicht.",
+    "tooltip_score_4": "Grundsätzlich gilt: Das Ergebnis zeigt, ob das Kommunikationsverhalten eines Geräts von typischen Mustern abweicht."
 }
