@@ -186,8 +186,7 @@
                 },
                 "docker.selfHosted": {
                     "type": "checkDocker",
-                    "label": "Docker container is hosted by the adapter",
-                    "default": true
+                    "label": "Docker container is hosted by the adapter"
                 },
                 "docker.url": {
                     "newLine": true,
