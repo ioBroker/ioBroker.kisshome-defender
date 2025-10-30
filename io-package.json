@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.0.20",
+    "version": "1.1.0",
     "news": {
+      "1.1.0": {
+        "en": "Corrected JSON config",
+        "de": "JSON config korrigiert",
+        "ru": "Исправленная конфигурация JSON",
+        "pt": "Configuração do JSON corrigida",
+        "nl": "Gecorrigeerde JSON-configuratie",
+        "fr": "Config JSON corrigée",
+        "it": "Corretto configurazione JSON",
+        "es": "Corregido JSON config",
+        "pl": "Poprawiony plik konfiguracyjny JSON",
+        "uk": "Виправлено налаштування JSON",
+        "zh-cn": "更正 JSON 配置"
+      },
       "1.0.20": {
         "en": "Do not send empty error log\nDo not send config too often\nChanged wording",
         "de": "Nicht leeres Fehlerprotokoll senden\nNicht zu oft config senden\nGeänderte Formulierung",
