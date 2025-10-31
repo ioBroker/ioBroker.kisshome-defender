@@ -886,27 +886,27 @@ export class IDSCommunication {
                 let _isAlert = detection.ml?.type === 'Alert';
 
                 if (detection.ml) {
-                    // ml has no score, we generate one based on the type
-                    detection.ml.score =
-                        detection.ml.type === 'Alert'
-                            ? randNormalClipped(95, 97.5, 1, 100) // 95-100
-                            : randNormalClipped(0, 2.5, 1, 5); // 0-5
+                    // ML has no score, we generate one based on the type
+                    detection.ml.score = _isAlert
+                        ? randNormalClipped(95, 97.5, 1, 100) // 95-100
+                        : randNormalClipped(0, 2.5, 1, 5); // 0-5
                 }
 
+                // Get the biggest score from ML and Suricata alerts
                 const detectionsBiggestScore = Math.max(
-                    _isAlert ? detection.ml?.score || 0 : 0,
+                    _isAlert ? detection.ml.score : 0,
                     ...(detection.suricata?.map(s => (s.type === 'Alert' ? s.score : 0)) || [0]),
                 );
 
-                let earliestOccurrence: number | null =
-                    detection.ml?.first_occurrence && detection.ml.type === 'Alert'
-                        ? new Date(detection.ml.first_occurrence).getTime()
-                        : null;
+                let earliestOccurrence: number | null = _isAlert
+                    ? new Date(detection.ml.first_occurrence || Date.now()).getTime()
+                    : null;
 
+                _isAlert ||= !!detection.suricata?.find(s => s.type === 'Alert');
+
+                // Find the earliest occurrence from Suricata alerts
                 detection.suricata?.forEach(suricata => {
                     if (suricata.first_occurrence && suricata.type === 'Alert') {
-                        _isAlert = true;
-
                         const occurrenceTime = new Date(suricata.first_occurrence).getTime();
                         if (!earliestOccurrence || occurrenceTime < earliestOccurrence) {
                             earliestOccurrence = occurrenceTime;
@@ -927,8 +927,8 @@ export class IDSCommunication {
                 detection.scanUUID = resultUUID; // Get the parent UUID if available
                 detection.uuid = randomUUID(); // Generate a unique ID for the detection
 
-                if (earliestOccurrence && _isAlert) {
-                    detection.time = new Date(earliestOccurrence).toISOString(); // Ensure time is in ISO format
+                if (_isAlert) {
+                    detection.time = new Date(earliestOccurrence || Date.now()).toISOString(); // Ensure time is in ISO format
                     sendEvent++;
                 } else {
                     detection.time = ''; // No alert, so no time
