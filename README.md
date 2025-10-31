@@ -53,6 +53,7 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 ## Changelog
 ### **WORK IN PROGRESS**
 -   (@GermanBluefox) Changed the calculation of the first occurrence time
+-   (@GermanBluefox) Added link to FAQ in email
 
 ### 1.1.0 (2025-10-30)
 -   (@GermanBluefox) Corrected JSON config
