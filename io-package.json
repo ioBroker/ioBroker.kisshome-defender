@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "news": {
+      "1.1.1": {
+        "en": "Changed the calculation of the first occurrence time\nAdded link to FAQ in email",
+        "de": "Die Berechnung der ersten Ereigniszeit geändert\nLink zu FAQ in E-Mail",
+        "ru": "Изменился расчет времени первого наступления\nДобавлена ссылка на FAQ в email",
+        "pt": "Alterou o cálculo da primeira ocorrência\nAdicionado link para FAQ no email",
+        "nl": "De berekening van de eerste voorvaltijd gewijzigd\nLink naar veelgestelde vragen toegevoegd in e-mail",
+        "fr": "Changement du calcul de la première occurrence\nAjout d'un lien vers la FAQ dans l'email",
+        "it": "Modificato il calcolo della prima occorrenza\nAggiunto link a FAQ in email",
+        "es": "Cambió el cálculo del primer tiempo de ocurrencia\nEnlace añadido a FAQ en correo electrónico",
+        "pl": "Zmieniono obliczenie czasu pierwszego wystąpienia\nDodano link do FAQ w e-mailu",
+        "uk": "Змінено розрахунок першого залягання\nДодано посилання на FAQ в електронній пошті",
+        "zh-cn": "更改了第一次发生时间的计算\n在电子邮件中添加到 FAQ 的链接"
+      },
       "1.1.0": {
         "en": "Corrected JSON config",
         "de": "JSON config korrigiert",
