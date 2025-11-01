@@ -1,9 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.1.2",
+    "version": "1.1.3",
     "news": {
-
+      "1.1.3": {
+        "en": "Disabled by default self-hosted docker option\nChanged default threshold value",
+        "de": "Deaktiviert durch standardmäßige selbstgehostete Docking-Option\nGeänderter Standard-Schwellwert",
+        "ru": "Отключен по умолчанию самостоятельно размещенный вариант докера\nИзменение порогового значения по умолчанию",
+        "pt": "Desactivada por opção de docker auto- hospedada por omissão\nValor-limite padrão alterado",
+        "nl": "Uitgeschakeld door standaard self-hosted docker optie\nGewijzigde standaarddrempelwaarde",
+        "fr": "Désactivé par défaut option Docker auto-hôte\nValeur seuil par défaut modifiée",
+        "it": "Disabili per impostazione predefinita opzione docker self-hosted\nValore di soglia predefinito modificato",
+        "es": "Discapacitados por opción predeterminada del docker\nValor por defecto",
+        "pl": "Wyłączony przez domyślną opcję docker\nZmieniona wartość progu domyślnego",
+        "uk": "Вимкнено за замовчуванням самоприхована кнопка\nЗміна значення порогу за замовчуванням",
+        "zh-cn": "默认自寄居器选项禁用\n更改的默认阈值"
+      }
     },
     "titleLang": {
       "en": "KISSHome defender",
