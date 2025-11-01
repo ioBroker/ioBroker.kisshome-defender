@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "news": {
+      "1.1.2": {
+        "en": "Disabled by default self-hosted docker option",
+        "de": "Deaktiviert durch standardmäßige selbstgehostete Docking-Option",
+        "ru": "Отключен по умолчанию самостоятельно размещенный вариант докера",
+        "pt": "Desactivada por opção de docker auto- hospedada por omissão",
+        "nl": "Uitgeschakeld door standaard self-hosted docker optie",
+        "fr": "Désactivé par défaut option Docker auto-hôte",
+        "it": "Disabili per impostazione predefinita opzione docker self-hosted",
+        "es": "Discapacitados por opción predeterminada del docker",
+        "pl": "Wyłączony przez domyślną opcję docker",
+        "uk": "Вимкнено за замовчуванням самоприхована кнопка",
+        "zh-cn": "默认自寄居器选项禁用"
+      },
       "1.1.1": {
         "en": "Changed the calculation of the first occurrence time\nAdded link to FAQ in email",
         "de": "Die Berechnung der ersten Ereigniszeit geändert\nLink zu FAQ in E-Mail",

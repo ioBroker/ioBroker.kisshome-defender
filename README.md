@@ -51,7 +51,7 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.1.2 (2025-11-01)
 -   (@GermanBluefox) Disabled by default self-hosted docker option
 
 ### 1.1.1 (2025-10-31)
