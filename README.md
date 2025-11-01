@@ -51,8 +51,9 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
-### 1.1.2 (2025-11-01)
+### **WORK IN PROGRESS**
 -   (@GermanBluefox) Disabled by default self-hosted docker option
+-   (@GermanBluefox) Changed default threshold value
 
 ### 1.1.1 (2025-10-31)
 -   (@GermanBluefox) Changed the calculation of the first occurrence time

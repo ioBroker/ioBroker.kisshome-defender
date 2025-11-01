@@ -3,58 +3,7 @@
     "name": "kisshome-defender",
     "version": "1.1.2",
     "news": {
-      "1.1.2": {
-        "en": "Disabled by default self-hosted docker option",
-        "de": "Deaktiviert durch standardmäßige selbstgehostete Docking-Option",
-        "ru": "Отключен по умолчанию самостоятельно размещенный вариант докера",
-        "pt": "Desactivada por opção de docker auto- hospedada por omissão",
-        "nl": "Uitgeschakeld door standaard self-hosted docker optie",
-        "fr": "Désactivé par défaut option Docker auto-hôte",
-        "it": "Disabili per impostazione predefinita opzione docker self-hosted",
-        "es": "Discapacitados por opción predeterminada del docker",
-        "pl": "Wyłączony przez domyślną opcję docker",
-        "uk": "Вимкнено за замовчуванням самоприхована кнопка",
-        "zh-cn": "默认自寄居器选项禁用"
-      },
-      "1.1.1": {
-        "en": "Changed the calculation of the first occurrence time\nAdded link to FAQ in email",
-        "de": "Die Berechnung der ersten Ereigniszeit geändert\nLink zu FAQ in E-Mail",
-        "ru": "Изменился расчет времени первого наступления\nДобавлена ссылка на FAQ в email",
-        "pt": "Alterou o cálculo da primeira ocorrência\nAdicionado link para FAQ no email",
-        "nl": "De berekening van de eerste voorvaltijd gewijzigd\nLink naar veelgestelde vragen toegevoegd in e-mail",
-        "fr": "Changement du calcul de la première occurrence\nAjout d'un lien vers la FAQ dans l'email",
-        "it": "Modificato il calcolo della prima occorrenza\nAggiunto link a FAQ in email",
-        "es": "Cambió el cálculo del primer tiempo de ocurrencia\nEnlace añadido a FAQ en correo electrónico",
-        "pl": "Zmieniono obliczenie czasu pierwszego wystąpienia\nDodano link do FAQ w e-mailu",
-        "uk": "Змінено розрахунок першого залягання\nДодано посилання на FAQ в електронній пошті",
-        "zh-cn": "更改了第一次发生时间的计算\n在电子邮件中添加到 FAQ 的链接"
-      },
-      "1.1.0": {
-        "en": "Corrected JSON config",
-        "de": "JSON config korrigiert",
-        "ru": "Исправленная конфигурация JSON",
-        "pt": "Configuração do JSON corrigida",
-        "nl": "Gecorrigeerde JSON-configuratie",
-        "fr": "Config JSON corrigée",
-        "it": "Corretto configurazione JSON",
-        "es": "Corregido JSON config",
-        "pl": "Poprawiony plik konfiguracyjny JSON",
-        "uk": "Виправлено налаштування JSON",
-        "zh-cn": "更正 JSON 配置"
-      },
-      "1.0.20": {
-        "en": "Do not send empty error log\nDo not send config too often\nChanged wording",
-        "de": "Nicht leeres Fehlerprotokoll senden\nNicht zu oft config senden\nGeänderte Formulierung",
-        "ru": "Не отправляйте пустой журнал ошибок\nНе отправляйте конфигурацию слишком часто\nИзмененная формулировка",
-        "pt": "Não enviar o registo de erros vazio\nNão enviar configuração com demasiada frequência\nTexto alterado",
-        "nl": "Geen leeg foutlog versturen\nConfig niet te vaak verzenden\nGewijzigde formulering",
-        "fr": "Ne pas envoyer de journal d'erreur vide\nNe pas envoyer de config trop souvent\nTexte modifié",
-        "it": "Non inviare log di errore vuoto\nNon inviare la configurazione troppo spesso\nCambiato formulazione",
-        "es": "No enviar registro de error vacío\nNo enviar config demasiado a menudo\nPalabras modificadas",
-        "pl": "Nie wysyłaj pustego dziennika błędów\nNie wysyłaj config zbyt często\nZmienione brzmienie",
-        "uk": "Не надсилати порожній журнал помилок\nНе надсилати налаштування занадто часто\nЗмінене слово",
-        "zh-cn": "不发送空错误日志\n不要经常发送配置\n修改措辞"
-      }
+
     },
     "titleLang": {
       "en": "KISSHome defender",
@@ -164,7 +113,7 @@
     "tempDir": "",
     "devices": [],
     "allowTraining": true,
-    "saveThresholdSeconds": 3600000,
+    "saveThresholdSeconds": 3600,
     "docker": {
       "selfHosted": false,
       "url": "",
