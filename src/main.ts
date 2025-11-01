@@ -5,6 +5,7 @@ import axios from 'axios';
 import { randomUUID, createHash } from 'node:crypto';
 import schedule, { type Job } from 'node-schedule';
 import { networkInterfaces } from 'node:os';
+import DockerManager from './lib/DockerManager';
 
 import {
     getDefaultGateway,
@@ -635,6 +636,28 @@ export class KISSHomeResearchAdapter extends Adapter {
         } else {
             this.log.error('Cannot read UUID');
             return;
+        }
+
+        // Check if the docker available and if not, but the config wants to use it, disable it
+        if (this.config.docker.selfHosted) {
+            let dockerVersion: string | null = null;
+            try {
+                const dockerManager = new DockerManager(this);
+                const info = await dockerManager.getDockerDaemonInfo();
+                dockerVersion = info?.version || null;
+                void dockerManager.destroy();
+            } catch {
+                // ignore
+            }
+            if (!dockerVersion) {
+                this.log.warn(`Docker self-hosted is enabled in the configuration, but Docker is not available`);
+                const obj = await this.getForeignObjectAsync(`system.adapter.${this.namespace}`);
+                if (obj?.native?.docker) {
+                    obj.native.docker.selfHosted = false;
+                    await this.setForeignObjectAsync(obj._id, obj);
+                    return;
+                }
+            }
         }
 
         const statePeriod = await this.getStateAsync('info.ids.period');
