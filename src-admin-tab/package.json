@@ -7,7 +7,7 @@
         "@iobroker/adapter-react-v5": "^8.0.5",
         "@iobroker/types-vis-2": "^2.13.6",
         "@module-federation/vite": "^1.8.1",
-        "@mui/icons-material": "^6.5.0",
+        "@mui/icons-material": "^7.3.4",
         "@mui/material": "^6.5.0",
         "@types/markdown-it": "^14.1.2",
         "@types/react": "^18.3.26",
