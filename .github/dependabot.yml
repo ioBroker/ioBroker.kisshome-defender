@@ -29,3 +29,39 @@ updates:
       timezone: Europe/Berlin
     open-pull-requests-limit: 20
     versioning-strategy: increase
+
+  - package-ecosystem: npm
+    directory: "/src-admin"
+    schedule:
+      interval: monthly
+      time: "04:00"
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 20
+    versioning-strategy: increase
+
+  - package-ecosystem: npm
+    directory: "/src-admin-tab"
+    schedule:
+      interval: monthly
+      time: "04:00"
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 20
+    versioning-strategy: increase
+
+  - package-ecosystem: npm
+    directory: "/src-widgets"
+    schedule:
+      interval: monthly
+      time: "04:00"
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 20
+    versioning-strategy: increase
+
+  - package-ecosystem: npm
+    directory: "/src-admin-v1"
+    schedule:
+      interval: monthly
+      time: "04:00"
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 20
+    versioning-strategy: increase
