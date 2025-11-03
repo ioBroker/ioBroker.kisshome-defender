@@ -1020,6 +1020,7 @@ export class IDSCommunication {
                     security: {
                         apparmor: 'unconfined',
                     },
+                    removeOnExit: true,
                 },
             ]);
 

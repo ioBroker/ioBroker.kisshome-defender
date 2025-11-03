@@ -580,12 +580,10 @@ export function startRecordingOnFritzBox(
                 });
 
                 res.on('end', () => {
-                    if (log) {
-                        log(
-                            `File closed by fritzbox after ${context.full.totalBytes} bytes received in ${Math.floor((Date.now() - context.started) / 100) / 10} seconds`,
-                            'debug',
-                        );
-                    }
+                    log?.(
+                        `File closed by fritzbox after ${context.full.totalBytes} bytes received in ${Math.floor((Date.now() - context.started) / 100) / 10} seconds`,
+                        'debug',
+                    );
                     if (!context.full.totalBytes && log && Date.now() - context.started < 3000) {
                         log(
                             `No bytes received and file was closed by Fritzbox very fast. May be wrong interface selected`,

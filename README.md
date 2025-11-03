@@ -51,6 +51,9 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+-   (@GermanBluefox) Destroy docker container on adapter stop
+
 ### 1.1.3 (2025-11-01)
 -   (@GermanBluefox) Disabled by default self-hosted docker option
 -   (@GermanBluefox) Changed default threshold value
