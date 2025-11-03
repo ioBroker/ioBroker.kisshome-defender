@@ -51,7 +51,7 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.1.4 (2025-11-03)
 -   (@GermanBluefox) Destroy docker container on adapter stop
 
 ### 1.1.3 (2025-11-01)
