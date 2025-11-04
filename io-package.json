@@ -101,6 +101,11 @@
         "admin": ">=7.7.19"
       }
     ],
+    "dependencies": [
+      {
+        "js-controller": ">=7.0.0"
+      }
+    ],
     "osDependencies": {
       "linux": [
         "docker-ce"
