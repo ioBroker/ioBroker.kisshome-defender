@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.1.5",
+    "version": "1.1.6",
     "news": {
+      "1.1.6": {
+        "en": "Showed error message if IDS has an error",
+        "de": "Fehlermeldung angezeigt, wenn IDS einen Fehler hat",
+        "ru": "Показано сообщение об ошибке, если IDS имеет ошибку",
+        "pt": "Mensagem de erro mostrada se IDS tiver um erro",
+        "nl": "Foutmelding getoond als IDS een fout heeft",
+        "fr": "Message d'erreur affiché si IDS a une erreur",
+        "it": "Mostrato messaggio di errore se IDS ha un errore",
+        "es": "Mensaje de error mostrado si IDS tiene un error",
+        "pl": "Pokazany komunikat błędu, jeśli IDS ma błąd",
+        "uk": "Показати повідомлення про помилку, якщо IDS має помилку",
+        "zh-cn": "如果IDS有错误, 显示错误消息"
+      },
       "1.1.5": {
         "en": "Destroy docker container on adapter stop\nRequire admin 7.7.19 as dependency",
         "de": "Zerstörter Andocker Container auf Adapteranschlag\nErfordern Admin 7.7.19 als Abhängigkeit",
