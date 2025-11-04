@@ -3,19 +3,6 @@
     "name": "kisshome-defender",
     "version": "1.1.4",
     "news": {
-      "1.1.4": {
-        "en": "Destroy docker container on adapter stop",
-        "de": "Zerstörter Andocker Container auf Adapteranschlag",
-        "ru": "Уничтожить контейнер докера на остановке адаптера",
-        "pt": "Destruir o recipiente de docker na paragem do adaptador",
-        "nl": "Vernietig doper container op adapter stop",
-        "fr": "Détruire le conteneur en docker sur l'arrêt de l'adaptateur",
-        "it": "Distruggere container docker sulla fermata dell'adattatore",
-        "es": "Destruir contenedor de muelles en parada de adaptador",
-        "pl": "Zniszcz pojemnik na adapter",
-        "uk": "Контейнер Destroy docker на зупинці адаптера",
-        "zh-cn": "在适配器站销毁嵌入容器"
-      },
       "1.1.3": {
         "en": "Disabled by default self-hosted docker option\nChanged default threshold value",
         "de": "Deaktiviert durch standardmäßige selbstgehostete Docking-Option\nGeänderter Standard-Schwellwert",
@@ -98,7 +85,7 @@
     },
     "globalDependencies": [
       {
-        "admin": ">=7.7.2"
+        "admin": ">=7.7.19"
       }
     ],
     "osDependencies": {
