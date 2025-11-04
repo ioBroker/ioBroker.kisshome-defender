@@ -1441,7 +1441,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                     devices: [],
                 },
                 detections: [],
-                file: `today.pcap`,
+                file: 'today.pcap',
                 result: { status: 'success' },
             },
             randomUUID(),

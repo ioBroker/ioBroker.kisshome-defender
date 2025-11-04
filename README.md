@@ -51,6 +51,9 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+-   (@GermanBluefox) Showed error message if IDS has an error
+
 ### 1.1.5 (2025-11-04)
 -   (@GermanBluefox) Destroy docker container on adapter stop
 -   (@GermanBluefox) Required admin 7.7.19 as dependency

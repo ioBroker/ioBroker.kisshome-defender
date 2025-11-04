@@ -838,8 +838,8 @@ export class IDSCommunication {
             if (analysisResult.result.status === 'success') {
                 this.adapter.log.debug(`[IDS] File ${analysisResult.file} processed successfully`);
             } else {
-                this.adapter.log.error(
-                    `[IDS] Error processing file ${analysisResult.file}: ${analysisResult.result.error}`,
+                this.adapter.log.warn(
+                    `[IDS] Error processing file ${analysisResult.file}: ${analysisResult.result.message || analysisResult.result.error}`,
                 );
             }
             this.uploadStatus.fileName = undefined;
@@ -1162,6 +1162,20 @@ export class IDSCommunication {
                 }
             })
             .catch(error => {
+                if (error.response?.status === 422) {
+                    this.adapter.log.error(
+                        `[IDS] File ${fileName} rejected by IDS: ${error.response.data.Error || error.response.data.error}`,
+                    );
+                    // delete file immediately as it will not be processed
+                    try {
+                        unlinkSync(filePath);
+                    } catch (err) {
+                        this.adapter.log.error(`[IDS] Error deleting file ${fileName}: ${err.message}`);
+                    }
+                    this.uploadStatus = { status: 'idle' };
+                    void this.adapter.setState('info.analysis.running', false, true);
+                    return;
+                }
                 this.adapter.log.error(`[IDS] Error uploading file ${fileName}: ${error.message}`);
                 this.uploadStatus = { status: 'idle' };
                 void this.adapter.setState('info.analysis.running', false, true);

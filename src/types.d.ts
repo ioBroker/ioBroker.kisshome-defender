@@ -104,6 +104,7 @@ type AnalysisResult = {
     result: {
         status: 'success';
         error?: string;
+        message?: string;
     };
     statistics: Statistics;
     detections: DetectionsForDevice[];
