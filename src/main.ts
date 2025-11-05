@@ -337,11 +337,13 @@ export class KISSHomeResearchAdapter extends Adapter {
                             }
 
                             this.IPs.forEach(item => {
-                                result.names![item.mac.toLowerCase()] = {
-                                    ip: item.ip || '',
-                                    desc: item.desc || '',
-                                    vendor: KISSHomeResearchAdapter.macCache[item.ip]?.vendor || '',
-                                };
+                                if (item.mac) {
+                                    result.names![item.mac.toLowerCase()] = {
+                                        ip: item.ip || '',
+                                        desc: item.desc || '',
+                                        vendor: KISSHomeResearchAdapter.macCache[item.ip]?.vendor || '',
+                                    };
+                                }
                             });
 
                             if (process.env.TEST) {
