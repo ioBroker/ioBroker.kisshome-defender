@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.1.6",
+    "version": "1.1.7",
     "news": {
+      "1.1.7": {
+        "en": "Corrected error if device is offline\nShow error codes 400-499 as warning and not as error",
+        "de": "Fehler behoben, wenn das Gerät offline ist\nFehlercodes 400-499 als Warnung anzeigen und nicht als Fehler",
+        "ru": "Исправлена ошибка, если устройство отключено\nПоказать коды ошибок 400-499 как предупреждение, а не как ошибка",
+        "pt": "Erro corrigido se o dispositivo estiver desligado\nMostrar os códigos de erro 400-499 como aviso e não como erro",
+        "nl": "Gecorrigeerde fout als het apparaat offline is\nToon foutcodes 400-499 als waarschuwing en niet als fout",
+        "fr": "Erreur corrigée si le périphérique est hors ligne\nAfficher les codes d'erreur 400-499 comme avertissement et non comme erreur",
+        "it": "Errore corretto se il dispositivo è offline\nMostra i codici di errore 400-499 come avviso e non come errore",
+        "es": "Error corregido si el dispositivo está fuera de línea\nMostrar códigos de error 400-499 como advertencia y no como error",
+        "pl": "Skorygowany błąd jeśli urządzenie jest wyłączone\nPokaż kody błędów 400- 499 jako ostrzeżenie, a nie jako błąd",
+        "uk": "Виправлена помилка, якщо пристрій відсутня\nПоказати коди помилок 400-499 як попередження та не як помилки",
+        "zh-cn": "设备离线时纠正错误\n将错误代码 400-499 显示为警告而非错误"
+      },
       "1.1.6": {
         "en": "Showed error message if IDS has an error",
         "de": "Fehlermeldung angezeigt, wenn IDS einen Fehler hat",
