@@ -51,6 +51,10 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+-   (@GermanBluefox) Corrected error if device is offline
+-   (@GermanBluefox) Show error codes 400-499 as warning and not as error
+
 ### 1.1.6 (2025-11-04)
 -   (@GermanBluefox) Showed error message if IDS has an error
 

@@ -1163,7 +1163,7 @@ export class IDSCommunication {
             })
             .catch(error => {
                 if (error.response?.status === 422) {
-                    this.adapter.log.error(
+                    this.adapter.log.warn(
                         `[IDS] File ${fileName} rejected by IDS: ${error.response.data.Error || error.response.data.error}`,
                     );
                     // delete file immediately as it will not be processed
@@ -1176,7 +1176,32 @@ export class IDSCommunication {
                     void this.adapter.setState('info.analysis.running', false, true);
                     return;
                 }
-                this.adapter.log.error(`[IDS] Error uploading file ${fileName}: ${error.message}`);
+                if (error.response?.status === 429) {
+                    this.adapter.log.warn(
+                        `[IDS] File ${fileName} rejected by IDS as busy with processing: ${error.response.data.Error || error.response.data.error || 429}`,
+                    );
+                    // delete file immediately as it will not be processed
+                    this.uploadStatus = { status: 'idle' };
+                    void this.adapter.setState('info.analysis.running', false, true);
+                    return;
+                }
+                if (error.response?.status === 409) {
+                    this.adapter.log.warn(
+                        `[IDS] File ${fileName} rejected by IDS as no configuration found: ${error.response.data.Error || error.response.data.error || 409}`,
+                    );
+                    this.configSent = false;
+                    // delete file immediately as it will not be processed
+                    this.uploadStatus = { status: 'idle' };
+                    void this.adapter.setState('info.analysis.running', false, true);
+                    return;
+                }
+                if (error.response?.status && error.response.status >= 400 && error.response.status < 500) {
+                    this.adapter.log.warn(
+                        `[IDS] Problem by uploading file ${fileName}: ${error.response?.status} ${error.message}`,
+                    );
+                } else {
+                    this.adapter.log.error(`[IDS] Error uploading file ${fileName}: ${error.message}`);
+                }
                 this.uploadStatus = { status: 'idle' };
                 void this.adapter.setState('info.analysis.running', false, true);
             });
