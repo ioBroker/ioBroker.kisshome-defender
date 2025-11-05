@@ -582,7 +582,8 @@ export class KISSHomeResearchAdapter extends Adapter {
                         // List ALL ip 4 and 6 addresses
                         Object.keys(interfaces).forEach(ifname => {
                             (interfaces[ifname] || []).forEach(iface => {
-                                if (iface.family === 'IPv4' || iface.family === 'IPv6') {
+                                // Select only IPv4 and no loopback
+                                if (iface.family === 'IPv4' && !iface.internal) {
                                     list.push({ label: `${ifname} (${iface.address})`, value: iface.address });
                                 }
                             });
@@ -593,7 +594,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                         if (data?.[0]?.addr_info) {
                             data.forEach(item => {
                                 item.addr_info.forEach((addr: any) => {
-                                    if (addr.family === 'inet' || addr.family === 'inet6') {
+                                    if (addr.family === 'inet' && addr.local !== '127.0.0.1') {
                                         list.push({ label: `${item.ifname} (${addr.local})`, value: addr.local });
                                     }
                                 });
