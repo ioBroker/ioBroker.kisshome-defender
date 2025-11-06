@@ -373,7 +373,7 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                             width: 'calc(100% - 40px)',
                             marginLeft: 20,
                         }}
-                        min={2}
+                        min={10}
                         max={60}
                         valueLabelDisplay="auto"
                         valueLabelFormat={val => I18n.t('kisshome-defender_%s minutes', val)}

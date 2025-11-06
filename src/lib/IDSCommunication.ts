@@ -21,6 +21,7 @@ import type {
 } from '../types';
 import DockerManager from './DockerManager';
 import { fileNameToDate, normalizeMacAddress } from './utils';
+import type { ContainerConfig } from './dockerManager.types';
 
 const MAX_FILES_ON_DISK = 6; // Maximum number of files to keep on disk
 export const CHANGE_TIME = '2025-11-17T00:00:00Z'; // Calculation time
@@ -213,7 +214,7 @@ export class IDSCommunication {
             this.adapter.log.warn('[IDS] No IDS URL configured, using localhost as fallback');
             throw new Error('No IDS URL configured');
         } else if (!this.idsUrl) {
-            this.idsUrl = `http://${!this.config.docker.bind || this.config.docker.bind === '0.0.0.0' ? await this.dockerManager!.getIpOfContainer() : this.config.docker.bind}:${this.config.docker.port || 5000}`;
+            this.idsUrl = `http://${!this.config.docker.bind || this.config.docker.bind === '0.0.0.0' || this.config.docker.bind === '127.0.0.1' ? await this.dockerManager!.getIpOfContainer() : this.config.docker.bind}:${this.config.docker.port || 5000}`;
         }
 
         const parsed = new URL(this.idsUrl);
@@ -507,7 +508,8 @@ export class IDSCommunication {
                 }
 
                 this.adapter.log.warn('[IDS] IDS in the error state, restarting...');
-                await this.dockerManager.containerRestart();
+                // Recreate the container anew
+                await this.dockerManager.containerReCreate(this.#getContainerConfig());
             }
 
             if (this.lastStatus?.message?.training) {
@@ -955,13 +957,13 @@ export class IDSCommunication {
                         if (sendEvent === 1) {
                             text = I18n.translate(
                                 `During an inspection, an anomaly score of %s was detected that could indicate a potential security risk.`,
-                                biggestScore.toString().replace(/./g, ','),
+                                biggestScore.toString().replace(/\./g, ','),
                             );
                         } else {
                             // Take the biggest score (ML and Suricata
                             text = I18n.translate(
                                 `During an inspection, anomaly scores of %s were detected that could indicate a potential security risk.`,
-                                biggestScore.toString().replace(/./g, ','),
+                                biggestScore.toString().replace(/\./g, ','),
                             );
                         }
                     }
@@ -1001,28 +1003,30 @@ export class IDSCommunication {
         return '';
     };
 
+    #getContainerConfig(): ContainerConfig {
+        return {
+            image: 'kisshome/ids:stable',
+            ports: [
+                {
+                    containerPort: 5000,
+                    hostPort: this.config.docker.port || 5000,
+                    hostIP: this.config.docker.bind === '127.0.0.1' ? undefined : this.config.docker.bind || undefined,
+                },
+            ],
+            iobAutoImageUpdate: true,
+            iobStopOnUnload: true,
+            volumes: [`${this.statisticsDir}/volume:/shared`],
+            security: {
+                apparmor: 'unconfined',
+            },
+            removeOnExit: true,
+        };
+    }
+
     async manageIdsContainer(): Promise<void> {
         if (this.config.docker?.selfHosted) {
             this.adapter.log.info(`[IDS] ${I18n.translate('Managing IDS container')}`);
-            this.dockerManager ||= new DockerManager(this.adapter, undefined, [
-                {
-                    image: 'kisshome/ids:stable',
-                    ports: [
-                        {
-                            containerPort: 5000,
-                            hostPort: this.config.docker.port || 5000,
-                            hostIP: this.config.docker.bind || undefined,
-                        },
-                    ],
-                    iobAutoImageUpdate: true,
-                    iobStopOnUnload: true,
-                    volumes: [`${this.statisticsDir}/volume:/shared`],
-                    security: {
-                        apparmor: 'unconfined',
-                    },
-                    removeOnExit: true,
-                },
-            ]);
+            this.dockerManager ||= new DockerManager(this.adapter, undefined, [this.#getContainerConfig()]);
 
             await this.dockerManager.isReady();
         }

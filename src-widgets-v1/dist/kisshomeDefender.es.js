@@ -76001,7 +76001,7 @@ yyyy`);
                     width: "calc(100% - 40px)",
                     marginLeft: 20
                   },
-                  min: 2,
+                  min: 10,
                   max: 60,
                   valueLabelDisplay: "auto",
                   valueLabelFormat: (r) => j.t("kisshome-defender_%s minutes", r),

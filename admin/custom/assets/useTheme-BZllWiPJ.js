@@ -1,1 +1,0 @@
-import{Y as n,e as o}from"./createTheme-BuDP1M88.js";import{C as s}from"./ConfigCustomKissHomeDefenderSet__loadShare__react__loadShare__-DCHqfbay.js";function r(e){return Object.keys(e).length===0}function m(e=null){const t=s.useContext(n);return!t||r(t)?e:t}const a=o();function h(e=a){return m(e)}export{m as a,h as u};
