@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.1.8",
+    "version": "1.1.9",
     "news": {
+      "1.1.9": {
+        "en": "Try to handle 127.0.0.1 as no bind given\nRecreate IDS container on error if self-hosted\nLimit minimal interval for sending PCAPs to 10 minutes",
+        "de": "Versuchen Sie, 127.0.0.1 zu handhaben, da keine Bindung gegeben\nRekrutieren Sie IDS-Container auf Fehler, wenn selbstgehostet\nLimit minimales Intervall für das Senden von PCAPs auf 10 Minuten",
+        "ru": "Попробуйте обращаться с 127.0.0.1 как без связывания\nВосстановление контейнера IDS по ошибке при самостоятельном размещении\nОграничьте минимальный интервал для отправки PCAP до 10 минут",
+        "pt": "Tente manusear 127.0.0.1 como nenhum vínculo dado\nRecriar o recipiente IDS em caso de erro se ele próprio estiver hospedado\nLimite o intervalo mínimo para enviar PCAPs a 10 minutos",
+        "nl": "Probeer 127.0.0.1 als geen bind gegeven te hanteren\nIDS-container opnieuw aanmaken bij foutmelding indien zelf-gehost\nBeperk het minimale interval voor het verzenden van PCAP's naar 10 minuten",
+        "fr": "Essayez de manipuler 127.0.0.1 comme aucune liaison donnée\nRecréer le conteneur IDS en cas d'erreur si vous vous-même\nLimiter l'intervalle minimal pour l'envoi des PACP à 10 minutes",
+        "it": "Prova a gestire 127.0.0.1 come nessun legame dato\nRicreare container IDS sull'errore se self-hosted\nLimitare l'intervallo minimo per l'invio di PCAP a 10 minuti",
+        "es": "Trate de manejar 127.0.0.1 como ningún bind dado\nRecrear contenedor IDS en error si auto hospedado\nLimite intervalo mínimo para enviar PCAP a 10 minutos",
+        "pl": "Spróbuj obsługiwać 127.0.0.1 jak nie ma wiązania\nOdtworzyć pojemnik IDS w przypadku błędu, jeśli jest on samodzielnie hostowany\nOgraniczenie minimalnego odstępu dla wysyłania PCAP do 10 minut",
+        "uk": "Спробуйте ручку 127.0.0.1 не вказаний\nВідтворити контейнер IDS на похибку, якщо самостійно\nОбмеження мінімального інтервалу для відправки PCAP до 10 хвилин",
+        "zh-cn": "尝试处理 127. 0.0.1 没有给定绑定\n如果自行托管, 在错误时重建 IDS 容器\n将发送PCAP的最小间隔限制为10分钟"
+      },
       "1.1.8": {
         "en": "Allowed only selection IPv4 addresses and not loopback for communication with docker",
         "de": "Erlaubt nur Auswahl IPv4-Adressen und nicht Schlaufe für die Kommunikation mit dem Docker",

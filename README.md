@@ -51,7 +51,7 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.1.9 (2025-11-06)
 -   (@GermanBluefox) Try to handle 127.0.0.1 as no bind given
 -   (@GermanBluefox) Recreate IDS container on error if self-hosted
 -   (@GermanBluefox) Limit minimal interval for sending PCAPs to 10 minutes
