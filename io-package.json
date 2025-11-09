@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.1.9",
+    "version": "1.1.10",
     "news": {
+      "1.1.10": {
+        "en": "Showed progress devices that have only IP address",
+        "de": "Zeigte Fortschrittsgeräte, die nur IP-Adresse haben",
+        "ru": "Показаны прогрессивные устройства, имеющие только IP-адрес",
+        "pt": "Dispositivos de progresso mostrados com apenas endereço IP",
+        "nl": "Voortgangsapparaten met alleen IP-adres tonen",
+        "fr": "Dispositifs de progression affichés qui n'ont que l'adresse IP",
+        "it": "Dispositivi di progresso visualizzati che hanno solo indirizzo IP",
+        "es": "Dispositivos de progreso mostrados que sólo tienen dirección IP",
+        "pl": "Pokazane urządzenia postępu, które posiadają tylko adres IP",
+        "uk": "Переглянуті пристрої, які мають лише IP-адресу",
+        "zh-cn": "显示只有 IP 地址的进度设备"
+      },
       "1.1.9": {
         "en": "Try to handle 127.0.0.1 as no bind given\nRecreate IDS container on error if self-hosted\nLimit minimal interval for sending PCAPs to 10 minutes",
         "de": "Versuchen Sie, 127.0.0.1 zu handhaben, da keine Bindung gegeben\nRekrutieren Sie IDS-Container auf Fehler, wenn selbstgehostet\nLimit minimales Intervall für das Senden von PCAPs auf 10 Minuten",
