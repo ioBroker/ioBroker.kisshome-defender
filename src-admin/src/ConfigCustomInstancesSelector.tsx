@@ -971,8 +971,8 @@ export default class ConfigCustomInstancesSelector extends ConfigGeneric<
                         ))}
                         {notFound.map(row => {
                             const normalizedIp = normalizeIpAddress(row.ip);
-                            const normalizedMac = normalizeMacAddress(row.mac);
                             const possibleMac = this.state.IP2MAC?.[normalizedIp];
+                            const normalizedMac = normalizeMacAddress(row.mac || possibleMac);
                             const duplicateIp =
                                 row.ip && row.enabled && devices.filter(it => row.ip === it.ip).length > 1
                                     ? I18n.t('custom_kisshome_duplicate_ip')

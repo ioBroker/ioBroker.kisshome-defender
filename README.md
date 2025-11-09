@@ -51,6 +51,9 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+-   (@GermanBluefox) Showed progress devices that have only IP address
+
 ### 1.1.9 (2025-11-06)
 -   (@GermanBluefox) Try to handle 127.0.0.1 as no bind given
 -   (@GermanBluefox) Recreate IDS container on error if self-hosted
