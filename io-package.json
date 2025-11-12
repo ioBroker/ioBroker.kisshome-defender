@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.1.11",
+    "version": "1.1.12",
     "news": {
+      "1.1.12": {
+        "en": "Changed german name of adapter\nSync names of PCAP files",
+        "de": "Geänderter deutscher Name des Adapters\nSync Namen von PCAP-Dateien",
+        "ru": "Изменилось немецкое название адаптера\nСинхронизация имен файлов PCAP",
+        "pt": "Nome alemão alterado do adaptador\nSincronizar os nomes dos ficheiros PCAP",
+        "nl": "Veranderde Duitse naam van adapter\nSynchroniseer namen van PCAP-bestanden",
+        "fr": "Changement du nom allemand de l'adaptateur\nSynchroniser les noms des fichiers PACP",
+        "it": "Cambiato nome tedesco di adattatore\nNomi di sincronizzazione dei file PCAP",
+        "es": "Nombre alemán cambiado de adaptador\nNombres sincronizados de archivos PCAP",
+        "pl": "Zmieniona niemiecka nazwa adaptera\nSynchronizacja nazw plików PCAP",
+        "uk": "Змінено німецьке ім'я адаптера\nSync імена файлів PCAP",
+        "zh-cn": "更改适配器的德国名称\n同步 PCAP 文件名称"
+      },
       "1.1.11": {
         "en": "Changed german name of adapter",
         "de": "Geänderter deutscher Name des Adapters",
@@ -80,19 +93,6 @@
         "pl": "Pokazany komunikat błędu, jeśli IDS ma błąd",
         "uk": "Показати повідомлення про помилку, якщо IDS має помилку",
         "zh-cn": "如果IDS有错误, 显示错误消息"
-      },
-      "1.1.5": {
-        "en": "Destroy docker container on adapter stop\nRequire admin 7.7.19 as dependency",
-        "de": "Zerstörter Andocker Container auf Adapteranschlag\nErfordern Admin 7.7.19 als Abhängigkeit",
-        "ru": "Уничтожить контейнер докера на остановке адаптера\nТребовать admin 7.7.19 в качестве зависимости",
-        "pt": "Destruir o recipiente de docker na paragem do adaptador\nRequer admin 7.7.19 como dependência",
-        "nl": "Vernietig doper container op adapter stop\nVereist admin 7.7.19 als afhankelijkheid",
-        "fr": "Détruire le conteneur en docker sur l'arrêt de l'adaptateur\nExiger admin 7.7.19 comme dépendance",
-        "it": "Distruggere container docker sulla fermata dell'adattatore\nRichiedere admin 7.7.19 come dipendenza",
-        "es": "Destruir contenedor de muelles en parada de adaptador\nRequire admin 7.7.19 como dependencia",
-        "pl": "Zniszcz pojemnik na adapter\nWymagane admin 7.7.19 jako zależność",
-        "uk": "Контейнер Destroy docker на зупинці адаптера\nПотрібні адміністратора 7.7.19 залежностей",
-        "zh-cn": "在适配器站销毁嵌入容器\n需要7.7.19管理员作为受扶养人"
       }
     },
     "titleLang": {
