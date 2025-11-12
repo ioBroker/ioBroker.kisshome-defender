@@ -24,7 +24,7 @@ import { fileNameToDate, normalizeMacAddress } from './utils';
 import type { ContainerConfig } from './dockerManager.types';
 
 const MAX_FILES_ON_DISK = 6; // Maximum number of files to keep on disk
-export const CHANGE_TIME = '2025-11-17T00:00:00Z'; // Calculation time
+export const CHANGE_TIME = '2025-12-01T00:00:00Z'; // Calculation time
 
 function randNormalClipped(min = 1, mean = 12, std = 2, max = 20): number {
     // Box–Muller transform to generate a normal-distributed value

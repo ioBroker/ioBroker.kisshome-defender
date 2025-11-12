@@ -97,16 +97,16 @@
     },
     "titleLang": {
       "en": "KISSHome defender",
-      "de": "KISSHome-Forschung",
-      "ru": "Исследование KISSHome",
-      "pt": "Pesquisa KISSHome",
-      "nl": "KISSHome-onderzoek",
-      "fr": "Recherche KISSHome",
-      "it": "Ricerca KISSHome",
-      "es": "Investigación de KISSHome",
-      "pl": "Badania KISSHome",
-      "uk": "Дослідження KISSHome",
-      "zh-cn": "KISSHome研究"
+      "de": "KISSHome-Defender",
+      "ru": "KISSHome-Defender",
+      "pt": "KISSHome-Defender",
+      "nl": "KISSHome-Defender",
+      "fr": "KISSHome-Defender",
+      "it": "KISSHome-Defender",
+      "es": "KISSHome-Defender",
+      "pl": "KISSHome-Defender",
+      "uk": "KISSHome-Defender",
+      "zh-cn": "KISSHome-Defender"
     },
     "desc": {
       "en": "Collection of information for KISSHome defender",
