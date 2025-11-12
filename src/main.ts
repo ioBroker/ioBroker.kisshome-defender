@@ -1036,12 +1036,12 @@ export class KISSHomeResearchAdapter extends Adapter {
     }
 
     savePacketsToFile(): void {
+        const timeStamp = getTimestamp();
         if (this.context.filtered.packets.length) {
             const packetsToSave = this.context.filtered.packets;
             this.context.filtered.packets = [];
             this.context.filtered.totalBytes = 0;
 
-            const timeStamp = getTimestamp();
             const fileName = `${this.workingCloudDir}/${timeStamp}.pcap`;
             // get file descriptor of a file
             const fd = openSync(fileName, 'w');
@@ -1093,7 +1093,6 @@ export class KISSHomeResearchAdapter extends Adapter {
             this.context.full.packets = [];
             this.context.full.totalBytes = 0;
 
-            const timeStamp = getTimestamp();
             const fileName = `${this.workingIdsDir}/${timeStamp}.pcap`;
             // get file descriptor of a file
             const fd = openSync(fileName, 'w');
