@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.1.12",
+    "version": "1.1.13",
     "news": {
+      "1.1.13": {
+        "en": "Allowed editing of the description for  automatically found devices",
+        "de": "Erlaubte Bearbeitung der Beschreibung für automatisch gefundene Geräte",
+        "ru": "Разрешено редактирование описания для автоматически найденных устройств",
+        "pt": "Permite a edição da descrição dos dispositivos encontrados automaticamente",
+        "nl": "Toegestaan bewerken van de beschrijving voor automatisch gevonden apparaten",
+        "fr": "Modification autorisée de la description pour les appareils trouvés automatiquement",
+        "it": "Modifica consentita della descrizione per i dispositivi trovati automaticamente",
+        "es": "Permitido edición de la descripción para dispositivos encontrados automáticamente",
+        "pl": "Dozwolona edycja opisu dla automatycznie znalezionych urządzeń",
+        "uk": "Дозволяється редагування опису для автоматично знайдених пристроїв",
+        "zh-cn": "允许编辑自动找到设备的描述"
+      },
       "1.1.12": {
         "en": "Changed german name of adapter\nSync names of PCAP files",
         "de": "Geänderter deutscher Name des Adapters\nSync Namen von PCAP-Dateien",
@@ -80,19 +93,6 @@
         "pl": "Skorygowany błąd jeśli urządzenie jest wyłączone\nPokaż kody błędów 400- 499 jako ostrzeżenie, a nie jako błąd",
         "uk": "Виправлена помилка, якщо пристрій відсутня\nПоказати коди помилок 400-499 як попередження та не як помилки",
         "zh-cn": "设备离线时纠正错误\n将错误代码 400-499 显示为警告而非错误"
-      },
-      "1.1.6": {
-        "en": "Showed error message if IDS has an error",
-        "de": "Fehlermeldung angezeigt, wenn IDS einen Fehler hat",
-        "ru": "Показано сообщение об ошибке, если IDS имеет ошибку",
-        "pt": "Mensagem de erro mostrada se IDS tiver um erro",
-        "nl": "Foutmelding getoond als IDS een fout heeft",
-        "fr": "Message d'erreur affiché si IDS a une erreur",
-        "it": "Mostrato messaggio di errore se IDS ha un errore",
-        "es": "Mensaje de error mostrado si IDS tiene un error",
-        "pl": "Pokazany komunikat błędu, jeśli IDS ma błąd",
-        "uk": "Показати повідомлення про помилку, якщо IDS має помилку",
-        "zh-cn": "如果IDS有错误, 显示错误消息"
       }
     },
     "titleLang": {

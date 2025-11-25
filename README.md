@@ -51,7 +51,7 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.1.13 (2025-11-25)
 -   (@GermanBluefox) Allowed editing of the description for  automatically found devices
 
 ### 1.1.12 (2025-11-12)
