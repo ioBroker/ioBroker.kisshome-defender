@@ -51,6 +51,9 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+-   (@GermanBluefox) Allowed editing of the description for  automatically found devices
+
 ### 1.1.12 (2025-11-12)
 -   (@GermanBluefox) Changed german name of adapter
 -   (@GermanBluefox) Sync names of PCAP files

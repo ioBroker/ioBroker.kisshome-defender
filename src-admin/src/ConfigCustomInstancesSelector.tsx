@@ -907,68 +907,102 @@ export default class ConfigCustomInstancesSelector extends ConfigGeneric<
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {this.state.ips?.map(row => (
-                            <TableRow key={row.uuid}>
-                                <TableCell
-                                    scope="row"
-                                    style={styles.td}
-                                >
-                                    <Checkbox
-                                        checked={!!devices.find(item => item.uuid === row.uuid)?.enabled}
-                                        disabled={this.state.runningRequest}
-                                        onClick={() => {
-                                            const _devices = [
-                                                ...(ConfigGeneric.getValue(this.props.data, 'devices') || []),
-                                            ];
-                                            const pos = _devices.findIndex(item => item.uuid === row.uuid);
-                                            if (pos === -1) {
-                                                // check if maybe the device with this IP already exists
-                                                const posIp = _devices.findIndex(item => item.ip === row.ip);
-                                                if (posIp !== -1) {
-                                                    // Modify the ips list
-                                                    const ips: {
-                                                        ip: string;
-                                                        type: string;
-                                                        desc: string;
-                                                        uuid: string;
-                                                        mac?: string;
-                                                    }[] = JSON.parse(JSON.stringify(this.state.ips));
-                                                    const ipsItem = ips.find(item => item.uuid === row.uuid);
-                                                    if (ipsItem) {
-                                                        ipsItem.uuid = _devices[posIp].uuid;
+                        {this.state.ips?.map(row => {
+                            const device = devices.find(item => item.uuid === row.uuid);
+                            return (
+                                <TableRow key={row.uuid}>
+                                    <TableCell
+                                        scope="row"
+                                        style={styles.td}
+                                    >
+                                        <Checkbox
+                                            checked={!!device?.enabled}
+                                            disabled={this.state.runningRequest}
+                                            onClick={() => {
+                                                const _devices = [
+                                                    ...(ConfigGeneric.getValue(this.props.data, 'devices') || []),
+                                                ];
+                                                const pos = _devices.findIndex(item => item.uuid === row.uuid);
+                                                if (pos === -1) {
+                                                    // check if maybe the device with this IP already exists
+                                                    const posIp = _devices.findIndex(item => item.ip === row.ip);
+                                                    if (posIp !== -1) {
+                                                        // Modify the ips list
+                                                        const ips: {
+                                                            ip: string;
+                                                            type: string;
+                                                            desc: string;
+                                                            uuid: string;
+                                                            mac?: string;
+                                                        }[] = JSON.parse(JSON.stringify(this.state.ips));
+                                                        const ipsItem = ips.find(item => item.uuid === row.uuid);
+                                                        if (ipsItem) {
+                                                            ipsItem.uuid = _devices[posIp].uuid;
+                                                        }
+                                                        _devices[posIp].enabled = true;
+                                                        this.setState({ ips }, () =>
+                                                            this.onChange('devices', _devices),
+                                                        );
+                                                    } else {
+                                                        if (row.ip === fritzBox) {
+                                                            this.setState({ showMessage: true });
+                                                            return;
+                                                        }
+                                                        _devices.push({
+                                                            ip: row.ip,
+                                                            mac: row.mac,
+                                                            desc: row.desc,
+                                                            enabled: true,
+                                                            uuid: row.uuid,
+                                                        });
                                                     }
-                                                    _devices[posIp].enabled = true;
-                                                    this.setState({ ips }, () => this.onChange('devices', _devices));
                                                 } else {
-                                                    if (row.ip === fritzBox) {
-                                                        this.setState({ showMessage: true });
-                                                        return;
-                                                    }
-                                                    _devices.push({
-                                                        ip: row.ip,
-                                                        mac: row.mac,
-                                                        desc: row.desc,
-                                                        enabled: true,
-                                                        uuid: row.uuid,
-                                                    });
+                                                    _devices.splice(pos, 1);
                                                 }
-                                            } else {
-                                                _devices.splice(pos, 1);
-                                            }
-                                            void this.onChange('devices', _devices);
-                                        }}
-                                    />
-                                </TableCell>
-                                <TableCell style={styles.td}>{row.ip}</TableCell>
-                                <TableCell style={styles.td}>{row.mac || ''}</TableCell>
-                                <TableCell style={{ ...styles.td, ...styles.vendor }}>
-                                    {this.state.MAC2VENDOR?.[normalizeMacAddress(row.mac)] || ''}
-                                </TableCell>
-                                <TableCell style={styles.td}>{row.desc}</TableCell>
-                                <TableCell style={styles.td}>{this.renderModelStatus(row.mac)}</TableCell>
-                                <TableCell style={styles.td} />
-                            </TableRow>
-                        ))}
+                                                void this.onChange('devices', _devices);
+                                            }}
+                                        />
+                                    </TableCell>
+                                    <TableCell style={styles.td}>{row.ip}</TableCell>
+                                    <TableCell style={styles.td}>{row.mac || ''}</TableCell>
+                                    <TableCell style={{ ...styles.td, ...styles.vendor }}>
+                                        {this.state.MAC2VENDOR?.[normalizeMacAddress(row.mac)] || ''}
+                                    </TableCell>
+                                    <TableCell style={styles.td}>
+                                        {device?.enabled ? (
+                                            <TextField
+                                                fullWidth
+                                                value={device.desc}
+                                                disabled={this.state.runningRequest}
+                                                onChange={e => {
+                                                    const _devices = [
+                                                        ...(ConfigGeneric.getValue(this.props.data, 'devices') || []),
+                                                    ];
+                                                    const dev = _devices.find(item => item.uuid === device.uuid);
+                                                    if (dev) {
+                                                        dev.desc = e.target.value;
+                                                        void this.onChange('devices', _devices);
+                                                        // check that all devices have a name
+                                                        this.checkDevices(_devices);
+                                                    }
+                                                }}
+                                                helperText={
+                                                    (row.desc || '').length >= 3
+                                                        ? ''
+                                                        : I18n.t('custom_kisshome_name_too_short')
+                                                }
+                                                error={(row.desc || '').length < 3}
+                                                variant="standard"
+                                            />
+                                        ) : (
+                                            row.desc
+                                        )}
+                                    </TableCell>
+                                    <TableCell style={styles.td}>{this.renderModelStatus(row.mac)}</TableCell>
+                                    <TableCell style={styles.td} />
+                                </TableRow>
+                            );
+                        })}
                         {notFound.map(row => {
                             const normalizedIp = normalizeIpAddress(row.ip);
                             const possibleMac = this.state.IP2MAC?.[normalizedIp];
