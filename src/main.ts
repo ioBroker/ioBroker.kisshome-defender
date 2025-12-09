@@ -33,7 +33,7 @@ import type {
     StoredStatisticsResult,
     UXEvent,
 } from './types';
-import CloudSync, { PCAP_HOST } from './lib/CloudSync';
+import CloudSync, { NO_COMMUNICATION, PCAP_HOST } from './lib/CloudSync';
 import { IDSCommunication, CHANGE_TIME } from './lib/IDSCommunication';
 import Statistics from './lib/Statistics';
 import { execSync } from 'node:child_process';
@@ -479,7 +479,7 @@ export class KISSHomeResearchAdapter extends Adapter {
                 }
 
                 case 'reportUxEvents': {
-                    if (msg.message) {
+                    if (msg.message && Date.now() < NO_COMMUNICATION) {
                         // Save UX events to the file
                         this.cloudSync?.reportUxEvents(msg.message as UXEvent[]);
                     }
@@ -487,6 +487,10 @@ export class KISSHomeResearchAdapter extends Adapter {
                 }
 
                 case 'questionnaireAnswer': {
+                    if (Date.now() > NO_COMMUNICATION) {
+                        this.sendTo(msg.from, msg.command, { result: 'ok' }, msg.callback);
+                        return;
+                    }
                     // Send the questionnaire answer to the server
                     if (msg.message && typeof msg.message === 'object' && this.config.email) {
                         try {
@@ -804,19 +808,23 @@ export class KISSHomeResearchAdapter extends Adapter {
             this.tempDir = this.tempDir.substring(0, this.tempDir.length - 1);
         }
 
-        this.workingCloudDir = `${this.tempDir}/cloud_pcaps`;
         this.workingIdsDir = `${this.tempDir}/ids_pcaps`;
 
         // create cloud directory
-        try {
-            if (!existsSync(this.workingCloudDir)) {
-                mkdirSync(this.workingCloudDir);
+        if (Date.now() < NO_COMMUNICATION) {
+            this.workingCloudDir = `${this.tempDir}/cloud_pcaps`;
+            try {
+                if (!existsSync(this.workingCloudDir)) {
+                    mkdirSync(this.workingCloudDir);
+                }
+            } catch (e) {
+                this.log.error(
+                    `${I18n.translate('Cannot create %s working directory', 'cloud')} "${this.workingCloudDir}": ${e}`,
+                );
+                return;
             }
-        } catch (e) {
-            this.log.error(
-                `${I18n.translate('Cannot create %s working directory', 'cloud')} "${this.workingCloudDir}": ${e}`,
-            );
-            return;
+        } else {
+            this.workingCloudDir = '';
         }
 
         // create ids directory
@@ -830,9 +838,6 @@ export class KISSHomeResearchAdapter extends Adapter {
             );
             return;
         }
-
-        // this.clearWorkingCloudDir();
-        // this.clearWorkingIdsDir();
 
         if (!this.config.email) {
             this.log.error(I18n.translate('No email provided. Please provide an email address in the configuration.'));
@@ -924,6 +929,10 @@ export class KISSHomeResearchAdapter extends Adapter {
     }
 
     readQuestionnaire(): void {
+        if (Date.now() > NO_COMMUNICATION) {
+            return;
+        }
+
         if (this.questionnaireTimer) {
             this.clearTimeout(this.questionnaireTimer);
             this.questionnaireTimer = null;
@@ -1042,50 +1051,52 @@ export class KISSHomeResearchAdapter extends Adapter {
             this.context.filtered.packets = [];
             this.context.filtered.totalBytes = 0;
 
-            const fileName = `${this.workingCloudDir}/${timeStamp}.pcap`;
-            // get file descriptor of a file
-            const fd = openSync(fileName, 'w');
-            let offset = 0;
-            const magic = packetsToSave[0].readUInt32LE(0);
-            const STANDARD_MAGIC = 0xa1b2c3d4;
-            // https://wiki.wireshark.org/Development/LibpcapFileFormat
-            const MODIFIED_MAGIC = 0xa1b2cd34;
+            if (Date.now() < NO_COMMUNICATION) {
+                const fileName = `${this.workingCloudDir}/${timeStamp}.pcap`;
+                // get file descriptor of a file
+                const fd = openSync(fileName, 'w');
+                let offset = 0;
+                const magic = packetsToSave[0].readUInt32LE(0);
+                const STANDARD_MAGIC = 0xa1b2c3d4;
+                // https://wiki.wireshark.org/Development/LibpcapFileFormat
+                const MODIFIED_MAGIC = 0xa1b2cd34;
 
-            // do not save a header if it is already present
-            // write header
-            if (magic !== STANDARD_MAGIC && magic !== MODIFIED_MAGIC) {
-                // create PCAP header
-                const byteArray = Buffer.alloc(6 * 4);
-                // magic number
-                byteArray.writeUInt32LE(
-                    this.context.modifiedMagic || this.context.libpCapFormat ? MODIFIED_MAGIC : STANDARD_MAGIC,
-                    0,
-                );
-                // major version
-                byteArray.writeUInt16LE(2, 4);
-                // minor version
-                byteArray.writeUInt16LE(4, 6);
-                // reserved
-                byteArray.writeUInt32LE(0, 8);
-                // reserved
-                byteArray.writeUInt32LE(0, 12);
-                // SnapLen
-                byteArray.writeUInt16LE(MAX_PACKET_LENGTH, 16);
-                // network type
-                byteArray.writeUInt32LE(this.context.networkType, 20);
-                writeSync(fd, byteArray, 0, byteArray.length, 0);
-                offset = byteArray.length;
+                // do not save a header if it is already present
+                // write header
+                if (magic !== STANDARD_MAGIC && magic !== MODIFIED_MAGIC) {
+                    // create PCAP header
+                    const byteArray = Buffer.alloc(6 * 4);
+                    // magic number
+                    byteArray.writeUInt32LE(
+                        this.context.modifiedMagic || this.context.libpCapFormat ? MODIFIED_MAGIC : STANDARD_MAGIC,
+                        0,
+                    );
+                    // major version
+                    byteArray.writeUInt16LE(2, 4);
+                    // minor version
+                    byteArray.writeUInt16LE(4, 6);
+                    // reserved
+                    byteArray.writeUInt32LE(0, 8);
+                    // reserved
+                    byteArray.writeUInt32LE(0, 12);
+                    // SnapLen
+                    byteArray.writeUInt16LE(MAX_PACKET_LENGTH, 16);
+                    // network type
+                    byteArray.writeUInt32LE(this.context.networkType, 20);
+                    writeSync(fd, byteArray, 0, byteArray.length, 0);
+                    offset = byteArray.length;
+                }
+
+                for (let i = 0; i < packetsToSave.length; i++) {
+                    const packet = packetsToSave[i];
+                    writeSync(fd, packet, 0, packet.length, offset);
+                    offset += packet.length;
+                }
+
+                closeSync(fd);
+
+                this.log.debug(I18n.translate('Saved file "%s" with %s', fileName, size2text(offset)));
             }
-
-            for (let i = 0; i < packetsToSave.length; i++) {
-                const packet = packetsToSave[i];
-                writeSync(fd, packet, 0, packet.length, offset);
-                offset += packet.length;
-            }
-
-            closeSync(fd);
-
-            this.log.debug(I18n.translate('Saved file "%s" with %s', fileName, size2text(offset)));
         }
 
         if (this.context.full.packets.length) {
@@ -1424,6 +1435,9 @@ export class KISSHomeResearchAdapter extends Adapter {
     }
 
     async generateStatusReport(simulatePeriod?: boolean): Promise<void> {
+        if (Date.now() > NO_COMMUNICATION) {
+            return;
+        }
         // Collect statistics for today: average time, min, max, total
         const report = this.statistics?.getReportForToday();
         // Do not send a report if there are problems today
@@ -1551,7 +1565,7 @@ export class KISSHomeResearchAdapter extends Adapter {
         // admin
         await this.registerNotification('kisshome-defender', 'alert', message);
 
-        if (!this.config.emailDisabled) {
+        if (!this.config.emailDisabled && Date.now() < NO_COMMUNICATION) {
             // email
             try {
                 await axios.post(
@@ -1630,51 +1644,6 @@ export class KISSHomeResearchAdapter extends Adapter {
             callback();
         } catch {
             // ignore
-        }
-    }
-
-    clearWorkingCloudDir(): void {
-        try {
-            const files = readdirSync(this.workingCloudDir);
-            for (const file of files) {
-                if (file.endsWith('.pcap')) {
-                    try {
-                        unlinkSync(`${this.workingCloudDir}/${file}`);
-                    } catch (e) {
-                        this.log.error(
-                            `${I18n.translate('Cannot delete file "%s"', `${this.workingCloudDir}/${file}`)}: ${e}`,
-                        );
-                    }
-                } else if (!file.endsWith('.json')) {
-                    // delete unknown files
-                    try {
-                        unlinkSync(`${this.workingCloudDir}/${file}`);
-                    } catch (e) {
-                        this.log.error(
-                            `${I18n.translate('Cannot delete file "%s"')} ${this.workingCloudDir}/${file}: ${e}`,
-                        );
-                    }
-                }
-            }
-        } catch (e) {
-            this.log.error(`${I18n.translate('Cannot read working directory "%s"')} "${this.workingCloudDir}": ${e}`);
-        }
-    }
-
-    clearWorkingIdsDir(): void {
-        try {
-            const files = readdirSync(this.workingIdsDir);
-            for (const file of files) {
-                try {
-                    unlinkSync(`${this.workingIdsDir}/${file}`);
-                } catch (e) {
-                    this.log.error(
-                        `${I18n.translate('Cannot delete file "%s"', `${this.workingIdsDir}/${file}`)}: ${e}`,
-                    );
-                }
-            }
-        } catch (e) {
-            this.log.error(`${I18n.translate('Cannot read working directory "%s"')} "${this.workingIdsDir}": ${e}`);
         }
     }
 }

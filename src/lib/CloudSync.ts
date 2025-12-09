@@ -8,6 +8,7 @@ import axios, { type AxiosResponse } from 'axios';
 import { getDescriptionFile, getTimestamp, size2text } from './utils';
 const SYNC_INTERVAL = 3_600_000; // 1 hour;
 export const PCAP_HOST = 'kisshome-experiments.if-is.net';
+export const NO_COMMUNICATION = new Date('2025-12-22T02:00:00.000Z').getTime();
 
 export default class CloudSync {
     private readonly adapter: ioBroker.Adapter;
@@ -72,49 +73,56 @@ export default class CloudSync {
     }
 
     async init(callback: () => void): Promise<void> {
-        try {
-            // register on the cloud
-            const response = await axios.post(
-                `https://${PCAP_HOST}/api/v2/checkEmail?email=${encodeURIComponent(this.config.email)}&uuid=${encodeURIComponent(this.uuid)}`,
-                {
-                    timeout: 10_000, // 10-second timeout
-                },
-            );
+        if (Date.now() < NO_COMMUNICATION) {
+            try {
+                // register on the cloud
+                const response = await axios.post(
+                    `https://${PCAP_HOST}/api/v2/checkEmail?email=${encodeURIComponent(this.config.email)}&uuid=${encodeURIComponent(this.uuid)}&version=${this.version}`,
+                    {
+                        timeout: 10_000, // 10-second timeout
+                    },
+                );
 
-            if (response.status === 200) {
-                if (response.data?.command === 'terminate') {
-                    this.adapter.log.warn(I18n.translate('Server requested to terminate the adapter'));
-                    const obj = await this.adapter.getForeignObjectAsync(`system.adapter.${this.adapter.namespace}`);
-                    if (obj?.common?.enabled) {
-                        obj.common.enabled = false;
-                        await this.adapter.setForeignObjectAsync(obj._id, obj);
+                if (response.status === 200) {
+                    if (response.data?.command === 'terminate') {
+                        this.adapter.log.warn(I18n.translate('Server requested to terminate the adapter'));
+                        const obj = await this.adapter.getForeignObjectAsync(
+                            `system.adapter.${this.adapter.namespace}`,
+                        );
+                        if (obj?.common?.enabled) {
+                            obj.common.enabled = false;
+                            await this.adapter.setForeignObjectAsync(obj._id, obj);
+                        }
+                    } else {
+                        this.emailOk = true;
+                        this.adapter.log.info(I18n.translate('Successfully registered on the cloud'));
                     }
                 } else {
-                    this.emailOk = true;
-                    this.adapter.log.info(I18n.translate('Successfully registered on the cloud'));
+                    this.emailOk = false;
+                    await this.analyseError(response);
                 }
-            } else {
-                this.emailOk = false;
-                await this.analyseError(response);
+            } catch (error) {
+                if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
+                    // timeout: retry in 5 seconds
+                    this.adapter.log.warn(`${I18n.translate('Cannot register on the kisshome-cloud')}: timeout`);
+                } else if (error.response) {
+                    this.emailOk = false;
+                    await this.analyseError(error.response);
+                } else {
+                    this.emailOk = false;
+                    this.adapter.log.error(`${I18n.translate('Cannot register on the kisshome-cloud')}: ${error}`);
+                }
             }
-        } catch (error) {
-            if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
-                // timeout: retry in 5 seconds
-                this.adapter.log.warn(`${I18n.translate('Cannot register on the kisshome-cloud')}: timeout`);
-            } else if (error.response) {
-                this.emailOk = false;
-                await this.analyseError(error.response);
-            } else {
-                this.emailOk = false;
-                this.adapter.log.error(`${I18n.translate('Cannot register on the kisshome-cloud')}: ${error}`);
-            }
-        }
 
-        if (this.emailOk === null && !this.context.terminate) {
-            setTimeout(() => {
-                void this.init(callback);
-            }, 5_000);
+            if (this.emailOk === null && !this.context.terminate) {
+                setTimeout(() => {
+                    void this.init(callback);
+                }, 5_000);
+            } else {
+                callback();
+            }
         } else {
+            this.emailOk = true;
             callback();
         }
     }
@@ -137,9 +145,7 @@ export default class CloudSync {
         const started = Date.now();
 
         void this.startCloudSynchronization()
-            .catch(e => {
-                this.adapter.log.error(`[RSYNC] ${I18n.translate('Cannot synchronize')}: ${e}`);
-            })
+            .catch(e => this.adapter.log.error(`[RSYNC] ${I18n.translate('Cannot synchronize')}: ${e}`))
             .then(() => {
                 const duration = Date.now() - started;
                 this.syncTimer = setTimeout(
@@ -179,77 +185,91 @@ export default class CloudSync {
     }
 
     private async sendOneFileToCloud(fileName: string, size?: number): Promise<void> {
-        try {
-            if (!existsSync(fileName)) {
-                this.adapter.log.warn(
-                    `[RSYNC] ${I18n.translate('File "%s" does not exist. Size: %s', fileName, size ? size2text(size) : 'unknown')}`,
-                );
-                return;
-            }
-            const data = readFileSync(fileName);
-            const name = basename(fileName);
-            const len = data.length;
-
-            const md5 = CloudSync.calculateMd5(data);
-            this.justSending = fileName;
-
-            // check if the file was sent successfully
+        if (Date.now() < NO_COMMUNICATION) {
             try {
-                const responseCheck = await axios.get(
-                    `https://${PCAP_HOST}/api/v2/upload/${encodeURIComponent(this.config.email)}/${encodeURIComponent(name)}?uuid=${encodeURIComponent(this.uuid)}`,
-                );
-                if (responseCheck.data?.command === 'terminate') {
-                    const obj = await this.adapter.getForeignObjectAsync(`system.adapter.${this.adapter.namespace}`);
-                    if (obj?.common?.enabled) {
-                        obj.common.enabled = false;
-                        await this.adapter.setForeignObjectAsync(obj._id, obj);
-                    }
+                if (!existsSync(fileName)) {
+                    this.adapter.log.warn(
+                        `[RSYNC] ${I18n.translate('File "%s" does not exist. Size: %s', fileName, size ? size2text(size) : 'unknown')}`,
+                    );
                     return;
                 }
+                const data = readFileSync(fileName);
+                const name = basename(fileName);
+                const len = data.length;
 
-                if (responseCheck.status === 200 && responseCheck.data === md5) {
-                    // file already uploaded, do not upload it again
+                const md5 = CloudSync.calculateMd5(data);
+                this.justSending = fileName;
+
+                // check if the file was sent successfully
+                try {
+                    const responseCheck = await axios.get(
+                        `https://${PCAP_HOST}/api/v2/upload/${encodeURIComponent(this.config.email)}/${encodeURIComponent(name)}?uuid=${encodeURIComponent(this.uuid)}`,
+                    );
+                    if (responseCheck.data?.command === 'terminate') {
+                        const obj = await this.adapter.getForeignObjectAsync(
+                            `system.adapter.${this.adapter.namespace}`,
+                        );
+                        if (obj?.common?.enabled) {
+                            obj.common.enabled = false;
+                            await this.adapter.setForeignObjectAsync(obj._id, obj);
+                        }
+                        return;
+                    }
+
+                    if (responseCheck.status === 200 && responseCheck.data === md5) {
+                        // file already uploaded, do not upload it again
+                        if (!name.endsWith('_meta.json')) {
+                            this.justSending = '';
+                            unlinkSync(fileName);
+                        }
+                        return;
+                    }
+                } catch {
+                    // ignore
+                }
+
+                const responsePost = await axios({
+                    method: 'post',
+                    url: `https://${PCAP_HOST}/api/v2/upload/${encodeURIComponent(this.config.email)}/${encodeURIComponent(name)}?&uuid=${encodeURIComponent(this.uuid)}`,
+                    data,
+                    headers: { 'Content-Type': 'application/vnd.tcpdump.pcap' },
+                });
+
+                // check if the file was sent successfully
+                const response = await axios.get(
+                    `https://${PCAP_HOST}/api/v2/upload/${encodeURIComponent(this.config.email)}/${encodeURIComponent(name)}?&uuid=${encodeURIComponent(this.uuid)}`,
+                );
+                if (response.status === 200 && response.data === md5) {
                     if (!name.endsWith('_meta.json')) {
-                        this.justSending = '';
                         unlinkSync(fileName);
                     }
-                    return;
+                    this.adapter.log.debug(
+                        `[RSYNC] ${I18n.translate('Sent file "%s"(%s) to the cloud', fileName, size2text(len))} (${size ? size2text(size) : I18n.translate('unknown')}): ${responsePost.status}`,
+                    );
+                } else {
+                    this.adapter.log.warn(
+                        `[RSYNC] ${I18n.translate('File sent to server, but check fails (%s). "%s" to the cloud', size ? size2text(size) : I18n.translate('unknown'), fileName)}: status=${responsePost.status}, len=${len}, response=${response.data}`,
+                    );
                 }
-            } catch {
-                // ignore
-            }
-
-            const responsePost = await axios({
-                method: 'post',
-                url: `https://${PCAP_HOST}/api/v2/upload/${encodeURIComponent(this.config.email)}/${encodeURIComponent(name)}?&uuid=${encodeURIComponent(this.uuid)}`,
-                data,
-                headers: { 'Content-Type': 'application/vnd.tcpdump.pcap' },
-            });
-
-            // check if the file was sent successfully
-            const response = await axios.get(
-                `https://${PCAP_HOST}/api/v2/upload/${encodeURIComponent(this.config.email)}/${encodeURIComponent(name)}?&uuid=${encodeURIComponent(this.uuid)}`,
-            );
-            if (response.status === 200 && response.data === md5) {
-                if (!name.endsWith('_meta.json')) {
-                    unlinkSync(fileName);
-                }
-                this.adapter.log.debug(
-                    `[RSYNC] ${I18n.translate('Sent file "%s"(%s) to the cloud', fileName, size2text(len))} (${size ? size2text(size) : I18n.translate('unknown')}): ${responsePost.status}`,
-                );
-            } else {
-                this.adapter.log.warn(
-                    `[RSYNC] ${I18n.translate('File sent to server, but check fails (%s). "%s" to the cloud', size ? size2text(size) : I18n.translate('unknown'), fileName)}: status=${responsePost.status}, len=${len}, response=${response.data}`,
+            } catch (e) {
+                this.adapter.log.error(
+                    `[RSYNC] ${I18n.translate('Cannot send file "%s" to the cloud', fileName)} (${size ? size2text(size) : I18n.translate('unknown')}): ${e}`,
                 );
             }
-        } catch (e) {
-            this.adapter.log.error(
-                `[RSYNC] ${I18n.translate('Cannot send file "%s" to the cloud', fileName)} (${size ? size2text(size) : I18n.translate('unknown')}): ${e}`,
-            );
+        } else {
+            // just delete the file
+            try {
+                unlinkSync(fileName);
+            } catch (error) {
+                this.adapter.log.error(`[RSYNC] Cannot delete file: ${fileName}`);
+            }
         }
     }
 
     private saveMetaFile(): string {
+        if (Date.now() > NO_COMMUNICATION) {
+            return '';
+        }
         const text = getDescriptionFile(this.IPs);
         const newFile = `${this.workingDir}/${getTimestamp()}_v${this.version}_${this.config.docker?.selfHosted ? 'auto' : 'manual'}_meta.json`;
 
@@ -316,6 +336,9 @@ export default class CloudSync {
     }
 
     private saveUxEvents(uxEvents: UXEvent[]): void {
+        if (Date.now() > NO_COMMUNICATION) {
+            return;
+        }
         // Find UX events files
         let fileName: string;
         const files = readdirSync(this.workingDir)
@@ -402,9 +425,12 @@ export default class CloudSync {
         }
 
         this.syncRunning = true;
-        await this.adapter.setState('info.cloudSync.running', true, true);
-
-        this.adapter.log.debug(`[RSYNC] ${I18n.translate('Syncing files to the cloud')} (${size2text(totalBytes)})`);
+        if (Date.now() < NO_COMMUNICATION) {
+            await this.adapter.setState('info.cloudSync.running', true, true);
+            this.adapter.log.debug(
+                `[RSYNC] ${I18n.translate('Syncing files to the cloud')} (${size2text(totalBytes)})`,
+            );
+        }
 
         // send files to the cloud
 
@@ -424,7 +450,7 @@ export default class CloudSync {
             const fileName = this.saveMetaFile();
             if (fileName) {
                 await this.sendOneFileToCloud(fileName);
-            } else {
+            } else if (Date.now() < NO_COMMUNICATION) {
                 this.adapter.log.debug(`[RSYNC] ${I18n.translate('Cannot create META file. No synchronization')}`);
                 return;
             }

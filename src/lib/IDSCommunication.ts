@@ -22,6 +22,7 @@ import type {
 import DockerManager from './DockerManager';
 import { fileNameToDate, normalizeMacAddress } from './utils';
 import type { ContainerConfig } from './dockerManager.types';
+import { NO_COMMUNICATION } from './CloudSync';
 
 const MAX_FILES_ON_DISK = 6; // Maximum number of files to keep on disk
 export const CHANGE_TIME = '2025-12-01T00:00:00Z'; // Calculation time
@@ -484,7 +485,8 @@ export class IDSCommunication {
             if (
                 this.lastStatus?.message?.error_logs &&
                 Object.keys(this.lastStatus.message.error_logs).length &&
-                JSON.stringify(this.lastStatus.message.error_logs) !== this.lastSentErrors
+                JSON.stringify(this.lastStatus.message.error_logs) !== this.lastSentErrors &&
+                this.workingCloudDir && Date.now() < NO_COMMUNICATION
             ) {
                 this.lastSentErrors = JSON.stringify(this.lastStatus.message.error_logs);
                 // Save the answer in ids cloud sync directory
@@ -858,11 +860,13 @@ export class IDSCommunication {
                 void this.adapter.setState('info.analysis.running', false, true);
             }
         }
-        // Save the answer in ids cloud sync directory
-        writeFileSync(
-            `${this.workingCloudDir}/${analysisResult.file.replace(/.pcap$/i, '.json')}`,
-            JSON.stringify(analysisResult),
-        );
+        if (this.workingCloudDir && Date.now() < NO_COMMUNICATION) {
+            // Save the answer in ids cloud sync directory
+            writeFileSync(
+                `${this.workingCloudDir}/${analysisResult.file.replace(/.pcap$/i, '.json')}`,
+                JSON.stringify(analysisResult),
+            );
+        }
 
         const resultUUID = randomUUID();
         let isAlert = false;
