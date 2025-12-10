@@ -486,7 +486,8 @@ export class IDSCommunication {
                 this.lastStatus?.message?.error_logs &&
                 Object.keys(this.lastStatus.message.error_logs).length &&
                 JSON.stringify(this.lastStatus.message.error_logs) !== this.lastSentErrors &&
-                this.workingCloudDir && Date.now() < NO_COMMUNICATION
+                this.workingCloudDir &&
+                Date.now() < NO_COMMUNICATION
             ) {
                 this.lastSentErrors = JSON.stringify(this.lastStatus.message.error_logs);
                 // Save the answer in ids cloud sync directory
