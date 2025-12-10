@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.1.13",
+    "version": "1.2.0",
     "news": {
+      "1.2.0": {
+        "en": "Stop any cloud communication after 21.12.2025",
+        "de": "Stoppen Sie jede Cloud-Kommunikation nach 21.12.2025",
+        "ru": "Прекратить любую облачную связь после 21.12.2025",
+        "pt": "Interromper qualquer comunicação de nuvem após 21.12.2025",
+        "nl": "Stop elke cloudcommunicatie na 21.12.2025",
+        "fr": "Arrêter toute communication en nuage après le 21.12.2025",
+        "it": "Interrompere qualsiasi comunicazione cloud dopo 21.12.2025",
+        "es": "Detener cualquier comunicación en la nube después de 21.12.2025",
+        "pl": "Przerwać wszelką komunikację w chmurze po 21.12.2025",
+        "uk": "Стоп будь-який хмарний зв'язок після 21.12.2025",
+        "zh-cn": "2025年12月21日后停止任何云通信"
+      },
       "1.1.13": {
         "en": "Allowed editing of the description for  automatically found devices",
         "de": "Erlaubte Bearbeitung der Beschreibung für automatisch gefundene Geräte",
@@ -80,19 +93,6 @@
         "pl": "Dozwolone tylko wybieranie adresów IPv4, a nie pętli do komunikacji z dokerem",
         "uk": "Дозволено лише підбір IPv4 адрес і не петля",
         "zh-cn": "仅允许选择 IPv4 地址, 不允许回回回与 docker 通信"
-      },
-      "1.1.7": {
-        "en": "Corrected error if device is offline\nShow error codes 400-499 as warning and not as error",
-        "de": "Fehler behoben, wenn das Gerät offline ist\nFehlercodes 400-499 als Warnung anzeigen und nicht als Fehler",
-        "ru": "Исправлена ошибка, если устройство отключено\nПоказать коды ошибок 400-499 как предупреждение, а не как ошибка",
-        "pt": "Erro corrigido se o dispositivo estiver desligado\nMostrar os códigos de erro 400-499 como aviso e não como erro",
-        "nl": "Gecorrigeerde fout als het apparaat offline is\nToon foutcodes 400-499 als waarschuwing en niet als fout",
-        "fr": "Erreur corrigée si le périphérique est hors ligne\nAfficher les codes d'erreur 400-499 comme avertissement et non comme erreur",
-        "it": "Errore corretto se il dispositivo è offline\nMostra i codici di errore 400-499 come avviso e non come errore",
-        "es": "Error corregido si el dispositivo está fuera de línea\nMostrar códigos de error 400-499 como advertencia y no como error",
-        "pl": "Skorygowany błąd jeśli urządzenie jest wyłączone\nPokaż kody błędów 400- 499 jako ostrzeżenie, a nie jako błąd",
-        "uk": "Виправлена помилка, якщо пристрій відсутня\nПоказати коди помилок 400-499 як попередження та не як помилки",
-        "zh-cn": "设备离线时纠正错误\n将错误代码 400-499 显示为警告而非错误"
       }
     },
     "titleLang": {
