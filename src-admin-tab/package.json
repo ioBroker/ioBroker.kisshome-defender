@@ -8,7 +8,7 @@
         "@iobroker/types-vis-2": "^2.13.8",
         "@module-federation/vite": "^1.9.3",
         "@mui/icons-material": "^6.5.0",
-        "@mui/material": "^6.5.0",
+        "@mui/material": "^7.3.6",
         "@types/markdown-it": "^14.1.2",
         "@types/react": "^18.3.27",
         "@types/react-dom": "^18.3.7",
