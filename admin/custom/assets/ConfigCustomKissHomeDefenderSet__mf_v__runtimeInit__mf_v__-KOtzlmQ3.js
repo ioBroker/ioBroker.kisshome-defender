@@ -1,0 +1,1 @@
+const _="__mf_init____mf__virtual/ConfigCustomKissHomeDefenderSet__mf_v__runtimeInit__mf_v__.js__";if(!globalThis[_]){let i,e;const t=new Promise((o,s)=>{i=o,e=s});globalThis[_]={initPromise:t,initResolve:i,initReject:e}}var n=globalThis[_];export{n as C};
