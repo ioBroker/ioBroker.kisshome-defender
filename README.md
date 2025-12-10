@@ -51,7 +51,7 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.3.0 (2025-12-10)
 -   (@GermanBluefox) Stop any cloud communication after 21.12.2025
 
 ### 1.1.13 (2025-11-25)

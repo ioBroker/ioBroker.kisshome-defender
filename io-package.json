@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "news": {
+      "1.3.0": {
+        "en": "Stop any cloud communication after 21.12.2025",
+        "de": "Stoppen Sie jede Cloud-Kommunikation nach 21.12.2025",
+        "ru": "Прекратить любую облачную связь после 21.12.2025",
+        "pt": "Interromper qualquer comunicação de nuvem após 21.12.2025",
+        "nl": "Stop elke cloudcommunicatie na 21.12.2025",
+        "fr": "Arrêter toute communication en nuage après le 21.12.2025",
+        "it": "Interrompere qualsiasi comunicazione cloud dopo 21.12.2025",
+        "es": "Detener cualquier comunicación en la nube después de 21.12.2025",
+        "pl": "Przerwać wszelką komunikację w chmurze po 21.12.2025",
+        "uk": "Стоп будь-який хмарний зв'язок після 21.12.2025",
+        "zh-cn": "2025年12月21日后停止任何云通信"
+      },
       "1.2.0": {
         "en": "Stop any cloud communication after 21.12.2025",
         "de": "Stoppen Sie jede Cloud-Kommunikation nach 21.12.2025",
@@ -80,19 +93,6 @@
         "pl": "Spróbuj obsługiwać 127.0.0.1 jak nie ma wiązania\nOdtworzyć pojemnik IDS w przypadku błędu, jeśli jest on samodzielnie hostowany\nOgraniczenie minimalnego odstępu dla wysyłania PCAP do 10 minut",
         "uk": "Спробуйте ручку 127.0.0.1 не вказаний\nВідтворити контейнер IDS на похибку, якщо самостійно\nОбмеження мінімального інтервалу для відправки PCAP до 10 хвилин",
         "zh-cn": "尝试处理 127. 0.0.1 没有给定绑定\n如果自行托管, 在错误时重建 IDS 容器\n将发送PCAP的最小间隔限制为10分钟"
-      },
-      "1.1.8": {
-        "en": "Allowed only selection IPv4 addresses and not loopback for communication with docker",
-        "de": "Erlaubt nur Auswahl IPv4-Adressen und nicht Schlaufe für die Kommunikation mit dem Docker",
-        "ru": "Разрешается только подбор IPv4 адресов и не петлябэк для связи с докером",
-        "pt": "Permitir apenas os endereços de seleção IPv4 e não loopback para comunicação com docker",
-        "nl": "Alleen IPv4-adressen geselecteerd en geen loopback voor communicatie met docker",
-        "fr": "Autorisé uniquement la sélection des adresses IPv4 et non le loopback pour la communication avec docker",
-        "it": "Consentito solo selezione indirizzi IPv4 e non loopback per la comunicazione con docker",
-        "es": "Permitido sólo selección IPv4 direcciones y no retroceso para la comunicación con docker",
-        "pl": "Dozwolone tylko wybieranie adresów IPv4, a nie pętli do komunikacji z dokerem",
-        "uk": "Дозволено лише підбір IPv4 адрес і не петля",
-        "zh-cn": "仅允许选择 IPv4 地址, 不允许回回回与 docker 通信"
       }
     },
     "titleLang": {
