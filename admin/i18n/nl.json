@@ -20,6 +20,7 @@
   "FritzBox Interface": "FritzBox-interface",
   "FritzBox Login": "FritzBox-login",
   "FritzBox Password": "FritzBox-wachtwoord",
+  "FritzBox explanation": "De Fritz!Box ondersteunt het vastleggen van netwerkverkeer over meerdere interfaces in PCAP-formaat. Elke interface vertegenwoordigt een specifiek deel van het interne netwerk of communicatiekanalen. Typische interfacenamen zoals 1-lan verwijzen naar uitgaande netwerkcommunicatie naar het internet, terwijl er ook interfaces zijn voor de fysieke LAN-poorten, WLAN en de WAN-verbinding (internet).\n\nDeze opname stelt technisch onderlegde gebruikers in staat om netwerkpakketten te analyseren en gedetailleerde informatie over dataverkeer te verkrijgen. Wij gebruiken dit voor beveiligingsanalyses. In onze ervaring registreert de 1-lan-interface netwerkverkeer van het LAN en WLAN naar het internet en is daarom het meest geschikt voor onze doeleinden. Als u bijzonder bekend bent met uw netwerk of specifieke netwerksegmenten gebruikt voor smart home-apparaten, kunt u hier een andere interface specificeren.",
   "General settings": "Algemene instellingen",
   "High": "Hoog",
   "I allow the training of the AI model with my data": "Ik sta de training van het AI-model toe met mijn gegevens",

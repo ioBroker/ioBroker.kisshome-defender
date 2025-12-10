@@ -20,6 +20,7 @@
   "FritzBox Interface": "FritzBox 界面",
   "FritzBox Login": "FritzBox 登录",
   "FritzBox Password": "FritzBox 密码",
+  "FritzBox explanation": "Fritz!Box 支持以 PCAP 格式记录多个接口的网络流量。每个接口代表内部网络或通信通道的特定区域。典型的接口名称，例如 1-lan，指的是通往互联网的出站网络通信；此外，还有用于物理 LAN 端口、WLAN 和 WAN 连接（互联网）的接口。\n\n这种记录方式允许技术娴熟的用户分析网络数据包，从而获取有关数据流量的详细信息。我们将其用于安全分析。根据我们的经验，1-lan 接口记录从 LAN 和 WLAN 到互联网的网络流量，因此最适合我们的用途。如果您对自己的网络非常熟悉，或者使用特定的网段连接智能家居设备，则可以在此处指定其他接口。",
   "General settings": "常规设置",
   "High": "高的",
   "I allow the training of the AI model with my data": "我允许使用我的数据训练人工智能模型",

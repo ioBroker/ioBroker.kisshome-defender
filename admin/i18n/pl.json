@@ -20,6 +20,7 @@
   "FritzBox Interface": "Interfejs FritzBox",
   "FritzBox Login": "Zaloguj się do FritzBoxa",
   "FritzBox Password": "Hasło FritzBoxa",
+  "FritzBox explanation": "Fritz!Box obsługuje rejestrowanie ruchu sieciowego na wielu interfejsach w formacie PCAP. Każdy interfejs reprezentuje określony obszar sieci wewnętrznej lub kanałów komunikacyjnych. Typowe nazwy interfejsów, takie jak 1-lan, odnoszą się do wychodzącej komunikacji sieciowej w kierunku internetu, ale istnieją również interfejsy dla fizycznych portów LAN, sieci WLAN i połączenia WAN (internet).\n\nTo rejestrowanie pozwala użytkownikom obeznanym z technologią analizować pakiety sieciowe w celu uzyskania szczegółowych informacji o ruchu danych. Wykorzystujemy to do analizy bezpieczeństwa. Z naszego doświadczenia wynika, że interfejs 1-lan rejestruje ruch sieciowy z sieci LAN i WLAN w kierunku internetu i dlatego najlepiej nadaje się do naszych celów. Jeśli znasz swoją sieć lub korzystasz z określonych segmentów sieci dla urządzeń inteligentnego domu, możesz tutaj określić inny interfejs.",
   "General settings": "Ustawienia główne",
   "High": "Wysoki",
   "I allow the training of the AI model with my data": "Pozwalam na trenowanie modelu AI przy użyciu moich danych",

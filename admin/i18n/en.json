@@ -20,6 +20,7 @@
   "FritzBox Interface": "FritzBox Interface",
   "FritzBox Login": "FritzBox Login",
   "FritzBox Password": "FritzBox Password",
+  "FritzBox explanation": "The Fritz!Box supports recording network traffic across multiple interfaces in PCAP format. Each interface represents a specific area of the internal network or communication channels. Typical interface names like 1-lan refer to outgoing network communication towards the internet, while there are also interfaces for the physical LAN ports, WLAN, and the WAN connection (internet).\n\nThis recording allows technically savvy users to analyze network packets to obtain detailed information about data traffic. We use this for security analysis. In our experience, the 1-lan interface records network traffic from the LAN and WLAN towards the internet and is therefore best suited for our purposes. If you are particularly familiar with your network or use specific network segments for smart home devices, you can specify a different interface here.",
   "General settings": "General settings",
   "High": "High",
   "I allow the training of the AI model with my data": "I allow the training of the AI model with my data",

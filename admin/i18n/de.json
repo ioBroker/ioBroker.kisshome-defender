@@ -20,6 +20,7 @@
   "FritzBox Interface": "FritzBox-Schnittstelle",
   "FritzBox Login": "FritzBox Login",
   "FritzBox Password": "FritzBox-Passwort",
+  "FritzBox explanation": "Die FritzBox unterstützt die Aufzeichnung von Netzwerkverkehr über mehrere Schnittstellen im PCAP-Format. Jede Schnittstelle repräsentiert dabei einen spezifischen Bereich des internen Netzwerks bzw. an Kommunikationswegen. Typische Schnittstellennamen wie 1-lan beziehen sich auf ausgehende Netzwerkkommunikation in Richtung Internet, während es auch Schnittstellen für die physikalischen LAN-Ports, WLAN oder die WAN-Verbindung (Internet) gibt.\n\nDie Aufzeichnung ermöglicht es technisch versierten Nutzern, Netzwerkpakete zu analysieren, um detaillierte Informationen über den Datenverkehr zu erhalten. Wir nutzen dies für die Sicherheitsanalysen. Erfahrungsgemäß zeichnet die Schnittstelle 1-lan Netzwerkverkehr aus dem LAN und WLAN in Richtung Internet auf und ist damit für unsere Zwecke am besten geeignet. Sollten Sie sich mit Ihrem Netzwerk besonders gut auskennen oder bestimmte Netzbereiche für die Smarthome-Geräte verwenden, könnten Sie hier auch eine andere Schnittstelle angeben.",
   "General settings": "Allgemeine Einstellungen",
   "High": "Hoch",
   "I allow the training of the AI model with my data": "Ich erlaube das Training des KI-Modells mit meinen Daten",

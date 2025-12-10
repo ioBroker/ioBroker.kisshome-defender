@@ -56,13 +56,12 @@
                     "label": "FritzBox Password",
                     "disabled": "!data.email && Date.now() < 1766368800000"
                 },
-                "_hint2": {
+                "_hint3": {
                     "newLine": true,
-                    "type": "staticLink",
-                    "sm": 12,
-                    "href": "https://kisshome-research.if-is.net/#/faq/interface",
-                    "text": "Explanation of the Fritz!Box interface could be found at this link.",
-                    "disabled": "!data.email && Date.now() < 1766368800000"
+                    "type": "infoBox",
+                    "text": "FritzBox explanation",
+                    "boxType": "info",
+                    "sm": 12
                 },
                 "iface": {
                     "newLine": true,

@@ -20,6 +20,7 @@
   "FritzBox Interface": "Interface do FritzBox",
   "FritzBox Login": "Login do FritzBox",
   "FritzBox Password": "Senha FritzBox",
+  "FritzBox explanation": "O Fritz!Box suporta a gravação do tráfego de rede em múltiplas interfaces no formato PCAP. Cada interface representa uma área específica da rede interna ou canais de comunicação. Nomes de interface típicos, como 1-lan, referem-se à comunicação de rede de saída para a internet, enquanto também existem interfaces para as portas LAN físicas, WLAN e a conexão WAN (internet).\n\nEssa gravação permite que usuários com conhecimento técnico analisem pacotes de rede para obter informações detalhadas sobre o tráfego de dados. Utilizamos isso para análise de segurança. Em nossa experiência, a interface 1-lan grava o tráfego de rede da LAN e da WLAN para a internet e, portanto, é a mais adequada para nossos propósitos. Se você conhece bem sua rede ou utiliza segmentos de rede específicos para dispositivos domésticos inteligentes, pode especificar uma interface diferente.",
   "General settings": "Configurações Gerais",
   "High": "Alto",
   "I allow the training of the AI model with my data": "Eu permito o treinamento do modelo de IA com meus dados",
