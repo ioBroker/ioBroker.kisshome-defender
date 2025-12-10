@@ -12,14 +12,16 @@
                     "md": 3,
                     "lg": 3,
                     "label": "Email",
-                    "tooltip": "E-mail address that was used for registration"
+                    "tooltip": "E-mail address that was used for registration",
+                    "hidden": "Date.now() > 1766368800000"
                 },
                 "_hint": {
                     "newLine": true,
                     "type": "staticLink",
                     "sm": 12,
                     "href": "https://kisshome-research.if-is.net/#/register",
-                    "text": "To participate in the KISSHome research, you need to register here."
+                    "text": "To participate in the KISSHome research, you need to register here.",
+                    "hidden": "Date.now() > 1766368800000"
                 },
                 "fritzbox": {
                     "newLine": true,
@@ -30,7 +32,7 @@
                     "label": "FritzBox IP",
                     "defaultSendTo": "getDefaultGateway",
                     "allowSaveWithError": true,
-                    "disabled": "!data.email"
+                    "disabled": "!data.email && Date.now() < 1766368800000"
                 },
                 "login": {
                     "newLine": true,
@@ -43,7 +45,7 @@
                     "md": 3,
                     "lg": 3,
                     "label": "FritzBox Login",
-                    "disabled": "!data.email"
+                    "disabled": "!data.email && Date.now() < 1766368800000"
                 },
                 "password": {
                     "type": "password",
@@ -52,7 +54,7 @@
                     "repeat": true,
                     "lg": 6,
                     "label": "FritzBox Password",
-                    "disabled": "!data.email"
+                    "disabled": "!data.email && Date.now() < 1766368800000"
                 },
                 "_hint2": {
                     "newLine": true,
@@ -60,7 +62,7 @@
                     "sm": 12,
                     "href": "https://kisshome-research.if-is.net/#/faq/interface",
                     "text": "Explanation of the Fritz!Box interface could be found at this link.",
-                    "disabled": "!data.email"
+                    "disabled": "!data.email && Date.now() < 1766368800000"
                 },
                 "iface": {
                     "newLine": true,
@@ -74,7 +76,7 @@
                     "lg": 6,
                     "label": "FritzBox Interface",
                     "help": "Default interface is 1-lan",
-                    "disabled": "!data.email"
+                    "disabled": "!data.email && Date.now() < 1766368800000"
                 },
                 "tempDir": {
                     "newLine": true,
@@ -84,7 +86,7 @@
                     "lg": 6,
                     "label": "Working directory",
                     "help": "Directory for temporary files. Leave empty to use the system directory.",
-                    "disabled": "!data.email"
+                    "disabled": "!data.email && Date.now() < 1766368800000"
                 },
                 "saveThresholdSeconds": {
                     "type": "slider",
@@ -102,7 +104,7 @@
                     "type": "checkbox",
                     "sm": 12,
                     "label": "I allow the training of the AI model with my data",
-                    "hidden": "!data.email"
+                    "hidden": "!data.email || Date.now() > 1766368800000"
                 },
                 "_header": {
                     "newLine": true,
@@ -115,7 +117,7 @@
                 },
                 "_recordingEnabled": {
                     "type": "state",
-                    "disabled": "!data.email || !data.fritzbox || data.fritzbox === '0.0.0.0' || !data.login || !data.password || !data.iface",
+                    "disabled": "(!data.email && Date.now() < 1766368800000) || !data.fritzbox || data.fritzbox === '0.0.0.0' || !data.login || !data.password || !data.iface",
                     "oid": "info.recording.enabled",
                     "control": "switch",
                     "falseText": "Disabled",
@@ -138,7 +140,7 @@
                         "opacity": 0.7
                     },
                     "trueText": "Recording is running",
-                    "disabled": "!data.email"
+                    "disabled": "!data.email && Date.now() < 1766368800000"
                 },
                 "_filter": {
                     "newLine": true,
@@ -149,14 +151,14 @@
                     "sm": 12,
                     "md": 12,
                     "lg": 12,
-                    "disabled": "!data.email"
+                    "disabled": "!data.email && Date.now() < 1766368800000"
                 }
             }
         },
         "_instances": {
             "type": "panel",
             "label": "Addresses",
-            "disabled": "!data.email",
+            "disabled": "!data.email && Date.now() < 1766368800000",
             "items": {
                 "_info": {
                     "type": "staticText",
