@@ -5,7 +5,6 @@ tmp
 iob_npm.done
 nbproject
 /src-admin/package-lock.json
-package-lock.json
 /src-admin/build
 *.map
 *.tgz

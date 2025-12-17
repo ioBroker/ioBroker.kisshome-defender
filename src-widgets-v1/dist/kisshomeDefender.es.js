@@ -49,7 +49,7 @@ var dTt = vY((Ma, Aa) => {
   function yY() {
     if (PE) return Tt;
     PE = 1;
-    var t = Symbol.for("react.element"), e = Symbol.for("react.portal"), r = Symbol.for("react.fragment"), n = Symbol.for("react.strict_mode"), a = Symbol.for("react.profiler"), o = Symbol.for("react.provider"), i = Symbol.for("react.context"), s = Symbol.for("react.forward_ref"), l = Symbol.for("react.suspense"), c = Symbol.for("react.memo"), d = Symbol.for("react.lazy"), u = Symbol.iterator;
+    var t = /* @__PURE__ */ Symbol.for("react.element"), e = /* @__PURE__ */ Symbol.for("react.portal"), r = /* @__PURE__ */ Symbol.for("react.fragment"), n = /* @__PURE__ */ Symbol.for("react.strict_mode"), a = /* @__PURE__ */ Symbol.for("react.profiler"), o = /* @__PURE__ */ Symbol.for("react.provider"), i = /* @__PURE__ */ Symbol.for("react.context"), s = /* @__PURE__ */ Symbol.for("react.forward_ref"), l = /* @__PURE__ */ Symbol.for("react.suspense"), c = /* @__PURE__ */ Symbol.for("react.memo"), d = /* @__PURE__ */ Symbol.for("react.lazy"), u = Symbol.iterator;
     function f(U) {
       return U === null || typeof U != "object" ? null : (U = u && U[u] || U["@@iterator"], typeof U == "function" ? U : null);
     }
@@ -248,7 +248,7 @@ var dTt = vY((Ma, Aa) => {
   function bY() {
     if (NE) return zf;
     NE = 1;
-    var t = Kl(), e = Symbol.for("react.element"), r = Symbol.for("react.fragment"), n = Object.prototype.hasOwnProperty, a = t.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner, o = { key: !0, ref: !0, __self: !0, __source: !0 };
+    var t = Kl(), e = /* @__PURE__ */ Symbol.for("react.element"), r = /* @__PURE__ */ Symbol.for("react.fragment"), n = Object.prototype.hasOwnProperty, a = t.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner, o = { key: !0, ref: !0, __self: !0, __source: !0 };
     function i(s, l, c) {
       var d, u = {}, f = null, h = null;
       c !== void 0 && (f = "" + c), l.key !== void 0 && (f = "" + l.key), l.ref !== void 0 && (h = l.ref);
@@ -563,7 +563,7 @@ var dTt = vY((Ma, Aa) => {
       var $ = y.hasOwnProperty(m) ? y[m] : null;
       ($ !== null ? $.type !== 0 : S || !(2 < m.length) || m[0] !== "o" && m[0] !== "O" || m[1] !== "n" && m[1] !== "N") && (v(m, _, $, S) && (_ = null), S || $ === null ? f(m) && (_ === null ? p.removeAttribute(m) : p.setAttribute(m, "" + _)) : $.mustUseProperty ? p[$.propertyName] = _ === null ? $.type === 3 ? !1 : "" : _ : (m = $.attributeName, S = $.attributeNamespace, _ === null ? p.removeAttribute(m) : ($ = $.type, _ = $ === 3 || $ === 4 && _ === !0 ? "" : "" + _, S ? p.setAttributeNS(S, m, _) : p.setAttribute(m, _))));
     }
-    var C = t.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED, E = Symbol.for("react.element"), T = Symbol.for("react.portal"), D = Symbol.for("react.fragment"), I = Symbol.for("react.strict_mode"), P = Symbol.for("react.profiler"), M = Symbol.for("react.provider"), R = Symbol.for("react.context"), F = Symbol.for("react.forward_ref"), z = Symbol.for("react.suspense"), j = Symbol.for("react.suspense_list"), W = Symbol.for("react.memo"), H = Symbol.for("react.lazy"), K = Symbol.for("react.offscreen"), q = Symbol.iterator;
+    var C = t.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED, E = /* @__PURE__ */ Symbol.for("react.element"), T = /* @__PURE__ */ Symbol.for("react.portal"), D = /* @__PURE__ */ Symbol.for("react.fragment"), I = /* @__PURE__ */ Symbol.for("react.strict_mode"), P = /* @__PURE__ */ Symbol.for("react.profiler"), M = /* @__PURE__ */ Symbol.for("react.provider"), R = /* @__PURE__ */ Symbol.for("react.context"), F = /* @__PURE__ */ Symbol.for("react.forward_ref"), z = /* @__PURE__ */ Symbol.for("react.suspense"), j = /* @__PURE__ */ Symbol.for("react.suspense_list"), W = /* @__PURE__ */ Symbol.for("react.memo"), H = /* @__PURE__ */ Symbol.for("react.lazy"), K = /* @__PURE__ */ Symbol.for("react.offscreen"), q = Symbol.iterator;
     function V(p) {
       return p === null || typeof p != "object" ? null : (p = q && p[q] || p["@@iterator"], typeof p == "function" ? p : null);
     }
@@ -3101,7 +3101,6 @@ var dTt = vY((Ma, Aa) => {
             return;
           }
         } catch {
-        } finally {
         }
         _ = hT(p, m, $, S), _ !== null && ($ = Rn(), Ro(_, p, S, $), FT(_, m, S));
       }
@@ -4054,14 +4053,7 @@ Error generating stack: ` + O.message + `
       var m = p.ref;
       if (m !== null) {
         var _ = p.stateNode;
-        switch (p.tag) {
-          case 5:
-            p = _;
-            break;
-          default:
-            p = _;
-        }
-        typeof m == "function" ? m(p) : m.current = p;
+        p.tag, p = _, typeof m == "function" ? m(p) : m.current = p;
       }
     }
     function cE(p) {
@@ -5408,13 +5400,7 @@ Error generating stack: ` + O.message + `
       return _ = $E(_), m.context === null ? m.context = _ : m.pendingContext = _, m = os(O, L), m.payload = { element: p }, S = S === void 0 ? null : S, S !== null && (m.callback = S), p = Xs($, m, L), p !== null && (Ro(p, $, L, O), iv(p, $, L)), L;
     }
     function Mv(p) {
-      if (p = p.current, !p.child) return null;
-      switch (p.child.tag) {
-        case 5:
-          return p.child.stateNode;
-        default:
-          return p.child.stateNode;
-      }
+      return p = p.current, p.child ? (p.child.tag === 5, p.child.stateNode) : null;
     }
     function AE(p, m) {
       if (p = p.memoizedState, p !== null && p.dehydrated !== null) {
@@ -6293,7 +6279,7 @@ Error generating stack: ` + O.message + `
   function tJ() {
     if (VE) return Xt;
     VE = 1;
-    var t = typeof Symbol == "function" && Symbol.for, e = t ? Symbol.for("react.element") : 60103, r = t ? Symbol.for("react.portal") : 60106, n = t ? Symbol.for("react.fragment") : 60107, a = t ? Symbol.for("react.strict_mode") : 60108, o = t ? Symbol.for("react.profiler") : 60114, i = t ? Symbol.for("react.provider") : 60109, s = t ? Symbol.for("react.context") : 60110, l = t ? Symbol.for("react.async_mode") : 60111, c = t ? Symbol.for("react.concurrent_mode") : 60111, d = t ? Symbol.for("react.forward_ref") : 60112, u = t ? Symbol.for("react.suspense") : 60113, f = t ? Symbol.for("react.suspense_list") : 60120, h = t ? Symbol.for("react.memo") : 60115, v = t ? Symbol.for("react.lazy") : 60116, g = t ? Symbol.for("react.block") : 60121, y = t ? Symbol.for("react.fundamental") : 60117, b = t ? Symbol.for("react.responder") : 60118, w = t ? Symbol.for("react.scope") : 60119;
+    var t = typeof Symbol == "function" && Symbol.for, e = t ? /* @__PURE__ */ Symbol.for("react.element") : 60103, r = t ? /* @__PURE__ */ Symbol.for("react.portal") : 60106, n = t ? /* @__PURE__ */ Symbol.for("react.fragment") : 60107, a = t ? /* @__PURE__ */ Symbol.for("react.strict_mode") : 60108, o = t ? /* @__PURE__ */ Symbol.for("react.profiler") : 60114, i = t ? /* @__PURE__ */ Symbol.for("react.provider") : 60109, s = t ? /* @__PURE__ */ Symbol.for("react.context") : 60110, l = t ? /* @__PURE__ */ Symbol.for("react.async_mode") : 60111, c = t ? /* @__PURE__ */ Symbol.for("react.concurrent_mode") : 60111, d = t ? /* @__PURE__ */ Symbol.for("react.forward_ref") : 60112, u = t ? /* @__PURE__ */ Symbol.for("react.suspense") : 60113, f = t ? /* @__PURE__ */ Symbol.for("react.suspense_list") : 60120, h = t ? /* @__PURE__ */ Symbol.for("react.memo") : 60115, v = t ? /* @__PURE__ */ Symbol.for("react.lazy") : 60116, g = t ? /* @__PURE__ */ Symbol.for("react.block") : 60121, y = t ? /* @__PURE__ */ Symbol.for("react.fundamental") : 60117, b = t ? /* @__PURE__ */ Symbol.for("react.responder") : 60118, w = t ? /* @__PURE__ */ Symbol.for("react.scope") : 60119;
     function x(E) {
       if (typeof E == "object" && E !== null) {
         var T = E.$$typeof;
@@ -7094,7 +7080,7 @@ Error generating stack: ` + O.message + `
   function IJ() {
     if (iD) return ar;
     iD = 1;
-    var t = Symbol.for("react.transitional.element"), e = Symbol.for("react.portal"), r = Symbol.for("react.fragment"), n = Symbol.for("react.strict_mode"), a = Symbol.for("react.profiler"), o = Symbol.for("react.consumer"), i = Symbol.for("react.context"), s = Symbol.for("react.forward_ref"), l = Symbol.for("react.suspense"), c = Symbol.for("react.suspense_list"), d = Symbol.for("react.memo"), u = Symbol.for("react.lazy"), f = Symbol.for("react.view_transition"), h = Symbol.for("react.client.reference");
+    var t = /* @__PURE__ */ Symbol.for("react.transitional.element"), e = /* @__PURE__ */ Symbol.for("react.portal"), r = /* @__PURE__ */ Symbol.for("react.fragment"), n = /* @__PURE__ */ Symbol.for("react.strict_mode"), a = /* @__PURE__ */ Symbol.for("react.profiler"), o = /* @__PURE__ */ Symbol.for("react.consumer"), i = /* @__PURE__ */ Symbol.for("react.context"), s = /* @__PURE__ */ Symbol.for("react.forward_ref"), l = /* @__PURE__ */ Symbol.for("react.suspense"), c = /* @__PURE__ */ Symbol.for("react.suspense_list"), d = /* @__PURE__ */ Symbol.for("react.memo"), u = /* @__PURE__ */ Symbol.for("react.lazy"), f = /* @__PURE__ */ Symbol.for("react.view_transition"), h = /* @__PURE__ */ Symbol.for("react.client.reference");
     function v(g) {
       if (typeof g == "object" && g !== null) {
         var y = g.$$typeof;
@@ -8827,7 +8813,7 @@ Error generating stack: ` + O.message + `
   function Q8() {
     return N.useContext(QF);
   }
-  const rZ = typeof Symbol == "function" && Symbol.for, nZ = rZ ? Symbol.for("mui.nested") : "__THEME_NESTED__";
+  const rZ = typeof Symbol == "function" && Symbol.for, nZ = rZ ? /* @__PURE__ */ Symbol.for("mui.nested") : "__THEME_NESTED__";
   function aZ(t, e) {
     return typeof e == "function" ? e(t) : {
       ...t,
@@ -43306,7 +43292,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
     iP = 1, Object.defineProperty(wc, "__esModule", { value: !0 }), wc.StateType = wc.Types = void 0;
     var t;
     (function(r) {
-      r.unknown = "unknown", r.airCondition = "airCondition", r.blind = "blind", r.blindButtons = "blindButtons", r.button = "button", r.buttonSensor = "buttonSensor", r.camera = "camera", r.chart = "chart", r.cie = "cie", r.ct = "ct", r.dimmer = "dimmer", r.door = "door", r.fireAlarm = "fireAlarm", r.floodAlarm = "floodAlarm", r.gate = "gate", r.hue = "hue", r.humidity = "humidity", r.illuminance = "illuminance", r.image = "image", r.info = "info", r.instance = "instance", r.light = "light", r.location = "location", r.locationOne = "locationOne", r.lock = "lock", r.media = "media", r.motion = "motion", r.rgb = "rgb", r.rgbSingle = "rgbSingle", r.rgbwSingle = "rgbwSingle", r.slider = "slider", r.socket = "socket", r.temperature = "temperature", r.thermostat = "thermostat", r.vacuumCleaner = "vacuumCleaner", r.volume = "volume", r.volumeGroup = "volumeGroup", r.warning = "warning", r.weatherCurrent = "weatherCurrent", r.weatherForecast = "weatherForecast", r.window = "window", r.windowTilt = "windowTilt";
+      r.unknown = "unknown", r.airCondition = "airCondition", r.blind = "blind", r.blindButtons = "blindButtons", r.button = "button", r.buttonSensor = "buttonSensor", r.camera = "camera", r.chart = "chart", r.cie = "cie", r.ct = "ct", r.dimmer = "dimmer", r.door = "door", r.fireAlarm = "fireAlarm", r.floodAlarm = "floodAlarm", r.gate = "gate", r.hue = "hue", r.humidity = "humidity", r.illuminance = "illuminance", r.image = "image", r.info = "info", r.instance = "instance", r.light = "light", r.location = "location", r.locationOne = "locationOne", r.lock = "lock", r.media = "media", r.motion = "motion", r.percentage = "percentage", r.rgb = "rgb", r.rgbSingle = "rgbSingle", r.rgbwSingle = "rgbwSingle", r.slider = "slider", r.socket = "socket", r.temperature = "temperature", r.thermostat = "thermostat", r.vacuumCleaner = "vacuumCleaner", r.volume = "volume", r.volumeGroup = "volumeGroup", r.warning = "warning", r.weatherCurrent = "weatherCurrent", r.weatherForecast = "weatherForecast", r.window = "window", r.windowTilt = "windowTilt";
     })(t || (wc.Types = t = {}));
     var e;
     return (function(r) {
@@ -45701,6 +45687,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             indicator: !1,
             type: t.StateType.Boolean,
             enums: e.roleOrEnumWindow,
+            write: !1,
             name: "ACTUAL",
             required: !0,
             defaultRole: "sensor.window",
@@ -45722,6 +45709,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             role: /^state$|^value(\.window)?$/,
             indicator: !1,
             type: t.StateType.Number,
+            write: !1,
             enums: e.roleOrEnumWindow,
             name: "ACTUAL",
             required: !0,
@@ -46095,6 +46083,41 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           n.battery
         ],
         type: t.Types.volumeGroup
+      },
+      percentage: {
+        states: [
+          {
+            role: /^level(\..*)?$/,
+            indicator: !1,
+            type: t.StateType.Number,
+            write: !0,
+            unit: "%",
+            name: "SET",
+            required: !0,
+            defaultRole: "level",
+            defaultUnit: "%",
+            ignoreRole: r
+          },
+          // optional
+          {
+            role: /^value(\..*)?$/,
+            indicator: !1,
+            type: t.StateType.Number,
+            write: !1,
+            name: "ACTUAL",
+            required: !1,
+            defaultRole: "value",
+            defaultUnit: "%",
+            ignoreRole: r
+          },
+          n.working,
+          n.unreach,
+          n.lowbat,
+          n.maintain,
+          n.error,
+          n.battery
+        ],
+        type: t.Types.percentage
       },
       levelSlider: {
         states: [
@@ -46547,7 +46570,12 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         }
         o.role && delete o.role, o.enums && delete o.enums, o.original && delete o.original;
       }
-      /** Sorts the list of Type patterns using the definition of the prioritized ones */
+      /**
+       * Sorts the list of Type patterns using the definition of the prioritized ones
+       *
+       * @param typeList Types list
+       * @param prioritizedTypes Array of pairs with changed priority
+       */
       sortTypes(o, i) {
         return i.forEach(([s, l]) => {
           const c = o.indexOf(s), d = o.indexOf(l);
@@ -46587,7 +46615,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           channelStates: T,
           usedIds: f,
           ignoreIndicators: h || [],
-          pattern: t.Types.unknown,
+          pattern: "unknown",
           usedInCurrentDevice: [],
           state: {},
           ignoreEnums: !!o.ignoreEnums,

@@ -3,7 +3,6 @@
 /* jslint node: true */
 /* jshint expr: true*/
 'use strict';
-const expect = require('chai').expect;
 const setup = require('@iobroker/legacy-testing');
 
 let objects = null;
@@ -92,8 +91,12 @@ describe(`Test ${adapterShortName} adapter`, function () {
 
     it(`Test ${adapterShortName} adapter: Check if adapter started`, done => {
         checkConnectionOfAdapter(res => {
-            res && console.log(res);
-            expect(res).not.to.be.equal('Cannot check connection');
+            if (res) {
+                console.log(res);
+            }
+            if (res === 'Cannot check connection') {
+                throw new Error(res);
+            }
             done();
         });
     }).timeout(60000);
