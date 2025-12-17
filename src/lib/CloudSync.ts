@@ -260,7 +260,7 @@ export default class CloudSync {
             // just delete the file
             try {
                 unlinkSync(fileName);
-            } catch (error) {
+            } catch {
                 this.adapter.log.error(`[RSYNC] Cannot delete file: ${fileName}`);
             }
         }

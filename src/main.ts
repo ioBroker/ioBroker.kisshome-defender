@@ -1,6 +1,6 @@
 import { Adapter, type AdapterOptions, I18n } from '@iobroker/adapter-core';
 import { join } from 'node:path';
-import { readFileSync, existsSync, mkdirSync, openSync, writeSync, closeSync, readdirSync, unlinkSync } from 'node:fs';
+import { readFileSync, existsSync, mkdirSync, openSync, writeSync, closeSync } from 'node:fs';
 import axios from 'axios';
 import { randomUUID, createHash } from 'node:crypto';
 import schedule, { type Job } from 'node-schedule';
