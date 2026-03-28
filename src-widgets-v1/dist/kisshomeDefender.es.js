@@ -28473,7 +28473,7 @@ export default theme;`;
     return rM || (rM = 1, (function(t, e) {
       var r = qj(), n = e && !e.nodeType && e, a = n && !0 && t && !t.nodeType && t, o = a && a.exports === n, i = o && r.process, s = (function() {
         try {
-          var l = a && a.require && a.require("util").types;
+          var l = a && a.require && a.require("node:util").types;
           return l || i && i.binding && i.binding("util");
         } catch {
         }
@@ -31376,7 +31376,7 @@ export default theme;`;
   }
   var TB = typeof Ma == "object" && Ma && !Ma.nodeType && Ma, t0 = TB && typeof Aa == "object" && Aa && !Aa.nodeType && Aa, Cpe = t0 && t0.exports === TB, y4 = Cpe && gB.process, YO = (function() {
     try {
-      var t = t0 && t0.require && t0.require("util").types;
+      var t = t0 && t0.require && t0.require("node:util").types;
       return t || y4 && y4.binding && y4.binding("util");
     } catch {
     }
