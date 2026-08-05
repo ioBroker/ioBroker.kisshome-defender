@@ -1,7 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
-import '@iobroker/adapter-react-v5/index.css';
+import '@iobroker/gui-components/index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 

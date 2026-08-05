@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
+import { I18n, type AdminConnection, type ThemeType } from '@iobroker/gui-components';
 import { Checkbox, Fab, LinearProgress, ListItemText, MenuItem, Paper, Select, Tab, Tabs } from '@mui/material';
 
 import type {
@@ -107,7 +107,7 @@ interface StatisticsTabProps {
     reportUxEvent: ReportUxHandler;
     alive: boolean;
     themeType: ThemeType;
-    socket: LegacyConnection;
+    socket: AdminConnection;
     lang: ioBroker.Languages;
     isMobile: boolean;
 }

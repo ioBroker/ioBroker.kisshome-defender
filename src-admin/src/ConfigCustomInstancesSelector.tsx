@@ -19,9 +19,9 @@ import { Add, Delete } from '@mui/icons-material';
 
 // important to make from package and not from some children.
 // invalid
-// import ConfigGeneric from '@iobroker/adapter-react-v5/ConfigGeneric';
+// import ConfigGeneric from '@iobroker/gui-components/ConfigGeneric';
 // valid
-import { I18n, type LegacyConnection, Message } from '@iobroker/adapter-react-v5';
+import { I18n, type AdminConnection, Message } from '@iobroker/gui-components';
 import { ConfigGeneric, type ConfigGenericProps, type ConfigGenericState } from '@iobroker/json-config';
 import type { IDSStatusMessage, MACAddress } from './types';
 
@@ -52,7 +52,7 @@ const styles: Record<string, React.CSSProperties> = {
     },
 };
 
-async function browseHomekit(socket: LegacyConnection, instance: string): Promise<{ ip: string; name: string }[]> {
+async function browseHomekit(socket: AdminConnection, instance: string): Promise<{ ip: string; name: string }[]> {
     const states = await socket.getObjectViewSystem('state', `${instance}.`, `${instance}.\u9999`);
     const devices: { ip: string; name: string }[] = [];
 
@@ -71,7 +71,7 @@ async function browseHomekit(socket: LegacyConnection, instance: string): Promis
     return devices;
 }
 
-async function browseHomeConnect(socket: LegacyConnection, instance: string): Promise<{ ip: string; name: string }[]> {
+async function browseHomeConnect(socket: AdminConnection, instance: string): Promise<{ ip: string; name: string }[]> {
     const states = await socket.getObjectViewSystem('state', `${instance}.`, `${instance}.\u9999`);
     const devices: { ip: string; name: string }[] = [];
 
@@ -91,7 +91,7 @@ async function browseHomeConnect(socket: LegacyConnection, instance: string): Pr
     return devices;
 }
 
-async function browseShelly(socket: LegacyConnection, instance: string): Promise<{ ip: string; name: string }[]> {
+async function browseShelly(socket: AdminConnection, instance: string): Promise<{ ip: string; name: string }[]> {
     const states = await socket.getObjectViewSystem('state', `${instance}.`, `${instance}.\u9999`);
     const devices: { ip: string; name: string }[] = [];
 
@@ -110,7 +110,7 @@ async function browseShelly(socket: LegacyConnection, instance: string): Promise
     return devices;
 }
 
-async function browseClients(socket: LegacyConnection, instance: string): Promise<{ ip: string; name: string }[]> {
+async function browseClients(socket: AdminConnection, instance: string): Promise<{ ip: string; name: string }[]> {
     const clients: { [id: string]: ioBroker.StateObject } = await socket.getObjectViewSystem(
         'state',
         `${instance}.info.clients.`,
@@ -130,7 +130,7 @@ async function browseClients(socket: LegacyConnection, instance: string): Promis
     return devices;
 }
 
-async function browseUpnp(socket: LegacyConnection, instance: string): Promise<{ ip: string; name: string }[]> {
+async function browseUpnp(socket: AdminConnection, instance: string): Promise<{ ip: string; name: string }[]> {
     const objects: { [id: string]: ioBroker.DeviceObject } = await socket.getObjectViewSystem(
         'device',
         `${instance}.`,
@@ -153,7 +153,7 @@ async function browseUpnp(socket: LegacyConnection, instance: string): Promise<{
 const ADAPTERS: {
     adapter: string;
     attr?: string;
-    browse?: (socket: LegacyConnection, instance: string) => Promise<{ ip: string; name: string }[]>;
+    browse?: (socket: AdminConnection, instance: string) => Promise<{ ip: string; name: string }[]>;
     arrayAttr?: string;
     clients?: boolean;
 }[] = [
@@ -638,7 +638,7 @@ export default class ConfigCustomInstancesSelector extends ConfigGeneric<
                 if (adapter.browse) {
                     try {
                         const devices = await adapter.browse(
-                            this.props.oContext.socket as unknown as LegacyConnection,
+                            this.props.oContext.socket as unknown as AdminConnection,
                             instances[i].id.replace('system.adapter.', ''),
                         );
                         devices.forEach(item => {
@@ -661,7 +661,7 @@ export default class ConfigCustomInstancesSelector extends ConfigGeneric<
                 if (adapter.clients) {
                     try {
                         const devices = await browseClients(
-                            this.props.oContext.socket as unknown as LegacyConnection,
+                            this.props.oContext.socket as unknown as AdminConnection,
                             instances[i].id.replace('system.adapter.', ''),
                         );
                         devices.forEach(item => {

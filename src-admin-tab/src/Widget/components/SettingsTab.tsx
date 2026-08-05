@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 
 import { Button, LinearProgress, Link, Paper, Slider, Switch } from '@mui/material';
-import { I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
+import { I18n, type AdminConnection, type ThemeType } from '@iobroker/gui-components';
 import type { ReportUxHandler } from '../types';
 import { findAdminLink, isTouch } from './utils';
 
 interface SettingsTabProps {
     instance: string;
     reportUxEvent: ReportUxHandler;
-    socket: LegacyConnection;
+    socket: AdminConnection;
     themeType: ThemeType;
     isMobile: boolean;
 }

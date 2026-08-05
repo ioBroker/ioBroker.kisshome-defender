@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 
 import logo from './assets/kisshome-defender.svg';
-import { I18n, type ThemeType, type LegacyConnection } from '@iobroker/adapter-react-v5';
+import { I18n, type ThemeType, type Connection } from '@iobroker/gui-components';
 
 import StatusTab, { StatusIcon } from './components/StatusTab';
 import StatisticsTab from './components/StatisticsTab';
@@ -41,7 +41,7 @@ function isMobile(): boolean {
 
 interface KisshomeDefenderProps {
     instance?: string;
-    socket: LegacyConnection;
+    socket: Connection;
     editMode: boolean;
     themeType: ThemeType;
     lang: ioBroker.Languages;

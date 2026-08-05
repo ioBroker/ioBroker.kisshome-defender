@@ -14,17 +14,17 @@ let adapterShortName = setup.adapterName.substring(setup.adapterName.indexOf('.'
 let sendMessage = null;
 
 function checkConnectionOfAdapter(cb, counter) {
-    counter = counter || 0;
+    counter ||= 0;
     console.log(`Try check #${counter}`);
     if (counter > 30) {
-        cb && cb('Cannot check connection');
+        cb?.('Cannot check connection');
         return;
     }
 
     states.getState(`system.adapter.${adapterShortName}.0.alive`, (err, state) => {
         err && console.error(err);
-        if (state && state.val) {
-            cb && cb();
+        if (state && state?.val) {
+            cb?.();
         } else {
             setTimeout(() => {
                 checkConnectionOfAdapter(cb, counter + 1);
@@ -34,18 +34,18 @@ function checkConnectionOfAdapter(cb, counter) {
 }
 
 function checkValueOfState(id, value, cb, counter) {
-    counter = counter || 0;
+    counter ||= 0;
     if (counter > 20) {
-        return cb && cb(`Cannot check value Of State ${id}`);
+        return cb?.(`Cannot check value Of State ${id}`);
     }
 
     states.getState(id, (err, state) => {
         err && console.error(err);
         if (value === null && !state) {
-            cb && cb();
+            cb?.();
         } else
         if (state && (value === undefined || state.val === value)) {
-            cb && cb();
+            cb?.();
         } else {
             setTimeout(() =>
                 checkValueOfState(id, value, cb, counter + 1), 500);

@@ -1,4 +1,4 @@
-import type { LegacyConnection } from '@iobroker/adapter-react-v5';
+import type { AdminConnection } from '@iobroker/gui-components';
 
 export const MOBILE_WIDTH = 600;
 
@@ -53,7 +53,7 @@ export function isTouch(e: any): boolean {
     );
 }
 
-export async function findAdminLink(socket: LegacyConnection, instance: string): Promise<string> {
+export async function findAdminLink(socket: AdminConnection, instance: string): Promise<string> {
     const obj = await socket.getObject(`system.adapter.kisshome-defender.${instance}`);
 
     if (obj?.native) {

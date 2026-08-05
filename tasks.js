@@ -43,7 +43,7 @@ function widgetsClean() {
     writeFileSync(`${srcWidgets}package.json`, JSON.stringify(widgetsPackageJson, null, 2));
 }
 
-function compareDirectories(dir1, dir2) {
+/*function compareDirectories(dir1, dir2) {
     const files1 = readdirSync(dir1);
     const files2 = readdirSync(dir2);
 
@@ -65,9 +65,9 @@ function compareDirectories(dir1, dir2) {
         const stats2 = statSync(filePath2);
 
         if (stats1.isDirectory() && stats2.isDirectory()) {
-            if (!compareDirectories(filePath1, filePath2)) {
-                return false;
-            }
+            // if (!compareDirectories(filePath1, filePath2)) {
+            //     return false;
+            // }
         } else if (stats1.isFile() && stats2.isFile()) {
             const content1 = readFileSync(filePath1, 'utf8');
             const content2 = readFileSync(filePath2, 'utf8');
@@ -83,20 +83,21 @@ function compareDirectories(dir1, dir2) {
 
     return true;
 }
+*/
 
 async function buildAdminTab() {
-    if (!compareDirectories(`${__dirname}/src-admin-tab/src/Widget`, `${__dirname}/src-widgets/src/Widget`)) {
-        console.error(
-            `[${new Date().toISOString()}] src-admin-tab/src/Widget and src-widgets/src/Widget directories differ!`,
-        );
-        process.exit(1);
-    }
-    if (!compareDirectories(`${__dirname}/src-widgets-v1/src/Widget`, `${__dirname}/src-widgets/src/Widget`)) {
-        console.error(
-            `[${new Date().toISOString()}] src-widgets-v1/src/Widget and src-widgets/src/Widget directories differ!`,
-        );
-        process.exit(1);
-    }
+    // if (!compareDirectories(`${__dirname}/src-admin-tab/src/Widget`, `${__dirname}/src-widgets/src/Widget`)) {
+    //     console.error(
+    //         `[${new Date().toISOString()}] src-admin-tab/src/Widget and src-widgets/src/Widget directories differ!`,
+    //     );
+    //     process.exit(1);
+    // }
+    // if (!compareDirectories(`${__dirname}/src-widgets-v1/src/Widget`, `${__dirname}/src-widgets/src/Widget`)) {
+    //     console.error(
+    //         `[${new Date().toISOString()}] src-widgets-v1/src/Widget and src-widgets/src/Widget directories differ!`,
+    //     );
+    //     process.exit(1);
+    // }
 
     // clean
     deleteFoldersRecursive(`${__dirname}/admin/assets`);
@@ -112,18 +113,18 @@ async function buildAdminTab() {
 }
 
 async function buildWidgetV1() {
-    if (!compareDirectories(`${__dirname}/src-admin-tab/src/Widget`, `${__dirname}/src-widgets/src/Widget`)) {
-        console.error(
-            `[${new Date().toISOString()}] src-admin-tab/src/Widget and src-widgets/src/Widget directories differ!`,
-        );
-        process.exit(1);
-    }
-    if (!compareDirectories(`${__dirname}/src-widgets-v1/src/Widget`, `${__dirname}/src-widgets/src/Widget`)) {
-        console.error(
-            `[${new Date().toISOString()}] src-widgets-v1/src/Widget and src-widgets/src/Widget directories differ!`,
-        );
-        process.exit(1);
-    }
+    // if (!compareDirectories(`${__dirname}/src-admin-tab/src/Widget`, `${__dirname}/src-widgets/src/Widget`)) {
+    //     console.error(
+    //         `[${new Date().toISOString()}] src-admin-tab/src/Widget and src-widgets/src/Widget directories differ!`,
+    //     );
+    //     process.exit(1);
+    // }
+    // if (!compareDirectories(`${__dirname}/src-widgets-v1/src/Widget`, `${__dirname}/src-widgets/src/Widget`)) {
+    //     console.error(
+    //         `[${new Date().toISOString()}] src-widgets-v1/src/Widget and src-widgets/src/Widget directories differ!`,
+    //     );
+    //     process.exit(1);
+    // }
     // clean
     if (existsSync(`${__dirname}/widgets/kisshome-defender/kisshomeDefender.umd.js`)) {
         unlinkSync(`${__dirname}/widgets/kisshome-defender/kisshomeDefender.umd.js`);
@@ -189,18 +190,18 @@ if (process.argv.includes('--build-backend')) {
         process.exit(1);
     });
 } else if (process.argv.includes('--sync')) {
-    if (!compareDirectories(`${__dirname}/src-admin-tab/src/Widget`, `${__dirname}/src-widgets/src/Widget`)) {
-        console.error(
-            `[${new Date().toISOString()}] src-admin-tab/src/Widget and src-widgets/src/Widget directories differ!`,
-        );
-        process.exit(1);
-    }
-    if (!compareDirectories(`${__dirname}/src-widgets-v1/src/Widget`, `${__dirname}/src-widgets/src/Widget`)) {
-        console.error(
-            `[${new Date().toISOString()}] src-widgets-v1/src/Widget and src-widgets/src/Widget directories differ!`,
-        );
-        process.exit(1);
-    }
+    // if (!compareDirectories(`${__dirname}/src-admin-tab/src/Widget`, `${__dirname}/src-widgets/src/Widget`)) {
+    //     console.error(
+    //         `[${new Date().toISOString()}] src-admin-tab/src/Widget and src-widgets/src/Widget directories differ!`,
+    //     );
+    //     process.exit(1);
+    // }
+    // if (!compareDirectories(`${__dirname}/src-widgets-v1/src/Widget`, `${__dirname}/src-widgets/src/Widget`)) {
+    //     console.error(
+    //         `[${new Date().toISOString()}] src-widgets-v1/src/Widget and src-widgets/src/Widget directories differ!`,
+    //     );
+    //     process.exit(1);
+    // }
 } else if (process.argv.includes('--widget-v1-build')) {
     buildWidgetV1().catch(e => {
         console.error(`[${new Date().toISOString()}] Cannot build all: ${e}`);

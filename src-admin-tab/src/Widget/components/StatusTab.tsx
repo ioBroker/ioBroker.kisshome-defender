@@ -3,13 +3,13 @@ import React, { Component } from 'react';
 import { Button, CircularProgress, Link, Paper } from '@mui/material';
 import { Check, Close, Warning } from '@mui/icons-material';
 
-import { I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
+import { I18n, type AdminConnection, type ThemeType } from '@iobroker/gui-components';
 import type { ReportUxHandler, StoredStatisticsResult } from '../types';
 import { bytes2string, findAdminLink, isTouch } from './utils';
 
 interface StatusTabProps {
     instance: string;
-    socket: LegacyConnection;
+    socket: AdminConnection;
     reportUxEvent: ReportUxHandler;
     alive: boolean;
     themeType: ThemeType;

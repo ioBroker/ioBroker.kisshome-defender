@@ -171,7 +171,8 @@
                     "i18n": true,
                     "url": "custom/customComponents.js",
                     "name": "ConfigCustomKissHomeDefenderSet/Components/ConfigCustomInstancesSelector",
-                    "bundlerType": "module"
+                    "bundlerType": "module",
+                    "guiApi": 2
                 }
             }
         },

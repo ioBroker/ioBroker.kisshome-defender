@@ -1,12 +1,8 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "allowJs": false,
-    "checkJs": false,
     "noEmit": false,
     "declaration": false,
-    "types": ["@iobroker/types"],
-    "outDir": "../build"
   },
   "include": [
     "./**/*.ts"

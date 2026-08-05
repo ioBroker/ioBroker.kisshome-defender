@@ -23,7 +23,7 @@ import {
     Fab,
     Menu,
 } from '@mui/material';
-import { I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
+import { I18n, type AdminConnection, type ThemeType } from '@iobroker/gui-components';
 import { Close, ExpandMore, Info, Notifications } from '@mui/icons-material';
 
 import type {
@@ -59,7 +59,7 @@ interface DetectionsTabProps {
     reportUxEvent: ReportUxHandler;
     alive: boolean;
     themeType: ThemeType;
-    socket: LegacyConnection;
+    socket: AdminConnection;
     group: 'A' | 'B';
     showDetectionWithUUID: string;
     results: StoredStatisticsResult | null;

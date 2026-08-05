@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import type { LegacyConnection, ThemeType } from '@iobroker/adapter-react-v5';
+import type { Connection, ThemeType } from '@iobroker/gui-components';
 import MarkdownIt from 'markdown-it';
 import {
     Button,
@@ -52,7 +52,7 @@ export interface QuestionnaireJson {
 }
 
 interface QuestionnaireProps {
-    socket: LegacyConnection;
+    socket: Connection;
     instance: string;
     json: QuestionnaireJson | null;
     onClose: () => void;

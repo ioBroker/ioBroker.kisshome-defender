@@ -7,11 +7,11 @@ import { Box } from '@mui/material';
 import {
     GenericApp,
     I18n,
-    type IobTheme,
     Loader,
+    type IobTheme,
     type GenericAppProps,
     type GenericAppState,
-} from '@iobroker/adapter-react-v5';
+} from '@iobroker/gui-components';
 
 import ConfigCustomInstancesSelector from './ConfigCustomInstancesSelector';
 
