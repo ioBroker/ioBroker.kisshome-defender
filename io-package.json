@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "1.3.3",
+    "version": "2.0.0",
     "news": {
       "1.3.3": {
         "en": "Stop any cloud communication after 21.12.2025",
@@ -80,19 +80,6 @@
         "pl": "Dozwolona edycja opisu dla automatycznie znalezionych urządzeń",
         "uk": "Дозволяється редагування опису для автоматично знайдених пристроїв",
         "zh-cn": "允许编辑自动找到设备的描述"
-      },
-      "1.1.12": {
-        "en": "Changed german name of adapter\nSync names of PCAP files",
-        "de": "Geänderter deutscher Name des Adapters\nSync Namen von PCAP-Dateien",
-        "ru": "Изменилось немецкое название адаптера\nСинхронизация имен файлов PCAP",
-        "pt": "Nome alemão alterado do adaptador\nSincronizar os nomes dos ficheiros PCAP",
-        "nl": "Veranderde Duitse naam van adapter\nSynchroniseer namen van PCAP-bestanden",
-        "fr": "Changement du nom allemand de l'adaptateur\nSynchroniser les noms des fichiers PACP",
-        "it": "Cambiato nome tedesco di adattatore\nNomi di sincronizzazione dei file PCAP",
-        "es": "Nombre alemán cambiado de adaptador\nNombres sincronizados de archivos PCAP",
-        "pl": "Zmieniona niemiecka nazwa adaptera\nSynchronizacja nazw plików PCAP",
-        "uk": "Змінено німецьке ім'я адаптера\nSync імена файлів PCAP",
-        "zh-cn": "更改适配器的德国名称\n同步 PCAP 文件名称"
       }
     },
     "titleLang": {

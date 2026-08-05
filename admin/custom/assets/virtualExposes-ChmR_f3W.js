@@ -1,0 +1,1 @@
+import{t as e}from"./virtual_mf-exposes___mfe_internal__ConfigCustomKissHomeDefenderSet__customComponents_js-Cw7JBQVx.js";export{e as default};
