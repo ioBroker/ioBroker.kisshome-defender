@@ -59,14 +59,7 @@ export class IDSCommunication {
     private readonly workingCloudDir: string;
     private readonly statisticsDir: string;
     private currentStatus:
-        | 'Running'
-        | 'Started'
-        | 'Configuring'
-        | 'Analyzing'
-        | 'Error'
-        | 'No connection'
-        | 'Exited'
-        | '' = '';
+        'Running' | 'Started' | 'Configuring' | 'Analyzing' | 'Error' | 'No connection' | 'Exited' | '' = '';
     private currentVersion: string = '';
     private uploadStatus: {
         status: 'idle' | 'waitingOnResponse' | 'sendingFile';

@@ -51,7 +51,7 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
-### 2.0.1 (2026-08-05)
+### **WORK IN PROGRESS**
 -   (@GermanBluefox) Updated some GUIs to React 19
 
 ### 1.3.3 (2025-12-17)

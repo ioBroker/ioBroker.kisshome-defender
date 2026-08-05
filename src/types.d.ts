@@ -155,11 +155,7 @@ export interface UXEvent {
 }
 
 export type DataRequestType =
-    | 'dataVolumePerDevice'
-    | 'dataVolumePerCountry'
-    | 'dataVolumePerDaytime'
-    | 'dataVolumePerDay'
-    | 'allStatistics';
+    'dataVolumePerDevice' | 'dataVolumePerCountry' | 'dataVolumePerDaytime' | 'dataVolumePerDay' | 'allStatistics';
 
 export interface DataVolumePerDeviceResult {
     [mac: MACAddress]: { series: [number, number][]; info?: { ip: string; desc: string } };
