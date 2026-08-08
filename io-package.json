@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "2.0.1",
+    "version": "3.0.0",
     "news": {
+      "3.0.0": {
+        "en": "Updated some GUIs to React 19\nMinimal supported Node.js version is 22",
+        "de": "Aktualisiert einige GUIs zu React 19\nMinimal unterstützt Node.js Version ist 22",
+        "ru": "Обновление GUI для React 19\nМинимально поддерживаемая версия Node.js 22",
+        "pt": "Atualizado algumas GUIs para Reagir 19\nVersão mínima suportada Node.js é 22",
+        "nl": "Enkele GUI's bijgewerkt om 19 te reacteren\nMinimale ondersteunde Node.js versie is 22",
+        "fr": "Mise à jour de quelques GUI pour réactualiser 19\nMinimal prise en charge Node.js version est 22",
+        "it": "Aggiornato alcune GUI a React 19\nMinimal supportato Node.js versione è 22",
+        "es": "Actualizado algunos GUIs para React 19\nVersión Node.js compatible con mínimos es 22",
+        "pl": "Aktualizacja niektórych wytycznych do reakcji 19\nMinimal obsługiwane Node.js wersja jest 22",
+        "uk": "Оновлено деякі інтерфейси до React 19\nВерсія Node.js - 22",
+        "zh-cn": "更新了一些图形用户界面以反应 19\n最小支持的 Node.js 版本为 22"
+      },
       "1.3.3": {
         "en": "Stop any cloud communication after 21.12.2025",
         "de": "Stoppen Sie jede Cloud-Kommunikation nach 21.12.2025",
