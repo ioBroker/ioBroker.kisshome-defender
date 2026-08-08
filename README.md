@@ -53,6 +53,7 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 ## Changelog
 ### **WORK IN PROGRESS**
 -   (@GermanBluefox) Updated some GUIs to React 19
+-   (@GermanBluefox) Minimal supported Node.js version is 22
 
 ### 1.3.3 (2025-12-17)
 -   (@GermanBluefox) Stop any cloud communication after 21.12.2025
