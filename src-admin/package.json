@@ -18,7 +18,7 @@
         "@mui/icons-material": "^9.3.0",
         "@mui/material": "^9.3.0",
         "@originjs/vite-plugin-federation": "^1.4.1",
-        "@types/node": "^26.1.2",
+        "@types/node": "^26.6.1",
         "@types/react": "^19.2.18",
         "@types/react-dom": "^19.2.4",
         "@types/uuid": "^11.0.0",
