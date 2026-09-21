@@ -9,7 +9,7 @@
         "@iobroker/gui-components": "^10.0.12",
         "@iobroker/types-vis-2": "^2.14.4",
         "@module-federation/vite": "^1.20.3",
-        "@mui/icons-material": "^9.3.0",
+        "@mui/icons-material": "^9.4.0",
         "@mui/material": "^9.3.0",
         "@types/markdown-it": "^14.1.2",
         "@types/react": "^19.2.18",
