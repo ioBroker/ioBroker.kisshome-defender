@@ -192,6 +192,8 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 
 -   (@GermanBluefox) Initial commit
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## License
 
 The MIT License (MIT)
