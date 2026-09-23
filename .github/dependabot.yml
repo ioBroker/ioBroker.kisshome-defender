@@ -2,72 +2,72 @@
 version: 2
 updates:
 
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "cron"
-      timezone: "Europe/Berlin"
-      cronjob: "7 2 8 * *"
+      interval: 'cron'
+      timezone: 'Europe/Berlin'
+      cronjob: '7 2 8 * *'
     open-pull-requests-limit: 15
 
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "cron"
-      timezone: "Europe/Berlin"
-      cronjob: "7 2 8 * *"
+      interval: 'cron'
+      timezone: 'Europe/Berlin'
+      cronjob: '7 2 8 * *'
     open-pull-requests-limit: 15
-    versioning-strategy: "increase"
+    versioning-strategy: 'increase'
     ignore:
-      - dependency-name: "typescript"
+      - dependency-name: 'typescript'
         update-types:
-          - "version-update:semver-minor"
-          - "version-update:semver-major"
+          - 'version-update:semver-minor'
+          - 'version-update:semver-major'
       - dependency-name: '@types/node'
         update-types:
           - 'version-update:semver-major'
 
-  - package-ecosystem: "npm"
-    directory: "/src"
+  - package-ecosystem: 'npm'
+    directory: '/src'
     schedule:
-      interval: "cron"
-      timezone: "Europe/Berlin"
-      cronjob: "7 2 8 * *"
+      interval: 'cron'
+      timezone: 'Europe/Berlin'
+      cronjob: '7 2 8 * *'
     open-pull-requests-limit: 20
-    versioning-strategy: "increase"
+    versioning-strategy: 'increase'
 
-  - package-ecosystem: "npm"
-    directory: "/src-admin"
+  - package-ecosystem: 'npm'
+    directory: '/src-admin'
     schedule:
-      interval: "cron"
-      timezone: "Europe/Berlin"
-      cronjob: "7 2 8 * *"
+      interval: 'cron'
+      timezone: 'Europe/Berlin'
+      cronjob: '7 2 8 * *'
     open-pull-requests-limit: 20
-    versioning-strategy: "increase"
+    versioning-strategy: 'increase'
 
-  - package-ecosystem: "npm"
-    directory: "/src-admin-tab"
+  - package-ecosystem: 'npm'
+    directory: '/src-admin-tab'
     schedule:
-      interval: "cron"
-      timezone: "Europe/Berlin"
-      cronjob: "7 2 8 * *"
+      interval: 'cron'
+      timezone: 'Europe/Berlin'
+      cronjob: '7 2 8 * *'
     open-pull-requests-limit: 20
-    versioning-strategy: "increase"
+    versioning-strategy: 'increase'
 
-  - package-ecosystem: "npm"
-    directory: "/src-widgets"
+  - package-ecosystem: 'npm'
+    directory: '/src-widgets'
     schedule:
-      interval: "cron"
-      timezone: "Europe/Berlin"
-      cronjob: "7 2 8 * *"
+      interval: 'cron'
+      timezone: 'Europe/Berlin'
+      cronjob: '7 2 8 * *'
     open-pull-requests-limit: 20
-    versioning-strategy: "increase"
+    versioning-strategy: 'increase'
 
-  - package-ecosystem: "npm"
-    directory: "/src-admin-v1"
+  - package-ecosystem: 'npm'
+    directory: '/src-admin-v1'
     schedule:
-      interval: "cron"
-      timezone: "Europe/Berlin"
-      cronjob: "7 2 8 * *"
+      interval: 'cron'
+      timezone: 'Europe/Berlin'
+      cronjob: '7 2 8 * *'
     open-pull-requests-limit: 20
-    versioning-strategy: "increase"
+    versioning-strategy: 'increase'
