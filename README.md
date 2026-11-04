@@ -54,6 +54,7 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 
 ### **WORK IN PROGRESS**
 - (copilot) Adapter requires node.js >= 22.19.0 now
+- (@GermanBluefox) vis-2 widgets rebuilt for React 19 and MUI 9 (vis-2 >= 2.20.2 needed), see ioBroker/ioBroker.vis-2#689
 ### 3.0.1 (2026-08-08)
 -   (@GermanBluefox) Updated some GUIs to React 19
 -   (@GermanBluefox) Minimal supported Node.js version is 22

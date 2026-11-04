@@ -22,7 +22,7 @@ import type { RxRenderWidgetProps, RxWidgetInfo, VisRxWidgetState, VisRxWidgetPr
 import type VisRxWidget from '@iobroker/types-vis-2/visRxWidget';
 
 import logo from './Widget/assets/kisshome-defender.svg';
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/gui-components';
 
 import StatusTab, { StatusIcon } from './Widget/components/StatusTab';
 import StatisticsTab from './Widget/components/StatisticsTab';
@@ -79,7 +79,7 @@ export default class KisshomeDefender extends (window.visRxWidget as typeof VisR
     private ignoreNewAlerts: Date | null = null;
     private lastCreated = '';
     private lastShownAlertDialog = '';
-    private cardRef: React.RefObject<HTMLDivElement> = React.createRef();
+    private cardRef: React.RefObject<HTMLDivElement | null> = React.createRef();
 
     constructor(props: VisRxWidgetProps) {
         super(props);
