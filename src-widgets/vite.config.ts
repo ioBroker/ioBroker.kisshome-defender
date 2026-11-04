@@ -1,6 +1,5 @@
 import react from '@vitejs/plugin-react';
 import commonjs from 'vite-plugin-commonjs';
-import vitetsConfigPaths from 'vite-tsconfig-paths';
 import { federation } from '@module-federation/vite';
 import { moduleFederationShared } from '@iobroker/types-vis-2/modulefederation.vis.config';
 import { readFileSync } from 'node:fs';
@@ -18,9 +17,9 @@ const config = {
             },
             remotes: {},
             shared: moduleFederationShared(pack),
+            dts: false,
         }),
         react(),
-        vitetsConfigPaths(),
         commonjs(),
     ],
     server: {
@@ -38,6 +37,11 @@ const config = {
         },
     },
     base: './',
+    resolve: {
+        tsconfigPaths: true,
+        // Same set as the shared modules above: the fallback copies inside the widget bundle must be unique too
+        dedupe: ['react', 'react-dom', '@emotion/react', '@mui/material', '@mui/icons-material'],
+    },
     build: {
         target: 'chrome89',
         outDir: './build',

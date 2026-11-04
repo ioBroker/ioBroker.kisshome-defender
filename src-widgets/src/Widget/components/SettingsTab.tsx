@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 
 import { Button, LinearProgress, Link, Paper, Slider, Switch } from '@mui/material';
-import { I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
+import { I18n, type Connection, type ThemeType } from '@iobroker/gui-components';
 import type { ReportUxHandler } from '../types';
 import { findAdminLink, isTouch } from './utils';
 
 interface SettingsTabProps {
     instance: string;
     reportUxEvent: ReportUxHandler;
-    socket: LegacyConnection;
+    socket: Connection;
     themeType: ThemeType;
     isMobile: boolean;
 }
@@ -265,6 +265,9 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                                     },
                                 },
                                 () => {
+                                    if (!configObj) {
+                                        return;
+                                    }
                                     configObj.native.saveThresholdSeconds =
                                         this.state.newConfig?.saveThresholdSeconds || 3600;
                                     void this.props.socket.setObject(
@@ -454,6 +457,9 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                                     },
                                 },
                                 () => {
+                                    if (!configObj) {
+                                        return;
+                                    }
                                     configObj.native.saveThresholdSeconds =
                                         this.state.newConfig?.saveThresholdSeconds || 3600;
                                     void this.props.socket.setObject(

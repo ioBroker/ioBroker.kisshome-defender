@@ -137,6 +137,8 @@ async function buildWidgetV1() {
 
 function widgetsCopyFiles() {
     copyFiles([`${srcWidgets}build/customWidgets.js`], `widgets/${adapterName}`);
+    // vis-2 reads the federation manifest next to customWidgets.js to check the shared modules of the widget set
+    copyFiles([`${srcWidgets}build/mf-manifest.json`], `widgets/${adapterName}`);
     copyFiles([`${srcWidgets}build/assets/*.*`], `widgets/${adapterName}/assets`);
     copyFiles([`${srcWidgets}build/img/*`], `widgets/${adapterName}/img`);
 }
