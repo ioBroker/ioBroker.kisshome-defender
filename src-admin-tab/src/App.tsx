@@ -10,7 +10,8 @@ import {
     Theme,
     type IobTheme,
     type ThemeName,
-    type ThemeType, ScrollbarStyles,
+    type ThemeType,
+    ScrollbarStyles,
 } from '@iobroker/gui-components';
 
 import '@iobroker/gui-components/build/index.css';
@@ -40,7 +41,7 @@ import ukLang from './Widget/i18n/uk.json';
 import zhLang from './Widget/i18n/zh-cn.json';
 
 import KisshomeDefender from './Widget';
-import { CssBaseline } from "@mui/material";
+import { CssBaseline } from '@mui/material';
 
 type AppProps = object;
 

@@ -216,12 +216,12 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                                 id: 'kisshome-defender-settings-save-threshold',
                                 event: 'change',
                                 ts: Date.now(),
-                                data: (value as number).toString(),
+                                data: value.toString(),
                                 isTouchEvent: isTouch(e),
                             });
                             this.setState({
                                 newConfig: {
-                                    saveThresholdSeconds: (value as number) * 60,
+                                    saveThresholdSeconds: value * 60,
                                 },
                             });
                         }}
@@ -408,12 +408,12 @@ export default class SettingsTab extends Component<SettingsTabProps, SettingsTab
                                 id: 'kisshome-defender-settings-save-threshold',
                                 event: 'change',
                                 ts: Date.now(),
-                                data: (value as number).toString(),
+                                data: value.toString(),
                                 isTouchEvent: isTouch(e),
                             });
                             this.setState({
                                 newConfig: {
-                                    saveThresholdSeconds: (value as number) * 60,
+                                    saveThresholdSeconds: value * 60,
                                 },
                             });
                         }}

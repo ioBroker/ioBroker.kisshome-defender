@@ -184,10 +184,8 @@ export default class StatisticsTab extends Component<StatisticsTabProps, Statist
         this.state = {
             tab:
                 (window.localStorage.getItem('kisshome-defender-tab.statisticsTab') as
-                    | 'dataVolumePerDevice'
-                    | 'dataVolumePerCountry'
-                    | 'dataVolumePerDaytime'
-                    | 'dataVolumePerDay') || 'dataVolumePerDay',
+                    'dataVolumePerDevice' | 'dataVolumePerCountry' | 'dataVolumePerDaytime' | 'dataVolumePerDay') ||
+                'dataVolumePerDay',
             dataVolumePerDevice: {
                 data: null,
                 ts: 0,

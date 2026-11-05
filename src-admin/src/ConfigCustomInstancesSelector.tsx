@@ -275,7 +275,7 @@ export default class ConfigCustomInstancesSelector extends ConfigGeneric<
     private statusPolling: ReturnType<typeof setInterval> | null = null;
 
     async componentDidMount(): Promise<void> {
-        super.componentDidMount();
+        await super.componentDidMount();
 
         let address: string[] = [];
         // get own ip address
@@ -638,7 +638,7 @@ export default class ConfigCustomInstancesSelector extends ConfigGeneric<
                 if (adapter.browse) {
                     try {
                         const devices = await adapter.browse(
-                            this.props.oContext.socket as unknown as AdminConnection,
+                            this.props.oContext.socket,
                             instances[i].id.replace('system.adapter.', ''),
                         );
                         devices.forEach(item => {
@@ -661,7 +661,7 @@ export default class ConfigCustomInstancesSelector extends ConfigGeneric<
                 if (adapter.clients) {
                     try {
                         const devices = await browseClients(
-                            this.props.oContext.socket as unknown as AdminConnection,
+                            this.props.oContext.socket,
                             instances[i].id.replace('system.adapter.', ''),
                         );
                         devices.forEach(item => {

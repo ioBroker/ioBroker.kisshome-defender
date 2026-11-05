@@ -142,13 +142,8 @@ export default class StatusTab extends Component<StatusTabProps, StatusTabState>
             this.setState({
                 idsStatus:
                     (state?.val as
-                        | 'Running'
-                        | 'Started'
-                        | 'Configuring'
-                        | 'Analyzing'
-                        | 'Error'
-                        | 'No connection'
-                        | 'Unknown') || 'Unknown',
+                        'Running' | 'Started' | 'Configuring' | 'Analyzing' | 'Error' | 'No connection' | 'Unknown') ||
+                    'Unknown',
             });
         }
     };

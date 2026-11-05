@@ -5,12 +5,8 @@ export default [
     {
         languageOptions: {
             parserOptions: {
-                allowDefaultProject: {
-                    allow: ['*.js', '*.mjs'],
-                },
+                projectService: true,
                 tsconfigRootDir: import.meta.dirname,
-                project: './tsconfig.json',
-                // projectService: true,
             },
         },
     },

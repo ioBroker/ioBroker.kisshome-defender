@@ -125,11 +125,10 @@ function singletonConnection(props: ConnectionProps, onConnectionChanged: (conne
 
     connection = new Connection({
         ...props,
-        protocol: props.protocol || window.location.protocol,
+        protocol: props.protocol || (window.location.protocol as 'http:' | 'https:'),
         host: props.host || window.location.hostname,
         port: props.port || 8082,
         name: 'kisshome-defender',
-        // @ts-expect-error
         token: props.token,
         onProgress: (progress: PROGRESS) => {
             if (progress === PROGRESS.CONNECTING) {

@@ -101,11 +101,10 @@ const styles: Record<string, React.CSSProperties> = {
 };
 
 export default class Questionnaire extends Component<QuestionnaireProps, QuestionnaireState> {
-    private markDown: MarkdownIt;
+    private readonly markDown = new MarkdownIt({ html: true });
 
     constructor(props: QuestionnaireProps) {
         super(props);
-        this.markDown = new MarkdownIt({ html: true });
         this.state = {
             answers: {},
             startTs: new Date().toISOString(),
@@ -258,7 +257,7 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                             step: item.step,
                         },
                     }}
-                    value={(this.state.answers[item.id]?.value as string) || ''}
+                    value={this.state.answers[item.id]?.value || ''}
                     onChange={e => {
                         const value = e.target.value;
                         if (!value && typeof value !== 'number') {
@@ -361,7 +360,7 @@ onclick="window._visQuestionnaireLinkClick('${href}');"
                     style={{ ...styles.divControl, ...this.state.json.itemStyle, ...item.style }}
                     variant="standard"
                     fullWidth
-                    value={(this.state.answers[item.id]?.value as string) || ''}
+                    value={this.state.answers[item.id]?.value || ''}
                     onChange={e => {
                         const value = e.target.value;
                         if (!value) {

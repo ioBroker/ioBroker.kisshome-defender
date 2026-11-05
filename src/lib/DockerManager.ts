@@ -2457,7 +2457,7 @@ export default class DockerManager {
             if (!volumes.find(it => it.name === name)) {
                 throw new Error(`Network ${name} not found after creation`);
             }
-            return { stdout: `Volume ${vol.Name} created`, stderr: '', volumes };
+            return { stdout: `Volume ${vol.name} created`, stderr: '', volumes };
         }
         let result: { stdout: string; stderr: string };
         if (driver === 'local' || !driver) {
