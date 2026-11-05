@@ -1,197 +1,188 @@
 {
   "common": {
-    "name": "kisshome-defender",
-    "version": "3.0.1",
-    "news": {
-      "3.0.1": {
-        "en": "Updated some GUIs to React 19\nMinimal supported Node.js version is 22",
-        "de": "Aktualisiert einige GUIs zu React 19\nMinimal unterstützt Node.js Version ist 22",
-        "ru": "Обновление GUI для React 19\nМинимально поддерживаемая версия Node.js 22",
-        "pt": "Atualizado algumas GUIs para Reagir 19\nVersão mínima suportada Node.js é 22",
-        "nl": "Enkele GUI's bijgewerkt om 19 te reacteren\nMinimale ondersteunde Node.js versie is 22",
-        "fr": "Mise à jour de quelques GUI pour réactualiser 19\nMinimal prise en charge Node.js version est 22",
-        "it": "Aggiornato alcune GUI a React 19\nMinimal supportato Node.js versione è 22",
-        "es": "Actualizado algunos GUIs para React 19\nVersión Node.js compatible con mínimos es 22",
-        "pl": "Aktualizacja niektórych wytycznych do reakcji 19\nMinimal obsługiwane Node.js wersja jest 22",
-        "uk": "Оновлено деякі інтерфейси до React 19\nВерсія Node.js - 22",
-        "zh-cn": "更新了一些图形用户界面以反应 19\n最小支持的 Node.js 版本为 22"
+      "name": "kisshome-defender",
+      "version": "3.0.1",
+      "news": {
+          "3.0.1": {
+              "en": "Updated some GUIs to React 19\nMinimal supported Node.js version is 22",
+              "de": "Aktualisiert einige GUIs zu React 19\nMinimal unterstützt Node.js Version ist 22",
+              "ru": "Обновление GUI для React 19\nМинимально поддерживаемая версия Node.js 22",
+              "pt": "Atualizado algumas GUIs para Reagir 19\nVersão mínima suportada Node.js é 22",
+              "nl": "Enkele GUI's bijgewerkt om 19 te reacteren\nMinimale ondersteunde Node.js versie is 22",
+              "fr": "Mise à jour de quelques GUI pour réactualiser 19\nMinimal prise en charge Node.js version est 22",
+              "it": "Aggiornato alcune GUI a React 19\nMinimal supportato Node.js versione è 22",
+              "es": "Actualizado algunos GUIs para React 19\nVersión Node.js compatible con mínimos es 22",
+              "pl": "Aktualizacja niektórych wytycznych do reakcji 19\nMinimal obsługiwane Node.js wersja jest 22",
+              "uk": "Оновлено деякі інтерфейси до React 19\nВерсія Node.js - 22",
+              "zh-cn": "更新了一些图形用户界面以反应 19\n最小支持的 Node.js 版本为 22"
+          },
+          "1.3.3": {
+              "en": "Stop any cloud communication after 21.12.2025",
+              "de": "Stoppen Sie jede Cloud-Kommunikation nach 21.12.2025",
+              "ru": "Прекратить любую облачную связь после 21.12.2025",
+              "pt": "Interromper qualquer comunicação de nuvem após 21.12.2025",
+              "nl": "Stop elke cloudcommunicatie na 21.12.2025",
+              "fr": "Arrêter toute communication en nuage après le 21.12.2025",
+              "it": "Interrompere qualsiasi comunicazione cloud dopo 21.12.2025",
+              "es": "Detener cualquier comunicación en la nube después de 21.12.2025",
+              "pl": "Przerwać wszelką komunikację w chmurze po 21.12.2025",
+              "uk": "Стоп будь-який хмарний зв'язок після 21.12.2025",
+              "zh-cn": "2025年12月21日后停止任何云通信"
+          },
+          "1.3.2": {
+              "en": "Stop any cloud communication after 21.12.2025",
+              "de": "Stoppen Sie jede Cloud-Kommunikation nach 21.12.2025",
+              "ru": "Прекратить любую облачную связь после 21.12.2025",
+              "pt": "Interromper qualquer comunicação de nuvem após 21.12.2025",
+              "nl": "Stop elke cloudcommunicatie na 21.12.2025",
+              "fr": "Arrêter toute communication en nuage après le 21.12.2025",
+              "it": "Interrompere qualsiasi comunicazione cloud dopo 21.12.2025",
+              "es": "Detener cualquier comunicación en la nube después de 21.12.2025",
+              "pl": "Przerwać wszelką komunikację w chmurze po 21.12.2025",
+              "uk": "Стоп будь-який хмарний зв'язок після 21.12.2025",
+              "zh-cn": "2025年12月21日后停止任何云通信"
+          },
+          "1.3.1": {
+              "en": "Stop any cloud communication after 21.12.2025",
+              "de": "Stoppen Sie jede Cloud-Kommunikation nach 21.12.2025",
+              "ru": "Прекратить любую облачную связь после 21.12.2025",
+              "pt": "Interromper qualquer comunicação de nuvem após 21.12.2025",
+              "nl": "Stop elke cloudcommunicatie na 21.12.2025",
+              "fr": "Arrêter toute communication en nuage après le 21.12.2025",
+              "it": "Interrompere qualsiasi comunicazione cloud dopo 21.12.2025",
+              "es": "Detener cualquier comunicación en la nube después de 21.12.2025",
+              "pl": "Przerwać wszelką komunikację w chmurze po 21.12.2025",
+              "uk": "Стоп будь-який хмарний зв'язок після 21.12.2025",
+              "zh-cn": "2025年12月21日后停止任何云通信"
+          },
+          "1.3.0": {
+              "en": "Stop any cloud communication after 21.12.2025",
+              "de": "Stoppen Sie jede Cloud-Kommunikation nach 21.12.2025",
+              "ru": "Прекратить любую облачную связь после 21.12.2025",
+              "pt": "Interromper qualquer comunicação de nuvem após 21.12.2025",
+              "nl": "Stop elke cloudcommunicatie na 21.12.2025",
+              "fr": "Arrêter toute communication en nuage après le 21.12.2025",
+              "it": "Interrompere qualsiasi comunicazione cloud dopo 21.12.2025",
+              "es": "Detener cualquier comunicación en la nube después de 21.12.2025",
+              "pl": "Przerwać wszelką komunikację w chmurze po 21.12.2025",
+              "uk": "Стоп будь-який хмарний зв'язок після 21.12.2025",
+              "zh-cn": "2025年12月21日后停止任何云通信"
+          },
+          "1.2.0": {
+              "en": "Stop any cloud communication after 21.12.2025",
+              "de": "Stoppen Sie jede Cloud-Kommunikation nach 21.12.2025",
+              "ru": "Прекратить любую облачную связь после 21.12.2025",
+              "pt": "Interromper qualquer comunicação de nuvem após 21.12.2025",
+              "nl": "Stop elke cloudcommunicatie na 21.12.2025",
+              "fr": "Arrêter toute communication en nuage après le 21.12.2025",
+              "it": "Interrompere qualsiasi comunicazione cloud dopo 21.12.2025",
+              "es": "Detener cualquier comunicación en la nube después de 21.12.2025",
+              "pl": "Przerwać wszelką komunikację w chmurze po 21.12.2025",
+              "uk": "Стоп будь-який хмарний зв'язок після 21.12.2025",
+              "zh-cn": "2025年12月21日后停止任何云通信"
+          },
+          "1.1.13": {
+              "en": "Allowed editing of the description for  automatically found devices",
+              "de": "Erlaubte Bearbeitung der Beschreibung für automatisch gefundene Geräte",
+              "ru": "Разрешено редактирование описания для автоматически найденных устройств",
+              "pt": "Permite a edição da descrição dos dispositivos encontrados automaticamente",
+              "nl": "Toegestaan bewerken van de beschrijving voor automatisch gevonden apparaten",
+              "fr": "Modification autorisée de la description pour les appareils trouvés automatiquement",
+              "it": "Modifica consentita della descrizione per i dispositivi trovati automaticamente",
+              "es": "Permitido edición de la descripción para dispositivos encontrados automáticamente",
+              "pl": "Dozwolona edycja opisu dla automatycznie znalezionych urządzeń",
+              "uk": "Дозволяється редагування опису для автоматично знайдених пристроїв",
+              "zh-cn": "允许编辑自动找到设备的描述"
+          }
       },
-      "1.3.3": {
-        "en": "Stop any cloud communication after 21.12.2025",
-        "de": "Stoppen Sie jede Cloud-Kommunikation nach 21.12.2025",
-        "ru": "Прекратить любую облачную связь после 21.12.2025",
-        "pt": "Interromper qualquer comunicação de nuvem após 21.12.2025",
-        "nl": "Stop elke cloudcommunicatie na 21.12.2025",
-        "fr": "Arrêter toute communication en nuage après le 21.12.2025",
-        "it": "Interrompere qualsiasi comunicazione cloud dopo 21.12.2025",
-        "es": "Detener cualquier comunicación en la nube después de 21.12.2025",
-        "pl": "Przerwać wszelką komunikację w chmurze po 21.12.2025",
-        "uk": "Стоп будь-який хмарний зв'язок після 21.12.2025",
-        "zh-cn": "2025年12月21日后停止任何云通信"
+      "titleLang": {
+          "en": "KISSHome defender",
+          "de": "KISSHome-Defender",
+          "ru": "KISSHome-Defender",
+          "pt": "KISSHome-Defender",
+          "nl": "KISSHome-Defender",
+          "fr": "KISSHome-Defender",
+          "it": "KISSHome-Defender",
+          "es": "KISSHome-Defender",
+          "pl": "KISSHome-Defender",
+          "uk": "KISSHome-Defender",
+          "zh-cn": "KISSHome-Defender"
       },
-      "1.3.2": {
-        "en": "Stop any cloud communication after 21.12.2025",
-        "de": "Stoppen Sie jede Cloud-Kommunikation nach 21.12.2025",
-        "ru": "Прекратить любую облачную связь после 21.12.2025",
-        "pt": "Interromper qualquer comunicação de nuvem após 21.12.2025",
-        "nl": "Stop elke cloudcommunicatie na 21.12.2025",
-        "fr": "Arrêter toute communication en nuage après le 21.12.2025",
-        "it": "Interrompere qualsiasi comunicazione cloud dopo 21.12.2025",
-        "es": "Detener cualquier comunicación en la nube después de 21.12.2025",
-        "pl": "Przerwać wszelką komunikację w chmurze po 21.12.2025",
-        "uk": "Стоп будь-який хмарний зв'язок після 21.12.2025",
-        "zh-cn": "2025年12月21日后停止任何云通信"
+      "desc": {
+          "en": "Collection of information for KISSHome defender",
+          "de": "Sammlung von Informationen für KISSHome-Forschung",
+          "ru": "Сбор информации для исследования KISSHome",
+          "pt": "Coleção de informações para pesquisa KISSHome",
+          "nl": "Verzameling informatie voor KISSHome-onderzoek",
+          "fr": "Collection d'informations pour la recherche KISSHome",
+          "it": "Raccolta di informazioni per la ricerca KISSHome",
+          "es": "Colección de información para la investigación de KISSHome",
+          "pl": "Zbiór informacji do badań KISSHome",
+          "uk": "Збір інформації для дослідження KISSHome",
+          "zh-cn": "KISSHome研究信息收集"
       },
-      "1.3.1": {
-        "en": "Stop any cloud communication after 21.12.2025",
-        "de": "Stoppen Sie jede Cloud-Kommunikation nach 21.12.2025",
-        "ru": "Прекратить любую облачную связь после 21.12.2025",
-        "pt": "Interromper qualquer comunicação de nuvem após 21.12.2025",
-        "nl": "Stop elke cloudcommunicatie na 21.12.2025",
-        "fr": "Arrêter toute communication en nuage après le 21.12.2025",
-        "it": "Interrompere qualsiasi comunicazione cloud dopo 21.12.2025",
-        "es": "Detener cualquier comunicación en la nube después de 21.12.2025",
-        "pl": "Przerwać wszelką komunikację w chmurze po 21.12.2025",
-        "uk": "Стоп будь-який хмарний зв'язок після 21.12.2025",
-        "zh-cn": "2025年12月21日后停止任何云通信"
+      "authors": ["Denis Haev <dogafox@gmail.com>"],
+      "platform": "Javascript/Node.js",
+      "mode": "daemon",
+      "nogit": true,
+      "loglevel": "info",
+      "readme": "https://github.com/ioBroker/ioBroker.kisshome-defender/blob/master/README.md",
+      "icon": "kisshome-defender.png",
+      "connectionType": "local",
+      "dataSource": "push",
+      "adminUI": {
+          "config": "json",
+          "tab": "materialize"
       },
-      "1.3.0": {
-        "en": "Stop any cloud communication after 21.12.2025",
-        "de": "Stoppen Sie jede Cloud-Kommunikation nach 21.12.2025",
-        "ru": "Прекратить любую облачную связь после 21.12.2025",
-        "pt": "Interromper qualquer comunicação de nuvem após 21.12.2025",
-        "nl": "Stop elke cloudcommunicatie na 21.12.2025",
-        "fr": "Arrêter toute communication en nuage après le 21.12.2025",
-        "it": "Interrompere qualsiasi comunicazione cloud dopo 21.12.2025",
-        "es": "Detener cualquier comunicación en la nube después de 21.12.2025",
-        "pl": "Przerwać wszelką komunikację w chmurze po 21.12.2025",
-        "uk": "Стоп будь-який хмарний зв'язок після 21.12.2025",
-        "zh-cn": "2025年12月21日后停止任何云通信"
+      "adminTab": {
+          "singleton": false,
+          "name": "KISSHome"
       },
-      "1.2.0": {
-        "en": "Stop any cloud communication after 21.12.2025",
-        "de": "Stoppen Sie jede Cloud-Kommunikation nach 21.12.2025",
-        "ru": "Прекратить любую облачную связь после 21.12.2025",
-        "pt": "Interromper qualquer comunicação de nuvem após 21.12.2025",
-        "nl": "Stop elke cloudcommunicatie na 21.12.2025",
-        "fr": "Arrêter toute communication en nuage après le 21.12.2025",
-        "it": "Interrompere qualsiasi comunicazione cloud dopo 21.12.2025",
-        "es": "Detener cualquier comunicación en la nube después de 21.12.2025",
-        "pl": "Przerwać wszelką komunikację w chmurze po 21.12.2025",
-        "uk": "Стоп будь-який хмарний зв'язок після 21.12.2025",
-        "zh-cn": "2025年12月21日后停止任何云通信"
+      "os": "linux",
+      "tier": 3,
+      "keywords": ["kisshome-defender"],
+      "stopTimeout": 5000,
+      "enabled": false,
+      "compact": true,
+      "singletonHost": true,
+      "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.kisshome-defender/main/admin/kisshome-defender.png",
+      "type": "utility",
+      "messagebox": true,
+      "plugins": {
+          "sentry": {
+              "dsn": "https://10a9528535e3bbbf99f4282a20ff43d1@sentry.iobroker.net/248"
+          }
       },
-      "1.1.13": {
-        "en": "Allowed editing of the description for  automatically found devices",
-        "de": "Erlaubte Bearbeitung der Beschreibung für automatisch gefundene Geräte",
-        "ru": "Разрешено редактирование описания для автоматически найденных устройств",
-        "pt": "Permite a edição da descrição dos dispositivos encontrados automaticamente",
-        "nl": "Toegestaan bewerken van de beschrijving voor automatisch gevonden apparaten",
-        "fr": "Modification autorisée de la description pour les appareils trouvés automatiquement",
-        "it": "Modifica consentita della descrizione per i dispositivi trovati automaticamente",
-        "es": "Permitido edición de la descripción para dispositivos encontrados automáticamente",
-        "pl": "Dozwolona edycja opisu dla automatycznie znalezionych urządzeń",
-        "uk": "Дозволяється редагування опису для автоматично знайдених пристроїв",
-        "zh-cn": "允许编辑自动找到设备的描述"
+      "licenseInformation": {
+          "type": "free",
+          "license": "MIT"
+      },
+      "globalDependencies": [
+          {
+              "admin": ">=7.7.19"
+          }
+      ],
+      "dependencies": [
+          {
+              "js-controller": ">=7.0.0"
+          }
+      ],
+      "osDependencies": {
+          "linux": ["docker-ce"]
+      },
+      "ifInstalledDependencies": {
+          "vis-2": ">=2.12.8"
+      },
+      "restartAdapters": ["vis-2", "vis"],
+      "visWidgets": {
+          "kisshome-defender": {
+              "i18n": "component",
+              "name": "kisshome-defender",
+              "bundlerType": "module",
+              "url": "kisshome-defender/customWidgets.js",
+              "components": ["KisshomeDefender"]
+          }
       }
-    },
-    "titleLang": {
-      "en": "KISSHome defender",
-      "de": "KISSHome-Defender",
-      "ru": "KISSHome-Defender",
-      "pt": "KISSHome-Defender",
-      "nl": "KISSHome-Defender",
-      "fr": "KISSHome-Defender",
-      "it": "KISSHome-Defender",
-      "es": "KISSHome-Defender",
-      "pl": "KISSHome-Defender",
-      "uk": "KISSHome-Defender",
-      "zh-cn": "KISSHome-Defender"
-    },
-    "desc": {
-      "en": "Collection of information for KISSHome defender",
-      "de": "Sammlung von Informationen für KISSHome-Forschung",
-      "ru": "Сбор информации для исследования KISSHome",
-      "pt": "Coleção de informações para pesquisa KISSHome",
-      "nl": "Verzameling informatie voor KISSHome-onderzoek",
-      "fr": "Collection d'informations pour la recherche KISSHome",
-      "it": "Raccolta di informazioni per la ricerca KISSHome",
-      "es": "Colección de información para la investigación de KISSHome",
-      "pl": "Zbiór informacji do badań KISSHome",
-      "uk": "Збір інформації для дослідження KISSHome",
-      "zh-cn": "KISSHome研究信息收集"
-    },
-    "authors": [
-      "Denis Haev <dogafox@gmail.com>"
-    ],
-    "platform": "Javascript/Node.js",
-    "mode": "daemon",
-    "nogit": true,
-    "loglevel": "info",
-    "readme": "https://github.com/ioBroker/ioBroker.kisshome-defender/blob/master/README.md",
-    "icon": "kisshome-defender.png",
-    "connectionType": "local",
-    "dataSource": "push",
-    "adminUI": {
-      "config": "json",
-      "tab": "materialize"
-    },
-    "adminTab": {
-      "singleton": false,
-      "name": "KISSHome"
-    },
-    "os": "linux",
-    "tier": 3,
-    "keywords": [
-      "kisshome-defender"
-    ],
-    "stopTimeout": 5000,
-    "enabled": false,
-    "compact": true,
-    "singletonHost": true,
-    "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.kisshome-defender/main/admin/kisshome-defender.png",
-    "type": "utility",
-    "messagebox": true,
-    "plugins": {
-      "sentry": {
-        "dsn": "https://10a9528535e3bbbf99f4282a20ff43d1@sentry.iobroker.net/248"
-      }
-    },
-    "licenseInformation": {
-      "type": "free",
-      "license": "MIT"
-    },
-    "globalDependencies": [
-      {
-        "admin": ">=7.7.19"
-      }
-    ],
-    "dependencies": [
-      {
-        "js-controller": ">=7.0.0"
-      }
-    ],
-    "osDependencies": {
-      "linux": [
-        "docker-ce"
-      ]
-    },
-    "ifInstalledDependencies": {},
-    "restartAdapters": [
-      "vis-2",
-      "vis"
-    ],
-    "visWidgets": {
-      "kisshome-defender": {
-        "i18n": "component",
-        "name": "kisshome-defender",
-        "bundlerType": "module",
-        "url": "kisshome-defender/customWidgets.js",
-        "components": [
-          "KisshomeDefender"
-        ]
-      }
-    }
   },
   "protectedNative": [
     "password",
