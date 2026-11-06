@@ -193,7 +193,10 @@
           "KisshomeDefender"
         ]
       }
-    }
+    },
+    "webComponents": [
+      "webcomponents/kisshome-defender.json"
+    ]
   },
   "protectedNative": [
     "password",

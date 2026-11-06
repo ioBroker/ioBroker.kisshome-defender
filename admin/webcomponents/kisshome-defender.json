@@ -1,0 +1,90 @@
+{
+    "$schema": "https://raw.githubusercontent.com/ioBroker/web-components/main/schemas/manifest.json",
+    "manifestVersion": 1,
+    "tag": "iob-kisshome-defender",
+    "name": {
+        "en": "KISSHome",
+        "de": "KISSHome",
+        "ru": "KISSГлавная",
+        "pt": "KISSHome",
+        "nl": "KISSHome",
+        "fr": "KISSAccueil",
+        "it": "KISSHome",
+        "es": "KISSHome",
+        "pl": "KISSHome",
+        "uk": "KISSHome",
+        "zh-cn": "KISS首页"
+    },
+    "description": {
+        "en": "Protection status, data volume statistics and detections of KISSHome defender",
+        "de": "Schutzstatus, Statistiken zum Datenvolumen und Erkennungen von KISSHome-Defender",
+        "ru": "Состояние защиты, статистика объёма данных и обнаружения KISSHome-Defender",
+        "pt": "Estado da proteção, estatísticas do volume de dados e deteções do KISSHome-Defender",
+        "nl": "Beschermingsstatus, statistieken van het datavolume en detecties van KISSHome-Defender",
+        "fr": "État de la protection, statistiques du volume de données et détections de KISSHome-Defender",
+        "it": "Stato della protezione, statistiche sul volume di dati e rilevamenti di KISSHome-Defender",
+        "es": "Estado de la protección, estadísticas del volumen de datos y detecciones de KISSHome-Defender",
+        "pl": "Stan ochrony, statystyki wolumenu danych i wykrycia KISSHome-Defender",
+        "uk": "Стан захисту, статистика обсягу даних і виявлення KISSHome-Defender",
+        "zh-cn": "KISSHome-Defender 的保护状态、数据量统计和检测结果"
+    },
+    "icon": "../kisshome-defender.png",
+    "module": "kisshome-defender.js",
+    "size": {
+        "width": 520,
+        "height": 400
+    },
+    "settings": {
+        "type": "panel",
+        "items": {
+            "instance": {
+                "type": "instance",
+                "adapter": "kisshome-defender",
+                "default": "kisshome-defender.0",
+                "label": {
+                    "en": "Adapter instance",
+                    "de": "Adapterinstanz",
+                    "ru": "Экземпляр адаптера",
+                    "pt": "Instância do adaptador",
+                    "nl": "Adapterinstantie",
+                    "fr": "Instance d'adaptateur",
+                    "it": "Istanza dell'adattatore",
+                    "es": "Instancia del adaptador",
+                    "pl": "Instancja adaptera",
+                    "uk": "Екземпляр адаптера",
+                    "zh-cn": "适配器实例"
+                }
+            },
+            "alertDialog": {
+                "type": "checkbox",
+                "default": true,
+                "label": {
+                    "en": "Show new anomalies in a dialog",
+                    "de": "Neue Anomalien in einem Dialog anzeigen",
+                    "ru": "Показывать новые аномалии в диалоге",
+                    "pt": "Mostrar novas anomalias numa caixa de diálogo",
+                    "nl": "Nieuwe afwijkingen in een dialoogvenster tonen",
+                    "fr": "Afficher les nouvelles anomalies dans une boîte de dialogue",
+                    "it": "Mostra le nuove anomalie in una finestra di dialogo",
+                    "es": "Mostrar las nuevas anomalías en un cuadro de diálogo",
+                    "pl": "Pokazuj nowe anomalie w oknie dialogowym",
+                    "uk": "Показувати нові аномалії в діалозі",
+                    "zh-cn": "在对话框中显示新的异常"
+                },
+                "help": {
+                    "en": "Once for each new anomaly, like the vis-2 widget",
+                    "de": "Einmal für jede neue Anomalie, wie das vis-2-Widget",
+                    "ru": "Один раз для каждой новой аномалии, как виджет vis-2",
+                    "pt": "Uma vez para cada nova anomalia, como o widget do vis-2",
+                    "nl": "Eén keer voor elke nieuwe afwijking, zoals de vis-2-widget",
+                    "fr": "Une fois pour chaque nouvelle anomalie, comme le widget vis-2",
+                    "it": "Una volta per ogni nuova anomalia, come il widget di vis-2",
+                    "es": "Una vez por cada nueva anomalía, como el widget de vis-2",
+                    "pl": "Raz dla każdej nowej anomalii, jak widżet vis-2",
+                    "uk": "Один раз для кожної нової аномалії, як віджет vis-2",
+                    "zh-cn": "每个新异常显示一次，与 vis-2 小部件相同"
+                }
+            }
+        }
+    }
+}

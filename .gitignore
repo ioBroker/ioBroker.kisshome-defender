@@ -22,3 +22,4 @@ nbproject
 /src-widgets/build/
 /src-widgets/node_modules/
 /src-widgets/package-lock.json
+/src-webcomponents/build/
