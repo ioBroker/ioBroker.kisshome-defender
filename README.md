@@ -51,6 +51,9 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+-   (@GermanBluefox) Added the web component `iob-kisshome-defender` for Aura and other hosts (`common.webComponents`)
+
 ### 4.0.0 (2026-11-05)
 -   (copilot) Adapter requires node.js >= 22.19.0 now
 -   (@GermanBluefox) vis-2 widgets rebuilt for React 19 and MUI 9 (vis-2 >= 2.20.2 needed), see ioBroker/ioBroker.vis-2#689

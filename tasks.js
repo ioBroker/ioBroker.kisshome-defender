@@ -12,6 +12,8 @@ const srcAdmin = `${__dirname}/src-admin/`;
 
 const srcWidgets = `${__dirname}/src-widgets/`;
 
+const srcWebComponents = `${__dirname}/src-webcomponents/`;
+
 function adminClean() {
     deleteFoldersRecursive(`${__dirname}/admin`, [
         'kisshome-defender.png',
@@ -19,6 +21,8 @@ function adminClean() {
         'jsonConfig.json',
         'i18n',
         'tab.html',
+        // built by --wc
+        'webcomponents',
     ]);
     deleteFoldersRecursive(`${srcAdmin}build`);
 }
@@ -135,6 +139,24 @@ async function buildWidgetV1() {
     copyFiles([`${__dirname}/src-widgets-v1/dist/kisshomeDefender.umd.js`], `widgets/kisshome-defender`);
 }
 
+/**
+ * The web component <iob-kisshome-defender> for Aura, devices and other hosts (`common.webComponents`): one module and
+ * its manifest in admin/webcomponents/. The build fails if the manifest is invalid.
+ */
+async function buildWebComponents() {
+    deleteFoldersRecursive(`${__dirname}/admin/webcomponents`);
+    deleteFoldersRecursive(`${srcWebComponents}build`);
+    if (!existsSync(`${srcWebComponents}node_modules`)) {
+        await npmInstall(srcWebComponents);
+    }
+    // no rootDir: the version of src-webcomponents/package.json stays as it is
+    await buildReact(srcWebComponents, { vite: true });
+    copyFiles(
+        [`${srcWebComponents}build/kisshome-defender.js`, `${srcWebComponents}build/kisshome-defender.json`],
+        'admin/webcomponents',
+    );
+}
+
 function widgetsCopyFiles() {
     copyFiles([`${srcWidgets}build/customWidgets.js`], `widgets/${adapterName}`);
     // vis-2 reads the federation manifest next to customWidgets.js to check the shared modules of the widget set
@@ -204,6 +226,11 @@ if (process.argv.includes('--build-backend')) {
     //     );
     //     process.exit(1);
     // }
+} else if (process.argv.includes('--wc')) {
+    buildWebComponents().catch(e => {
+        console.error(`[${new Date().toISOString()}] Cannot build web components: ${e}`);
+        process.exit(1);
+    });
 } else if (process.argv.includes('--widget-v1-build')) {
     buildWidgetV1().catch(e => {
         console.error(`[${new Date().toISOString()}] Cannot build all: ${e}`);
@@ -220,6 +247,7 @@ if (process.argv.includes('--build-backend')) {
         .then(() => widgetsCopyFiles())
         .then(() => buildAdminTab())
         .then(() => buildWidgetV1())
+        .then(() => buildWebComponents())
         .catch(e => {
             console.error(`[${new Date().toISOString()}] Cannot build all: ${e}`);
             process.exit(1);
