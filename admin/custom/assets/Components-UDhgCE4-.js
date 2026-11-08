@@ -1,0 +1,1 @@
+import{t as e}from"./ConfigCustomInstancesSelector-DjlHSGHF.js";var t={ConfigCustomInstancesSelector:e};export{t as default};

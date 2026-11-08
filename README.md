@@ -51,7 +51,7 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 4.1.0 (2026-11-08)
 -   (@GermanBluefox) Added the web component `iob-kisshome-defender` for Aura and other hosts (`common.webComponents`)
 
 ### 4.0.0 (2026-11-05)
@@ -67,10 +67,6 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 
 ### 1.1.13 (2025-11-25)
 -   (@GermanBluefox) Allowed editing of the description for  automatically found devices
-
-### 1.1.12 (2025-11-12)
--   (@GermanBluefox) Changed german name of adapter
--   (@GermanBluefox) Sync names of PCAP files
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 

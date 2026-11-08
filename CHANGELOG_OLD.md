@@ -1,4 +1,8 @@
 # Older changes
+## 1.1.12 (2025-11-12)
+-   (@GermanBluefox) Changed german name of adapter
+-   (@GermanBluefox) Sync names of PCAP files
+
 ## 1.1.10 (2025-11-09)
 -   (@GermanBluefox) Showed progress devices that have only IP address
 
