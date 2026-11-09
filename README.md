@@ -51,6 +51,9 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Sizes are written as "30,0 MB" instead of "30,0Mb"
+
 ### 4.1.0 (2026-11-08)
 -   (@GermanBluefox) Added the web component `iob-kisshome-defender` for Aura and other hosts (`common.webComponents`)
 

@@ -12,38 +12,38 @@ export function bytes2string(bytes: number, maxValue?: number, noFloat?: boolean
     }
     if (maxValue !== undefined && maxValue > GIGABYTE) {
         // Use a part of GB
-        return `${(bytes / GIGABYTE).toFixed(1).replace('.', ',')}Gb`;
+        return `${(bytes / GIGABYTE).toFixed(1).replace('.', ',')} GB`;
     }
 
     if (maxValue !== undefined && maxValue > MEGABYTE) {
         const mb = bytes / MEGABYTE;
         // Use a part of MB
-        return `${mb.toFixed(maxValue > 12 * MEGABYTE && noFloat ? 0 : 1).replace('.', ',')}Mb`;
+        return `${mb.toFixed(maxValue > 12 * MEGABYTE && noFloat ? 0 : 1).replace('.', ',')} MB`;
     }
     if (bytes < KILOBYTE) {
-        return `${bytes}b`;
+        return `${bytes} B`;
     }
     if (maxValue !== undefined) {
         if (bytes < 1024 * 1024) {
             const kb = bytes / KILOBYTE;
-            return `${kb.toFixed(maxValue > 12 * KILOBYTE && noFloat ? 0 : 1).replace('.', ',')}kb`;
+            return `${kb.toFixed(maxValue > 12 * KILOBYTE && noFloat ? 0 : 1).replace('.', ',')} KB`;
         }
         if (bytes < GIGABYTE) {
             const mb = bytes / MEGABYTE;
-            return `${mb.toFixed(maxValue > 12 * MEGABYTE && noFloat ? 0 : 1).replace('.', ',')}Mb`;
+            return `${mb.toFixed(maxValue > 12 * MEGABYTE && noFloat ? 0 : 1).replace('.', ',')} MB`;
         }
-        return `${(bytes / GIGABYTE).toFixed(maxValue > 12 * GIGABYTE && noFloat ? 0 : 1).replace('.', ',')}Gb`;
+        return `${(bytes / GIGABYTE).toFixed(maxValue > 12 * GIGABYTE && noFloat ? 0 : 1).replace('.', ',')} GB`;
     }
 
     if (bytes < MEGABYTE) {
         const kb = bytes / KILOBYTE;
-        return `${kb.toFixed(noFloat ? 0 : 1).replace('.', ',')}kb`;
+        return `${kb.toFixed(noFloat ? 0 : 1).replace('.', ',')} KB`;
     }
     if (bytes < GIGABYTE) {
         const mb = bytes / MEGABYTE;
-        return `${mb.toFixed(noFloat ? 0 : 1).replace('.', ',')}Mb`;
+        return `${mb.toFixed(noFloat ? 0 : 1).replace('.', ',')} MB`;
     }
-    return `${(bytes / GIGABYTE).toFixed(noFloat ? 0 : 1).replace('.', ',')}Gb`;
+    return `${(bytes / GIGABYTE).toFixed(noFloat ? 0 : 1).replace('.', ',')} GB`;
 }
 
 export function isTouch(e: any): boolean {
