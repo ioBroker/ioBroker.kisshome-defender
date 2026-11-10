@@ -51,6 +51,9 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) The name of the admin tab is given per language, as the schema of `io-package.json` requires
+
 ### 4.1.1 (2026-11-10)
 - (@GermanBluefox) Sizes are written as "30,0 MB" instead of "30,0Mb"
 

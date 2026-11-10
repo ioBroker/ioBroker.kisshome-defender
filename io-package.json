@@ -138,7 +138,19 @@
     },
     "adminTab": {
       "singleton": false,
-      "name": "KISSHome"
+      "name": {
+        "en": "KISSHome",
+        "de": "KISSHome",
+        "ru": "KISSHome",
+        "pt": "KISSHome",
+        "nl": "KISSHome",
+        "fr": "KISSHome",
+        "it": "KISSHome",
+        "es": "KISSHome",
+        "pl": "KISSHome",
+        "uk": "KISSHome",
+        "zh-cn": "KISSHome"
+      }
     },
     "os": "linux",
     "tier": 3,
