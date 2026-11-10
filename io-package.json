@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "kisshome-defender",
-    "version": "4.1.0",
+    "version": "4.1.1",
     "news": {
+      "4.1.1": {
+        "en": "Sizes are written as \"30,0 MB\" instead of \"30,0Mb\"",
+        "de": "Größen sind mit „30,0 MB“ statt „30,0 MB“ angegeben",
+        "ru": "Размеры записываются как «30,0 МБ» вместо «30,0 МБ»",
+        "pt": "Os tamanhos são “30,0 MB” em vez de “30,0Mb”",
+        "nl": "De afmetingen worden geschreven als „30,0 MB” in plaats van „30,0 MB”",
+        "fr": "Les tailles sont écrites « 30,0 Mo » au lieu de « 30,0 Mo »",
+        "it": "Le dimensioni sono «30,0 MB» anziché «30,0 Mb»",
+        "es": "Los tamaños se escriben como «30,0 MB» en lugar de «30,0 Mb»",
+        "pl": "Rozmiary są zapisywane jako „30,0 MB” zamiast „30,0Mb”",
+        "uk": "Розміри записуються як «30,0 Мб» замість «30,0Мб»",
+        "zh-cn": "大小写为 “30,0 MB” 而不是 “30,0Mb”"
+      },
       "4.1.0": {
         "en": "Added the web component `iob-kisshome-defender` for Aura and other hosts (`common.webComponents`)",
         "de": "Webkomponente `iob-kisshome-defender` für Aura und andere Hosts hinzugefügt (`common.webComponents`)",
@@ -69,19 +82,6 @@
         "zh-cn": "2025年12月21日后停止任何云通信"
       },
       "1.3.1": {
-        "en": "Stop any cloud communication after 21.12.2025",
-        "de": "Stoppen Sie jede Cloud-Kommunikation nach 21.12.2025",
-        "ru": "Прекратить любую облачную связь после 21.12.2025",
-        "pt": "Interromper qualquer comunicação de nuvem após 21.12.2025",
-        "nl": "Stop elke cloudcommunicatie na 21.12.2025",
-        "fr": "Arrêter toute communication en nuage après le 21.12.2025",
-        "it": "Interrompere qualsiasi comunicazione cloud dopo 21.12.2025",
-        "es": "Detener cualquier comunicación en la nube después de 21.12.2025",
-        "pl": "Przerwać wszelką komunikację w chmurze po 21.12.2025",
-        "uk": "Стоп будь-який хмарний зв'язок після 21.12.2025",
-        "zh-cn": "2025年12月21日后停止任何云通信"
-      },
-      "1.3.0": {
         "en": "Stop any cloud communication after 21.12.2025",
         "de": "Stoppen Sie jede Cloud-Kommunikation nach 21.12.2025",
         "ru": "Прекратить любую облачную связь после 21.12.2025",

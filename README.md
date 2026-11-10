@@ -51,7 +51,7 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 4.1.1 (2026-11-10)
 - (@GermanBluefox) Sizes are written as "30,0 MB" instead of "30,0Mb"
 
 ### 4.1.0 (2026-11-08)
@@ -67,9 +67,6 @@ iobroker ALL=(ALL) NOPASSWD: /usr/bin/docker
 
 ### 1.3.3 (2025-12-17)
 -   (@GermanBluefox) Stop any cloud communication after 21.12.2025
-
-### 1.1.13 (2025-11-25)
--   (@GermanBluefox) Allowed editing of the description for  automatically found devices
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
