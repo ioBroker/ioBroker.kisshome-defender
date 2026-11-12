@@ -207,7 +207,28 @@
       }
     },
     "webComponents": [
-      "webcomponents/kisshome-defender.json"
+      {
+        "manifest": "webcomponents/kisshome-defender.json",
+        "tag": "iob-kisshome-defender",
+        "name": {
+          "en": "KISSHome",
+          "de": "KISSHome",
+          "ru": "KISSГлавная",
+          "pt": "KISSHome",
+          "nl": "KISSHome",
+          "fr": "KISSAccueil",
+          "it": "KISSHome",
+          "es": "KISSHome",
+          "pl": "KISSHome",
+          "uk": "KISSHome",
+          "zh-cn": "KISS首页"
+        },
+        "icon": "../kisshome-defender.png",
+        "size": {
+          "width": 520,
+          "height": 400
+        }
+      }
     ]
   },
   "protectedNative": [

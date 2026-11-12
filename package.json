@@ -46,7 +46,8 @@
     "@types/node-schedule": "^2.1.8",
     "@types/tar-fs": "^2.0.4",
     "@vitejs/plugin-react": "^6.2.1",
-    "typescript": "~6.0.3"
+    "typescript": "~6.0.3",
+    "@iobroker/web-components": "^0.8.0"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/iobroker.kisshome-defender/issues"
@@ -66,7 +67,7 @@
     "prepublishOnly": "npm run build",
     "lint": "eslint -c src/eslint.config.mjs src/",
     "lint-frontend": "cd src-admin && npm run lint",
-    "build": "npm run build-backend && npm run build:gui",
+    "build": "npm run build-backend && npm run build:gui && iob-web-components sync-io-package",
     "build-backend": "node tasks --build-backend",
     "release": "release-script",
     "release-patch": "release-script patch --yes",
